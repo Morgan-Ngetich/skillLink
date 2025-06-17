@@ -1,0 +1,21 @@
+services:
+  frontend:
+    ports:
+      - "5173:5173"  # Optional override (if needed)
+    env_file:
+      - .env
+    environment:
+      - VITE_API_URL=${VITE_API_URL}  # Dev override
+
+  backend:
+    build:
+      args:
+        INSTALL_DEV: "true"
+    environment:
+      - DOMAIN=localhost
+    volumes:
+      - ./backend:/app  # For hot reload (e.g., uvicorn --reload)
+
+  db:
+    ports:
+      - "5433:5432"  # Optional override to avoid clashing local PG
