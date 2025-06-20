@@ -1,7 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.api.main import api_router
+from app.core.config import settings
 
-app = FastAPI()
+app = FastAPI(    
+    title=settings.PROJECT_NAME,
+    docs_url=f"{settings.API_V1_STR}/docs",
+    openapi_url=f"{settings.API_V1_STR}/openapi.json",    
+)
 
 origins = ["*"]  # or restrict this in prod
 
@@ -13,6 +19,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
-def root():
-    return {"message": "Hello, World!"}
+app.include_router(api_router, prefix=settings.API_V1_STR)
