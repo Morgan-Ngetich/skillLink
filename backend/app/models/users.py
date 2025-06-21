@@ -1,6 +1,18 @@
-from sqlmodel import SQLModel, Field, Relationship, UniqueConstraint
+from sqlmodel import SQLModel, Field, Relationship
+from pydantic import BaseModel
 from app.core.config import settings
+from enum import Enum
+from typing import List
 
+class RoleName(str, Enum):
+    SUPERUSER = "superuser"
+    MENTOR = "mentor"
+    
+# use BaseModel to avoid kwargs mismatch bt FastAPI
+class RoleAssignRequest(BaseModel):
+    user_id: int
+    role_name: RoleName
+    
 class RoleBase(SQLModel):
     name: str = Field(unique=True, index=True)
 
@@ -33,7 +45,7 @@ class RolePermission(SQLModel, table=True):
 
 class UserRole(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    user_id: int = Field(foreign_key="user.id", **{"ondelete": "CASCADE"})
+    user_id: int = Field(foreign_key="users.id", **{"ondelete": "CASCADE"})
     role_id: int = Field(foreign_key="role.id", **{"ondelete": "CASCADE"})
     user: "User" = Relationship(back_populates="roles")
     role: Role = Relationship(back_populates="users")  
@@ -45,25 +57,30 @@ class UserBase(SQLModel):
     is_active: bool = True
 
 class User(UserBase, table=True):
+    __tablename__ = "users"  # ✅ prevent Postgres reserved word issues
+    
     id: int = Field(default=None, primary_key=True)
     hashed_password: str
     roles: list[UserRole] = Relationship(back_populates="user", cascade_delete=True)
 
-    def has_role(self, role_name: str) -> bool:
-        return any(ur.role.name == role_name for ur in self.roles)
+    def has_role(self, role_name: RoleName) -> bool:
+        return any(ur.role.name == role_name.value for ur in self.roles)
 
     @property
     def is_superuser(self) -> bool:
-        return self.has_role("superuser")
+        return self.has_role(RoleName.SUPERUSER)
 
+    @property
+    def is_mentor(self) -> bool:
+        return self.has_role(RoleName.MENTOR)
+        
     def to_public(self):
         return UserPublic(
             id=self.id,
             full_name=self.full_name,
             email=self.email,
             is_superuser=self.is_superuser,
-            is_provider=self.has_role("provider"),
-            is_loggeduser=self.has_role("loggeduser"),
+            is_mentor=self.is_mentor,
         )
 
 class UserPublic(SQLModel):
@@ -71,8 +88,11 @@ class UserPublic(SQLModel):
     full_name: str
     email: str
     is_superuser: bool
-    is_provider: bool
-    is_loggeduser: bool
+    is_mentor: bool
+
+class UsersPublic(BaseModel):
+    data: List[UserPublic]
+    count: int
     
 class UserCreate(UserBase):
     password: str
