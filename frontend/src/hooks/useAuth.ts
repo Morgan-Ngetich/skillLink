@@ -45,5 +45,73 @@ export function useAuth() {
     };
   }, []);
 
-  return { user, loading };
+  /**
+   * Sign up a new user with full name as metadata
+   */
+  async function signUp(email: string, password: string, fullName: string) {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
+      },
+    });
+
+    if (error) {
+      console.error('Signup error:', error.message);
+      return { error };
+    }
+
+    const token = data.session?.access_token;
+    if (token) {
+      await fetchBackendUser(token);
+    }
+
+    return { data };
+  }
+
+
+    /**
+   * Log in an existing user
+   */
+  async function signIn(email: string, password: string) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      console.error('Login error:', error.message);
+      return { error };
+    }
+
+    const token = data.session?.access_token;
+    if (token) {
+      await fetchBackendUser(token);
+    }
+
+    return { data };
+  }
+
+   /**
+   * Log out the current user
+   */
+  async function signOut() {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Logout error:', error.message);
+    }
+    setUser(null);
+    OpenAPI.TOKEN = ''; // clear backend token
+  }
+
+    return {
+    user,
+    loading,
+    signUp,
+    signIn,
+    signOut,
+  };
 }
