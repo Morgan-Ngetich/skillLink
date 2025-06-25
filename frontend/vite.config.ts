@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import checker from 'vite-plugin-checker'
-import path from 'path'
+import path from 'node:path'
 
 export default defineConfig({
   plugins: [
@@ -10,12 +10,11 @@ export default defineConfig({
     checker({
       typescript: true,
       eslint: {
-        lintCommand: 'biome lint . --quiet', // run biome lint
+        lintCommand: 'eslint "./src/**/*.{ts,tsx,js,jsx}" --quiet',
       },
     }),
     VitePWA({
       registerType: 'autoUpdate',
-      // includeAssets: ['vite.svg', 'favicon.svg', 'robots.txt'], // Assets in public/
       includeAssets: ['vite.svg'], 
       manifest: {
         name: 'SkillUP',
@@ -25,7 +24,7 @@ export default defineConfig({
         icons: [
           {
             src: '/vite.svg',
-            sizes: '192x192', // Vite logo may not be perfect size-wise but will work
+            sizes: '192x192',
             type: 'image/svg+xml'
           },
           {
