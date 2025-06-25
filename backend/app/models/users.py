@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from app.core.config import settings
 from enum import Enum
 from typing import List
+from uuid import UUID, uuid4
 
 class RoleName(str, Enum):
     SUPERUSER = "superuser"
@@ -60,6 +61,7 @@ class User(UserBase, table=True):
     __tablename__ = "users"  # ✅ prevent Postgres reserved word issues
     
     id: int = Field(default=None, primary_key=True)
+    uuid: UUID = Field(default_factory=uuid4, index=True, unique=True)
     hashed_password: str
     roles: list[UserRole] = Relationship(back_populates="user", cascade_delete=True)
 
