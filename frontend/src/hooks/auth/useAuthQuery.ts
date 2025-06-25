@@ -1,7 +1,7 @@
-// hooks/useAuthQuery.ts
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../supabaseClient';
 import { UserService, OpenAPI } from '../../client';
+import { useSupabaseSessionReady } from '../useSupabaseSession';
 
 export const fetchCurrentUser = async () => {
   const {
@@ -15,13 +15,19 @@ export const fetchCurrentUser = async () => {
   }
 
   OpenAPI.TOKEN = token;
-  return await UserService.getCurrentUser();
+
+  const user = await UserService.getCurrentUser();
+  return user
 };
 
-export const useAuthQuery = () =>
-  useQuery({
+export const useAuthQuery = () => {
+  const ready = useSupabaseSessionReady();
+
+  return useQuery({
     queryKey: ['auth', 'user'],
     queryFn: fetchCurrentUser,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    enabled: ready, // Don't run until Supabase session is ready
+    staleTime: 1000 * 60 * 5,
     retry: false,
   });
+}
