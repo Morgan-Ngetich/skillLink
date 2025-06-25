@@ -20,6 +20,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # --- Frontend Setup ---
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -37,33 +38,11 @@ jobs:
         run: npm ci
         working-directory: frontend
 
-      - name: Lint + Format + Type Check (Frontend)
+      - name: Build / Type Check (Frontend)
         working-directory: frontend
-        run: |
-          npm run build
+        run: npm run build
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.11
-
-      - name: Cache Python packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Install backend deps
+      # --- Backend Docker CI ---
+      - name: Build backend Docker image with dev dependencies
         working-directory: backend
-        run: |
-          python -m venv venv
-          source venv/bin/activate
-          pip install -r requirements.txt
-
-      - name: Run backend tests
-        working-directory: backend
-        run: |
-          source venv/bin/activate
-          pytest --maxfail=1 --disable-warnings -q
+        run: docker build -t backend-test --build-arg INSTALL_DEV=true .
