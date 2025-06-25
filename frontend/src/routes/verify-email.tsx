@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Box, Heading, Text, Button, HStack, } from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../hooks/auth/useAuth';
 import useToaster from '../hooks/useToaster';
 import { Fade } from '../components/ui/fade';
@@ -14,23 +14,6 @@ function VerifyEmailPage() {
   const [loading, setLoading] = useState(false);
   const [resendCount, setResendCount] = useState(0);
   const [cooldown, setCooldown] = useState(0);
-
-  useEffect(() => {
-    if (search.expired === 'true') {
-      toast(
-        'Confirmation link expired',
-        'Sending new link to youy email ...',
-        'warning'
-      );
-
-      // Auto resend after 2s
-      const timer = setTimeout(() => {
-        handleResend();
-      }, 2000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [search]);
 
   // Cooldown timer effect
   useEffect(() => {
@@ -50,7 +33,7 @@ function VerifyEmailPage() {
     return 'red.500';
   };
 
-  const handleResend = async () => {
+  const handleResend = useCallback(async () => {
     if (cooldown > 0 || resendCount >= 3) return;
 
     setLoading(true);
@@ -64,7 +47,25 @@ function VerifyEmailPage() {
       setCooldown(30);
       setResendCount((prev) => prev + 1);
     }
-  };
+  }, [cooldown, resendCount, resendVerificationEmail, search.email, toast]);
+
+  useEffect(() => {
+    if (search.expired === 'true') {
+      toast(
+        'Confirmation link expired',
+        'Sending new link to your email ...',
+        'warning'
+      );
+
+      // Auto resend after 2s
+      const timer = setTimeout(() => {
+        handleResend();
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [search.expired, handleResend, toast]);
+
   return (
     <Box maxW="lg" mx="auto" mt="16" textAlign="center">
       <Heading size="lg" mb="4">Confirm Your Email</Heading>
@@ -92,7 +93,7 @@ function VerifyEmailPage() {
             transition="color 0.3s ease"
           >
             <HStack>
-              <IoMdClock size={'25px'}/>
+              <IoMdClock size={'25px'} />
               {cooldown}s
             </HStack>
 
