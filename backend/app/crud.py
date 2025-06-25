@@ -1,15 +1,21 @@
 from sqlmodel import Session, select
 from app.models.users import User, UserCreate, Role, UserRole, RoleName
 from app.core.security import get_password_hash, verify_password
-
+from uuid import UUID
 
 def get_user_by_email(session: Session, email: str) -> User | None:
     statement = select(User).where(User.email == email)
     return session.exec(statement).first()
 
 
+# Gets users by ID, First checks for the UUID, => Supabase Users
 def get_user_by_id(session: Session, user_id: str | int) -> User | None:
-    return session.get(User, user_id)
+    try:
+        # Tries UUID parsing first
+        user_uuid = UUID(str(user_id)) 
+        return session.exec(select(User).where(User.uuid == user_uuid)).first()
+    except ValueError:
+        return session.get(User, int(user_id))  # Fallback to integer local ID
 
 
 def create_user(session: Session, user_in: UserCreate) -> User:
@@ -24,7 +30,13 @@ def create_user(session: Session, user_in: UserCreate) -> User:
 
 
 def create_user_from_supabase(session: Session, user_id: str, email: str) -> User:
-    user = User(id=user_id, email=email, is_active=True)
+    user = User( 
+        email=email,
+        full_name=email.split("@")[0],
+        hashed_password="",  
+        uuid=UUID(user_id),
+        is_active=True        
+    )
     session.add(user)
     session.commit()
     session.refresh(user)
