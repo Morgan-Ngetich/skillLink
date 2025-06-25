@@ -28,22 +28,20 @@ def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:
     return UsersPublic(data=[user.to_public() for user in users], count=count)
 
 
-# ✅ GET /me — authenticated user (JWT or Supabase)
 @router.get("/me", response_model=UserPublic)
 def get_me(current_user: CurrentUser) -> UserPublic:
     """
-    Get current active user
+    GET /me — authenticated user (JWT or Supabase)
     """
     return current_user.to_public()
 
 
-# ✅ POST / — create a new user (admin-only/manual password auth)
 @router.post(
     "/", response_model=UserPublic, dependencies=[Depends(get_current_active_superuser)]
 )
 def create_user(session: SessionDep, user_in: UserCreate) -> Any:
     """
-    Create a new User
+    create a new user (admin-only/manual password auth)
     """
     existing_user = crud.get_user_by_email(session=session, email=user_in.email)
     if existing_user:
