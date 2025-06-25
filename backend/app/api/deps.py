@@ -16,26 +16,21 @@ TokenDep = Annotated[str, Depends(security.oauth2_scheme)]
 
 def get_current_user(session: SessionDep, token: TokenDep) -> User:
     try:
-        payload = jwt.decode(
-            token,
-            settings.SECRET_KEY,
-            algorithms=[settings.ALGORITHM],
-        )
+        payload = security.decode_token(token)  # Unified decoding
         user_id = payload.get("sub")
         email = payload.get("email")
 
         if not user_id:
             raise HTTPException(status_code=403, detail="Token missing subject")
-    except (JWTError, ValidationError, ValueError):
+    except Exception:
         raise HTTPException(status_code=403, detail="Invalid credentials")
 
     user = crud.get_user_by_id(session, user_id)
-    
-    if not user:
-        if email:
-            user = crud.create_user_from_supabase(session, user_id, email)
-        else:
-            raise HTTPException(status_code=404, detail="User not found")
+
+    if not user and email:
+        user = crud.create_user_from_supabase(session, user_id, email)
+    elif not user:
+        raise HTTPException(status_code=404, detail="User not found")
 
     if not user.is_active:
         raise HTTPException(status_code=403, detail="Inactive user")
