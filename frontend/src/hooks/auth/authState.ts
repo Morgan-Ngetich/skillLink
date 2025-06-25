@@ -1,14 +1,6 @@
-import { queryClient } from '../lib/queryClient';
-import { fetchCurrentUser } from './useAuthQuery';
+import { supabase } from '../supabaseClient';
 
 export async function isLoggedIn() {
-  try {
-    const user = await queryClient.ensureQueryData({
-      queryKey: ['auth', 'user'],
-      queryFn: fetchCurrentUser,
-    });
-    return Boolean(user);
-  } catch {
-    return false;
-  }
+  const { data, error } = await supabase.auth.getUser();
+  return Boolean(data?.user) && !error;
 }
