@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Deploy backend Docker image to Railway
-        uses: railwayapp/cli-action@v1
+        uses: railwayapp/cli-action@main
         with:
           railwayToken: ${{ secrets.RAILWAY_TOKEN }}
           projectId: ${{ secrets.RAILWAY_BACKEND_PROJECT_ID }}
