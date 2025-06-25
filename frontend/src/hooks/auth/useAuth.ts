@@ -1,4 +1,3 @@
-// hooks/useAuth.ts
 import { useAuthQuery } from './useAuthQuery';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../supabaseClient';
@@ -9,10 +8,14 @@ export function useAuth() {
   const { data: user, isLoading } = useAuthQuery();
 
   const signUp = async (email: string, password: string, fullName: string) => {
+    const redirectUrl = `${window.location.origin}/auth/callback?email=${encodeURIComponent(email)}`;
+    console.log('Redirect URL:', redirectUrl);
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
+        emailRedirectTo: redirectUrl,
         data: {
           full_name: fullName,
         },
@@ -53,11 +56,23 @@ export function useAuth() {
     await queryClient.removeQueries({ queryKey: ['auth', 'user'] });
   };
 
+  const resendVerificationEmail = async (email: string) => {
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+    });
+
+    return { error };
+  };
+
+
   return {
     user,
     isLoading,
     signUp,
     signIn,
     signOut,
+
+    resendVerificationEmail,
   };
 }
