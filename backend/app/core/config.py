@@ -2,13 +2,20 @@ from pydantic import computed_field
 from functools import lru_cache
 from pydantic_settings import BaseSettings
 import secrets
+import base64
 from typing import Optional
 
 class Settings(BaseSettings):  
     DOMAIN: str = "localhost"
     API_V1_STR: str = "/api/v1"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # min * hours * days
+    
     SECRET_KEY: str = secrets.token_urlsafe(32)
+    SUPABASE_PROJECT_ID: str
+    SUPABASE_JWT_SECRET: str
+    SUPABASE_ANON_KEY: str
+
+    
     ALGORITHM: str = "HS256"
 
     ENVIRONMENT: str = "local"
@@ -32,9 +39,14 @@ class Settings(BaseSettings):
             f"@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
         )
 
+    @property
+    def SUPABASE_JWT_SECRET_DECODED(self) -> bytes:
+        return base64.b64decode(self.SUPABASE_JWT_SECRET)
+
     class Config:
         env_file = ".env"
         extra = "ignore"
+        
 
 @lru_cache
 def get_settings():
