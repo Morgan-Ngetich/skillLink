@@ -31,7 +31,7 @@ RUN poetry check
 RUN bash -c "if [ \"$INSTALL_DEV\" = \"true\" ]; then poetry install --no-root --no-interaction --no-ansi; else poetry install --no-root --only main --no-interaction --no-ansi; fi"
 
 # Not neccessary but for clarity
-EXPOSE 80
+EXPOSE 8000
 
 # Copy application code
 COPY . .
