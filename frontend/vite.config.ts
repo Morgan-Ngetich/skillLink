@@ -16,7 +16,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       // includeAssets: ['vite.svg', 'favicon.svg', 'robots.txt'], // Assets in public/
-      includeAssets: ['vite.svg', 'favicon.svg', 'robots.txt'], 
+      includeAssets: ['vite.svg'], 
       manifest: {
         name: 'SkillUP',
         short_name: 'skillUp',
