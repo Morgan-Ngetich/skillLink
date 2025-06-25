@@ -10,6 +10,7 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     env:
+      ENVIRONMENT: production
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
