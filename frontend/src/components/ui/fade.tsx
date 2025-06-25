@@ -21,7 +21,7 @@ export const Fade = ({ in: isVisible, children, ...rest }: FadeProps) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: isVisible ? 1 : 0 }}
       style={{ transitionDuration: '0.4s' }} // ✅ optional visual fallback
-      // @ts-ignore
+      // @ts-expect-error: ignoring type mismatch for framer-motion transition prop
       transition={{ duration: 0.4 }} // ✅ use Framer Motion's `transition` directly
     >
       {children}
