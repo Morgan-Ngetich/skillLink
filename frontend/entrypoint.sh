@@ -1,4 +1,6 @@
 #!/bin/sh
+echo "--- ENTRYPOINT STARTUP ---"
+env | grep BACKEND_HOST || echo "No BACKEND_HOST in env"
 
 if [ -z "$BACKEND_HOST" ]; then
   echo "ERROR: BACKEND_HOST is not set"
