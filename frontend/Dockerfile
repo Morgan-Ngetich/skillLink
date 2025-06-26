@@ -41,5 +41,8 @@ COPY nginx.template.conf /etc/nginx/nginx.template.conf
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
+# After copying files in final stage
+EXPOSE 80
+
 # Use the entrypoint to inject env vars and start Nginx
 ENTRYPOINT ["/entrypoint.sh"]
