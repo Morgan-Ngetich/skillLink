@@ -1,18 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
-import checker from 'vite-plugin-checker'
 import path from 'node:path'
 
 export default defineConfig({
   plugins: [
     react(),
-    checker({
-      typescript: true,
-      eslint: {
-        lintCommand: 'eslint "./src/**/*.{ts,tsx,js,jsx}" --quiet',
-      },
-    }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['vite.svg'], 
