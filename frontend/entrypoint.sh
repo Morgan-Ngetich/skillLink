@@ -5,7 +5,7 @@ if [ -z "$BACKEND_HOST" ]; then
   exit 1
 fi
 
-envsubst '$BACKEND_HOST' < /etc/nginx/nginx.template.conf > /etc/nginx/nginx.conf
+envsubst "$BACKEND_HOST" < /etc/nginx/nginx.template.conf > /etc/nginx/nginx.conf
 
 echo "===== Generated nginx.conf ====="
 cat /etc/nginx/nginx.conf
