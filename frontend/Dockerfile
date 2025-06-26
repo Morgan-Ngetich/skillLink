@@ -46,3 +46,4 @@ EXPOSE 80
 
 # Use the entrypoint to inject env vars and start Nginx
 ENTRYPOINT ["/entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]
