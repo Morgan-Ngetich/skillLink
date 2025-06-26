@@ -5,10 +5,12 @@ if [ -z "$BACKEND_HOST" ]; then
   exit 1
 fi
 
-envsubst "$BACKEND_HOST" < /etc/nginx/nginx.template.conf > /etc/nginx/nginx.conf
+# ✅ Correct use of single quotes with envsubst
+envsubst '${BACKEND_HOST}' < /etc/nginx/nginx.template.conf > /etc/nginx/nginx.conf
 
 echo "===== Generated nginx.conf ====="
 cat /etc/nginx/nginx.conf
 echo "==============================="
 
-nginx -g 'daemon off;'
+# ✅ Explicit config path, and daemon stays in foreground
+nginx -c /etc/nginx/nginx.conf -g 'daemon off;'
