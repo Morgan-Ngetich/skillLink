@@ -35,15 +35,21 @@ RUN rm -rf /usr/share/nginx/html/*
 COPY --from=build /app/dist /usr/share/nginx/html
 
 # Copy Nginx config template
-COPY nginx.template.conf /etc/nginx/nginx.template.conf
+# COPY nginx.template.conf /etc/nginx/nginx.template.conf
+
+# Add custom Nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Add custom Nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy the entrypoint script
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# COPY entrypoint.sh /entrypoint.sh
+# RUN chmod +x /entrypoint.sh
 
-# After copying files in final stage
-EXPOSE 80
+# # After copying files in final stage
+# EXPOSE 80
 
-# Use the entrypoint to inject env vars and start Nginx
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["nginx", "-g", "daemon off;"]
+# # Use the entrypoint to inject env vars and start Nginx
+# ENTRYPOINT ["/entrypoint.sh"]
+# CMD ["nginx", "-g", "daemon off;"]
