@@ -22,7 +22,9 @@ FROM nginx:1.25-alpine
 
 RUN rm -rf /usr/share/nginx/html/*
 COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# FULL nginx.conf to the correct global config path
+COPY nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
 
