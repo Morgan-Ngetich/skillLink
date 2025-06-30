@@ -10,8 +10,9 @@ import {
 import { useEffect } from "react"
 import { Avatar } from '@chakra-ui/react';
 import { FaArrowDownLong } from "react-icons/fa6";
-import { useAuthQuery } from '../../hooks/auth/useAuthQuery';
+import { useAuthQuery } from '@/hooks/auth/useAuthQuery';
 import { useNavigate } from '@tanstack/react-router';
+import { ColorModeButton } from '@/components/ui/color-mode';
 
 const Header = () => {
   const { data: user, isLoading } = useAuthQuery();
@@ -77,6 +78,7 @@ const Header = () => {
             <Button colorScheme="blue" onClick={() => navigate({ to: '/signup' })}>
               Sign Up
             </Button>
+            <ColorModeButton />
           </HStack>
         )}
       </Flex>
