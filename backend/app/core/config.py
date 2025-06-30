@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # min * hours * days
 
+    FIRST_SUPERUSER: str
+    FIRST_SUPERUSER_PASSWORD: str
+
     SECRET_KEY: str = secrets.token_urlsafe(32)
     SUPABASE_PROJECT_ID: Optional[str] = None
     SUPABASE_JWT_SECRET: Optional[str] = None
