@@ -49,20 +49,44 @@ def authenticate(*, session: Session, email: str, password: str) -> User | None:
     if not verify_password(password, db_user.hashed_password):
         return None
     return db_user
-    
-def assign_role(session: Session, user: User, role_name: RoleName) -> User:
-    # Ensure we compare using the enum value
-    role = session.exec(
+
+
+def create_role(session: Session, role_name: RoleName) -> Role:
+    # Ensure it's a valid enum member
+    if role_name not in RoleName:
+        raise ValueError(f"Invalid role: {role_name}")
+
+    # Check if the role already exists
+    existing_role = session.exec(
         select(Role).where(Role.name == role_name.value)
     ).first()
-    if not role:
-        raise ValueError(f"Role `{role_name.value} ` not found")
-    
-    # Check is user already has this role
-    has_role = any(ur.role_id == role.id for ur in user.roles)
+
+    # If it exists, return the existing role
+    if existing_role:
+        return existing_role
+    # Else it doesn't exist, create the new role
+    new_role = Role(name=role_name.value)
+    session.add(new_role)
+    session.commit()
+    session.refresh(new_role)
+    return new_role
+
+
+def assign_role(session: Session, user: User, role_name: RoleName) -> User:
+    # Create the role if it doesn't exist
+    role = create_role(session, role_name)
+
+    # Check if the user already has this role
+    has_role = session.exec(
+        select(UserRole).where(
+            UserRole.user_id == user.id, UserRole.role_id == role.id
+        )
+    ).first()
+
     if has_role:
-        return user # Already assigned
-    
+        return user  # User already has this role
+
+    # Assign the role to the user
     user_role = UserRole(user_id=user.id, role_id=role.id)
     session.add(user_role)
     session.commit()
