@@ -1,5 +1,15 @@
+'use client';
+
 import { createFileRoute } from '@tanstack/react-router';
-import { Box, Heading, Text, Button, HStack, } from '@chakra-ui/react';
+import {
+  Box,
+  Heading,
+  Text,
+  Button,
+  HStack,
+  VStack,
+  Flex,
+} from '@chakra-ui/react';
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../hooks/auth/useAuth';
 import useToaster from '../hooks/useToaster';
@@ -15,22 +25,19 @@ function VerifyEmailPage() {
   const [resendCount, setResendCount] = useState(0);
   const [cooldown, setCooldown] = useState(0);
 
-  // Cooldown timer effect
+  // Cooldown countdown
   useEffect(() => {
     if (cooldown === 0) return;
-
     const interval = setInterval(() => {
-      setCooldown((prev) => (prev > 0 ? prev - 1 : 0));
+      setCooldown(prev => Math.max(prev - 1, 0));
     }, 1000);
-
     return () => clearInterval(interval);
   }, [cooldown]);
 
-  // Determine color by time left
-  const getCooldownColor = () => {
-    if (cooldown > 20) return 'green.500';
-    if (cooldown > 10) return 'yellow.500';
-    return 'red.500';
+  const getCooldownColor = (): string => {
+    if (cooldown > 20) return 'green.400';
+    if (cooldown > 10) return 'yellow.400';
+    return 'red.400';
   };
 
   const handleResend = useCallback(async () => {
@@ -57,7 +64,6 @@ function VerifyEmailPage() {
         'warning'
       );
 
-      // Auto resend after 2s
       const timer = setTimeout(() => {
         handleResend();
       }, 2000);
@@ -67,40 +73,50 @@ function VerifyEmailPage() {
   }, [search.expired, handleResend, toast]);
 
   return (
-    <Box maxW="lg" mx="auto" mt="16" textAlign="center">
-      <Heading size="lg" mb="4">Confirm Your Email</Heading>
-      <Text fontSize="md" mb="6">
-        We’ve sent a confirmation link to <strong>{search.email}</strong>.<br />
-        Please check your inbox and click the link to activate your account.
-      </Text>
+    <Flex
+      minH="70vh"
+      align="center"
+      justify="center"
+      bg={{ base: "gray.100", _dark: "gray.800"}}
+      color="bodyColor"
+    >
 
-      <HStack justify="center" gap={4}>
-        <Button
-          onClick={handleResend}
-          disabled={loading || cooldown > 0}
-          loading={loading}
-          colorScheme="teal"
-        >
-          Resend Confirmation Email
-        </Button>
+    <Box maxW="lg" mx="auto" textAlign="center" color="bodyColor" border={2} borderColor="inputBorder" borderRadius="lg" bg={{ base: "white", _dark: "gray.900" }} boxShadow="md" p={8}>
+      <VStack gap={6}>
+        <Heading size="lg">Confirm Your Email</Heading>
+        <Text fontSize="md">
+          We’ve sent a confirmation link to <Text fontWeight={"bold"} color={'teal.500'}>{search.email}</Text>.
+          Please check your inbox and click the link to activate your account.
+        </Text>
 
-        {/* Countdown timer with fade */}
-        <Fade in={cooldown > 0}>
-          <Text
-            fontSize="sm"
-            fontWeight="semibold"
-            color={getCooldownColor()}
-            transition="color 0.3s ease"
+        <HStack justify="center" gap={4}>
+          <Button
+            onClick={handleResend}
+            variant="outline"
+            disabled={loading || cooldown > 0}
+            loading={loading}
+            bg="buttonSolidBg"
+            color="buttonSolidColor"
+            _hover={{ bg: 'buttonSolidHoverBg' }}
+            _active={{ bg: 'buttonSolidActiveBg' }}
+            _disabled={{
+              bg: 'buttonSolidDisabledBg',
+              cursor: 'not-allowed',
+            }}
           >
-            <HStack>
-              <IoMdClock size={'25px'} />
-              {cooldown}s
-            </HStack>
+            Resend Confirmation Email
+          </Button>
 
-          </Text>
-        </Fade>
-      </HStack>
+          <Fade in={cooldown > 0}>
+            <HStack gap={1} color={getCooldownColor()}>
+              <IoMdClock size={20} />
+              <Text fontWeight="medium" fontSize="sm">{cooldown}s</Text>
+            </HStack>
+          </Fade>
+        </HStack>
+      </VStack>
     </Box>
+    </Flex>
   );
 }
 

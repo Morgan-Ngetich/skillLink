@@ -1,15 +1,21 @@
+'use client';
+
 import {
   Box,
   Button,
   Input,
   VStack,
   Text,
+  Heading,
+  Flex,
+  Separator,
 } from '@chakra-ui/react';
 import { FormControl, FormLabel } from '@chakra-ui/form-control';
+import { FcGoogle } from 'react-icons/fc';
 import { useForm } from 'react-hook-form';
-import { useAuth } from '../hooks/auth/useAuth';
-import useToaster from '../hooks/useToaster';
-import { useNavigate } from '@tanstack/react-router';
+import { useAuth } from '@/hooks/auth/useAuth';
+import useToaster from '@/hooks/useToaster';
+import { Link, useNavigate } from '@tanstack/react-router';
 
 type LoginFormData = {
   email: string;
@@ -17,7 +23,7 @@ type LoginFormData = {
 };
 
 const LoginForm = () => {
-  const { signIn } = useAuth();
+  const { signIn, signInWithGoogle } = useAuth();
   const {
     register,
     handleSubmit,
@@ -25,44 +31,135 @@ const LoginForm = () => {
   } = useForm<LoginFormData>();
 
   const toast = useToaster();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const onSubmit = async ({ email, password }: LoginFormData) => {
     const { error } = await signIn(email, password);
     if (error) {
-      toast('Login failed', error.message, 'error');
+      toast('Login failed', error.message ?? 'An unknown error occurred.', 'error');
     } else {
-      toast('Login successful', 'Welcome back!', 'success',);
-      navigate({ to: '/' })
+      toast('Login successful', 'Welcome back!', 'success');
+      navigate({ to: '/' });
     }
   };
 
   return (
-    <Box maxW="md" mx="auto" mt={10}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <VStack gap={4} align="stretch">
-          <FormControl isInvalid={!!errors.email}>
-            <FormLabel>Email</FormLabel>
-            <Input type="email" {...register('email', { required: 'Email is required' })} />
-            <Text color="red.500">{errors.email?.message}</Text>
-          </FormControl>
+    <Flex
+      minH="100vh"
+      align="center"
+      justify="center"
+      bg={{ base: "gray.100", _dark: "gray.800" }}
+      px={4}
+    >
+      <Box
+        maxW="md"
+        w="100%"
+        p={8}
+          bg={{ base: "white", _dark: "gray.900" }}
+        boxShadow="lg"
+        borderRadius="xl"
+        borderWidth="1px"
+        borderColor={{ base: "gray.300", _dark: "gray.600" }}
+      >
+        <Heading
+          size="lg"
+          mb={6}
+          textAlign="center"
+          color="bodyColor"
+        >
+          Log In
+        </Heading>
 
-          <FormControl isInvalid={!!errors.password}>
-            <FormLabel>Password</FormLabel>
-            <Input
-              type="password"
-              {...register('password', { required: 'Password is required' })}
-            />
-            <Text color="red.500">{errors.password?.message}</Text>
-          </FormControl>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <VStack gap={5} align="stretch">
+            <FormControl isInvalid={!!errors.email}>
+              <FormLabel color="bodyColor">Email</FormLabel>
+              <Input
+                type="email"
+                variant="subtle"
+                bg={{ base: "gray.500", _dark: "gray.700" }}
+                _hover={{ bg: { base: "gray.100", _dark: "gray.600" } }}
+                _focus={{ bg: { base: "white", _dark: "gray.800" }, borderColor: { base: "teal.500", _dark: "teal.300" } }}
+                {...register('email', { required: 'Email is required' })}
+              />
+              {errors.email && (
+                <Text fontSize="xs" color="red.400">
+                  {errors.email.message}
+                </Text>
+              )}
+            </FormControl>
 
-          <Button type="submit" colorScheme="blue" loading={isSubmitting}>
-            Log In
-          </Button>
-        </VStack>
-      </form>
-    </Box>
+            <FormControl isInvalid={!!errors.password}>
+              <FormLabel color="bodyColor">Password</FormLabel>
+              <Input
+                type="password"
+                variant="subtle"
+                bg={{ base: "gray.50", _dark: "gray.700" }}
+                _hover={{ bg: { base: "gray.100", _dark: "gray.600" } }}
+                _focus={{ bg: { base: "white", _dark: "gray.800" }, borderColor: { base: "teal.500", _dark: "teal.300" } }}
+                {...register('password', { required: 'Password is required' })}
+              />
+              {errors.password && (
+                <Text fontSize="xs" color="red.400">
+                  {errors.password.message}
+                </Text>
+              )}
+            </FormControl>
+
+            <Button
+              type="submit"
+              loading={isSubmitting}
+              size="md"
+              rounded="lg"
+              bg={{ base: "teal.700", _dark: "teal.600" }}
+              color={{ base: "white", _dark: "white" }}
+              _hover={{ bg: { base: "teal.600", _dark: "teal.500" } }}
+              _active={{ bg: { base: "teal.700", _dark: "teal.600" } }}
+              _disabled={{ bg: { base: "teal.300", _dark: "teal.200" }, cursor: 'not-allowed' }}
+            >
+              Log In
+            </Button>
+
+            <Separator />
+
+            <Flex justify={'center'} w="100%" mt={2}>
+              <Button
+                w="90%"
+                textAlign={'center'}
+                variant="outline"
+                onClick={signInWithGoogle}
+                color="buttonOutlineColor"
+                borderColor="buttonOutlineBorder"
+                _hover={{ bg: 'buttonOutlineHoverBg' }}
+                _active={{ bg: 'buttonOutlineActiveBg' }}
+                _disabled={{ cursor: 'not-allowed' }}
+              >
+                <Box as={FcGoogle} mr={2} />
+                Continue with Google
+              </Button>
+            </Flex>
+
+            <Text color="bodyColor" mt={3} fontSize="sm" textAlign="center">
+              Not registered yet?{' '}
+              <Link to="/signup">
+                <Text
+                  as="span"
+                  fontWeight="medium"
+                  color="buttonOutlineColor"
+                  _hover={{
+                    textDecoration: 'underline',
+                    color: 'buttonOutlineBorder',
+                  }}
+                >
+                  Sign Up
+                </Text>
+              </Link>
+            </Text>
+          </VStack>
+        </form>
+      </Box>
+    </Flex>
   );
-}
+};
 
-export default LoginForm
+export default LoginForm;
