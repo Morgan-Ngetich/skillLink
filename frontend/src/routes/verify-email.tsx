@@ -77,45 +77,48 @@ function VerifyEmailPage() {
       minH="70vh"
       align="center"
       justify="center"
-      bg={{ base: "gray.100", _dark: "gray.800"}}
+      bg={"bodyBg"}
       color="bodyColor"
     >
 
-    <Box maxW="lg" mx="auto" textAlign="center" color="bodyColor" border={2} borderColor="inputBorder" borderRadius="lg" bg={{ base: "white", _dark: "gray.900" }} boxShadow="md" p={8}>
-      <VStack gap={6}>
-        <Heading size="lg">Confirm Your Email</Heading>
-        <Text fontSize="md">
-          We’ve sent a confirmation link to <Text fontWeight={"bold"} color={'teal.500'}>{search.email}</Text>.
-          Please check your inbox and click the link to activate your account.
-        </Text>
+      <Box maxW="lg" mx="auto" textAlign="center" color="bodyColor" border={"1px solid"} borderColor={{base: "black", _dark: "white"}} borderRadius="lg" bg={{ base: "white", _dark: "gray.900" }} boxShadow="md" p={8}>
+        <VStack gap={6}>
+          <Heading size="lg">Confirm Your Email</Heading>
+          <Text fontSize="md">
+            We’ve sent a confirmation link to <Text fontWeight={"bold"} color={'teal.500'}>{search.email}</Text>.
+            Please check your inbox and click the link to activate your account.
+          </Text>
 
-        <HStack justify="center" gap={4}>
-          <Button
-            onClick={handleResend}
-            variant="outline"
-            disabled={loading || cooldown > 0}
-            loading={loading}
-            bg="buttonSolidBg"
-            color="buttonSolidColor"
-            _hover={{ bg: 'buttonSolidHoverBg' }}
-            _active={{ bg: 'buttonSolidActiveBg' }}
-            _disabled={{
-              bg: 'buttonSolidDisabledBg',
-              cursor: 'not-allowed',
-            }}
-          >
-            Resend Confirmation Email
-          </Button>
+          <HStack justify="center" gap={4}>
+            <Button
+              onClick={handleResend}
+              variant="outline"
+              disabled={loading || cooldown > 0}
+              loading={loading}
+              size="md"
+              rounded="lg"
+              bg={{ base: "teal.700", _dark: "teal.600" }}
+              color={{ base: "white", _dark: "white" }}
+              _hover={{ bg: { base: "teal.600", _dark: "teal.500" } }}
+              _active={{ bg: { base: "teal.700", _dark: "teal.600" } }}
+              _disabled={{ bg: { base: "teal.300", _dark: "teal.200" }, cursor: 'not-allowed' }}
+              _focus={{
+                bg: { base: "teal", _dark: "teal.800" },
+                borderColor: { base: "teal.500", _dark: "teal.300" }
+              }}
+            >
+              Resend Confirmation Email
+            </Button>
 
-          <Fade in={cooldown > 0}>
-            <HStack gap={1} color={getCooldownColor()}>
-              <IoMdClock size={20} />
-              <Text fontWeight="medium" fontSize="sm">{cooldown}s</Text>
-            </HStack>
-          </Fade>
-        </HStack>
-      </VStack>
-    </Box>
+            <Fade in={cooldown > 0}>
+              <HStack gap={1} color={getCooldownColor()}>
+                <IoMdClock size={20} />
+                <Text fontWeight="medium" fontSize="sm">{cooldown}s</Text>
+              </HStack>
+            </Fade>
+          </HStack>
+        </VStack>
+      </Box>
     </Flex>
   );
 }
