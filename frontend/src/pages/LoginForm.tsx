@@ -16,6 +16,8 @@ import { useForm } from 'react-hook-form';
 import { useAuth } from '@/hooks/auth/useAuth';
 import useToaster from '@/hooks/useToaster';
 import { Link, useNavigate } from '@tanstack/react-router';
+import { PasswordInput } from '@/components/ui/password-input';
+import { isValidEmail } from '@/utils/validator';
 
 type LoginFormData = {
   email: string;
@@ -55,7 +57,7 @@ const LoginForm = () => {
         maxW="md"
         w="100%"
         p={8}
-          bg={{ base: "white", _dark: "gray.900" }}
+        bg={{ base: "white", _dark: "gray.900" }}
         boxShadow="lg"
         borderRadius="xl"
         borderWidth="1px"
@@ -76,11 +78,13 @@ const LoginForm = () => {
               <FormLabel color="bodyColor">Email</FormLabel>
               <Input
                 type="email"
-                variant="subtle"
-                bg={{ base: "gray.500", _dark: "gray.700" }}
+                bg={{ base: "gray.50", _dark: "gray.700" }}
                 _hover={{ bg: { base: "gray.100", _dark: "gray.600" } }}
                 _focus={{ bg: { base: "white", _dark: "gray.800" }, borderColor: { base: "teal.500", _dark: "teal.300" } }}
-                {...register('email', { required: 'Email is required' })}
+                {...register('email', {
+                  required: 'Email is required',
+                  validate: (val) => isValidEmail(val) || 'Invalid email format',
+                })}
               />
               {errors.email && (
                 <Text fontSize="xs" color="red.400">
@@ -91,13 +95,14 @@ const LoginForm = () => {
 
             <FormControl isInvalid={!!errors.password}>
               <FormLabel color="bodyColor">Password</FormLabel>
-              <Input
+              <PasswordInput
                 type="password"
-                variant="subtle"
                 bg={{ base: "gray.50", _dark: "gray.700" }}
                 _hover={{ bg: { base: "gray.100", _dark: "gray.600" } }}
                 _focus={{ bg: { base: "white", _dark: "gray.800" }, borderColor: { base: "teal.500", _dark: "teal.300" } }}
-                {...register('password', { required: 'Password is required' })}
+                {...register('password', {
+                  required: 'Password is required',
+                })}
               />
               {errors.password && (
                 <Text fontSize="xs" color="red.400">

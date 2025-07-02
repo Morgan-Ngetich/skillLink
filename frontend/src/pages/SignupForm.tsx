@@ -16,6 +16,10 @@ import { useForm } from 'react-hook-form';
 import { useAuth } from '@/hooks/auth/useAuth';
 import useToaster from '@/hooks/useToaster';
 import { Link, useNavigate } from '@tanstack/react-router';
+import { PasswordInput, PasswordStrengthMeter } from '@/components/ui/password-input';
+import { calculatePasswordStrength } from '@/utils/password';
+import { isValidEmail } from '@/utils/validator';
+import { hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar } from '@/utils/validator';
 
 type SignUpFormData = {
   fullName: string;
@@ -28,9 +32,11 @@ const SignupForm = () => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<SignUpFormData>();
 
+  const passwordValue = watch('password');
   const toast = useToaster();
   const navigate = useNavigate();
 
@@ -62,6 +68,7 @@ const SignupForm = () => {
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <VStack gap={4} align="stretch">
+            {/* Full Name */}
             <FormControl isInvalid={!!errors.fullName}>
               <FormLabel color="bodyColor">Full Name</FormLabel>
               <Input
@@ -75,6 +82,7 @@ const SignupForm = () => {
               </Text>
             </FormControl>
 
+            {/* Email */}
             <FormControl isInvalid={!!errors.email}>
               <FormLabel color="bodyColor">Email</FormLabel>
               <Input
@@ -82,33 +90,61 @@ const SignupForm = () => {
                 bg={{ base: "gray.50", _dark: "gray.700" }}
                 _hover={{ bg: { base: "gray.100", _dark: "gray.600" } }}
                 _focus={{ bg: { base: "white", _dark: "gray.800" }, borderColor: { base: "teal.500", _dark: "teal.300" } }}
-                {...register('email', { required: 'Email is required' })}
+                {...register('email', {
+                  required: 'Email is required',
+                  validate: (val) => isValidEmail(val) || 'Invalid email format',
+                })}
               />
               <Text color="red.400" fontSize="xs">
                 {errors.email?.message}
               </Text>
             </FormControl>
 
+
+            {/* Password */}
             <FormControl isInvalid={!!errors.password}>
               <FormLabel color="bodyColor">Password</FormLabel>
-              <Input
+              <PasswordInput
                 type="password"
+                placeholder="Enter your password"
+                autoComplete="new-password"
                 bg={{ base: "gray.50", _dark: "gray.700" }}
                 _hover={{ bg: { base: "gray.100", _dark: "gray.600" } }}
-                _focus={{ bg: { base: "white", _dark: "gray.800" }, borderColor: { base: "teal.500", _dark: "teal.300" } }}
-                {...register('password', { required: 'Password is required' })}
+                _focus={{
+                  bg: { base: "white", _dark: "gray.800" },
+                  borderColor: { base: "teal.500", _dark: "teal.300" },
+                }}
+                {...register('password', {
+                  required: 'Password is required',
+                  minLength: {
+                    value: 8,
+                    message: 'Password must be at least 8 characters long',
+                  },
+                  validate: {
+                    hasUpper: (val) => hasUpperCase(val) || 'Must contain an uppercase letter',
+                    hasLower: (val) => hasLowerCase(val) || 'Must contain a lowercase letter',
+                    hasNumber: (val) => hasNumber(val) || 'Must contain a number',
+                    hasSpecial: (val) => hasSpecialChar(val) || 'Must contain a special character',
+                  },
+                })}
               />
+
+              {passwordValue && (
+                <PasswordStrengthMeter value={calculatePasswordStrength(passwordValue)} />
+              )}
+
               <Text color="red.400" fontSize="xs">
                 {errors.password?.message}
               </Text>
             </FormControl>
 
+            {/* Submit Button */}
             <Button
               type="submit"
               loading={isSubmitting}
               size="md"
-              rounded={'lg'}
-              bg={{ base: "teal.600", _dark: "teal.500" }}
+              rounded="lg"
+              bg={{ base: "teal.700", _dark: "teal.600" }}
               color={{ base: "white", _dark: "white" }}
               _hover={{ bg: { base: "teal.600", _dark: "teal.500" } }}
               _active={{ bg: { base: "teal.700", _dark: "teal.600" } }}
@@ -123,6 +159,7 @@ const SignupForm = () => {
               or
             </Text>
 
+            {/* Google Sign In */}
             <Flex justify={'center'} w="100%" mt={2}>
               <Button
                 w="90%"
