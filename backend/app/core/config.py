@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     POSTGRES_DB: Optional[str] = None
 
     DATABASE_URL: Optional[str] = None
+    
+    # Default values:
+    DEFAULT_AVATAR_URL = "https://cdn.skilllink.dev/default-avatar.png"
 
     @computed_field
     def SQLALCHEMY_DATABASE_URI(self) -> str:
