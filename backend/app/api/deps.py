@@ -19,6 +19,9 @@ def get_current_user(session: SessionDep, token: TokenDep) -> User:
         payload = security.decode_token(token)  # Unified decoding
         user_id = payload.get("sub")
         email = payload.get("email")
+        full_name = payload.get("user_metadata", {}).get("full_name" 
+        or payload.get('full_name')  # Handle different metadata keys
+        or email.split("@")[0])
 
         if not user_id:
             raise HTTPException(status_code=403, detail="Token missing subject")
@@ -28,7 +31,7 @@ def get_current_user(session: SessionDep, token: TokenDep) -> User:
     user = crud.get_user_by_id(session, user_id)
 
     if not user and email:
-        user = crud.create_user_from_supabase(session, user_id, email)
+        user = crud.create_user_from_supabase(session, user_id, email, full_name)
     elif not user:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -53,6 +56,3 @@ def assign_role_to_user(session: Session, user_id: int, role_name: str) -> User:
     ).first()
 
     return crud.assign_role(session=session, user=user, role_name=role_name)
-
-    
-    
