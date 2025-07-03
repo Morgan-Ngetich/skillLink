@@ -24,3 +24,25 @@ export const $UserPublic = {
 
   },
 } as const;
+
+
+export const $UserSyncIn = {
+  properties: {
+    user_uuid: {
+      type: 'number',
+      isRequired: true,
+    },
+    email: {
+      type: 'string',
+      isRequired: true,
+    },
+    full_name: {
+      type: 'any-of',
+      contains: [{
+        type: 'string',
+      }, {
+        type: 'null',
+      }],
+    },
+  },
+} as const;
