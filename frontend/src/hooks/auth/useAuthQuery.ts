@@ -14,7 +14,7 @@ export const fetchCurrentUser = async () => {
     throw new Error('No session token');
   }
 
-  OpenAPI.TOKEN = token;
+  OpenAPI.TOKEN = () => Promise.resolve(token);
 
   const user = await UserService.getCurrentUser();
   return user
