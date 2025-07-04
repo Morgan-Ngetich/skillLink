@@ -10,8 +10,9 @@ export type UserPublic =  {
 
 export type UserSyncIn =  {
   user_uuid: string;
-  email: string | undefined;
-  full_name: string
+  email: string;
+  full_name: string | null;
+  avatar_url?: string;
 }
 
 import type { User } from '@supabase/supabase-js';
