@@ -5,8 +5,10 @@ from enum import Enum
 from typing import List, Optional
 from uuid import UUID, uuid4
 from datetime import datetime
-
 from pydantic import model_validator, computed_field
+from sqlalchemy import Column
+from sqlalchemy.dialects.postgresql import JSON
+
 # ================== ROLES AND PERMISSIONS ==================
 class RoleName(str, Enum):
     SUPERUSER = "superuser"
@@ -106,21 +108,6 @@ class User(UserBase, table=True):
             profile=self.profile.to_public() if self.profile else None    
         )
 
-class UserPublic(SQLModel):
-    id: int
-    full_name: str
-    email: str
-    avatar_url: Optional[str] = None
-    is_superuser: bool
-    is_mentor: bool
-    is_mentee: bool
-    profile: Optional["UserProfilePublic"] = None
-UserPublic.update_forward_refs()  #To wait for UserProfilePublic to be defined
-
-class UsersPublic(BaseModel):
-    data: List[UserPublic]
-    count: int
-    
 class UserCreate(UserBase):
     password: str
 
@@ -130,11 +117,35 @@ class UserUpdate(BaseModel):
     is_active: bool | None = None
     
 
+# ================== USER PUBLIC MODELS ==================
+class UserProfilePublic(SQLModel):
+    user_id: int
+    bio: str | None = None
+    location: str | None = None
+    goals: str | None = None
+    social_links: dict[str, str] | None = None
+    
+class UserPublic(SQLModel):
+    id: int
+    full_name: str
+    email: str
+    avatar_url: Optional[str] = None
+    is_superuser: bool
+    is_mentor: bool
+    is_mentee: bool
+    profile: Optional["UserProfilePublic"] = None
+
+class UsersPublic(BaseModel):
+    data: List[UserPublic]
+    count: int
+    
+
 # ================== USER PROFILE ==================
 class UserSyncIn(BaseModel):
     user_id: UUID
     email: str
     full_name: str | None = None
+    avatar_url: str | None = None  # Optional, can be set later in UserProfile
     
     
 class UserProfileBase(SQLModel):
@@ -142,7 +153,9 @@ class UserProfileBase(SQLModel):
     bio: str | None = None
     location: str | None = None
     goals: str | None = None
-    social_links: dict[str, str] | None = None  # e.g. {"linkedin": "https://linkedin.com/in/username"}
+    social_links: Optional[dict[str, str]] = Field(
+        sa_column=Column(JSON, nullable=True), default=None
+    )
     created_at: datetime | None = Field(default=None, nullable=True)
     updated_at: datetime | None = Field(default=None, nullable=True)
   
@@ -168,12 +181,6 @@ class UserProfileUpdate(BaseModel):
     bio: str | None = None
     location: str | None = None
     goals: str | None = None
-    social_links: dict[str, str] | None = None  
-    
-class UserProfilePublic(SQLModel):
-    user_id: int
-    bio: str | None = None
-    location: str | None = None
-    goals: str | None = None
-    social_links: dict[str, str] | None = None
+    social_links: Optional[dict[str, str]] = None 
+
     
