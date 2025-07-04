@@ -19,6 +19,7 @@ def get_current_user(session: SessionDep, token: TokenDep) -> User:
         payload = security.decode_token(token)  # Unified decoding
         user_id = payload.get("sub")
         email = payload.get("email")
+        avatar_url = payload.get("avatar_url", settings.DEFAULT_AVATAR_URL)
         full_name = payload.get("user_metadata", {}).get("full_name" 
         or payload.get('full_name')  # Handle different metadata keys
         or email.split("@")[0])
@@ -31,7 +32,7 @@ def get_current_user(session: SessionDep, token: TokenDep) -> User:
     user = crud.get_user_by_id(session, user_id)
 
     if not user and email:
-        user = crud.create_user_from_supabase(session, user_id, email, full_name)
+        user = crud.create_user_from_supabase(session, user_id, email, full_name, avatar_url)
     elif not user:
         raise HTTPException(status_code=404, detail="User not found")
 

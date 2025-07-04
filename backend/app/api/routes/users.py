@@ -5,7 +5,7 @@ from sqlalchemy import func
 from app.models.users import User, UserPublic, UsersPublic, UserCreate, UserSyncIn
 from app.api.deps import CurrentUser, get_current_active_superuser, SessionDep
 from app import crud
-
+from app.core.config import settings
 router = APIRouter()
 
 
@@ -58,6 +58,7 @@ def sync_user_from_supabase_to_db(
         user_id=user_sync_in.user_id,
         email=user_sync_in.email,
         full_name=user_sync_in.full_name,
+        avatar_url=user_sync_in.avatar_url if user_sync_in.avatar_url else settings.DEFAULT_AVATAR_URL,
     )
     return user.to_public()
 

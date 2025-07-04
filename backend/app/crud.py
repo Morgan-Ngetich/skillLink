@@ -29,11 +29,12 @@ def create_user(session: Session, user_in: UserCreate) -> User:
     return db_user
 
 
-def create_user_from_supabase(session: Session, user_id: str, email: str, full_name: str) -> User:
+def create_user_from_supabase(session: Session, user_id: str, email: str, full_name: str, avatart_url: str) -> User:
     user = User(
         uuid=UUID(user_id),
         email=email,
         full_name=full_name,
+        avatart_url=avatart_url,
         hashed_password="",  # Password managed by Supabase, so blank here
         is_active=True
     )
@@ -95,7 +96,7 @@ def assign_role(session: Session, user: User, role_name: RoleName) -> User:
 
 
 def sync_user_from_supabase(
-    session: Session, user_id: str, email: str, full_name: str | None = None
+    session: Session, user_id: str, email: str, full_name: str | None = None, avatar_url: str | None = None
 ) -> User:
     """
     Syncs a user from Supabase by creating or updating their record.
@@ -108,6 +109,9 @@ def sync_user_from_supabase(
     # Update user's full name if provided
     if full_name:
         user.full_name = full_name
+    
+    if avatar_url:
+        user.avatar_url = avatar_url
 
     session.add(user)
     session.commit()
