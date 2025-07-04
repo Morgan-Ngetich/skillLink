@@ -34,7 +34,8 @@ RUN bash -c "if [ \"$INSTALL_DEV\" = \"true\" ]; then poetry install --no-root -
 EXPOSE 80
 
 # Copy application code
-COPY . .
+COPY alembic.ini ./
+COPY app ./app
 
 # Default command (adjust in docker-compose or override for production)
 CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
