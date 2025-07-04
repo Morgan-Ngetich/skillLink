@@ -2,6 +2,7 @@ import { useAuthQuery } from './useAuthQuery';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../supabaseClient';
 import { OpenAPI, UserService, type SupabaseUser } from '../../client';
+import { useNavigate } from '@tanstack/react-router';
 
 export function useAuth() {
   const queryClient = useQueryClient();
@@ -15,11 +16,13 @@ export function useAuth() {
     }
 
     const full_name = user_metadata?.full_name ?? email.split("@")[0];
+    const avatar_url = user_metadata?.avatar_url ?? undefined;
 
     await UserService.syncUserFromSupabase({
       user_uuid,
       email,
       full_name,
+      avatar_url,
     });
   };
 
@@ -78,12 +81,16 @@ export function useAuth() {
     return { data };
   };
 
+  const navigate = useNavigate();
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) return { error };
 
     OpenAPI.TOKEN = '';
     await queryClient.removeQueries({ queryKey: ['auth', 'user'] });
+
+    // Redirect to home page after sign out
+    navigate({ to: '/login' });    
   };
 
   const resendVerificationEmail = async (email: string) => {
