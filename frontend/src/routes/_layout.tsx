@@ -10,7 +10,7 @@ function Layout() {
     <AppLayout>
       {isLoading ? (
         <Flex justify="center" align="center" height="100vh" width="full">
-          <Spinner size="xl" color="blue.500" />
+          <Spinner size="xl" color="teal.500" />
         </Flex>
       ) : (
         <Outlet />
