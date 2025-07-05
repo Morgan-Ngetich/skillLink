@@ -31,7 +31,9 @@ RUN bash -c "if [ \"$INSTALL_DEV\" = \"true\" ]; then poetry install --no-root -
 RUN poetry check
 
 # Not neccessary but for clarity
-EXPOSE 80
+ARG PORT=8000
+ENV PORT=${PORT}
+EXPOSE ${PORT}
 
 # Set PYTHONPATH for resolving `app.` imports
 ENV PYTHONPATH=/app
