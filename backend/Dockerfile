@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     libwebp-dev \
     curl \
+    procps \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
