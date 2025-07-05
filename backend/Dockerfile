@@ -31,7 +31,7 @@ RUN bash -c "if [ \"$INSTALL_DEV\" = \"true\" ]; then poetry install --no-root -
 RUN poetry check
 
 # Not neccessary but for clarity
-ARG PORT=8080
+ARG PORT=8000
 ENV PORT=${PORT}
 EXPOSE ${PORT}
 
