@@ -31,7 +31,7 @@ RUN bash -c "if [ \"$INSTALL_DEV\" = \"true\" ]; then poetry install --no-root -
 RUN poetry check
 
 # Not neccessary but for clarity
-ARG PORT=8000
+ARG PORT=8080
 ENV PORT=${PORT}
 EXPOSE ${PORT}
 
@@ -46,3 +46,5 @@ COPY entrypoint.sh /app/
 
 RUN chmod +x /app/entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]
+
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
