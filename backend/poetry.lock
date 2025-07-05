@@ -815,6 +815,18 @@ anyio = ">=3.6.2,<5"
 full = ["httpx (>=0.27.0,<0.29.0)", "itsdangerous", "jinja2", "python-multipart (>=0.0.18)", "pyyaml"]
 
 [[package]]
+name = "tenacity"
+version = "9.1.2"
+description = "Retry code until it succeeds"
+category = "main"
+optional = false
+python-versions = ">=3.9"
+
+[package.extras]
+doc = ["reno", "sphinx"]
+test = ["pytest", "tornado (>=4.5)", "typeguard"]
+
+[[package]]
 name = "tomli"
 version = "2.2.1"
 description = "A lil' TOML parser"
@@ -937,7 +949,7 @@ python-versions = ">=3.9"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "97c571287d1c219bd356532fd0344173a0949452e302dbff791aa4931827c725"
+content-hash = "6b6e04d0bc9e3f243d008bddf0ca60e7156dcb3eb1ab241d2ce917a2afaedca8"
 
 [metadata.files]
 alembic = []
@@ -999,6 +1011,7 @@ sniffio = []
 sqlalchemy = []
 sqlmodel = []
 starlette = []
+tenacity = []
 tomli = []
 typing-extensions = []
 typing-inspection = []
