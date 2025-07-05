@@ -8,7 +8,6 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     libwebp-dev \
     curl \
-    procps \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -47,5 +46,3 @@ COPY entrypoint.sh /app/
 
 RUN chmod +x /app/entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]
-
-# CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
