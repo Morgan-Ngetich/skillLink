@@ -24,18 +24,23 @@ ARG INSTALL_DEV=false
 # Copy only dependency files first to leverage caching
 COPY pyproject.toml poetry.lock* ./
 
-# Check for syntax issues
-RUN poetry check
-
 # Install dependencies
 RUN bash -c "if [ \"$INSTALL_DEV\" = \"true\" ]; then poetry install --no-root --no-interaction --no-ansi; else poetry install --no-root --only main --no-interaction --no-ansi; fi"
+
+# Check for syntax issues
+RUN poetry check
 
 # Not neccessary but for clarity
 EXPOSE 80
 
+# Set PYTHONPATH for resolving `app.` imports
+ENV PYTHONPATH=/app
+
 # Copy application code
 COPY alembic.ini ./
-COPY app ./app
+COPY ./app /app/app
 
-# Default command (adjust in docker-compose or override for production)
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+COPY entrypoint.sh /app/
+
+RUN chmod +x /app/entrypoint.sh
+ENTRYPOINT ["/app/entrypoint.sh"]
