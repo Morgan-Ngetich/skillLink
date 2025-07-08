@@ -7,20 +7,19 @@ const NotFound = () => {
       justify="center"
       align="center"
       height="100vh"
-      bg="gray.50"
       px={4}
       textAlign="center"
     >
       <Box>
-        <Text fontSize="4xl" fontWeight="bold" color="gray.700" mb={2}>
+        <Text fontSize="4xl" fontWeight="bold" mb={2}>
           Oops! Page not found.
         </Text>
-        <Text fontSize="md" color="gray.500" mb={6}>
+        <Text fontSize="md" mb={6}>
           The page you're looking for doesn't exist or has been moved.
         </Text>
 
         <Link to="/">
-          <Button colorScheme="blue">
+          <Button>
             Go Home
           </Button>
         </Link>
