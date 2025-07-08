@@ -6,7 +6,7 @@
   "scripts": {
     "generate": "tsr generate",
     "lint": "eslint . --ext .ts,.tsx",
-    "check": "tsc --noEmit",
+    "check": "tsc --build",
     "dev": "npm run generate && vite",
     "build": "npm run generate && npm run check && vite build",
     "preview": "vite preview"
