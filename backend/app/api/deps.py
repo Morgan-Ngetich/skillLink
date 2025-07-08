@@ -44,6 +44,7 @@ def get_current_user(session: SessionDep, token: TokenDep) -> User:
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
 def get_current_active_superuser(current_user: CurrentUser) -> User:
+    print(f"Current user: {current_user.email}, Superuser: {current_user.is_superuser}")
     if not current_user.is_superuser:
         raise HTTPException(status_code=403, detail="User lacks superuser privileges")
     return current_user
