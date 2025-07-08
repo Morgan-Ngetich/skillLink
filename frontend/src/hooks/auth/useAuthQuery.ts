@@ -20,6 +20,7 @@ export const fetchCurrentUser = async () => {
   return user
 };
 
+// Use Auth query for hardCore, e.g setting/profiles
 export const useAuthQuery = () => {
   const ready = useSupabaseSessionReady();
 
