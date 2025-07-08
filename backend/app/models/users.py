@@ -68,7 +68,7 @@ class UserBase(SQLModel):
 class User(UserBase, table=True):
     __tablename__ = "users"  # ✅ prevent Postgres reserved word issues
     
-    id: int = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True) # Auto-incrementing ID for supabase users. Superuser have UUIDs only
     uuid: UUID = Field(default_factory=uuid4, index=True, unique=True)
     # TODO: Consider moving the avatar_url to UserProfile to keep User table clean and focused on authentication
     avatar_url: str | None = None
@@ -104,8 +104,10 @@ class User(UserBase, table=True):
             avatar_url=self.avatar_url or settings.DEFAULT_AVATAR_URL,
             is_superuser=self.is_superuser,
             is_mentor=self.is_mentor,
-            is_mentee=self.is_mentee,
-            profile=self.profile.to_public() if self.profile else None    
+            is_mentee=self.is_mentee,            
+            profile=self.profile.to_public() if self.profile else None    ,
+            created_at=self.created_at,
+            updated_at=self.updated_at
         )
 
 class UserCreate(UserBase):
@@ -134,6 +136,8 @@ class UserPublic(SQLModel):
     is_mentor: bool
     is_mentee: bool
     profile: Optional["UserProfilePublic"] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 class UsersPublic(BaseModel):
     data: List[UserPublic]
@@ -142,7 +146,7 @@ class UsersPublic(BaseModel):
 
 # ================== USER PROFILE ==================
 class UserSyncIn(BaseModel):
-    user_id: UUID
+    user_id: UUID  # UUID from Supabase
     email: str
     full_name: str | None = None
     avatar_url: str | None = None  # Optional, can be set later in UserProfile
