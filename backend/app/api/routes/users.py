@@ -5,7 +5,9 @@ from sqlalchemy import func
 from app.models.users import User, UserPublic, UsersPublic, UserCreate, UserSyncIn
 from app.api.deps import CurrentUser, get_current_active_superuser, SessionDep
 from app import crud
+from uuid import UUID
 from app.core.config import settings
+from app.tasks.sync import sync_user_from_supabase_task
 router = APIRouter()
 
 
@@ -46,21 +48,32 @@ def read_user(session: SessionDep, user_id: int) -> UserPublic:
     return user.to_public()
 
 
-@router.post("/sync", response_model=UserPublic, dependencies=[Depends(get_current_active_superuser)])
+@router.post("/sync", response_model=UserPublic)
 def sync_user_from_supabase_to_db(
-   session: SessionDep, user_sync_in: UserSyncIn
+   user_sync_in: UserSyncIn,
+   current_user: CurrentUser
 ) -> UserPublic:
     """
-    Sync a user from Supabase by creating or updating their record.
+    Trigger a background task to sync a user from Supabase.
     """
-    user = crud.sync_user_from_supabase(
-        session=session,
-        user_id=user_sync_in.user_id,
+    if current_user.uuid != user_sync_in.user_id:
+        raise HTTPException(
+            status_code=403,
+            detail="You can only sync your own user profile.",
+        )
+        
+    # Trigger a background task
+    # Don't pass sesions => not serailizeble
+    # Pass UUID as str for Celery serialization
+    sync_user_from_supabase_task.delay(
+        # user_id is uuid from supabase
+        user_id=str(user_sync_in.user_id),
         email=user_sync_in.email,
         full_name=user_sync_in.full_name,
-        avatar_url=user_sync_in.avatar_url if user_sync_in.avatar_url else settings.DEFAULT_AVATAR_URL,
+        avatar_url=user_sync_in.avatar_url,
     )
-    return user.to_public()
+    
+    return current_user.to_public()
 
 
 @router.post(
