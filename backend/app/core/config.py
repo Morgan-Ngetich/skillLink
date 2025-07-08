@@ -34,6 +34,12 @@ class Settings(BaseSettings):
     
     # Default values:
     DEFAULT_AVATAR_URL: str = "https://cdn.skilllink.dev/default-avatar.png"
+    
+    TIMEZONE: str = "UTC"
+    RABBITMQ_DEFAULT_USER: str
+    RABBITMQ_DEFAULT_PASS : str
+    RABBITMQ_PORT: str
+    RABBITMQ_HOST: str
 
     @computed_field
     def SQLALCHEMY_DATABASE_URI(self) -> str:
