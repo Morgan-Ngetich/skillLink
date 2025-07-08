@@ -3,7 +3,8 @@ services:
     container_name: nginx
     image: nginx:1.25-alpine
     ports:
-      - "80:80" # Only Nginx binds to host port 80
+      - "8000:8000" # Only Nginx binds to host port 80
+      - "5174:5174"
     env_file:
       - .env
     volumes:
@@ -24,17 +25,22 @@ services:
         VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
         VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
     container_name: frontend
+    volumes:
+      - uploads:/shared/uploads
     expose:
-      - "80"
+      - "8000"
+      - "5174:5174"
 
   # BACKEND SERVICE
   backend:
+    image: "backend:latest"
+    command: "fastapi"
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: backend
     volumes:
-      - ./backend:/app
+      - uploads:/shared/uploads
     env_file:
       - .env
     environment:
@@ -52,13 +58,80 @@ services:
     env_file:
       - .env
     environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
       - POSTGRES_USER=${POSTGRES_USER?Variable not set}
       - POSTGRES_DB=${POSTGRES_DB?Variable not set}
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data/pgdata
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    restart: always
+    ports:
+      - "5672:5672"    # AMQP port
+      - "15672:15672"  # Management UI
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+      - rabbitmq-log:/var/log/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - default
+  
+  celery_worker:
+    container_name: celery_worker
+    image: "backend:latest"
+    command: "celery_worker"
+    restart: on-failure
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      celery_beat:
+        condition: service_started
+    env_file:
+    - .env
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+    volumes:
+      - uploads:/shared/uploads
+    networks:
+      - default
+  
+  celery_beat:
+    container_name: "celery_beat"
+    image: "backend:latest"
+    command: "celery_beat"
+    restart: always
+    depends_on:
+      - rabbitmq
+    env_file:
+      - .env
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+    volumes:
+      - uploads:/shared/uploads
+    networks:
+      - default
 
 volumes:
   postgres_data:
+    external: true
+  uploads:
+  rabbitmq-data:
+  rabbitmq-log:
