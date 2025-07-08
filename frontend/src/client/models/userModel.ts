@@ -8,11 +8,12 @@ export type UserPublic =  {
   role: Roles
 }
 
+// user_id => UUID from supabase
 export type UserSyncIn =  {
-  user_uuid: string;
+  user_id: string;
   email: string;
   full_name: string | null;
-  avatar_url?: string;
+  avatar_url?: string | null;
 }
 
 import type { User } from '@supabase/supabase-js';

@@ -28,8 +28,8 @@ export const $UserPublic = {
 
 export const $UserSyncIn = {
   properties: {
-    user_uuid: {
-      type: 'number',
+    user_id: {
+      type: 'string',
       isRequired: true,
     },
     email: {
@@ -43,6 +43,16 @@ export const $UserSyncIn = {
       }, {
         type: 'null',
       }],
+      default: null, // Default to null if not provided
+    },
+    avatar_url: {
+      type: 'any-of',
+      contains: [{
+        type: 'string',
+      }, {
+        type: 'null',
+      }],
+      default: null, // Default to null if not provided
     },
   },
 } as const;
