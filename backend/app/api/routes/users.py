@@ -51,7 +51,8 @@ def read_user(session: SessionDep, user_id: int) -> UserPublic:
 @router.post("/sync", response_model=UserPublic)
 def sync_user_from_supabase_to_db(
    user_sync_in: UserSyncIn,
-   current_user: CurrentUser
+   current_user: CurrentUser,
+   session: SessionDep
 ) -> UserPublic:
     """
     Trigger a background task to sync a user from Supabase.
@@ -62,6 +63,17 @@ def sync_user_from_supabase_to_db(
             detail="You can only sync your own user profile.",
         )
         
+    # Prevent duplicate syncs by checking for email
+    existing_user = crud.get_user_by_email(session, user_sync_in.email)
+    if existing_user:
+        # Optional: check if UUID matches
+        if str(existing_user.uuid) != str(user_sync_in.user_id):
+            raise HTTPException(
+                status_code=409,
+                detail="A user with this email already exists.",
+            )
+        return existing_user.to_public()
+    
     # Trigger a background task
     # Don't pass sesions => not serailizeble
     # Pass UUID as str for Celery serialization
