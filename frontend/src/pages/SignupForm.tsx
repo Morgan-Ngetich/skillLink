@@ -15,7 +15,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '@/hooks/auth/useAuth';
 import useToaster from '@/hooks/useToaster';
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { PasswordInput, PasswordStrengthMeter } from '@/components/ui/password-input';
 import { calculatePasswordStrength } from '@/utils/password';
 import { isValidEmail } from '@/utils/validator';
@@ -38,15 +38,12 @@ const SignupForm = () => {
 
   const passwordValue = watch('password');
   const toast = useToaster();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const onSubmit = async ({ fullName, email, password }: SignUpFormData) => {
     const { error } = await signUp(email, password, fullName);
     if (error) {
       toast('Signup failed', error.message ?? 'An unknown error occurred.', 'error');
-    } else {
-      toast('Signup successful', 'Check your email to confirm your account.', 'success');
-      navigate({ to: '/verify-email', search: { email } });
     }
   };
 

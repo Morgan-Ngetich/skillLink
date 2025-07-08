@@ -1,31 +1,14 @@
 import { useAuthQuery } from './useAuthQuery';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../supabaseClient';
-import { OpenAPI, UserService, type SupabaseUser } from '../../client';
+import { OpenAPI } from '../../client';
 import { useNavigate } from '@tanstack/react-router';
+// import { setApiToken } from './authState';
 
 export function useAuth() {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: user, isLoading } = useAuthQuery();
-
-  const syncUserToBackend = async (user: SupabaseUser) => {
-    const { id: user_uuid, email, user_metadata } = user;
-
-    if (!email) {
-      throw new Error("User email is undefined");
-    }
-
-    const full_name = user_metadata?.full_name ?? email.split("@")[0];
-    const avatar_url = user_metadata?.avatar_url ?? undefined;
-
-    await UserService.syncUserFromSupabase({
-      user_uuid,
-      email,
-      full_name,
-      avatar_url,
-    });
-  };
-
 
   // When a user signs up, i need to sunc them with the database.
   const signUp = async (email: string, password: string, fullName: string) => {
@@ -49,10 +32,12 @@ export function useAuth() {
       return { error: new Error("User is null after sign up") };
     }
 
-    await syncUserToBackend(data.user);
+
     // Fetch backend user again
     await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
 
+    // Navigate to sync user to the backend
+    navigate({ to: '/auth/callback' });
     return { data };
   };
 
@@ -74,14 +59,12 @@ export function useAuth() {
       return { error: new Error("User is null after sign in") };
     }
 
-    await syncUserToBackend(data.user);
-
     await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
 
     return { data };
   };
 
-  const navigate = useNavigate();
+
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) return { error };
@@ -106,9 +89,9 @@ export function useAuth() {
   const signInWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      // options: {
-      //   redirectTo: `${window.location.origin}/auth/callback`,
-      // },
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
     });
 
     return { error };
