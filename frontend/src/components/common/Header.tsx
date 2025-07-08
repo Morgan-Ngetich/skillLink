@@ -19,7 +19,7 @@ const Header = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('User:', user);
+    console.log('UserME:', user);
   }, [user]);
 
   return (
@@ -49,78 +49,81 @@ const Header = () => {
 
         <Spacer />
 
-        {!isLoading && user ? (
-          <Menu.Root>
-            <Menu.Trigger asChild>
-              <Button variant="ghost" size="sm">
-                <HStack gap={2}>
-                  <Avatar
-                    size="sm"
-                    name={user.full_name}
-                    src={user.avatar_url}
-                    bg={{ base: 'blue.100', _dark: 'blue.800' }}
-                    color={{ base: 'blue.800', _dark: 'white' }}
-                  />
-                  <Text display={{ base: 'none', md: 'inline' }} fontWeight="medium">
-                    {user.full_name}
-                  </Text>
-                  <FaChevronDown size={10} />
-                </HStack>
-              </Button>
-            </Menu.Trigger>
+        <HStack gap={4}>
+          {!isLoading && user ? (
+            <Menu.Root>
+              <Menu.Trigger asChild>
+                <Button variant="ghost" size="sm">
+                  <HStack gap={2}>
+                    <Avatar
+                      size="sm"
+                      name={user.full_name}
+                      src={user.avatar_url}
+                      bg={{ base: 'blue.100', _dark: 'blue.800' }}
+                      color={{ base: 'blue.800', _dark: 'white' }}
+                    />
+                    <Text display={{ base: 'none', md: 'inline' }} fontWeight="medium">
+                      {user.full_name}
+                    </Text>
+                    <FaChevronDown size={10} />
+                  </HStack>
+                </Button>
+              </Menu.Trigger>
 
-            <Menu.Positioner>
-              <Menu.Content
-                bg={{ base: 'white', _dark: 'gray.800' }}
-                border="1px solid"
-                borderColor={{ base: 'gray.100', _dark: 'gray.700' }}
-                borderRadius="md"
-                shadow="lg"
-                py={2}
-                minW="180px"
+              <Menu.Positioner>
+                <Menu.Content
+                  bg={{ base: 'white', _dark: 'gray.800' }}
+                  border="1px solid"
+                  borderColor={{ base: 'gray.100', _dark: 'gray.700' }}
+                  borderRadius="md"
+                  shadow="lg"
+                  py={2}
+                  minW="180px"
+                >
+                  <Menu.Item
+                    value="profile"
+                    onSelect={() => navigate({ to: '/profile' })}
+                    _hover={{ bg: { base: 'gray.100', _dark: 'gray.700' } }}
+                  >
+                    Profile
+                  </Menu.Item>
+
+                  <Menu.Separator />
+                  <Menu.Item
+                    value="logout"
+                    onSelect={() => signOut()}
+                    color="red.500"
+                    _hover={{ bg: { base: 'gray.100', _dark: 'gray.700' } }}
+                  >
+                    Logout
+                  </Menu.Item>
+
+                </Menu.Content>
+              </Menu.Positioner>
+            </Menu.Root>
+          ) : (
+            <>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate({ to: '/login' })}
+                _hover={{ bg: { base: 'gray.100', _dark: 'gray.700' } }}
+                border={"1px solid"}
               >
-                <Menu.Item
-                  value="profile"
-                  onSelect={() => navigate({ to: '/profile' })}
-                  _hover={{ bg: { base: 'gray.100', _dark: 'gray.700' } }}
-                >
-                  Profile
-                </Menu.Item>
+                Login
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => navigate({ to: '/signup' })}
+              >
+                Sign Up
+              </Button>
+            </>
+          )}
 
-                <Menu.Separator />
-
-                <Menu.Item
-                  value="logout"
-                  onSelect={() => {
-                    signOut
-                  }}
-                  _hover={{ bg: { base: 'gray.100', _dark: 'gray.700' } }}
-                >
-                  Logout
-                </Menu.Item>
-              </Menu.Content>
-            </Menu.Positioner>
-          </Menu.Root>
-        ) : (
-          <HStack gap={4}>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate({ to: '/login' })}
-              _hover={{ bg: { base: 'gray.100', _dark: 'gray.700' } }}
-            >
-              Login
-            </Button>
-            <Button
-              colorScheme="blue"
-              size="sm"
-              onClick={() => navigate({ to: '/signup' })}
-            >
-              Sign Up
-            </Button>
-            <ColorModeButton />
-          </HStack>
-        )}
+          {/* Always visible ColorModeButton */}
+          <ColorModeButton />
+        </HStack>
       </Flex>
     </Box>
   );
