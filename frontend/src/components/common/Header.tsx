@@ -6,6 +6,8 @@ import {
   HStack,
   Spacer,
   Menu,
+  SkeletonCircle,
+  SkeletonText,
 } from '@chakra-ui/react';
 import { Avatar } from '@/components/ui/avatar';
 import { useEffect } from 'react';
@@ -50,7 +52,14 @@ const Header = () => {
         <Spacer />
 
         <HStack gap={4}>
-          {!isLoading && user ? (
+          {isLoading ? (
+            // Show skeleton placeholders while loading
+            <HStack gap={3} align="center">
+              <SkeletonCircle size="8" />
+              <SkeletonText noOfLines={1} width="100px" />
+              <FaChevronDown size={20} />
+            </HStack>
+          ) : user ? (
             <Menu.Root>
               <Menu.Trigger asChild>
                 <Button variant="ghost" size="sm">
@@ -59,8 +68,6 @@ const Header = () => {
                       size="sm"
                       name={user.full_name}
                       src={user.avatar_url}
-                      bg={{ base: 'blue.100', _dark: 'blue.800' }}
-                      color={{ base: 'blue.800', _dark: 'white' }}
                     />
                     <Text display={{ base: 'none', md: 'inline' }} fontWeight="medium">
                       {user.full_name}
