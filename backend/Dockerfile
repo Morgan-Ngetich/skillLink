@@ -8,8 +8,12 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     libwebp-dev \
     curl \
+    adduser \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Now create non-root user
+RUN adduser --disabled-password --gecos '' appuser
 
 # Install Poetry
 RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python && \
@@ -34,15 +38,18 @@ RUN poetry check
 ARG PORT=8000
 ENV PORT=${PORT}
 EXPOSE ${PORT}
-
-# Set PYTHONPATH for resolving `app.` imports
 ENV PYTHONPATH=/app
 
-# Copy application code
+# Copy app code
 COPY alembic.ini ./
 COPY ./app /app/app
-
 COPY entrypoint.sh /app/
-
 RUN chmod +x /app/entrypoint.sh
+
+# Fix permissions for non-root user
+RUN chown -R appuser:appuser /app
+
+# Switch to non-root user
+USER appuser
+
 ENTRYPOINT ["/app/entrypoint.sh"]
