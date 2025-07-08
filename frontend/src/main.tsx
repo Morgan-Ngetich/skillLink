@@ -8,7 +8,7 @@ import { ColorModeProvider } from '@/components/ui/color-mode';
 import themeSystem from './theme';
 
 import { Toaster } from '@/components/ui/toaster';
-import { useSupabaseSessionReady } from './hooks/useSupabaseSession';
+import { useSession } from './hooks/auth/useSession'; // <-- import your hook here
 
 const queryClient = new QueryClient();
 
@@ -20,12 +20,12 @@ const router = createRouter({
 });
 
 const App = () => {
-  const ready = useSupabaseSessionReady();
+  const { isLoading } = useSession();
 
-  if (!ready) {
+  if (isLoading) {
     return (
       <Flex justify="center" align="center" height="100vh">
-        <Spinner color="teal.500" size="md" />
+        <Spinner color="teal.500" size="xl" />
       </Flex>
     );
   }
