@@ -38,9 +38,20 @@ const LoginForm = () => {
   const onSubmit = async ({ email, password }: LoginFormData) => {
     const { error } = await signIn(email, password);
     if (error) {
-      toast('Login failed', error.message ?? 'An unknown error occurred.', 'error');
+      toast({
+        id: 'login-failed',
+        title: 'Login failed',
+        description: error.message ?? 'An unknown error occurred.',
+        status: 'error',
+      });
     } else {
-      toast('Login successful', 'Welcome back!', 'success');
+      toast({
+        id: 'login-success',
+        title: 'Login successful',
+        description: 'Welcome back!',
+        status: 'success',
+      });
+
       navigate({ to: '/' });
     }
   };

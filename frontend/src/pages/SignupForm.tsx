@@ -43,7 +43,13 @@ const SignupForm = () => {
   const onSubmit = async ({ fullName, email, password }: SignUpFormData) => {
     const { error } = await signUp(email, password, fullName);
     if (error) {
-      toast('Signup failed', error.message ?? 'An unknown error occurred.', 'error');
+      toast({
+        id: 'signup-failed',
+        title: 'Signup failed',
+        description: error.message ?? 'An unknown error occurred.',
+        status: 'error',
+      });
+
     }
   };
 

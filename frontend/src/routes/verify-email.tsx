@@ -48,9 +48,21 @@ function VerifyEmailPage() {
     setLoading(false);
 
     if (error) {
-      toast("Resend failed", error.message ?? "Unable to resend email.", "error");
+      toast({
+        id: 'resend-failed',
+        title: 'Resend failed',
+        description: error.message ?? "Unable to resend email.",
+        status: 'error',
+      });
+
     } else {
-      toast("Email resent", "Check your inbox for a new confirmation link.", "success");
+      toast({
+        id: 'resend-success',
+        title: 'Email resent',
+        description: "Check your inbox for a new confirmation link.",
+        status: 'success',
+      });
+
       setCooldown(30);
       setResendCount((prev) => prev + 1);
     }
@@ -58,11 +70,12 @@ function VerifyEmailPage() {
 
   useEffect(() => {
     if (search.expired === 'true') {
-      toast(
-        'Confirmation link expired',
-        'Sending new link to your email ...',
-        'warning'
-      );
+      toast({
+        id: 'link-expired',
+        title: 'Confirmation link expired',
+        description: 'Sending new link to your email ...',
+        status: 'warning',
+      });
 
       const timer = setTimeout(() => {
         handleResend();
@@ -81,7 +94,7 @@ function VerifyEmailPage() {
       color="bodyColor"
     >
 
-      <Box maxW="lg" mx="auto" textAlign="center" color="bodyColor" border={"1px solid"} borderColor={{base: "black", _dark: "white"}} borderRadius="lg" bg={{ base: "white", _dark: "gray.900" }} boxShadow="md" p={8}>
+      <Box maxW="lg" mx="auto" textAlign="center" color="bodyColor" border={"1px solid"} borderColor={{ base: "black", _dark: "white" }} borderRadius="lg" bg={{ base: "white", _dark: "gray.900" }} boxShadow="md" p={8}>
         <VStack gap={6}>
           <Heading size="lg">Confirm Your Email</Heading>
           <Text fontSize="md">

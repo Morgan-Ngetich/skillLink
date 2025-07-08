@@ -18,9 +18,7 @@ function AuthCallbackPage() {
         const { data, error } = await supabase.auth.getSession();
 
         if (!data?.session || error) {
-          toast('Session expired or invalid', 'Please sign up again.', 'error');
-          navigate({ to: '/signup' });
-          return;
+          throw new Error('Session expired or invalid');
         }
 
         await setApiToken();
@@ -28,15 +26,27 @@ function AuthCallbackPage() {
         await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
 
         navigate({ to: '/' });
-      } catch (err) {
+      } catch (err: any) {
         console.error('Error during auth callback:', err);
-        toast('Something went wrong', 'Please try again later.', 'error');
+
+        const message =
+          err?.body?.detail || // from OpenAPI-generated client
+          err?.message ||       // standard JS error
+          'Something went wrong. Please try again.';
+
+        toast({
+          id: 'auth-error', // fixed ID so only one toast for this error shows at a time
+          title: 'Auth Error',
+          description: message,
+          status: 'error',
+        });
         navigate({ to: '/signup' });
       }
     };
 
     handleCallback();
   }, [navigate, toast]);
+
 
   return (
     <Flex justify="center" align="center" height="100vh">
