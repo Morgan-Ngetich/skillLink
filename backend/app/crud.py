@@ -1,5 +1,19 @@
+from fastapi import HTTPException
 from sqlmodel import Session, select
-from app.models.users import User, UserCreate, Role, UserRole, RoleName
+from app.models.users import (
+    User, 
+    UserCreate,
+    UserUpdate,
+    Role,
+    UserRole,
+    RoleName,
+    UserProfile,
+    UserProfileCreate,
+    UserProfileUpdate,
+    MentorProfile,
+    MentorProfileCreate,
+    MentorProfileUpdate,
+)
 from app.core.security import get_password_hash, verify_password
 from uuid import UUID
 
@@ -28,6 +42,14 @@ def create_user(session: Session, user_in: UserCreate) -> User:
     session.refresh(db_user)
     return db_user
 
+def update_user(session: Session, user: User, user_in: UserUpdate) -> User:
+    for key, value in user_in.dict(exclude_unset=True).items():
+        setattr(user, key, value)
+
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+    return user
 
 def create_user_from_supabase(session: Session, user_id: UUID, email: str, full_name: str, avatar_url: str) -> User:
     user = User(
@@ -55,7 +77,7 @@ def authenticate(*, session: Session, email: str, password: str) -> User | None:
 def create_role(session: Session, role_name: RoleName) -> Role:
     # Ensure it's a valid enum member
     if role_name not in RoleName:
-        raise ValueError(f"Invalid role: {role_name}")
+        raise HTTPException(status_code=400, detail=f"Invalid role: {role_name}")
 
     # Check if the role already exists
     existing_role = session.exec(
@@ -118,3 +140,67 @@ def sync_user_from_supabase(
     session.refresh(user)
 
     return user
+
+
+# =========== USERPROFILES ============
+def get_user_profile(session: Session, user_id: int) -> UserProfile | None:
+    return session.get(UserProfile, user_id)
+
+def get_user_profile_or_404(session: Session, user_id: int) -> UserProfile:
+    profile = get_user_profile(session, user_id)
+    if not profile:
+        raise HTTPException(status_code=404, detail="UserProfile not found")
+    return profile
+
+def ensure_user_profile_not_exists(session: Session, user_id: int):
+    if get_user_profile(session, user_id):
+        raise HTTPException(status_code=400, detail="Profile already exists for this user")
+    
+def create_user_profile(session: Session, profile_in: UserProfileCreate) -> UserProfile:
+    ensure_user_profile_not_exists(session, profile_in.user_id)
+    profile = UserProfile.model_validate(profile_in)
+    session.add(profile)
+    session.commit()
+    session.refresh(profile)
+    return profile
+
+def update_user_profile(session: Session, user_id: int, profile_in: UserProfileUpdate):
+    profile = get_user_profile_or_404(session, user_id)
+
+    for key, value in profile_in.dict(exclude_unset=True).items():
+        setattr(profile, key, value)
+    session.add(profile)
+    session.commit()
+    session.refresh(profile)
+    return profile
+    
+# MENTOR PROFILE
+def get_mentor_profile(session: Session, user_id: int) -> MentorProfile | None:
+    return session.get(MentorProfile, user_id)
+
+def get_mentor_profile_or_404(session: Session, user_id: int) -> MentorProfile:
+    profile = get_mentor_profile(session, user_id)
+    if not profile:
+        raise HTTPException(status_code=404, detail="MentorProfile not found")
+    return profile
+
+
+def create_mentor_profile(session: Session, profile_in: MentorProfileCreate) -> MentorProfile:
+    existing_profile = get_mentor_profile(session, profile_in.user_id)
+    if existing_profile:
+        raise HTTPException(status_code=400, detail="MentorProfile already exists for this user")
+    
+    profile = MentorProfile.model_validate(profile_in)
+    session.add(profile)
+    session.commit()
+    session.refresh(profile)
+    return profile
+
+def update_mentor_profile(session: Session, user_id: int, profile_in: MentorProfileUpdate) -> MentorProfile:
+    profile = get_mentor_profile_or_404(session, user_id)
+    for key, value in profile_in.dict(exclude_unset=True).items():
+        setattr(profile, key, value)
+    session.add(profile)
+    session.commit()
+    session.refresh(profile)
+    return profile
