@@ -1,26 +1,29 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Body
-from sqlmodel import Session
-
-from app.api.deps import SessionDep, assign_role_to_user
-from app.models.users import RoleAssignRequest, UserPublic
+from sqlmodel import select
+from sqlalchemy.orm import selectinload
+from app.api.deps import SessionDep
+from app.models.users import User, RoleAssignRequest,  UserPublic, UserRole
+from app import crud
 
 router = APIRouter()
 
 @router.post("/roles/assign", status_code=200)
 def assign_roles(
-  session: SessionDep,
-  request: RoleAssignRequest = Body(...)
+    session: SessionDep,
+    request: RoleAssignRequest = Body(...)
 ):
-    """
-    Assign Role to a user.
-    """
     try:
-        user = assign_role_to_user(
-            session=session,
-            user_id=request.user_id,
-            role_name=request.role_name
-        )
-        return user.to_public()  # 👈 return the actual user instance
+        user = session.exec(
+            select(User)
+            .where(User.id == request.user_id)
+            .options(selectinload(User.roles).selectinload(UserRole.role))
+        ).first()
+        if not user:
+            raise ValueError("User not found")
+
+        updated_user = crud.assign_role(session=session, user=user, role_name=request.role_name)
+        return updated_user.to_public()
+
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
