@@ -1,13 +1,13 @@
-from datetime import datetime, timedelta
-from typing import Any
+from fastapi.security import OAuth2PasswordBearer, HTTPBearer
+from fastapi.security import HTTPAuthorizationCredentials
 from jose import jwt, JWTError
-from jose import jwk
-from jose.utils import base64url_decode
 from jose.exceptions import ExpiredSignatureError
+from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
-from fastapi.security import OAuth2PasswordBearer
 import requests
 from functools import lru_cache
+from typing import Any
+from app.core.config import settings
 
 from app.core.config import settings
 
@@ -16,10 +16,13 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # Only works for manually created Users. Does not affect supaBase created users. TokenDep will still be fine
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/login/access-token")
 
+# For Swagger / Bearer auth
+bearer_scheme = HTTPBearer(auto_error=False)
+
 ALGORITHM = "HS256"  # For internal tokens and Supabase Tokens
 
 def create_access_token(subject: str | Any, expires_delta: timedelta) -> str:
-    expire = datetime.utcnow() + expires_delta
+    expire = datetime.now(timezone.utc) + expires_delta
     to_encode = {"exp": expire, "sub": str(subject)}
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -51,11 +54,6 @@ def decode_supabase_token(token: str) -> dict[str, Any]:
             audience="authenticated",  # Optional: only if you enforce it
         )
         return payload
-    except ExpiredSignatureError:
-        raise ValueError("Token expired")
-    except JWTError as e:
-        raise ValueError(f"Invalid token: {e}")
-
     except ExpiredSignatureError:
         raise ValueError("Token expired")
     except JWTError as e:
