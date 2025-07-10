@@ -2,20 +2,24 @@ from fastapi import APIRouter, Depends, HTTPException
 from typing import Any
 from sqlmodel import select
 from sqlalchemy import func
-from app.models.users import User, UserPublic, UsersPublic, UserCreate, UserSyncIn
-from app.api.deps import CurrentUser, get_current_active_superuser, SessionDep
+from app.models.users import (
+    User, 
+    UserPublic, 
+    UsersPublic,
+    UserCreate,
+    UserUpdate,
+    UserSyncIn,
+    RoleName,
+)
+from app.api.deps import CurrentUser, require_role, SessionDep
 from app import crud
-from uuid import UUID
 from app.core.config import settings
 from app.tasks.sync import sync_user_from_supabase_task
+
 router = APIRouter()
 
 
-@router.get(
-    "/",
-    dependencies=[Depends(get_current_active_superuser)],
-    response_model=UsersPublic,
-)
+@router.get("/", response_model=UsersPublic, dependencies=[Depends(require_role(RoleName.SUPERUSER))])
 def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:
     """
     Retrieve users.
@@ -37,7 +41,7 @@ def get_me(current_user: CurrentUser) -> UserPublic:
     return current_user.to_public()
 
 
-@router.get("/users/{user_id}", response_model=UserPublic)
+@router.get("/{user_id}", response_model=UserPublic)
 def read_user(session: SessionDep, user_id: int) -> UserPublic:
     """
     Retrieve a user by ID.
@@ -88,12 +92,10 @@ def sync_user_from_supabase_to_db(
     return current_user.to_public()
 
 
-@router.post(
-    "/", response_model=UserPublic, dependencies=[Depends(get_current_active_superuser)]
-)
+@router.post("/", response_model=UserPublic, dependencies=[Depends(require_role(RoleName.SUPERUSER))])
 def create_user(session: SessionDep, user_in: UserCreate) -> Any:
     """
-    create a new user (admin-only/manual password auth)
+    Create a new user (admin-only). Remember all Auths happen over Supabase
     """
     existing_user = crud.get_user_by_email(session=session, email=user_in.email)
     if existing_user:
@@ -105,30 +107,32 @@ def create_user(session: SessionDep, user_in: UserCreate) -> Any:
     return user.to_public()
 
 
-@router.put("/{user_id}", response_model=UserPublic, dependencies=[Depends(get_current_active_superuser)])
-def update_user(
-    session: SessionDep, user_in: UserCreate, user_id: int
-) -> UserPublic:
+@router.patch("/me", response_model=UserPublic)
+def update_me(session: SessionDep, current_user: CurrentUser, user_in: UserUpdate):
     """
-    Update a user
+    For authenticated users to update their own info. Backend already knows who you are via the token.
     """
-    user = crud.get_user_by_id(session=session, user_id=user_id)
+    updated_user = crud.update_user(session, current_user, user_in)
+    return updated_user.to_public()
+
+
+@router.patch("/{user_id}", response_model=UserPublic, dependencies=[Depends(require_role(RoleName.SUPERUSER))])
+def update_user(session: SessionDep, current_user: CurrentUser, user_in: UserUpdate, user_id: int):
+    """
+    For admins (superusers) to update any user by ID.
+    """
+    user = crud.get_user_by_id(session, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    # Update fields
-    user.full_name = user_in.full_name
-    user.email = user_in.email
-    if user_in.avatar_url:
-        user.avatar_url = user_in.avatar_url
+    if not current_user.is_superuser and current_user.id != user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to update this user")
 
-    session.add(user)
-    session.commit()
-    session.refresh(user)
+    updated_user = crud.update_user(session, user, user_in)
+    return updated_user.to_public()
 
-    return user.to_public()
 
-@router.delete("/{user_id}", dependencies=[Depends(get_current_active_superuser)])
+@router.delete("/users/{user_id}", dependencies=[Depends(require_role(RoleName.SUPERUSER))])
 def delete_user(session: SessionDep, user_id: int) -> Any:
     """
     Delete a user
@@ -139,5 +143,10 @@ def delete_user(session: SessionDep, user_id: int) -> Any:
 
     session.delete(user)
     session.commit()
-    return {"detail": "User deleted successfully"}
+    return {"status": "success", "detail": "User deleted successfully"}
+
+
+# ================ PROFILES ================
+
+
 
