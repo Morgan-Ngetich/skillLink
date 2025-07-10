@@ -1,5 +1,5 @@
 from app.core.celery import celery_app
-from app.tasks.utils import with_session
+from app.utils.validation import with_session
 from uuid import UUID
 
 @celery_app.task(name="app.tasks.sync_user_from_supabase_task")
