@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { useAuthQuery } from './useAuthQuery';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../supabaseClient';
@@ -65,15 +66,24 @@ export function useAuth() {
   };
 
 
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) return { error };
+    setIsLoggingOut(true)
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) return { error };
 
-    OpenAPI.TOKEN = '';
-    await queryClient.removeQueries({ queryKey: ['auth', 'user'] });
+      OpenAPI.TOKEN = '';
+      await queryClient.removeQueries({ queryKey: ['auth', 'user'] });
 
-    // Redirect to home page after sign out
-    navigate({ to: '/login' });    
+      // Redirect to home page after sign out
+      navigate({ to: '/login' });
+    } catch(error) {
+      // TODO { toast }
+      console.error(error);
+    } finally {
+      setIsLoggingOut(false)
+    }
   };
 
   const resendVerificationEmail = async (email: string) => {
@@ -101,6 +111,8 @@ export function useAuth() {
   return {
     user,
     isLoading,
+    isLoggingOut,
+    
     signUp,
     signIn,
     signOut,
