@@ -9,8 +9,10 @@ import {
   Heading,
   Flex,
   Separator,
+  Icon,
 } from '@chakra-ui/react';
 import { FormControl, FormLabel } from '@chakra-ui/form-control';
+import { Avatar } from '@/components/ui/avatar';
 import { FcGoogle } from 'react-icons/fc';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '@/hooks/auth/useAuth';
@@ -21,7 +23,7 @@ import { calculatePasswordStrength } from '@/utils/password';
 import { isValidEmail } from '@/utils/validator';
 import { hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar } from '@/utils/validator';
 import { useCleanRedirect } from '@/hooks/auth/authState';
-
+import { useGoogleUser } from '@/hooks/auth/authState';
 type SignUpFormData = {
   fullName: string;
   email: string;
@@ -40,6 +42,7 @@ const SignupForm = () => {
   const passwordValue = watch('password');
   const toast = useToaster();
   const redirect = useCleanRedirect()
+  const googleUser  = useGoogleUser()
 
   const onSubmit = async ({ fullName, email, password }: SignUpFormData) => {
     const { error } = await signUp(email, password, fullName);
@@ -168,16 +171,56 @@ const SignupForm = () => {
             </Text>
 
             {/* Google Sign In */}
-            <Flex justify={'center'} w="100%" mt={2}>
+
+            <Flex justify="center" w="100%">
               <Button
-                w="90%"
-                variant="ghost"
                 onClick={signInWithGoogle}
-                _disabled={{ cursor: 'not-allowed' }}
-                border={"1px solid"}
+                w="full"
+                maxW="md"
+                h="48px"
+                border="2px solid"
+                borderRadius="200px"
+                borderImage="linear-gradient(95deg, #4285F4, #DB4437, #F4B400, #0F9D58) 0.5"
+                boxShadow="none"
+                fontWeight="500"
+                fontSize="14px"
+                lineHeight="20px"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                px={4}
+                gap={3}
+                variant="ghost"
               >
-                <Box as={FcGoogle} mr={2} />
-                Sign up with Google
+                {googleUser?.avatar_url ? (
+                  <Box position="relative" display="inline-block">
+                    <Avatar size="sm" src={googleUser.avatar_url} name={googleUser.name} />
+                    {/* Google Icon overlay */}
+                    <Box
+                      position="absolute"
+                      top="-2px"
+                      right="-2px"
+                      boxSize="16px"
+                      borderRadius="full"
+                      bg="white"                   // Background behind the icon
+                      border="1px solid"
+                      borderColor="gray.300"      // Soft border to match Google styling
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      boxShadow="0 0 2px rgba(0,0,0,0.1)" // Optional subtle shadow
+                    >
+                      <Icon as={FcGoogle} boxSize={4} />
+                    </Box>
+                  </Box>
+                ) : (
+                  <Box as={FcGoogle} boxSize={6} />
+                )}
+                <Text lineClamp={1} whiteSpace="nowrap">
+                  {googleUser
+                    ? `Continue as ${googleUser.email}`
+                    : 'Sign in with Google'}
+                </Text>
               </Button>
             </Flex>
 
