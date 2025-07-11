@@ -21,7 +21,6 @@ export function AuthCallbackLoader() {
       >
         <Text
           fontSize="md"
-          color="gray.600"
         >
           Setting up your account. Please wait...
         </Text>
