@@ -15,9 +15,11 @@ import { FcGoogle } from 'react-icons/fc';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '@/hooks/auth/useAuth';
 import useToaster from '@/hooks/useToaster';
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { PasswordInput } from '@/components/ui/password-input';
 import { isValidEmail } from '@/utils/validator';
+import { useCleanRedirect } from '@/hooks/auth/authState';
+// import useAuthRedirect from '@/hooks/auth/authState';
 
 type LoginFormData = {
   email: string;
@@ -26,6 +28,7 @@ type LoginFormData = {
 
 const LoginForm = () => {
   const { signIn, signInWithGoogle } = useAuth();
+  
   const {
     register,
     handleSubmit,
@@ -33,7 +36,8 @@ const LoginForm = () => {
   } = useForm<LoginFormData>();
 
   const toast = useToaster();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+  const redirect = useCleanRedirect()
 
   const onSubmit = async ({ email, password }: LoginFormData) => {
     const { error } = await signIn(email, password);
@@ -52,7 +56,7 @@ const LoginForm = () => {
         status: 'success',
       });
 
-      navigate({ to: '/' });
+      redirect()
     }
   };
 
@@ -127,11 +131,7 @@ const LoginForm = () => {
               loading={isSubmitting}
               size="md"
               rounded="lg"
-              bg={{ base: "teal.700", _dark: "teal.600" }}
-              color={{ base: "white", _dark: "white" }}
-              _hover={{ bg: { base: "teal.600", _dark: "teal.500" } }}
-              _active={{ bg: { base: "teal.700", _dark: "teal.600" } }}
-              _disabled={{ bg: { base: "teal.300", _dark: "teal.200" }, cursor: 'not-allowed' }}
+              _disabled={{ cursor: 'not-allowed' }}
             >
               Log In
             </Button>
@@ -142,13 +142,10 @@ const LoginForm = () => {
               <Button
                 w="90%"
                 textAlign={'center'}
-                variant="outline"
+                variant="ghost"
                 onClick={signInWithGoogle}
-                color="buttonOutlineColor"
-                borderColor="buttonOutlineBorder"
-                _hover={{ bg: 'buttonOutlineHoverBg' }}
-                _active={{ bg: 'buttonOutlineActiveBg' }}
                 _disabled={{ cursor: 'not-allowed' }}
+                border={'1px solid'}
               >
                 <Box as={FcGoogle} mr={2} />
                 Continue with Google

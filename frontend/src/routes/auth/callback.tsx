@@ -5,12 +5,13 @@ import useToaster from '../../hooks/useToaster';
 import { Flex } from '@chakra-ui/react';
 import { useNavigate } from '@tanstack/react-router';
 import { queryClient } from '@/hooks/lib/queryClient';
-import { setApiToken, syncUserToBackend } from '@/hooks/auth/authState';
+import { setApiToken, syncUserToBackend, useCleanRedirect } from '@/hooks/auth/authState';
 import { AuthCallbackLoader } from '@/components/common/AuthCallBackLoader';
 
 function AuthCallbackPage() {
   const toast = useToaster();
   const navigate = useNavigate();
+  const redirect = useCleanRedirect()
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -25,7 +26,7 @@ function AuthCallbackPage() {
         await syncUserToBackend(data.session.user);
         await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
 
-        navigate({ to: '/' });
+        redirect()
       } catch (err: any) {
         console.error('Error during auth callback:', err);
 
@@ -40,7 +41,7 @@ function AuthCallbackPage() {
           description: message,
           status: 'error',
         });
-        navigate({ to: '/signup' });
+        navigate({ to: '/login' });
       }
     };
 

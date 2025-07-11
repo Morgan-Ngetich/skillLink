@@ -20,6 +20,7 @@ import { PasswordInput, PasswordStrengthMeter } from '@/components/ui/password-i
 import { calculatePasswordStrength } from '@/utils/password';
 import { isValidEmail } from '@/utils/validator';
 import { hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar } from '@/utils/validator';
+import { useCleanRedirect } from '@/hooks/auth/authState';
 
 type SignUpFormData = {
   fullName: string;
@@ -38,7 +39,7 @@ const SignupForm = () => {
 
   const passwordValue = watch('password');
   const toast = useToaster();
-  // const navigate = useNavigate();
+  const redirect = useCleanRedirect()
 
   const onSubmit = async ({ fullName, email, password }: SignUpFormData) => {
     const { error } = await signUp(email, password, fullName);
@@ -49,7 +50,15 @@ const SignupForm = () => {
         description: error.message ?? 'An unknown error occurred.',
         status: 'error',
       });
+    } else {
+      toast({
+        id: 'signup-success',
+        title: 'Signup successful',
+        description: 'Welcome 🎉🎉🎉',
+        status: 'success',
+      });
 
+      redirect()
     }
   };
 
@@ -147,11 +156,7 @@ const SignupForm = () => {
               loading={isSubmitting}
               size="md"
               rounded="lg"
-              bg={{ base: "teal.700", _dark: "teal.600" }}
-              color={{ base: "white", _dark: "white" }}
-              _hover={{ bg: { base: "teal.600", _dark: "teal.500" } }}
-              _active={{ bg: { base: "teal.700", _dark: "teal.600" } }}
-              _disabled={{ bg: { base: "teal.300", _dark: "teal.200" }, cursor: 'not-allowed' }}
+              _disabled={{ cursor: 'not-allowed' }}
             >
               Sign Up
             </Button>
@@ -166,13 +171,10 @@ const SignupForm = () => {
             <Flex justify={'center'} w="100%" mt={2}>
               <Button
                 w="90%"
-                variant="outline"
+                variant="ghost"
                 onClick={signInWithGoogle}
-                color="buttonOutlineColor"
-                borderColor="buttonOutlineBorder"
-                _hover={{ bg: 'buttonOutlineHoverBg' }}
-                _active={{ bg: 'buttonOutlineActiveBg' }}
                 _disabled={{ cursor: 'not-allowed' }}
+                border={"1px solid"}
               >
                 <Box as={FcGoogle} mr={2} />
                 Sign up with Google
@@ -185,8 +187,7 @@ const SignupForm = () => {
                 <Text
                   as="span"
                   fontWeight="medium"
-                  color="buttonOutlineColor"
-                  _hover={{ textDecoration: 'underline', color: 'buttonOutlineBorder' }}
+                  _hover={{ textDecoration: 'underline' }}
                 >
                   Log in
                 </Text>
