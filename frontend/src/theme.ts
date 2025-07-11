@@ -1,4 +1,12 @@
 import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
+// import { defineRecipe } from "@chakra-ui/react";
+
+// Define the Button recipe
+// const buttonRecipe = defineRecipe({
+//   base: {
+//     borderRadius: "lg", // Apply large border radius
+//   },
+// });
 
 const config = defineConfig({
   globalCss: {
@@ -16,14 +24,19 @@ const config = defineConfig({
     semanticTokens: {
       colors: {
         bodyBg: {
-          value: { DEFAULT: "white", _dark: "gray.800" }
+          value: { DEFAULT: "white", _dark: "gray.800" },
         },
 
         bodyColor: {
-          value: { DEFAULT: "gray.800", _dark: "whiteAlpha.900" }
+          value: { DEFAULT: "gray.800", _dark: "whiteAlpha.900" },
         },
       },
     },
+
+    // Define recipes for components
+    // recipes: {
+    //   button: buttonRecipe,
+    // },
   },
 });
 
