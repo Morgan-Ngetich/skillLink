@@ -24,11 +24,17 @@ export const fetchCurrentUser = async () => {
 export const useAuthQuery = () => {
   const ready = useSupabaseSessionReady();
 
-  return useQuery({
+  const query = useQuery({
     queryKey: ['auth', 'user'],
     queryFn: fetchCurrentUser,
     enabled: ready, // Don't run until Supabase session is ready
     staleTime: 1000 * 60 * 5,
     retry: false,
   });
+
+  return {
+    ...query,
+    isLoading: !ready || query.isLoading,
+    data: query.data || null,
+  }
 }
