@@ -1,6 +1,7 @@
 import { Box, Flex } from '@chakra-ui/react';
 import Sidebar from '@/components/common/SideBar';
 import Header from '@/components/common/Header';
+import AuthPromptDialog from './components/common/AuthPromptDialog';
 
 const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
@@ -13,6 +14,8 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           {children}
         </Box>
       </Flex>
+
+      <AuthPromptDialog />
     </Flex>
   );
 };
