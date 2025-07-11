@@ -76,9 +76,19 @@ def sync_user_from_supabase_to_db(
                 status_code=409,
                 detail="A user with this email already exists.",
             )
-        return existing_user.to_public()
+            
+        updated_user = crud.update_synced_user_info(
+            session,
+            existing_user,
+            email=user_sync_in.email,
+            full_name=user_sync_in.full_name,
+            avatar_url=user_sync_in.avatar_url,
+        )
+        
+        return updated_user.to_public()
+
     
-    # Trigger a background task
+    # Trigger a background task if new user
     # Don't pass sesions => not serailizeble
     # Pass UUID as str for Celery serialization
     sync_user_from_supabase_task.delay(

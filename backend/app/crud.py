@@ -142,6 +142,41 @@ def sync_user_from_supabase(
     return user
 
 
+def update_synced_user_info(
+    session: Session,
+    user: User,
+    email: str,
+    full_name: str | None = None,
+    avatar_url: str | None = None,
+) -> User:
+    """
+    Updates user info only if changed. Logs each updated field.
+    """
+    updated = False
+
+    if user.email != email:
+        user.email = email
+        updated = True
+
+    if full_name is not None and user.full_name != full_name:
+        user.full_name = full_name
+        updated = True
+
+    if avatar_url is not None and user.avatar_url != avatar_url:
+        user.avatar_url = avatar_url
+        updated = True
+
+    if updated:
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+    else:
+        raise HTTPException(status_code=200, detail="No changes detected.")
+
+    return user
+
+
+
 # =========== USERPROFILES ============
 def get_user_profile(session: Session, user_id: int) -> UserProfile | None:
     return session.get(UserProfile, user_id)
