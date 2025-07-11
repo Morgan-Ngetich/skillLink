@@ -8,6 +8,7 @@ import {
   Menu,
   SkeletonCircle,
   SkeletonText,
+  Spinner,
 } from '@chakra-ui/react';
 import { Avatar } from '@/components/ui/avatar';
 import { useEffect } from 'react';
@@ -15,14 +16,18 @@ import { FaChevronDown } from 'react-icons/fa6';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useNavigate } from '@tanstack/react-router';
 import { ColorModeButton } from '@/components/ui/color-mode';
+import { useNavigateWithRedirect } from '@/hooks/auth/authState';
 
 const Header = () => {
-  const { user, isLoading, signOut } = useAuth();
+  const { user, isLoading, isLoggingOut, signOut } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     console.log('UserME:', user);
+    console.log('UserAvatar_url:', user?.avatar_url);
   }, [user]);
+
+  const navigateWithRedirect = useNavigateWithRedirect();
 
   return (
     <Box
@@ -53,7 +58,7 @@ const Header = () => {
 
         <HStack gap={4}>
           {isLoading ? (
-            // Show skeleton placeholders while loading
+            // Show skeleton placeholders while loading user info
             <HStack gap={3} align="center">
               <SkeletonCircle size="8" />
               <SkeletonText noOfLines={1} width="100px" />
@@ -62,18 +67,21 @@ const Header = () => {
           ) : user ? (
             <Menu.Root>
               <Menu.Trigger asChild>
-                <Button variant="ghost" size="sm">
-                  <HStack gap={2}>
-                    <Avatar
-                      size="sm"
-                      name={user.full_name}
-                      src={user.avatar_url}
-                    />
-                    <Text display={{ base: 'none', md: 'inline' }} fontWeight="medium">
-                      {user.full_name}
-                    </Text>
-                    <FaChevronDown size={10} />
-                  </HStack>
+                <Button variant="ghost" size="sm" disabled={isLoggingOut}>
+                  {isLoggingOut ? (
+                    <HStack gap={2}>
+                      <Spinner size="sm" />
+                      <Text>Logging out...</Text>
+                    </HStack>
+                  ) : (
+                    <HStack gap={2}>
+                      <Avatar size="sm" name={user.full_name} src={user.avatar_url} />
+                      <Text display={{ base: 'none', md: 'inline' }} fontWeight="medium">
+                        {user.full_name}
+                      </Text>
+                      <FaChevronDown size={10} />
+                    </HStack>
+                  )}
                 </Button>
               </Menu.Trigger>
 
@@ -91,44 +99,51 @@ const Header = () => {
                     value="profile"
                     onSelect={() => navigate({ to: '/profile' })}
                     _hover={{ bg: { base: 'gray.100', _dark: 'gray.700' } }}
+                    disabled={isLoggingOut}
                   >
                     Profile
                   </Menu.Item>
 
                   <Menu.Separator />
+
                   <Menu.Item
                     value="logout"
-                    onSelect={() => signOut()}
                     color="red.500"
+                    onSelect={() => {
+                      if (!isLoggingOut) signOut();
+                    }}
                     _hover={{ bg: { base: 'gray.100', _dark: 'gray.700' } }}
+                    disabled={isLoggingOut}
                   >
-                    Logout
+                    {isLoggingOut ? (
+                      <HStack gap={2}>
+                        <Spinner size="sm" />
+                        <Text>Logging out...</Text>
+                      </HStack>
+                    ) : (
+                      'Logout'
+                    )}
                   </Menu.Item>
-
                 </Menu.Content>
               </Menu.Positioner>
             </Menu.Root>
           ) : (
+            // User not logged in - optionally show login/signup buttons
+            // null or uncomment to enable buttons:
             <>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate({ to: '/login' })}
+                onClick={() => navigateWithRedirect('/login')}
                 _hover={{ bg: { base: 'gray.100', _dark: 'gray.700' } }}
-                border={"1px solid"}
+                border="1px solid"
               >
-                Login
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => navigate({ to: '/signup' })}
-              >
-                Sign Up
+                Get Started for Free
               </Button>
             </>
           )}
 
-          {/* Always visible ColorModeButton */}
+
           <ColorModeButton />
         </HStack>
       </Flex>
