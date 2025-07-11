@@ -1,6 +1,7 @@
 import { supabase } from '../supabaseClient';
 import { OpenAPI } from '@/client';
-import {type SupabaseUser, UserService } from '@/client';
+import { type SupabaseUser, UserService } from '@/client';
+import { useNavigate, useRouterState } from '@tanstack/react-router';
 
 export async function isLoggedIn() {
   const {
@@ -9,6 +10,49 @@ export async function isLoggedIn() {
 
   return Boolean(session?.user);
 }
+
+
+
+export function useCleanRedirect(paramKey = 'redirectTo') {
+  const navigate = useNavigate();
+  const routerState = useRouterState();
+
+  return () => {
+    const search = routerState.location.search;
+    const redirectTo = search[paramKey] as string | undefined;
+
+    if (redirectTo) {
+      // Remove the redirectTo param from search
+      const { [paramKey]: _, ...rest } = search;
+
+      navigate({
+        to: redirectTo,
+        search: rest,      // keep other params except redirectTo
+        replace: true,     // replace current history entry
+      });
+    } else {
+      // No redirect param, just go to root
+      navigate({ to: '/', replace: true });
+    }
+  };
+}
+
+
+export function useNavigateWithRedirect() {
+  const navigate = useNavigate();
+  const routerState = useRouterState();
+
+  return (path: string) => {
+    const redirectToState = routerState.location.pathname;
+
+    navigate({
+      to: path,
+      search: { redirectTo: redirectToState },
+      replace: true,
+    });
+  };
+}
+
 
 // This is used to set the OPENAPI client token before syncing the user
 export const setApiToken = async () => {
@@ -20,19 +64,19 @@ export const setApiToken = async () => {
 
 
 export const syncUserToBackend = async (user: SupabaseUser) => {
-    const { id: user_id, email, user_metadata } = user;
+  const { id: user_id, email, user_metadata } = user;
 
-    if (!email) {
-      throw new Error("User email is undefined");
-    }
+  if (!email) {
+    throw new Error("User email is undefined");
+  }
 
-    const full_name = user_metadata?.full_name ?? email.split("@")[0];
-    const avatar_url = user_metadata?.avatar_url ?? undefined;
+  const full_name = user_metadata?.full_name ?? email.split("@")[0];
+  const avatar_url = user_metadata?.avatar_url ?? undefined;
 
-    await UserService.syncUserFromSupabase({
-      user_id,
-      email,
-      full_name,
-      avatar_url,
-    });
-  };
+  await UserService.syncUserFromSupabase({
+    user_id,
+    email,
+    full_name,
+    avatar_url,
+  });
+};
