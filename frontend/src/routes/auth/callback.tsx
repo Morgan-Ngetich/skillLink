@@ -7,6 +7,14 @@ import { useNavigate } from '@tanstack/react-router';
 import { queryClient } from '@/hooks/lib/queryClient';
 import { setApiToken, syncUserToBackend, useCleanRedirect } from '@/hooks/auth/authState';
 import { AuthCallbackLoader } from '@/components/common/AuthCallBackLoader';
+import { storage } from '@/utils/localstorage';
+import { type GoogleUserInfo } from '@/client';
+
+const LOCAL_STORAGE_KEY = 'googleUser';
+
+function isUserFromGoogle(user: any): boolean {
+  return user?.identities?.some((i: any) => i.provider === 'google') ?? false;
+}
 
 function AuthCallbackPage() {
   const toast = useToaster();
@@ -22,9 +30,26 @@ function AuthCallbackPage() {
           throw new Error('Session expired or invalid');
         }
 
+        const user = data.session.user;
         await setApiToken();
-        await syncUserToBackend(data.session.user);
+        await syncUserToBackend(user);
         await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
+
+        // ✅ Save Google user info to localStorage
+        const isGoogle = isUserFromGoogle(user);
+        const email = user.email;
+
+        if (isGoogle && email) {
+          const name = user.user_metadata?.full_name || email.split('@')[0] || 'Google User';
+          const avatar_url = user.user_metadata?.avatar_url
+
+          const googleUser: GoogleUserInfo = { name, email, avatar_url };
+          console.log('✅ Saving Google user to localStorage:', googleUser);
+          storage.set(LOCAL_STORAGE_KEY, JSON.stringify(googleUser));
+        } else {
+          // Clear if not a Google user
+          storage.remove(LOCAL_STORAGE_KEY);
+        }
 
         redirect()
       } catch (err: any) {
