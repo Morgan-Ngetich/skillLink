@@ -76,6 +76,7 @@ export function useAuth() {
       OpenAPI.TOKEN = '';
       await queryClient.removeQueries({ queryKey: ['auth', 'user'] });
 
+      // TODO storage.remove("googleUser") => When user optionally chooses to logout
       // Redirect to home page after sign out
       navigate({ to: '/login' });
     } catch(error) {
