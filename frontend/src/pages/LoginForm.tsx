@@ -3,7 +3,6 @@
 import {
   Box,
   Button,
-  Input,
   VStack,
   Text,
   Heading,
@@ -23,6 +22,7 @@ import { isValidEmail } from '@/utils/validator';
 import { useCleanRedirect } from '@/hooks/auth/authState';
 // import useAuthRedirect from '@/hooks/auth/authState';
 import { useGoogleUser } from '@/hooks/auth/authState';
+import { StyledInput } from '@/components/ui';
 
 type LoginFormData = {
   email: string;
@@ -86,8 +86,7 @@ const LoginForm = () => {
         <Heading
           size="lg"
           mb={6}
-          textAlign="center"
-          color="bodyColor"
+          textAlign="center"          
         >
           Log In
         </Heading>
@@ -95,12 +94,9 @@ const LoginForm = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <VStack gap={5} align="stretch">
             <FormControl isInvalid={!!errors.email}>
-              <FormLabel color="bodyColor">Email</FormLabel>
-              <Input
+              <FormLabel >Email</FormLabel>
+              <StyledInput
                 type="email"
-                bg={{ base: "gray.50", _dark: "gray.700" }}
-                _hover={{ bg: { base: "gray.100", _dark: "gray.600" } }}
-                _focus={{ bg: { base: "white", _dark: "gray.800" }, borderColor: { base: "teal.500", _dark: "teal.300" } }}
                 {...register('email', {
                   required: 'Email is required',
                   validate: (val) => isValidEmail(val) || 'Invalid email format',
@@ -114,12 +110,9 @@ const LoginForm = () => {
             </FormControl>
 
             <FormControl isInvalid={!!errors.password}>
-              <FormLabel color="bodyColor">Password</FormLabel>
+              <FormLabel >Password</FormLabel>
               <PasswordInput
                 type="password"
-                bg={{ base: "gray.50", _dark: "gray.700" }}
-                _hover={{ bg: { base: "gray.100", _dark: "gray.600" } }}
-                _focus={{ bg: { base: "white", _dark: "gray.800" }, borderColor: { base: "teal.500", _dark: "teal.300" } }}
                 {...register('password', {
                   required: 'Password is required',
                 })}
@@ -143,7 +136,7 @@ const LoginForm = () => {
 
             <Separator my={2} />
 
-            <Text textAlign="center" color="bodyColor" fontSize="xs">
+            <Text textAlign="center"  fontSize="xs">
               or
             </Text>
 
@@ -200,16 +193,14 @@ const LoginForm = () => {
             </Flex>
 
 
-            <Text color="bodyColor" mt={3} fontSize="sm" textAlign="center">
+            <Text  mt={3} fontSize="sm" textAlign="center">
               Not registered yet?{' '}
               <Link to="/signup">
                 <Text
                   as="span"
                   fontWeight="medium"
-                  color="buttonOutlineColor"
                   _hover={{
-                    textDecoration: 'underline',
-                    color: 'buttonOutlineBorder',
+                    textDecoration: 'underline'
                   }}
                 >
                   Sign Up

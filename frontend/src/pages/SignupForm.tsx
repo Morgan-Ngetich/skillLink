@@ -3,7 +3,6 @@
 import {
   Box,
   Button,
-  Input,
   VStack,
   Text,
   Heading,
@@ -12,7 +11,7 @@ import {
   Icon,
 } from '@chakra-ui/react';
 import { FormControl, FormLabel } from '@chakra-ui/form-control';
-import { Avatar } from '@/components/ui/avatar';
+import { Avatar, StyledInput } from '@/components/ui';
 import { FcGoogle } from 'react-icons/fc';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '@/hooks/auth/useAuth';
@@ -21,7 +20,7 @@ import { Link } from '@tanstack/react-router';
 import { PasswordInput, PasswordStrengthMeter } from '@/components/ui/password-input';
 import { calculatePasswordStrength } from '@/utils/password';
 import { isValidEmail } from '@/utils/validator';
-import { hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar } from '@/utils/validator';
+import { hasUpperCase, hasLowerCase, hasNumber } from '@/utils/validator';
 import { useCleanRedirect } from '@/hooks/auth/authState';
 import { useGoogleUser } from '@/hooks/auth/authState';
 type SignUpFormData = {
@@ -77,7 +76,7 @@ const SignupForm = () => {
         borderColor="inputBorder"
         boxShadow="lg"
       >
-        <Heading size="md" mb={6} textAlign="center" color="bodyColor">
+        <Heading size="md" mb={6} textAlign="center">
           Create Account
         </Heading>
 
@@ -85,11 +84,8 @@ const SignupForm = () => {
           <VStack gap={4} align="stretch">
             {/* Full Name */}
             <FormControl isInvalid={!!errors.fullName}>
-              <FormLabel color="bodyColor">Full Name</FormLabel>
-              <Input
-                bg={{ base: "gray.50", _dark: "gray.700" }}
-                _hover={{ bg: { base: "gray.100", _dark: "gray.600" } }}
-                _focus={{ bg: { base: "white", _dark: "gray.800" }, borderColor: { base: "teal.500", _dark: "teal.300" } }}
+              <FormLabel>Full Name</FormLabel>
+              <StyledInput
                 {...register('fullName', { required: 'Full name is required' })}
               />
               <Text color="red.400" fontSize="xs">
@@ -99,12 +95,9 @@ const SignupForm = () => {
 
             {/* Email */}
             <FormControl isInvalid={!!errors.email}>
-              <FormLabel color="bodyColor">Email</FormLabel>
-              <Input
+              <FormLabel>Email</FormLabel>
+              <StyledInput
                 type="email"
-                bg={{ base: "gray.50", _dark: "gray.700" }}
-                _hover={{ bg: { base: "gray.100", _dark: "gray.600" } }}
-                _focus={{ bg: { base: "white", _dark: "gray.800" }, borderColor: { base: "teal.500", _dark: "teal.300" } }}
                 {...register('email', {
                   required: 'Email is required',
                   validate: (val) => isValidEmail(val) || 'Invalid email format',
@@ -118,17 +111,11 @@ const SignupForm = () => {
 
             {/* Password */}
             <FormControl isInvalid={!!errors.password}>
-              <FormLabel color="bodyColor">Password</FormLabel>
+              <FormLabel>Password</FormLabel>
               <PasswordInput
                 type="password"
                 placeholder="Enter your password"
                 autoComplete="new-password"
-                bg={{ base: "gray.50", _dark: "gray.700" }}
-                _hover={{ bg: { base: "gray.100", _dark: "gray.600" } }}
-                _focus={{
-                  bg: { base: "white", _dark: "gray.800" },
-                  borderColor: { base: "teal.500", _dark: "teal.300" },
-                }}
                 {...register('password', {
                   required: 'Password is required',
                   minLength: {
@@ -139,7 +126,7 @@ const SignupForm = () => {
                     hasUpper: (val) => hasUpperCase(val) || 'Must contain an uppercase letter',
                     hasLower: (val) => hasLowerCase(val) || 'Must contain a lowercase letter',
                     hasNumber: (val) => hasNumber(val) || 'Must contain a number',
-                    hasSpecial: (val) => hasSpecialChar(val) || 'Must contain a special character',
+                    // hasSpecial: (val) => hasSpecialChar(val) || 'Must contain a special character',
                   },
                 })}
               />
@@ -166,7 +153,7 @@ const SignupForm = () => {
 
             <Separator my={2} />
 
-            <Text textAlign="center" color="bodyColor" fontSize="xs">
+            <Text textAlign="center" fontSize="xs">
               or
             </Text>
 
@@ -224,7 +211,7 @@ const SignupForm = () => {
               </Button>
             </Flex>
 
-            <Text color="bodyColor" mt={3} fontSize="sm" textAlign="center">
+            <Text mt={3} fontSize="sm" textAlign="center">
               Already signed up?{' '}
               <Link to="/login">
                 <Text

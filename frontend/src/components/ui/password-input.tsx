@@ -11,7 +11,6 @@ import {
   Text,
   HStack,
   IconButton,
-  Input,
   InputGroup,
   Stack,
   mergeRefs,
@@ -19,6 +18,7 @@ import {
 } from "@chakra-ui/react"
 import * as React from "react"
 import { LuEye, LuEyeOff } from "react-icons/lu"
+import { StyledInput } from "@/components/ui"
 
 export interface PasswordVisibilityProps {
   defaultVisible?: boolean
@@ -71,7 +71,7 @@ export const PasswordInput = React.forwardRef<
       }
       {...rootProps}
     >
-      <Input
+      <StyledInput 
         {...rest}
         ref={mergeRefs(ref, inputRef)}
         type={visible ? "text" : "password"}
