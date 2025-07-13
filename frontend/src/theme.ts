@@ -1,5 +1,6 @@
 import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 // import { defineRecipe } from "@chakra-ui/react";
+import { inputRecipe } from "@/recipes/input.recipe"
 
 // Define the Button recipe
 // const buttonRecipe = defineRecipe({
@@ -7,6 +8,7 @@ import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 //     borderRadius: "lg", // Apply large border radius
 //   },
 // });
+
 
 const config = defineConfig({
   globalCss: {
@@ -34,9 +36,10 @@ const config = defineConfig({
     },
 
     // Define recipes for components
-    // recipes: {
-    //   button: buttonRecipe,
-    // },
+    recipes: {
+      // button: buttonRecipe,
+      input: inputRecipe
+    },
   },
 });
 
