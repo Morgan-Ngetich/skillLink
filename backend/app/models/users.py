@@ -130,9 +130,9 @@ class UserProfilePublic(SQLModel):
     uuid: str
     bio: Optional[str] = None
     location: Optional[str] = None
+    area_of_focus: Optional[List[str]] = None
     goals: Optional[List[str]] = None
     interests: Optional[List[str]] = None
-    availability: Optional[List[str]] = None
     social_links: Optional[dict[str, str]] = None
     is_profile_complete: Optional[bool] = None
     created_at: Optional[datetime] = None
@@ -182,9 +182,9 @@ class UserProfileBase(SQLModel):
     bio: Optional[str] = Field(default=None, nullable=True)
     location: Optional[str] = Field(default=None, nullable=True)
     
+    area_of_focus: Optional[List[str]] = Field(sa_column=Column(ARRAY(String), nullable=True), default=None)
     goals: Optional[List[str]] = Field(sa_column=Column(ARRAY(String), nullable=True), default=None)
     interests: Optional[List[str]] = Field(sa_column=Column(ARRAY(String), nullable=True), default=None)
-    availability: Optional[List[str]] = Field(sa_column=Column(ARRAY(String), nullable=True), default=None)
     
     social_links: Optional[dict[str, str]] = Field(sa_column=Column(JSON, nullable=True), default=None)
     created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -199,9 +199,9 @@ class UserProfile(UserProfileBase, table=True):
         return all(is_valid(field) for field in [
             self.bio,
             self.location,
+            self.area_of_focus,
             self.goals,
             self.interests,
-            self.availability,
             self.social_links,
         ])
         
@@ -211,9 +211,9 @@ class UserProfile(UserProfileBase, table=True):
             uuid=str(self.user.uuid),
             bio=self.bio,
             location=self.location,
+            area_of_focus=self.area_of_focus,
             goals=self.goals,
             interests=self.interests,
-            availability=self.availability,
             social_links=self.social_links,
             is_profile_complete=self.is_profile_complete,
             created_at=self.created_at,
@@ -221,7 +221,7 @@ class UserProfile(UserProfileBase, table=True):
         )
         
 class UserProfileCreate(UserProfileBase):
-    @field_validator('goals', 'interests', 'availability', mode='before')
+    @field_validator('goals', 'interests', 'area_of_focus', mode='before')
     @classmethod
     def parse_list_fields(cls, v):
         if isinstance(v, str):
@@ -231,12 +231,12 @@ class UserProfileCreate(UserProfileBase):
 class UserProfileUpdate(BaseModel):
     bio: Optional[str] = None
     location: Optional[str] = None
+    area_of_focus: Optional[List[str]] = None
     goals: Optional[List[str]] = None
     interests: Optional[List[str]] = None
-    availability: Optional[List[str]] = None
     social_links: Optional[dict[str, str]] = None
     
-    @field_validator('goals', 'interests', 'availability', mode='before')
+    @field_validator('goals', 'interests', 'area_of_focus', mode='before')
     @classmethod
     def parse_list_fields(cls, v):
         if isinstance(v, str):

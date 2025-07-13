@@ -32,7 +32,7 @@ export interface UserProfilePublic {
   location?: string;
   goals?: string[];
   interests?: string[];
-  availability?: string[];
+  area_of_focus?: string[];
   social_links?: { [key: string]: string };
   is_profile_complete?: boolean;
   created_at?: string;

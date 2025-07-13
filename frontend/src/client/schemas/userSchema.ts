@@ -50,7 +50,7 @@ export const $UserProfilePublic = {
       type: 'array',
       contains: { type: 'string' },
     },
-    availability: {
+    area_of_focus: {
       type: 'array',
       contains: { type: 'string' },
     },
