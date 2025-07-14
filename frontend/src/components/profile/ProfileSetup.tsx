@@ -5,67 +5,107 @@ import {
   Button,
   ButtonGroup,
   Flex,
-  VStack,
-  Text,
   Heading,
+  VStack,
 } from '@chakra-ui/react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { LuUser, LuCheck, LuHeartHandshake, LuMessageSquare } from 'react-icons/lu';
-import Step1BasicInfo from './forms/Step1BasicInfo';
-import Step2AreaOfFocus from './forms/Step2AreaOfFocus'
-import Step3GoalsInterests from './forms/Step3GoalsInterests';
-
-
-// Import the reusable step components
+import { useForm, FormProvider, useWatch } from 'react-hook-form';
+import {
+  LuUser,
+  LuHeartHandshake,
+  LuMessageSquare,
+  LuCheck,
+} from 'react-icons/lu';
+import { useRouter, useSearch } from '@tanstack/react-router';
 import {
   StepsItem,
   StepsRoot,
   StepsList,
   StepsContent,
-  StepsCompletedContent,
-  StepsNextTrigger,
-  StepsPrevTrigger,
+  // StepsCompletedContent,
 } from '../ui/steps';
+import { useProfile } from '@/hooks/useProfile';
+import type { UserProfileCreate } from '@/client';
 
-const stepItems = [
+import Step1BasicInfo from './forms/Step1BasicInfo';
+import Step2AreaOfFocus from './forms/Step2AreaOfFocus';
+import Step3GoalsInterests from './forms/Step3GoalsInterests';
+
+const steps = [
   {
     title: 'Your Name',
-    description: 'Browse and upload',
+    description: 'Provide your basic info',
     icon: <LuUser />,
     content: <Step1BasicInfo />,
   },
   {
-    title: 'Describes',
-    description: 'Browse and upload',
+    title: 'Focus',
+    description: 'Choose your focus',
     icon: <LuHeartHandshake />,
     content: <Step2AreaOfFocus />,
   },
   {
-    title: 'Services',
-    description: 'Browse and upload',
+    title: 'Goals & Interests',
+    description: 'Set your goals',
     icon: <LuMessageSquare />,
     content: <Step3GoalsInterests />,
   },
 ];
 
 export default function ProfileSetup() {
-  const methods = useForm({
+  const router = useRouter();
+  const { step: stepParam } = useSearch({ from: '/_layout/profile-setup' });
+
+  const stepIndex = Math.max(0, Math.min(Number(stepParam) - 1 || 0, steps.length - 1));
+  const setStepInUrl = (index: number) => {
+    router.navigate({
+      to: "/profile-setup",
+      search: { step: index + 1 },
+      replace: true,
+    });
+  };
+
+  const { updateProfileAll, isSubmitting } = useProfile();
+
+  const methods = useForm<UserProfileCreate>({
     defaultValues: {
       location: '',
       bio: '',
       goals: [],
+      area_of_focus: [],
       interests: [],
     },
   });
 
-  const onSubmit = (data: any) => {
-    console.log('Submitting form:', data);
-    const goals = data.goals || [];
-    const interests = data.interests || [];
+  const { control, handleSubmit } = methods;
 
-    console.log('Goals:', goals);
-    console.log('Interests:', interests);
-    // await UserService.updateProfile(data);
+  // Validation watches
+  const location = useWatch({ control, name: 'location' });
+  const bio = useWatch({ control, name: 'bio' });
+  const area_of_focus = useWatch({ control, name: 'area_of_focus' });
+  const goals = useWatch({ control, name: 'goals' });
+  const interests = useWatch({ control, name: 'interests' });
+
+  const isStepValid = (index: number) => {
+    if (index === 0) return !!location?.trim() && !!bio?.trim();
+    if (index === 1) return Array.isArray(area_of_focus) && area_of_focus.length > 0;
+    if (index === 2)
+      return Array.isArray(goals) && goals.length >= 2 &&
+        Array.isArray(interests) && interests.length >= 2;
+    return false;
+  };
+
+
+  const onStepChange = (nextStep: number) => {
+    if (nextStep <= stepIndex || isStepValid(stepIndex)) {
+      setStepInUrl(nextStep);
+    }
+  };
+
+  const onSubmit = async (data: UserProfileCreate) => {
+    await updateProfileAll(data, {
+      onSuccess: () => console.log('Profile saved'),
+      onError: (err) => console.error(err),
+    });
   };
 
   return (
@@ -80,18 +120,17 @@ export default function ProfileSetup() {
         direction={{ base: 'column', md: 'row' }}
       >
         <StepsRoot
-          count={stepItems.length}
+          step={stepIndex}
+          // onStepChange={onStepChange}
+          count={steps.length}
           orientation={{ base: 'horizontal', md: 'vertical' }}
-          key={methods.watch()}
-          minH={"500px"}
+          minH="500px"
         >
           <StepsList>
-            {stepItems.map((step, index) => (
+            {steps.map((step, index) => (
               <StepsItem
                 key={index}
                 index={index}
-                // title={step.title}
-                // description={step.description}
                 icon={
                   <Box
                     boxSize="32px"
@@ -118,58 +157,41 @@ export default function ProfileSetup() {
             ))}
           </StepsList>
 
-          {/* Right Form Card */}
-          <Box
-            flex="1"
-            borderRadius="lg"
-            px={{ base: 4, md: 10 }}
-            py={{ base: 6, md: 10 }}
-          >
-            {stepItems.map((step, index) => (
-              <StepsContent key={index} index={index}>
-                <VStack align="stretch" gap={6}>
-                  <Heading
-                    as="h3"
-                    fontSize="xl"
-                    borderBottom="1px solid"
-                    pb={4}
+          {steps.map((step, index) => (
+            <StepsContent key={index} index={index} w="full" px={{ base: 4, md: 10 }} py={{ base: 6, md: 10 }}>
+              <VStack align="stretch" gap={6}>
+                <Heading as="h3" fontSize="xl" borderBottom="1px solid" pb={4}>
+                  Step {index + 1} / {steps.length}
+                </Heading>
+
+                {step.content}
+
+                <ButtonGroup pt={6} justifyContent="space-between" w="100%">
+                  <Button
+                    onClick={() => onStepChange(stepIndex - 1)}
+                    disabled={stepIndex === 0}
+                    variant="outline"
                   >
-                    Step {index + 1}/{stepItems.length}
-                  </Heading>
-
-                  {step.content}
-
-                  <ButtonGroup pt={6} justifyContent="space-between" w="full">
-                    <StepsPrevTrigger asChild>
-                      <Button variant="ghost" border="1px solid">
-                        Back
-                      </Button>
-                    </StepsPrevTrigger>
-                    <StepsNextTrigger asChild>
-                      <Button colorScheme="green">
-                        {index === stepItems.length - 1 ? 'Finish' : 'Next Step'}
-                      </Button>
-                    </StepsNextTrigger>
-                  </ButtonGroup>
-                </VStack>
-              </StepsContent>
-            ))}
-
-            <StepsCompletedContent>
-              <VStack mt={10} gap={6}>
-                <Text color="white" fontSize="lg">
-                  🎉 You're done! Let’s finalize your profile.
-                </Text>
-                <Button
-                  size="lg"
-                  colorScheme="teal"
-                  onClick={methods.handleSubmit(onSubmit)}
-                >
-                  Submit Profile
-                </Button>
+                    Back
+                  </Button>
+                  {stepIndex === steps.length - 1 ? (
+                    <Button onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+                      Finish
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => onStepChange(stepIndex + 1)}
+                      disabled={!isStepValid(stepIndex)}
+                    >
+                      Next
+                    </Button>
+                  )}
+                </ButtonGroup>
               </VStack>
-            </StepsCompletedContent>
-          </Box>
+            </StepsContent>
+          ))}
+
+          {/* <StepsCompletedContent>All steps are complete!</StepsCompletedContent> */}
         </StepsRoot>
       </Flex>
     </FormProvider>

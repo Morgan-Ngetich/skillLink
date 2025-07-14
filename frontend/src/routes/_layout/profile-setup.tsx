@@ -4,6 +4,12 @@ import { Suspense } from 'react';
 import ProfileSetup from "@/components/profile/ProfileSetup";
 
 export const Route = createFileRoute("/_layout/profile-setup")({
+  validateSearch: (search) => {
+    const step = Number(search.step ?? 1);
+    return {
+      step: isNaN(step) || step < 1 ? 1 : step,
+    };
+  },
   component: () => (
     <Suspense fallback={<Spinner />}>
       <ProfileSetup />
