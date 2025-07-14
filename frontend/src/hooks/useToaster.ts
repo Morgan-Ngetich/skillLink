@@ -3,7 +3,7 @@ import { toaster } from "../components/ui/toaster";
 
 type ToastStatus = "success" | "error" | "info" | "warning" | "loading";
 
-type ToastOptions = {
+export type ToastOptions = {
   title: string;
   description?: string;
   status?: ToastStatus;
