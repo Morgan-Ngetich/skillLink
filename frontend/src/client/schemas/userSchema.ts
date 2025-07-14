@@ -15,7 +15,6 @@ export const $UserSyncIn = {
   },
 } as const;
 
-
 export const $UserCreate = {
   properties: {
     full_name: { type: 'string', isRequired: true },
@@ -25,7 +24,6 @@ export const $UserCreate = {
   },
 } as const;
 
-
 export const $UserUpdate = {
   properties: {
     full_name: { type: 'string' },
@@ -34,7 +32,6 @@ export const $UserUpdate = {
     email: { type: 'string' },
   },
 } as const;
-
 
 export const $UserProfilePublic = {
   properties: {
@@ -64,6 +61,69 @@ export const $UserProfilePublic = {
   },
 } as const;
 
+export const $UserProfileCreate = {
+  properties: {
+    bio: { type: 'string' },
+    location: { type: 'string' },
+    goals: {
+      type: 'any-of',
+      contains: [
+        { type: 'array', contains: { type: 'string' } },
+        { type: 'string' },
+      ],
+    },
+    interests: {
+      type: 'any-of',
+      contains: [
+        { type: 'array', contains: { type: 'string' } },
+        { type: 'string' },
+      ],
+    },
+    area_of_focus: {
+      type: 'any-of',
+      contains: [
+        { type: 'array', contains: { type: 'string' } },
+        { type: 'string' },
+      ],
+    },
+    social_links: {
+      type: 'dictionary',
+      properties: { type: 'string' },
+    },
+  },
+} as const;
+
+export const $UserProfileUpdate = {
+  properties: {
+    bio: { type: 'string' },
+    location: { type: 'string' },
+    goals: {
+      type: 'any-of',
+      contains: [
+        { type: 'array', contains: { type: 'string' } },
+        { type: 'string' },
+      ],
+    },
+    interests: {
+      type: 'any-of',
+      contains: [
+        { type: 'array', contains: { type: 'string' } },
+        { type: 'string' },
+      ],
+    },
+    area_of_focus: {
+      type: 'any-of',
+      contains: [
+        { type: 'array', contains: { type: 'string' } },
+        { type: 'string' },
+      ],
+    },
+    social_links: {
+      type: 'dictionary',
+      properties: { type: 'string' },
+    },
+  },
+} as const;
 
 export const $MentorProfilePublic = {
   properties: {
@@ -90,6 +150,46 @@ export const $MentorProfilePublic = {
   },
 } as const;
 
+export const $MentorProfileCreate = {
+  properties: {
+    user_id: { type: 'number', isRequired: true },
+    industry: { type: 'string' },
+    expertise: {
+      type: 'array',
+      contains: { type: 'string' },
+    },
+    experience_level: { type: 'string' },
+    available_times: {
+      type: 'array',
+      contains: { type: 'string' },
+    },
+    currently_open_to_mentees: { type: 'boolean' },
+    contact_details: {
+      type: 'dictionary',
+      properties: { type: 'string' },
+    },
+  },
+} as const;
+
+export const $MentorProfileUpdate = {
+  properties: {
+    industry: { type: 'string' },
+    expertise: {
+      type: 'array',
+      contains: { type: 'string' },
+    },
+    experience_level: { type: 'string' },
+    available_times: {
+      type: 'array',
+      contains: { type: 'string' },
+    },
+    currently_open_to_mentees: { type: 'boolean' },
+    contact_details: {
+      type: 'dictionary',
+      properties: { type: 'string' },
+    },
+  },
+} as const;
 
 export const $UserPublic = {
   properties: {
@@ -107,7 +207,6 @@ export const $UserPublic = {
     updated_at: { type: 'string', format: 'date-time' },
   },
 } as const;
-
 
 export const $UsersPublic = {
   properties: {

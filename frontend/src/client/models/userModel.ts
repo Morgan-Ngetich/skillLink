@@ -8,8 +8,9 @@ export interface UserSyncIn {
   avatar_url?: string;
 }
 
-import type { User } from '@supabase/supabase-js';
+import type { User, UserIdentity } from '@supabase/supabase-js';
 export type SupabaseUser = User;
+export type Identity = UserIdentity;
 
 export interface UserCreate {
   full_name: string;
@@ -39,18 +40,22 @@ export interface UserProfilePublic {
   updated_at?: string;
 }
 
-export interface MentorProfilePublic {
-  user_id: number;
-  uuid: string;
-  industry?: string;
-  expertise?: string[];
-  experience_level?: string;
-  available_times?: string[];
-  currently_open_to_mentees: boolean;
-  contact_details?: { [key: string]: string };
-  is_mentor_profile_complete?: boolean;
-  created_at: string;
-  updated_at: string;
+export interface UserProfileCreate {
+  bio?: string;
+  location?: string;
+  goals?: string[] | string;
+  interests?: string[] | string;
+  area_of_focus?: string[] | string;
+  social_links?: { [key: string]: string };
+}
+
+export interface UserProfileUpdate {
+  bio?: string;
+  location?: string;
+  goals?: string[] | string;
+  interests?: string[] | string;
+  area_of_focus?: string[] | string;
+  social_links?: { [key: string]: string };
 }
 
 export interface UserPublic {
@@ -77,4 +82,39 @@ export type GoogleUserInfo = {
   name: string;
   email: string;
   avatar_url?: string
+}
+
+
+export interface MentorProfilePublic {
+  user_id: number;
+  uuid: string;
+  industry?: string;
+  expertise?: string[];
+  experience_level?: string;
+  available_times?: string[];
+  currently_open_to_mentees: boolean;
+  contact_details?: { [key: string]: string };
+  is_mentor_profile_complete?: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+
+export interface MentorProfileCreate {
+  user_id: number;
+  industry?: string;
+  expertise?: string[];
+  experience_level?: string;
+  available_times?: string[];
+  currently_open_to_mentees?: boolean;
+  contact_details?: { [key: string]: string };
+}
+
+export interface MentorProfileUpdate {
+  industry?: string;
+  expertise?: string[];
+  experience_level?: string;
+  available_times?: string[];
+  currently_open_to_mentees?: boolean;
+  contact_details?: { [key: string]: string };
 }
