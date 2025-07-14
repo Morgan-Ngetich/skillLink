@@ -128,7 +128,7 @@ export class UserService {
   public static deleteUser(userId: number): CancelablePromise<string> {
     return __request(OpenAPI, {
       method: 'DELETE',
-      url: `/api/v1/users/users/${userId}`,
+      url: `/api/v1/users/${userId}`,
     });
   }
 }

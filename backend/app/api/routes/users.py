@@ -142,7 +142,7 @@ def update_user(session: SessionDep, current_user: CurrentUser, user_in: UserUpd
     return updated_user.to_public()
 
 
-@router.delete("/users/{user_id}", dependencies=[Depends(require_role(RoleName.SUPERUSER))])
+@router.delete("/{user_id}", dependencies=[Depends(require_role(RoleName.SUPERUSER))])
 def delete_user(session: SessionDep, user_id: int) -> Any:
     """
     Delete a user
