@@ -32,7 +32,7 @@ export default function Step3GoalsInterests() {
   const [customInputValue, setCustomInputValue] = useState('');
 
 
-  const selectedAreas = useWatch({ control, name: 'areaOfFocus' }) || [];
+  const selectedAreas = useWatch({ control, name: 'area_of_focus' }) || [];
 
   const suggestions: FocusTag[] = Array.from(
     new Set(
@@ -89,9 +89,10 @@ export default function Step3GoalsInterests() {
                   }
                 };
 
-                const isValid =
-                  selectedGoals.length >= 2 &&
-                  selectedInterests.length >= 2;
+                const missingGoals = Math.max(0, 2 - (selectedGoals?.length ?? 0));
+                const missingInterests = Math.max(0, 2 - (selectedInterests?.length ?? 0));
+
+                const isValid = missingGoals === 0 && missingInterests === 0;
 
                 const isCustom = (tag: FocusTag) => {
                   return !suggestionLabels.includes(tag.label);
@@ -101,8 +102,11 @@ export default function Step3GoalsInterests() {
                 return (
                   <>
                     {!isValid && (
-                      <Alert status="warning" borderRadius="md" fontSize="sm" >
-                        Please select at least 2 goals and 2 interests.
+                      <Alert status="warning" borderRadius="md" fontSize="sm">
+                        Please select at least{' '}
+                        {missingGoals > 0 && `${missingGoals} more goal${missingGoals > 1 ? 's' : ''}`}
+                        {missingGoals > 0 && missingInterests > 0 && ' and '}
+                        {missingInterests > 0 && `${missingInterests} more interest${missingInterests > 1 ? 's' : ''}`}.
                       </Alert>
                     )}
 
