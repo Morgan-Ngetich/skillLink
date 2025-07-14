@@ -8,12 +8,13 @@ import { queryClient } from '@/hooks/lib/queryClient';
 import { setApiToken, syncUserToBackend, useCleanRedirect } from '@/hooks/auth/authState';
 import { AuthCallbackLoader } from '@/components/common/AuthCallBackLoader';
 import { storage } from '@/utils/localstorage';
-import { type GoogleUserInfo } from '@/client';
+import { type GoogleUserInfo, type Identity, type SupabaseUser } from '@/client';
+import { getApiErrorMessage } from '@/utils/errorUtils';
 
 const LOCAL_STORAGE_KEY = 'googleUser';
 
-function isUserFromGoogle(user: any): boolean {
-  return user?.identities?.some((i: any) => i.provider === 'google') ?? false;
+function isUserFromGoogle(user: SupabaseUser): boolean {
+  return user?.identities?.some((i: Identity) => i.provider === 'google') ?? false;
 }
 
 function AuthCallbackPage() {
@@ -52,26 +53,22 @@ function AuthCallbackPage() {
         }
 
         redirect()
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error during auth callback:', err);
 
-        const message =
-          err?.body?.detail || // from OpenAPI-generated client
-          err?.message ||       // standard JS error
-          'Something went wrong. Please try again.';
-
         toast({
-          id: 'auth-error', // fixed ID so only one toast for this error shows at a time
+          id: 'auth-error',
           title: 'Auth Error',
-          description: message,
+          description: getApiErrorMessage(err),
           status: 'error',
         });
+
         navigate({ to: '/login' });
       }
     };
 
     handleCallback();
-  }, [navigate, toast]);
+  }, [navigate, redirect, toast]);
 
 
   return (
