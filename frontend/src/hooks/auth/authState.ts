@@ -24,7 +24,8 @@ export function useCleanRedirect(paramKey = 'redirectTo') {
 
     if (redirectTo) {
       // Remove the redirectTo param from search
-      const { [paramKey]: _, ...rest } = search;
+      const { [paramKey]: _discard, ...rest } = search;
+      void _discard; // <-- just reference it to silence unused var warning
 
       navigate({
         to: redirectTo,
