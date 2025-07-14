@@ -189,11 +189,15 @@ def get_user_profile_or_404(session: Session, user_id: int) -> UserProfile:
 
 def ensure_user_profile_not_exists(session: Session, user_id: int):
     if get_user_profile(session, user_id):
-        raise HTTPException(status_code=400, detail="Profile already exists for this user")
+        raise HTTPException(status_code=409, detail="Profile already exists for this user")
     
-def create_user_profile(session: Session, profile_in: UserProfileCreate) -> UserProfile:
-    ensure_user_profile_not_exists(session, profile_in.user_id)
-    profile = UserProfile.model_validate(profile_in)
+def create_user_profile(session: Session, profile_in: UserProfileCreate, user_id: int) -> UserProfile:
+    ensure_user_profile_not_exists(session, user_id)
+    
+    profile = UserProfile(
+        user_id=user_id,
+        ** profile_in.dict(exclude_unset=True)
+    )
     session.add(profile)
     session.commit()
     session.refresh(profile)

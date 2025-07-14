@@ -76,10 +76,8 @@ def create_profile(session: SessionDep, profile_in: UserProfileCreate, current_u
     """
     Create user's Profile and assign MENTEE role
     """
-    # Ensure that user_id matches current_use or set it explicitly
-    if profile_in.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Cannot create profile for another User")
-    profile = crud.create_user_profile(session, profile_in)
+
+    profile = crud.create_user_profile(session, profile_in, user_id=current_user.id)
     
     # Assign MENTEE role
     crud.assign_role(session, current_user, RoleName.MENTEE)

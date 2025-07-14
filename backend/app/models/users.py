@@ -220,7 +220,15 @@ class UserProfile(UserProfileBase, table=True):
             updated_at=self.updated_at
         )
         
-class UserProfileCreate(UserProfileBase):
+        
+class UserProfileBaseModel(BaseModel):
+    bio: Optional[str] = None
+    location: Optional[str] = None
+    area_of_focus: Optional[List[str]] = None
+    goals: Optional[List[str]] = None
+    interests: Optional[List[str]] = None
+    social_links: Optional[dict[str, str]] = None
+
     @field_validator('goals', 'interests', 'area_of_focus', mode='before')
     @classmethod
     def parse_list_fields(cls, v):
@@ -228,20 +236,13 @@ class UserProfileCreate(UserProfileBase):
             return json.loads(v)
         return v
 
-class UserProfileUpdate(BaseModel):
-    bio: Optional[str] = None
-    location: Optional[str] = None
-    area_of_focus: Optional[List[str]] = None
-    goals: Optional[List[str]] = None
-    interests: Optional[List[str]] = None
-    social_links: Optional[dict[str, str]] = None
-    
-    @field_validator('goals', 'interests', 'area_of_focus', mode='before')
-    @classmethod
-    def parse_list_fields(cls, v):
-        if isinstance(v, str):
-            return json.loads(v)
-        return v
+
+class UserProfileCreate(UserProfileBaseModel):
+    pass
+
+
+class UserProfileUpdate(UserProfileBaseModel):
+    pass
 
 class MentorProfileBase(SQLModel):
     user_id: int = Field(foreign_key="users.id", index=True, primary_key=True)
