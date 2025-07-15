@@ -53,3 +53,4 @@ RUN chown -R appuser:appuser /app
 USER appuser
 
 ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["fastapi"]
