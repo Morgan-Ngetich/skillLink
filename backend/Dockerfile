@@ -8,49 +8,43 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     libwebp-dev \
     curl \
+    supervisor \
     adduser \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Now create non-root user
+# Create non-root user
 RUN adduser --disabled-password --gecos '' appuser
 
 # Install Poetry
 RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python && \
     ln -s /opt/poetry/bin/poetry /usr/local/bin/poetry
 
-# Configure Poetry to not use virtualenvs
+# Configure Poetry
 RUN poetry config virtualenvs.create false
 
-# Add option for installing dev dependencies
 ARG INSTALL_DEV=false
 
-# Copy only dependency files first to leverage caching
 COPY pyproject.toml poetry.lock* ./
 
-# Install dependencies
 RUN bash -c "if [ \"$INSTALL_DEV\" = \"true\" ]; then poetry install --no-root --no-interaction --no-ansi; else poetry install --no-root --only main --no-interaction --no-ansi; fi"
 
-# Check for syntax issues
 RUN poetry check
 
-# Not neccessary but for clarity
 ARG PORT=8000
 ENV PORT=${PORT}
-EXPOSE ${PORT}
 ENV PYTHONPATH=/app
 
-# Copy app code
 COPY alembic.ini ./
 COPY ./app /app/app
-COPY entrypoint.sh /app/
-RUN chmod +x /app/entrypoint.sh
+COPY ./scripts/start-fastapi.sh /app/scripts/start-fastapi.sh
+COPY ./supervisord.conf /etc/supervisord.conf
 
-# Fix permissions for non-root user
+RUN chmod +x /app/scripts/start-fastapi.sh
 RUN chown -R appuser:appuser /app
 
-# Switch to non-root user
+EXPOSE ${PORT}
+
 USER appuser
 
-ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["fastapi"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
