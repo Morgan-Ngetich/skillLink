@@ -5,37 +5,38 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { useAuth } from "@/hooks/auth/useAuth";
+import { useLocation } from "@tanstack/react-router";
 import { useNavigateWithRedirect } from "@/hooks/auth/authState";
-import { storage } from "@/utils/localstorage";
+import { setPromptDismissed } from "@/utils/authPromptDismiss";
 
-const AuthPromptDialog = () => {
-  const { user, isLoading } = useAuth();
-  const [open, setOpen] = useState(false);
+interface AuthPromptDialogProps {
+  open: boolean;
+  showStayLoggedOut: boolean;
+  onClose: () => void;
+}
 
+const AuthPromptDialog: React.FC<AuthPromptDialogProps> = ({ open, showStayLoggedOut, onClose }) => {
   const navigateWithRedirect = useNavigateWithRedirect();
-  // Show dialog only once loading is complete and user is unauthenticated
-  useEffect(() => {
-    if (!user && !isLoading && !storage.get("authPromptDismissed")) {
-      setOpen(true);
-    } else {
-      setOpen(false);
-    }
-  }, [user, isLoading]);
-
-  if (user || isLoading) return null; // Don’t show if logged in or loading
+  const location = useLocation();
 
   return (
-    <Dialog.Root open={open} onOpenChange={(e) => setOpen(e.open)} size="sm" placement="center" motionPreset="slide-in-top">
+    <Dialog.Root
+      open={open}
+      onOpenChange={(e) => {
+        if (!e.open) onClose();
+      }}
+      size="sm"
+      placement="center"
+      motionPreset="slide-in-left"
+    >
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner>
-          <Dialog.Content border="1px solid" textAlign={'center'}>
+          <Dialog.Content border="1px solid" textAlign="center">
             <Dialog.Header>
-              <Dialog.Title w={'full'}>
-                <Text fontSize={'2xl'} textAlign={'center'}>
-                  Thanks for visiting MENTspace
+              <Dialog.Title w="full">
+                <Text fontSize="2xl" textAlign="center">
+                  Enjoy MENTspace your way
                 </Text>
               </Dialog.Title>
             </Dialog.Header>
@@ -51,9 +52,10 @@ const AuthPromptDialog = () => {
                 <Button
                   onClick={() => {
                     navigateWithRedirect("/login");
-                    setOpen(false);
+                    onClose();
                   }}
-                  borderRadius={"lg"}>
+                  borderRadius="lg"
+                >
                   Log in
                 </Button>
                 <Button
@@ -61,33 +63,44 @@ const AuthPromptDialog = () => {
                   size="sm"
                   onClick={() => {
                     navigateWithRedirect("/signup");
-                    setOpen(false);
+                    onClose();
                   }}
                   border="1px solid"
-                  borderRadius={"lg"}
+                  borderRadius="lg"
                 >
                   Sign up for free
                 </Button>
 
-                <Text
-                  fontSize="sm"
-                  mt={5}
-                  textAlign="center"
-                  textUnderlineOffset={5}
-                  textDecoration="underline"
-                  cursor="pointer"
-                  transition="color 0.2s ease"
-                  _hover={{
-                    textDecoration: 'underline',
-                  }}
-                  onClick={() => {
-                    storage.set("authPromptDismissed", "true");
-                    setOpen(false);
-                  }}
-
-                >
-                  Stay logged out
-                </Text>
+                {/* Show "Stay logged out" only if allowed */}
+                {showStayLoggedOut ? (
+                  <Text
+                    fontSize="sm"
+                    mt={5}
+                    textAlign="center"
+                    textDecoration="underline"
+                    textUnderlineOffset={5}
+                    cursor="pointer"
+                    transition="color 0.2s ease"
+                    _hover={{ textDecoration: "underline" }}
+                    onClick={() => {
+                      setPromptDismissed(location.pathname);
+                      onClose();
+                    }}
+                  >
+                    Stay logged out
+                  </Text>
+                ) : (
+                  <Button
+                    variant="outline"
+                    size={'sm'}
+                    onClick={() => {
+                      window.history.back(); // fallback: go back to last page
+                      onClose();
+                    }}
+                  >
+                    ← Go back
+                  </Button>
+                )}
               </VStack>
             </Dialog.Footer>
           </Dialog.Content>

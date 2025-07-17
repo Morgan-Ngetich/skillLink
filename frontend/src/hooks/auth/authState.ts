@@ -14,6 +14,10 @@ export async function isLoggedIn() {
 }
 
 
+/* This hook is used *after login or signup* to redirect the user
+  back to the page they originally intended to visit.
+  it reads the "redirectTo" query param from the URL and navigates to it.
+*/
 export function useCleanRedirect(paramKey = 'redirectTo') {
   const navigate = useNavigate();
   const routerState = useRouterState();
@@ -40,6 +44,10 @@ export function useCleanRedirect(paramKey = 'redirectTo') {
 }
 
 
+/* This hook is used *before* login or signup navigation,
+    to remember where the user was before we redirect them to auth.
+    It stores the current path in a query param like: /login?redirectTo=/original-page
+*/
 export function useNavigateWithRedirect() {
   const navigate = useNavigate();
   const routerState = useRouterState();
@@ -50,13 +58,13 @@ export function useNavigateWithRedirect() {
     navigate({
       to: path,
       search: { redirectTo: redirectToState },
-      replace: true,
+      replace: true, // avoids polluting browser history
     });
   };
 }
 
 
-// This is used to set the OPENAPI client token before syncing the user
+// This is used to set the OPENAPI client token before syncing the user.
 export const setApiToken = async () => {
   const { data: sessionData } = await supabase.auth.getSession();
   const token = sessionData?.session?.access_token;
