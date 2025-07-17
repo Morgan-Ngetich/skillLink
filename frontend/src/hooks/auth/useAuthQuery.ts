@@ -3,6 +3,8 @@ import { supabase } from '../supabaseClient';
 import { UserService, OpenAPI } from '../../client';
 import { useSupabaseSessionReady } from '../useSupabaseSession';
 
+let lastToken: string | null = null; // store last token to avoid repeated assignments
+
 export const fetchCurrentUser = async () => {
   const {
     data: { session },
@@ -14,10 +16,14 @@ export const fetchCurrentUser = async () => {
     throw new Error('No session token');
   }
 
-  OpenAPI.TOKEN = () => Promise.resolve(token);
+  // Only set token if changed
+  if (lastToken !== token) {
+    OpenAPI.TOKEN = () => Promise.resolve(token);
+    lastToken = token;
+  }
 
   const user = await UserService.getCurrentUser();
-  return user
+  return user;
 };
 
 // Use Auth query for hardCore, e.g setting/profiles
@@ -36,5 +42,5 @@ export const useAuthQuery = () => {
     ...query,
     isLoading: !ready || query.isLoading,
     data: query.data || null,
-  }
-}
+  };
+};
