@@ -35,6 +35,7 @@ export interface UserProfilePublic {
   interests?: string[];
   area_of_focus?: string[];
   social_links?: { [key: string]: string };
+  is_profile_setup_complete?: boolean;
   is_profile_complete?: boolean;
   created_at?: string;
   updated_at?: string;

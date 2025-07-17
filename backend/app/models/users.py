@@ -135,6 +135,7 @@ class UserProfilePublic(SQLModel):
     interests: Optional[List[str]] = None
     social_links: Optional[dict[str, str]] = None
     is_profile_complete: Optional[bool] = None
+    is_profile_setup_complete: Optional[bool] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
        
@@ -204,6 +205,18 @@ class UserProfile(UserProfileBase, table=True):
             self.interests,
             self.social_links,
         ])
+    
+    @computed_field(return_type=bool)
+    @property
+    def is_profile_setup_complete(self) -> bool:
+        """Partial profile completion check — used to gate initial onboarding steps (no social_links required)."""
+        return all(is_valid(field) for field in [
+            self.bio,
+            self.location,
+            self.area_of_focus,
+            self.goals,
+            self.interests,
+        ])
         
     def to_public(self):
         return UserProfilePublic(
@@ -216,6 +229,7 @@ class UserProfile(UserProfileBase, table=True):
             interests=self.interests,
             social_links=self.social_links,
             is_profile_complete=self.is_profile_complete,
+            is_profile_setup_complete=self.is_profile_setup_complete,
             created_at=self.created_at,
             updated_at=self.updated_at
         )
