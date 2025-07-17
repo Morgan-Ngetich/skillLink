@@ -16,7 +16,7 @@ const config = defineConfig({
       bg: "white",
       color: "gray.800",
       _dark: {
-        bg: "gray.800",
+        bg: "gray.900",
         color: "whiteAlpha.900",
       },
     },
