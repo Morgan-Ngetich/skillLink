@@ -15,7 +15,7 @@ import {
   LuMessageSquare,
   LuCheck,
 } from 'react-icons/lu';
-import { useRouter, useSearch } from '@tanstack/react-router';
+import { useNavigate, useRouter, useSearch } from '@tanstack/react-router';
 import {
   StepsItem,
   StepsRoot,
@@ -53,6 +53,7 @@ const steps = [
 
 export default function ProfileSetup() {
   const router = useRouter();
+  const navigate = useNavigate()
   const { step: stepParam } = useSearch({ from: '/_layout/profile-setup' });
 
   const stepIndex = Math.max(0, Math.min(Number(stepParam) - 1 || 0, steps.length - 1));
@@ -103,7 +104,9 @@ export default function ProfileSetup() {
 
   const onSubmit = async (data: UserProfileCreate) => {
     await updateProfileAll(data, {
-      onSuccess: () => console.log('Profile saved'),
+      onSuccess: async () => {
+        await navigate({ to: "/dashboard/profile"})
+      },
       onError: (err) => console.error(err),
     });
   };
