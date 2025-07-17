@@ -25,7 +25,7 @@ const navItems = [
 ];
 
 const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <Collapsible.Root open={isOpen} onOpenChange={(e) => setIsOpen(e.open)} unmountOnExit>
