@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { type Session } from '@supabase/supabase-js';
 
-export function Session() {
-  const [session, setSession] = useState<Session | null>(null);
+export function useSessionState() {
+  const [session, setSession] = useState<Session | null | undefined>(undefined);
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -25,9 +25,9 @@ export function Session() {
 
 // use useSession for lightWork auth checkup.
 export function useSession() {
-  const session = Session(); // local
+  const session = useSessionState();
   const isLoading = session === undefined;
-  const user = session?.user;
+  const user = session?.user ?? null;
 
   return {
     session,
