@@ -10,6 +10,9 @@ export const Route = createFileRoute("/_layout/profile-setup")({
       step: isNaN(step) || step < 1 ? 1 : step,
     };
   },
+  loader: async () => {
+    return { requiresAuth: true };
+  },
   component: () => (
     <Suspense fallback={<Spinner />}>
       <ProfileSetup />
