@@ -32,6 +32,16 @@ const config = defineConfig({
         bodyColor: {
           value: { DEFAULT: "gray.800", _dark: "whiteAlpha.900" },
         },
+        cardbg: {
+          DEFAULT: {
+            value: {
+              base: "{colors.gray.50}",
+              _dark: "{colors.gray.800}",
+            },
+          },
+          // subtle: { value: "{colors.gray.100}" },
+          // strong: { value: "{colors.gray.200}" },
+        },
       },
     },
 
