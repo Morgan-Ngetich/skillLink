@@ -42,7 +42,7 @@ const AuthPromptDialog: React.FC<AuthPromptDialogProps> = ({ open, showStayLogge
             </Dialog.Header>
 
             <Dialog.Body>
-              <Text fontSize="sm">
+              <Text fontSize="sm" color="fg.muted">
                 Log in or sign up for the full experience — <br />or continue as a guest.
               </Text>
             </Dialog.Body>
