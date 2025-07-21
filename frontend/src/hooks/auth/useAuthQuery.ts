@@ -13,7 +13,9 @@ export const fetchCurrentUser = async () => {
   const token = session?.access_token;
 
   if (!token) {
-    throw new Error('No session token');
+    // TODO throw new error. Efficiently handle session resadiness.
+    // throw new Error('No session token');
+    return null // gracefully handle unauthenticated state
   }
 
   // Only set token if changed
@@ -22,25 +24,31 @@ export const fetchCurrentUser = async () => {
     lastToken = token;
   }
 
-  const user = await UserService.getCurrentUser();
-  return user;
-};
+  try {
+    const user = await UserService.getCurrentUser();
+    return user;
+  } catch (err: unknown) {    
+    console.error('Failed to fetch user:', err);
+    return null // as a fallbase
+  }
+}
 
-// Use Auth query for hardCore, e.g setting/profiles
-export const useAuthQuery = () => {
-  const ready = useSupabaseSessionReady();
 
-  const query = useQuery({
-    queryKey: ['auth', 'user'],
-    queryFn: fetchCurrentUser,
-    enabled: ready, // Don't run until Supabase session is ready
-    staleTime: 1000 * 60 * 5,
-    retry: false,
-  });
+  // Use Auth query for hardCore, e.g setting/profiles
+  export const useAuthQuery = () => {
+    const ready = useSupabaseSessionReady();
 
-  return {
-    ...query,
-    isLoading: !ready || query.isLoading,
-    data: query.data || null,
+    const query = useQuery({
+      queryKey: ['auth', 'user'],
+      queryFn: fetchCurrentUser,
+      enabled: ready, // Don't run until Supabase session is ready
+      staleTime: 1000 * 60 * 5,
+      retry: false,
+    });
+
+    return {
+      ...query,
+      isLoading: !ready || query.isLoading,
+      data: query.data || null,
+    };
   };
-};

@@ -19,6 +19,10 @@ export function isProtectedRoute(matches: AnyRouteMatch[]): boolean {
 // Accepts search as an object and do the serialization inside
 export async function requireProfileCompletion(location: { pathname: string; search: Record<string, string> }) {
   const user = await fetchCurrentUser();
+  
+  // If no user (i.e., not logged in), do nothing. Let AuthPromptDialog handle it.
+  if (!user) return 
+
   if (!user?.profile?.is_profile_setup_complete) {
     throw redirect({
       to: "/profile-setup",
