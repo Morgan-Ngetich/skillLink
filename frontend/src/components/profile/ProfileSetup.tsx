@@ -29,6 +29,7 @@ import type { UserProfileCreate } from '@/client';
 import Step1BasicInfo from './forms/Step1BasicInfo';
 import Step2AreaOfFocus from './forms/Step2AreaOfFocus';
 import Step3GoalsInterests from './forms/Step3GoalsInterests';
+import { useAuthRouteGuard } from '@/hooks/auth/useAuthRouteGuard';
 
 const steps = [
   {
@@ -54,6 +55,8 @@ const steps = [
 export default function ProfileSetup() {
   const router = useRouter();
   const navigate = useNavigate()
+  const { isBlocked, isLoading } = useAuthRouteGuard()
+  
   const { step: stepParam } = useSearch({ from: '/_layout/profile-setup' });
 
   const stepIndex = Math.max(0, Math.min(Number(stepParam) - 1 || 0, steps.length - 1));
@@ -105,11 +108,16 @@ export default function ProfileSetup() {
   const onSubmit = async (data: UserProfileCreate) => {
     await updateProfileAll(data, {
       onSuccess: async () => {
-        await navigate({ to: "/dashboard/profile"})
+        await navigate({ to: "/dashboard/profile" })
       },
       onError: (err) => console.error(err),
     });
   };
+
+  if (isLoading || isBlocked) {
+    // TODO return the pages' skeletopn structure. 
+    return null
+  }
 
   return (
     <FormProvider {...methods}>
