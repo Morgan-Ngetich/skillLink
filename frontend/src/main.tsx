@@ -9,6 +9,7 @@ import themeSystem from './theme';
 
 import { Toaster } from '@/components/ui/toaster';
 import { useSession } from './hooks/auth/useSession'; // <-- import your hook here
+import { GlobalStyles } from './components/ui/GlobalStyles';
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ChakraProvider value={themeSystem}> {/* ✅ ChakraProvider wraps everything */}
       <ColorModeProvider>
+      <GlobalStyles />
         <App />
       </ColorModeProvider>
     </ChakraProvider>
