@@ -1,0 +1,45 @@
+import {
+  Box,
+  Text,
+  Wrap,
+  WrapItem,
+} from "@chakra-ui/react"
+import { useColorModeValue } from "@/components/ui"
+
+interface SkillsSectionProps {
+  skills: string[]
+}
+
+export default function SkillsSection({ skills }: SkillsSectionProps) {
+  const bg = useColorModeValue("gray.200", "gray.700")
+
+  if (!skills?.length) return null
+
+  return (
+    <Box>
+      <Text fontWeight="semibold" fontSize="md" mb={3}>
+        Skills
+      </Text>
+
+      <Wrap gap={3}>
+        {skills.map((skill) => (
+          <WrapItem key={skill}>
+            <Box
+              px={3}
+              py={2}
+              fontSize="sm"
+              borderRadius="lg"
+              border="1px solid"
+              bg={bg}
+              transition="all 0.2s"
+              as="button"
+              textAlign="center"
+            >
+              {skill}
+            </Box>
+          </WrapItem>
+        ))}
+      </Wrap>
+    </Box>
+  )
+}
