@@ -16,6 +16,9 @@ import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as LayoutProfileSetupRouteImport } from './routes/_layout/profile-setup'
+import { Route as LayoutExploreRouteImport } from './routes/_layout/explore'
+import { Route as LayoutDashboardIndexRouteImport } from './routes/_layout/dashboard/index'
+import { Route as LayoutDashboardProfileRouteImport } from './routes/_layout/dashboard/profile'
 
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
@@ -51,22 +54,43 @@ const LayoutProfileSetupRoute = LayoutProfileSetupRouteImport.update({
   path: '/profile-setup',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutExploreRoute = LayoutExploreRouteImport.update({
+  id: '/explore',
+  path: '/explore',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutDashboardIndexRoute = LayoutDashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutDashboardProfileRoute = LayoutDashboardProfileRouteImport.update({
+  id: '/dashboard/profile',
+  path: '/dashboard/profile',
+  getParentRoute: () => LayoutRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/explore': typeof LayoutExploreRoute
   '/profile-setup': typeof LayoutProfileSetupRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/': typeof LayoutIndexRoute
+  '/dashboard/profile': typeof LayoutDashboardProfileRoute
+  '/dashboard': typeof LayoutDashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/explore': typeof LayoutExploreRoute
   '/profile-setup': typeof LayoutProfileSetupRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/': typeof LayoutIndexRoute
+  '/dashboard/profile': typeof LayoutDashboardProfileRoute
+  '/dashboard': typeof LayoutDashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -74,9 +98,12 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/_layout/explore': typeof LayoutExploreRoute
   '/_layout/profile-setup': typeof LayoutProfileSetupRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/_layout/': typeof LayoutIndexRoute
+  '/_layout/dashboard/profile': typeof LayoutDashboardProfileRoute
+  '/_layout/dashboard/': typeof LayoutDashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -84,26 +111,35 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/verify-email'
+    | '/explore'
     | '/profile-setup'
     | '/auth/callback'
     | '/'
+    | '/dashboard/profile'
+    | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
     | '/signup'
     | '/verify-email'
+    | '/explore'
     | '/profile-setup'
     | '/auth/callback'
     | '/'
+    | '/dashboard/profile'
+    | '/dashboard'
   id:
     | '__root__'
     | '/_layout'
     | '/login'
     | '/signup'
     | '/verify-email'
+    | '/_layout/explore'
     | '/_layout/profile-setup'
     | '/auth/callback'
     | '/_layout/'
+    | '/_layout/dashboard/profile'
+    | '/_layout/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -165,17 +201,44 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutProfileSetupRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/explore': {
+      id: '/_layout/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof LayoutExploreRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/dashboard/': {
+      id: '/_layout/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof LayoutDashboardIndexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/dashboard/profile': {
+      id: '/_layout/dashboard/profile'
+      path: '/dashboard/profile'
+      fullPath: '/dashboard/profile'
+      preLoaderRoute: typeof LayoutDashboardProfileRouteImport
+      parentRoute: typeof LayoutRoute
+    }
   }
 }
 
 interface LayoutRouteChildren {
+  LayoutExploreRoute: typeof LayoutExploreRoute
   LayoutProfileSetupRoute: typeof LayoutProfileSetupRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
+  LayoutDashboardProfileRoute: typeof LayoutDashboardProfileRoute
+  LayoutDashboardIndexRoute: typeof LayoutDashboardIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
+  LayoutExploreRoute: LayoutExploreRoute,
   LayoutProfileSetupRoute: LayoutProfileSetupRoute,
   LayoutIndexRoute: LayoutIndexRoute,
+  LayoutDashboardProfileRoute: LayoutDashboardProfileRoute,
+  LayoutDashboardIndexRoute: LayoutDashboardIndexRoute,
 }
 
 const LayoutRouteWithChildren =
