@@ -3,8 +3,9 @@
 const path = require("path");
 const cwd = process.cwd();
 
-const rootPath = path.resolve(__dirname); // Monorepo root
-const frontendPath = path.join(rootPath, "frontend");
+// Go one level up from /scripts to get monorepo root
+const rootPath = path.resolve(__dirname, '..');
+const frontendPath = path.join(rootPath, 'frontend');
 
 if (cwd === rootPath) {
   console.log("✅ You are in the monorepo root. Proceeding...");
@@ -21,6 +22,5 @@ This is not a recognized project root.
   - Root folder: ${rootPath}
   - Frontend folder: ${frontendPath}
 `);
-  process.exit(1); // optionally block the install
+  process.exit(1); // block install
 }
- 
