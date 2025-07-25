@@ -10,7 +10,7 @@
     "dev": "npm run generate && vite",
     "build": "npm run generate && npm run check && vite build",
     "preview": "vite preview",
-    "preinstall": "node ../scripts/check-location.js"
+    "preinstall": "node scripts/check-location.js"
   },
   "dependencies": {
     "@chakra-ui/form-control": "^2.2.0",
