@@ -9,8 +9,7 @@
     "check": "tsc --build",
     "dev": "npm run generate && vite",
     "build": "npm run generate && npm run check && vite build",
-    "preview": "vite preview",
-    "preinstall": "node scripts/check-location.js"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@chakra-ui/form-control": "^2.2.0",
