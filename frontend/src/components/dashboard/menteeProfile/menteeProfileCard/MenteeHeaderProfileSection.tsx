@@ -23,7 +23,7 @@ const user = {
   instagram: 'https://instagram.com/fakeprofile'
 };
 
-export default function MenteeProfileSection() {
+export default function MenteeHeaderProfileSection() {
   return (
     <Flex
       justify="space-between"

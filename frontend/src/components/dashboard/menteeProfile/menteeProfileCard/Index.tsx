@@ -7,15 +7,21 @@ import {
   HStack,
   Image,
   Separator,
+  Text,
+  Button,
+  Collapsible,
 } from '@chakra-ui/react';
+import { useColorModeValue, Tag } from '@/components/ui';
 import { FiEdit } from 'react-icons/fi';
-import { Avatar, Tag, useColorModeValue } from '@/components/ui';
+import { FaAngleLeft, FaAngleRight } from 'react-icons/fa6';
+import { useState } from 'react';
 
+import { Avatar } from '@/components/ui';
 import GoalAndInterestSection from './GoalAndInterestSection';
 import ExperienceSection from './ExperienceSection';
 import EducationSection from './EducationSection';
 import SkillsSection from './SkillsSection';
-import MenteeProfileSection from './MenteeProfileSection';
+import MenteeHeaderProfileSection from './MenteeHeaderProfileSection';
 
 const user = {
   full_name: 'Aisha Kamau',
@@ -44,17 +50,18 @@ const user = {
 };
 
 export default function MenteeProfileCard() {
-  const border = useColorModeValue("1px solid", "")
+  const [isExpanded, setIsExpanded] = useState(false);
+  const border = useColorModeValue('1px solid', '');
 
   const renderTags = () =>
     user.area_of_focus?.map((focus) => (
       <Tag
         key={focus}
         size="md"
-        bg={'white'}
-        color={'black'}
+        bg="white"
+        color="black"
         border={border}
-        borderColor={'black'}
+        borderColor="black"
         borderRadius="sm"
       >
         {focus}
@@ -69,7 +76,7 @@ export default function MenteeProfileCard() {
   );
 
   return (
-    <Box borderRadius="lg" overflow="hidden" boxShadow="lg" maxW="3xl" border="1px solid">
+    <Box borderRadius="lg" overflow="hidden" boxShadow="lg" maxW="3xl" minW={'3xl'} border="1px solid">
       <Box position="relative">
         {/* Banner */}
         <Box h="150px" position="relative">
@@ -117,13 +124,33 @@ export default function MenteeProfileCard() {
         />
       </Box>
 
-      <Box px={6} pt={12} pb={6}>
-        <Flex direction="column" gap={4}>
-          {renderSeparatorSection(MenteeProfileSection)}
-          {renderSeparatorSection(SkillsSection, { skills: user.skills })}
+      <Box px={6} pt={12} pb={3}>
+        <Flex direction="column" gap={4} position={'relative'}>
+          {/* Always visible */}
+          {renderSeparatorSection(MenteeHeaderProfileSection)}
           {renderSeparatorSection(GoalAndInterestSection)}
-          {renderSeparatorSection(ExperienceSection)}
-          {renderSeparatorSection(EducationSection)}
+
+          {/* Collapsible Section */}
+          <Collapsible.Root open={isExpanded} onOpenChange={({ open }) => setIsExpanded(open)} unmountOnExit>
+            <Collapsible.Content>
+              <Box mt={2} transition="all 0.3s ease-in-out">
+                {renderSeparatorSection(ExperienceSection)}
+                {renderSeparatorSection(EducationSection)}
+                {renderSeparatorSection(SkillsSection, { skills: user.skills })}
+              </Box>
+            </Collapsible.Content>
+
+            <Flex justify="flex-end" position={'absolute'} right={0} bottom={0}>
+              <Collapsible.Trigger asChild>
+                <Button size="sm" mt={2}>
+                  <Flex align="center" gap="1">
+                    {isExpanded ? <FaAngleLeft /> : <FaAngleRight />}
+                    <Text>{isExpanded ? 'Show Less' : 'Show More'}</Text>
+                  </Flex>
+                </Button>
+              </Collapsible.Trigger>
+            </Flex>
+          </Collapsible.Root>
         </Flex>
       </Box>
     </Box>

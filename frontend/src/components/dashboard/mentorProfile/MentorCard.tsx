@@ -2,22 +2,29 @@
 import {
   Box,
   Text,
-  Stack,
   Badge,
   HStack,
   VStack,
   Button,
   Icon,
   Image,
-  Center,
-  Flex,
 } from '@chakra-ui/react';
 import { useColorModeValue, Avatar } from '@/components/ui';
 import { FaStar, FaMapMarkerAlt } from 'react-icons/fa';
+import type { Mentor } from '@/client/services/ment';
 
-export const MentorCard = ({ mentor }) => {
+
+
+
+interface MentorCardProps {
+  mentor: Mentor;
+  onCollapse?: () => void;
+}
+
+export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
   return (
     <Box
+    // TODO Create a variant in the theme file, add this as the default styles for card.
       borderRadius="xl"
       boxShadow="xl"
       bg={"cardbg"}
@@ -46,7 +53,7 @@ export const MentorCard = ({ mentor }) => {
               flexWrap="wrap"
               justify="flex-end"
             >
-              {mentor.tags?.map((tag) => (
+              {mentor.tags?.map((tag: string) => (
                 <Badge key={tag} colorScheme="purple" fontSize="xs">
                   {tag}
                 </Badge>
@@ -66,7 +73,6 @@ export const MentorCard = ({ mentor }) => {
           border="2px solid"
         />
       </Box>
-
 
 
 
@@ -97,7 +103,7 @@ export const MentorCard = ({ mentor }) => {
 
         {/* Skills */}
         <HStack gap={2} mt={4} overflowX={'auto'} scrollbar={'hidden'}>
-          {mentor.skills.map((skill) => (
+          {mentor.skills.map((skill: string) => (
             <Badge
               key={skill}
               variant="surface"

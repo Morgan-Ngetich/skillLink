@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -10,69 +10,9 @@ import {
 } from '@chakra-ui/react';
 
 import { ProjectCard } from './ProjectCard';
+import { fakeProjects } from "@/client/services/ment";
 
-const fakeProjects = [
-  {
-    id: 1,
-    title: '500 LeetCode Questions',
-    category: 'Coding',
-    task: 'Solve 200 Easy',
-    progress: 60,
-    deadline: '2025-08-30',
-    url: 'https://leetcode.com/problemset/all/',
-    todayFocus: true,
-    mentors: [
-      { name: 'Alice', avatar: 'https://i.pravatar.cc/40?img=1' },
-      { name: 'Bob', avatar: 'https://i.pravatar.cc/40?img=2' },
-      { name: 'Carol', avatar: 'https://i.pravatar.cc/40?img=3' },
-    ],
-  },
-  {
-    id: 2,
-    title: 'Startup MVP - Braidify',
-    category: 'Startup',
-    task: 'Finalize Pricing Engine',
-    progress: 45,
-    deadline: '2025-08-10',
-    url: 'https://github.com/braidify/mvp-core',
-    todayFocus: false,
-    mentors: [
-      { name: 'Alice', avatar: 'https://i.pravatar.cc/40?img=1' },
-      { name: 'Bob', avatar: 'https://i.pravatar.cc/40?img=2' },
-      { name: 'Carol', avatar: 'https://i.pravatar.cc/40?img=3' },
-    ],
-  },
-  {
-    id: 3,
-    title: 'DSA Class Site',
-    category: 'Career',
-    task: 'Wireframe Curriculum',
-    progress: 80,
-    deadline: '2025-08-05',
-    url: 'https://figma.com/file/example-dsa-design',
-    todayFocus: false,
-    mentors: [
-      { name: 'Alice', avatar: 'https://i.pravatar.cc/40?img=1' },
-      { name: 'Bob', avatar: 'https://i.pravatar.cc/40?img=2' },
-      { name: 'Carol', avatar: 'https://i.pravatar.cc/40?img=3' },
-    ],
-  },
-  {
-    id: 4,
-    title: 'DSA Class Site',
-    category: 'Career',
-    task: 'Wireframe Curriculum',
-    progress: 80,
-    deadline: '2025-08-05',
-    url: 'https://figma.com/file/example-dsa-design',
-    todayFocus: true,
-    mentors: [
-      { name: 'Alice', avatar: 'https://i.pravatar.cc/40?img=1' },
-      { name: 'Bob', avatar: 'https://i.pravatar.cc/40?img=2' },
-      { name: 'Carol', avatar: 'https://i.pravatar.cc/40?img=3' },
-    ],
-  },
-];
+
 
 
 const categories = ['All', 'Coding', 'Startup', 'Career'];

@@ -7,8 +7,9 @@ import {
   HStack,
   Link,
 } from '@chakra-ui/react';
-import { useColorModeValue, Progress, Tooltip, Avatar } from '@/components/ui';
+import { Progress, Tooltip, Avatar } from '@/components/ui';
 import { formatDistanceStrict } from "date-fns";
+import type { Project } from "@/client/services/ment";
 
 export function URLPreview({ url }: { url: string }) {
   const domain = new URL(url).hostname.replace('www.', '');
@@ -34,8 +35,8 @@ export function ProjectCard({
   url,
   todayFocus,
   mentors = []
-}: any) {
-  const bg = useColorModeValue('gray.50', 'gray.800');
+}: Project) {
+  // const bg = useColorModeValue('gray.50', 'gray.800');
   const highlight = todayFocus
     ? {
       border: '2px solid',
@@ -90,7 +91,7 @@ export function ProjectCard({
                 <Avatar
                   size="sm"
                   name={mentor.name}
-                  src={mentor.avatar}
+                  src={mentor.photo}
                   border="1px solid"
                 />
               </Box>

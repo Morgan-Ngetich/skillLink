@@ -1,20 +1,20 @@
 'use client';
 
 import {
-  Box,
+  // Box,
   Text,
   HStack,
   VStack,
   Heading,
   Table,
   Card,
-  FormatNumber,
-  Show,
+  // FormatNumber,
+  // Show,
 } from '@chakra-ui/react';
-import { BarChart, Bar, XAxis, ResponsiveContainer } from 'recharts';
+// import { BarChart, Bar, XAxis, ResponsiveContainer } from 'recharts';
 import { Stat, Avatar, AvatarGroup, Tooltip, } from "@/components/ui"
 import { formatDistanceToNow } from 'date-fns';
-import { InfoTip } from '@/components/ui/toggle-tip';
+// import { InfoTip } from '@/components/ui/toggle-tip';
 
 const ProfileViewsDashboard = () => {
   const recentViewers = [
@@ -31,11 +31,11 @@ const ProfileViewsDashboard = () => {
     { id: 3, name: 'Alice Kim', interest: 'Design', viewedAt: new Date(Date.now() - 86400 * 1000), photo: 'https://i.pravatar.cc/150?img=3' },
   ];
 
-  const conversionData = [
-    { stage: 'Views', count: 320 },
-    { stage: 'Clicks', count: 75 },
-    { stage: 'Bookings', count: 28 },
-  ];
+  // const conversionData = [
+  //   { stage: 'Views', count: 320 },
+  //   { stage: 'Clicks', count: 75 },
+  //   { stage: 'Bookings', count: 28 },
+  // ];
 
   return (
     <VStack gap={6} align="stretch">
@@ -76,9 +76,9 @@ const ProfileViewsDashboard = () => {
           <Heading size="sm">Recently Viewed By</Heading>
         </Card.Header>
         <Card.Body>
-          <AvatarGroup size="md" max={5}>
+          <AvatarGroup size="md">
             {recentViewers.map((user) => (
-              <Tooltip key={user.id} label={`${user.name}, ${user.location}`}>
+              <Tooltip key={user.id} content={`${user.name}, ${user.location}`}>
                 <Avatar name={user.name} src={user.photo} />
               </Tooltip>
             ))}
