@@ -34,7 +34,7 @@ services:
   # BACKEND SERVICE
   backend:
     image: "backend:latest"
-    # command: "fastapi"
+    command: "fastapi"
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -91,7 +91,7 @@ services:
   celery_worker:
     container_name: celery_worker
     image: "backend:latest"
-    # command: "celery_worker"
+    command: "celery_worker"
     restart: on-failure
     depends_on:
       rabbitmq:
@@ -113,7 +113,7 @@ services:
   celery_beat:
     container_name: "celery_beat"
     image: "backend:latest"
-    # command: "celery_beat"
+    command: "celery_beat"
     restart: always
     depends_on:
       - rabbitmq
