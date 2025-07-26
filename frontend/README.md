@@ -5,7 +5,7 @@
 
 ## Getting Started 
 - Access the app at: **http://localhost** 
-- Access the Swagger Docs at **http://localhost/docs** or **http://localhost:5174/docs**
+- Access the Swagger Docs at **http://localhost/docs** or **http://localhost:5173/docs**
 
 ### Prerequisites
 - Node.js 18+
