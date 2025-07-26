@@ -14,17 +14,16 @@ import { FaStar, FaMapMarkerAlt } from 'react-icons/fa';
 import type { Mentor } from '@/client/services/ment';
 
 
-
-
 interface MentorCardProps {
   mentor: Mentor;
   onCollapse?: () => void;
 }
 
 export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
+  const badgeBg = useColorModeValue('gray.50', 'gray.100')
   return (
     <Box
-    // TODO Create a variant in the theme file, add this as the default styles for card.
+      // TODO Create a variant in the theme file, add this as the default styles for card.
       borderRadius="xl"
       boxShadow="xl"
       bg={"cardbg"}
@@ -34,15 +33,17 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
       {/* Cover Image and Avatar */}
       <Box position="relative" borderRadius="xl">
         {/* Banner Image */}
-        <Box borderTopRadius="xl" overflow="hidden">
-          <Box aspectRatio={4 / 1} position="relative">
-            <Image
-              src={mentor.coverImage || '/fallback-banner.jpg'}
-              alt={`${mentor.name}'s cover`}
-              objectFit="cover"
-              w="100%"
-              h="100%"
-            />
+        <Box>
+          <Box position="relative">
+            <Box overflow={'hidden'} aspectRatio={4 / 1} borderTopRadius="xl" >
+              <Image
+                src={mentor.coverImage || '/fallback-banner.jpg'}
+                alt={`${mentor.name}'s cover`}
+                objectFit="cover"
+                w="100%"
+                h="100%"
+              />
+            </Box>
 
             {/* Tags */}
             <HStack
@@ -50,29 +51,52 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
               bottom="4px"
               right="10px"
               gap={2}
-              flexWrap="wrap"
-              justify="flex-end"
+              maxW={'190px'}
+              overflowX="auto"
+              whiteSpace="nowrap"
+              alignItems="flex-end"
+              scrollbar="hidden"
             >
-              {mentor.tags?.map((tag: string) => (
-                <Badge key={tag} colorScheme="purple" fontSize="xs">
-                  {tag}
+              {mentor.badges?.map((badge: string) => (
+                <Badge
+                  key={badge}
+                  bg={badgeBg}
+                  color="black"
+                  fontSize="xs"
+                  whiteSpace="nowrap"
+                  flexShrink={0}
+                >
+                  {badge}
                 </Badge>
               ))}
             </HStack>
+
+            {/* Avatar */}
+            <Box position="absolute" bottom="-25px" left="20px">
+              <Avatar
+                boxSize="60px"
+                src={mentor.photo}
+                name={mentor.name}
+                border="2px solid"
+              />
+
+              {mentor.available && (
+                <Box
+                  position="absolute"
+                  bottom="2px"
+                  right="2px"
+                  boxSize="14px"
+                  bg="green.500"
+                  borderWidth="2px"
+                  borderColor="white"
+                  borderRadius="full"
+                />
+              )}
+            </Box>
           </Box>
         </Box>
-
-        {/* Avatar */}
-        <Avatar
-          boxSize="60px"
-          src={mentor.photo}
-          name={mentor.name}
-          position="absolute"
-          bottom="-25px"
-          left="20px"
-          border="2px solid"
-        />
       </Box>
+
 
 
 
@@ -83,21 +107,19 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
             <Text fontWeight="bold" fontSize="lg">
               {mentor.name}
             </Text>
-            {mentor.available && (
-              <Badge colorPalette={'green'} variant={'surface'}>
-                {'Available'}
-              </Badge>
-            )}
+            <Text>
+              {mentor.rate}
+            </Text>
           </HStack>
 
-          <Text fontSize="sm" fontWeight={'medium'}>
+          <Text fontSize="sm" fontWeight={'medium'} lineClamp={1}>
             {mentor.title}
           </Text>
         </VStack>
 
 
         {/* Bio */}
-        <Text mt={1} fontSize="sm" lineClamp={3} color="fg.muted">
+        <Text mt={1} fontSize="sm" lineClamp={2} color="fg.muted" >
           {mentor.bio}
         </Text>
 

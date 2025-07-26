@@ -34,7 +34,7 @@ const TopMentors = () => {
           <Flex key={index} align="center" gap="4"
             // TODO Create a variant in the theme file, add this as the default styles for card.
             borderRadius="xl"
-            boxShadow="xl"
+            boxShadow="xs"
             bg={"cardbg"}
             borderWidth="2px"
             borderColor={border}

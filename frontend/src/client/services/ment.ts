@@ -12,52 +12,76 @@ export type Mentor = {
   rate: string;
   photo: string;
   coverImage: string;
+  sessions: number;
   available: boolean;
+  badges: string[];
 };
 
 export const mentors: Mentor[] = [
   {
     name: 'Fatima Ali',
     title: 'Product Manager · Startup Coach',
-    skills: ['Product Strategy', 'Agile', 'Pitch Decks'],
-    bio: 'Ex-Google PM mentoring early-stage founders.',
+    skills: ['Product Strategy', 'Agile', 'Pitch Decks', 'Growth Hacking'],
+    bio: 'Ex-Google PM with 8 years experience mentoring early-stage founders. Specialized in SaaS products.',
     rating: 5.0,
-    reviews: 25,
+    reviews: 42,
     location: 'Toronto, Canada',
-    tags: ["Backend", "FrontEnd"],
+    tags: ["Top Mentor", "Live Session", "Staff Pick", "Startup Specialist", "Featured"],
     rate: 'Free',
     photo: 'https://picsum.photos/id/1012/100',
     coverImage: 'https://picsum.photos/id/1016/400/200',
-    available: true,
+    available: false,
+    sessions: 120,
+    badges: ["Ex-Google", "Y Combinator Advisor"]
   },
   {
     name: 'David Kim',
     title: 'Software Architect · Tech Lead Mentor',
-    skills: ['System Design', 'Backend', 'Scalability'],
-    bio: 'Guiding senior engineers into tech leadership.',
-    tags: ["Backend", "FrontEnd"],
-    rating: 4.8,
-    reviews: 40,
+    skills: ['System Design', 'Backend', 'Scalability', 'Cloud Architecture', 'DevOps'],
+    bio: '15+ years experience guiding senior engineers into tech leadership roles at FAANG companies.',
+    tags: ["Top Rated", "Instant Booking", "Community Favorite", "Open for 1:1"],
+    rating: 4.9,
+    reviews: 87,
     location: 'Seoul, South Korea',
-    rate: '$60/hr',
+    rate: '$120/hr',
     photo: 'https://picsum.photos/id/1027/100',
     coverImage: 'https://picsum.photos/id/1022/400/200',
     available: true,
+    sessions: 320,
+    badges: ["Ex-Meta", "Conference Speaker"]
   },
   {
     name: 'Lara Singh',
-    title: 'UX Designer · Career Coach',
-    skills: ['UX/UI', 'Portfolio Reviews', 'Design Thinking'],
-    bio: 'Helping designers land their first job in tech.',
-    tags: ["Backend", "FrontEnd"],
-    rating: 4.6,
-    reviews: 14,
+    title: 'UX Lead · Career Coach',
+    skills: ['UX/UI', 'Portfolio Reviews', 'Design Thinking', 'Figma', 'User Research'],
+    bio: 'Former Head of Design at Spotify helping designers land jobs at top tech companies.',
+    tags: ["Live Now", "Hiring Manager", "Trending", "Workshop Host"],
+    rating: 4.8,
+    reviews: 56,
     location: 'Bangalore, India',
-    rate: '$30/hr',
+    rate: '$80/hr',
     photo: 'https://picsum.photos/id/1035/100',
     coverImage: 'https://picsum.photos/id/1032/400/200',
     available: false,
+    sessions: 210,
+    badges: ["Ex-Spotify", "Design Jury"]
   },
+  {
+    name: 'Marcus Johnson',
+    title: 'Data Science Lead · AI Mentor',
+    skills: ['Machine Learning', 'LLMs', 'Python', 'Data Visualization', 'R'],
+    bio: 'Building AI products since 2015. Mentor at DeepLearning.AI and Kaggle Grandmaster.',
+    tags: ["Top Mentor", "Flash Sale", "Course Author", "AI Specialist"],
+    rating: 5.0,
+    reviews: 134,
+    location: 'San Francisco, USA',
+    rate: '$150/hr',
+    photo: 'https://picsum.photos/id/177/100',
+    coverImage: 'https://picsum.photos/id/180/400/200',
+    available: true,
+    sessions: 450,
+    badges: ["Kaggle Grandmaster", "Published Author"]
+  }
 ];
 
 export type Project = {
