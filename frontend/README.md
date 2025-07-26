@@ -1,54 +1,66 @@
-# React + TypeScript + Vite
+# Frontend
+**React + Vite + TypeScript + Chakra UI**.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+---
 
-Currently, two official plugins are available:
+## Getting Started 
+- Access the app at: **http://localhost** 
+- Access the Swagger Docs at **http://localhost/docs** or **http://localhost:5174/docs**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Prerequisites
+- Node.js 18+
+- npm 9+
+- Docker 20+ (optional)
 
-## Expanding the ESLint configuration
+### 1. Clone the repo
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+git clone git@github.com:Morgan-Ngetich/skillLink.git
+cd mentaspace/frontend
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+### 2.  Install Dependencies
+```bash
+npm install
 ```
+
+### 3. Environment Configuration
+Copy the example file and update with your credentials:
+```bash
+cp .env.example .env
+```
+Required Environment Variables
+```bash
+VITE_SUPABASE_URL=your-project-url.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_API_URL=/api/v1
+```
+
+### 4. Docker Development
+```bash
+docker compose build
+docker compose up -d
+```
+Access the app at: **http://localhost**
+
+Common Docker Commands
+Command	Description
+- `docker compose logs -f`	View container logs
+- `docker compose down` containers
+- `docker compose restart`	Hot-reload containers
+
+
+### 5. Development Workflow
+Local Development (without Docker)
+```bash
+npm run dev
+```
+
+### 💡 Notes
+- Never commit your `.env` file.
+- This app uses Supabase for authentication and backend services.
+- Ensure your Supabase project has email/password auth enabled.
+
+
+### License [MIT]
+- [https://github.com/Morgan-Ngetich/skillLink/blob/main/LICENSE](https://github.com/Morgan-Ngetich/killLink/blob/main/LICENSE)
