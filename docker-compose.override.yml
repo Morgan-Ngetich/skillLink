@@ -1,7 +1,7 @@
 services:
   frontend:
     ports:
-      - "5173:5173"  # Optional override (if needed)
+      - "80:80"  # This exposes nginx running on port 80 inside container to localhost:80
     env_file:
       - .env
     environment:
@@ -22,4 +22,4 @@ services:
 
   db:
     ports:
-      - "5433:5432"  # Optional override to avoid clashing local PG
+      - "5433:5432"  # override to avoid clashing local PG
