@@ -10,6 +10,7 @@ import {
   SkeletonText,
   Spinner,
 } from '@chakra-ui/react';
+import Search  from './Search'
 import { Avatar } from '@/components/ui/avatar';
 import { useEffect } from 'react';
 import { FaChevronDown } from 'react-icons/fa6';
@@ -55,6 +56,8 @@ const Header = () => {
         </Text>
 
         <Spacer />
+
+        <Search />
 
         <HStack gap={4}>
           {isLoading ? (
