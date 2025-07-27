@@ -1,4 +1,4 @@
-# Mentaspace
+# MENTspace
 
 Modern Collaboration Platform
 
