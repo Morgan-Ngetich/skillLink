@@ -9,7 +9,7 @@ import {
   Icon,
   Image,
 } from '@chakra-ui/react';
-import { useColorModeValue, Avatar } from '@/components/ui';
+import { useColorModeValue, Avatar, Tooltip } from '@/components/ui';
 import { FaStar, FaMapMarkerAlt } from 'react-icons/fa';
 import type { Mentor } from '@/client/services/ment';
 
@@ -77,7 +77,7 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
                 boxSize="60px"
                 src={mentor.photo}
                 name={mentor.name}
-                border="2px solid"
+                border="2px solid white"
               />
 
               {mentor.available && (
@@ -96,8 +96,6 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
           </Box>
         </Box>
       </Box>
-
-
 
 
       {/* Main Content */}
@@ -119,9 +117,12 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
 
 
         {/* Bio */}
+        <Tooltip content={mentor.bio} showArrow portalled={false} disabled={!mentor.bio}>
+
         <Text mt={1} fontSize="sm" lineClamp={2} color="fg.muted" >
           {mentor.bio}
         </Text>
+        </Tooltip>
 
         {/* Skills */}
         <HStack gap={2} mt={4} overflowX={'auto'} scrollbar={'hidden'}>
