@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     POSTGRES_DB: Optional[str] = None
 
     DATABASE_URL: Optional[str] = None
+    TEST_DATABASE_URL: Optional[str] = "postgresql://testuser:testpass@db_test:5432/testdb"
     
     # Default values:
     DEFAULT_AVATAR_URL: str = "https://cdn.skilllink.dev/default-avatar.png"

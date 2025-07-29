@@ -1,0 +1,16 @@
+# docker compose -f docker-compose.test.yml up -d
+services:
+  db_test:
+    container_name: db_test
+    image: postgres:15
+    environment:
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpass
+      POSTGRES_DB: testdb
+    ports:
+      - "5434:5432"  # map to a different port if needed
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U testuser"]
+      interval: 5s
+      retries: 5
+      
