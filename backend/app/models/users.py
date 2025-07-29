@@ -134,6 +134,7 @@ class UserProfilePublic(SQLModel):
     goals: Optional[List[str]] = None
     interests: Optional[List[str]] = None
     social_links: Optional[dict[str, str]] = None
+    contact_details: Optional[dict[str, str]] = None
     is_profile_complete: Optional[bool] = None
     is_profile_setup_complete: Optional[bool] = None
     created_at: Optional[datetime] = None
@@ -160,12 +161,14 @@ class UsersPublic(BaseModel):
 class MentorProfilePublic(SQLModel):
     user_id: int
     uuid: str
+    title: Optional[str] = None
     industry: Optional[str] = None
     expertise: Optional[List[str]] = None
     experience_level: Optional[str] = None
     available_times: Optional[List[str]] = None
+    tags: Optional[List[str]] = None
+    badges: Optional[List[str]] = None
     currently_open_to_mentees: bool
-    contact_details: Optional[dict[str, str]] = None
     is_mentor_profile_complete: Optional[bool] = None
     created_at: datetime
     updated_at: datetime
@@ -188,6 +191,7 @@ class UserProfileBase(SQLModel):
     interests: Optional[List[str]] = Field(sa_column=Column(ARRAY(String), nullable=True), default=None)
     
     social_links: Optional[dict[str, str]] = Field(sa_column=Column(JSON, nullable=True), default=None)
+    contact_details: Optional[dict[str, str]] = Field(sa_column=Column(JSON, nullable=True), default=None)
     created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
   
@@ -228,6 +232,7 @@ class UserProfile(UserProfileBase, table=True):
             goals=self.goals,
             interests=self.interests,
             social_links=self.social_links,
+            contact_details=self.contact_details,
             is_profile_complete=self.is_profile_complete,
             is_profile_setup_complete=self.is_profile_setup_complete,
             created_at=self.created_at,
@@ -242,6 +247,7 @@ class UserProfileBaseModel(BaseModel):
     goals: Optional[List[str]] = None
     interests: Optional[List[str]] = None
     social_links: Optional[dict[str, str]] = None
+    contact_details: Optional[dict[str, str]] = None
 
     @field_validator('goals', 'interests', 'area_of_focus', mode='before')
     @classmethod
@@ -260,28 +266,35 @@ class UserProfileUpdate(UserProfileBaseModel):
 
 class MentorProfileBase(SQLModel):
     user_id: int = Field(foreign_key="users.id", index=True, primary_key=True)
+    title: Optional[str] = None
     industry: Optional[str] = None
 
     expertise: Optional[List[str]] = Field(
         sa_column=Column(ARRAY(String), nullable=True), default=None
     )
-
+    
     experience_level: Optional[str] = None
+    
 
     available_times: Optional[List[str]] = Field(
         sa_column=Column(ARRAY(String), nullable=True), default=None
     )
 
     currently_open_to_mentees: bool = Field(default=True)
-
-    contact_details: Optional[dict[str, str]] = Field(
-        sa_column=Column(JSON, nullable=True), default=None
+    # For bagdes and filtering purposes e.g ["Live Now", "Hiring Manager", "Trending", "Workshop Host"]
+    tags: Optional[List[str]] = Field(
+        sa_column=Column(ARRAY(String), nullable=True), default=None
     )
-
+    
+     
+    
 
 class MentorProfile(MentorProfileBase, table=True):
     user: "User" = Relationship(back_populates="mentor_profile")
-
+    badges: Optional[List[str]] = Field(
+        sa_column=Column(ARRAY(String), nullable=True), default=None
+    )
+    
     created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -289,23 +302,26 @@ class MentorProfile(MentorProfileBase, table=True):
     @property
     def is_mentor_profile_complete(self) -> bool:
         return all(is_valid(field) for field in [
+            self.title,
             self.industry,
             self.expertise,
             self.experience_level,
             self.available_times,
-            self.contact_details,
+            self.tags,
         ])
       
     def to_public(self) -> "MentorProfilePublic":
         return MentorProfilePublic(
             user_id=self.user_id,
             uuid=str(self.user.uuid),
+            title=self.title,
             industry=self.industry,
             expertise=self.expertise,
-            experience_level=self.experience_level,
+            experience_level=self.experience_level,            
             available_times=self.available_times,
+            tags=self.tags,
+            badges=self.badges,
             currently_open_to_mentees=self.currently_open_to_mentees,
-            contact_details=self.contact_details,
             is_mentor_profile_complete=self.is_mentor_profile_complete,
             created_at=self.created_at,
             updated_at=self.updated_at,
@@ -317,9 +333,11 @@ class MentorProfileCreate(MentorProfileBase):
 
 
 class MentorProfileUpdate(SQLModel):
+    title: Optional[str] = None
     industry: Optional[str] = None
     expertise: Optional[List[str]] = None
     experience_level: Optional[str] = None
     available_times: Optional[List[str]] = None
+    tags: Optional[List[str]] = None
+    badges: Optional[List[str]] = None
     currently_open_to_mentees: Optional[bool] = None
-    contact_details: Optional[dict[str, str]] = None
