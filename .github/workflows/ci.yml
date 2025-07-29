@@ -94,8 +94,7 @@ jobs:
         working-directory: backend
         env:
           DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
-        run: |
-          pytest tests --cov=app --cov-report=xml --junitxml=test-results.xml
+        run: poetry run pytest tests --cov=app --cov-report=xml --junitxml=test-results.xml
 
       - name: Upload coverage
         uses: codecov/codecov-action@v3
