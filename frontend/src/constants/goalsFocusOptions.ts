@@ -14,7 +14,7 @@ import {
 } from 'react-icons/fi';
 import { type IconType } from 'react-icons/lib';
 
-// 👇 Key-based definition (type-safe & dynamic)
+// Key-based definition (type-safe & dynamic)
 export const focusOptionMap = {
   tech: { label: 'Tech', icon: FiCode },
   business: { label: 'Business', icon: FiBriefcase },

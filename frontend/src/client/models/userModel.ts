@@ -119,3 +119,75 @@ export interface MentorProfileUpdate {
   currently_open_to_mentees?: boolean;
   contact_details?: { [key: string]: string };
 }
+
+/*
+
+export interface UserPublic {
+  id: number;
+  uuid: string;
+  full_name: string;
+  email: string;
+  avatar_url?: string;
+  is_superuser: boolean;
+  is_mentor: boolean;
+  is_mentee: boolean;
+
+  // Shared user profile (for both mentees & mentors)
+  profile?: UserProfilePublic;
+
+  // Only present if the user is a mentor
+  mentor_profile?: MentorProfilePublic;
+
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface UserProfilePublic {
+  user_id: number;
+  uuid: string;
+  bio?: string;
+  location?: string;
+  goals?: string[];
+  interests?: string[];
+  area_of_focus?: string[];
+  social_links?: { [key: string]: string };
+  contact_details?: { [key: string]: string };
+  is_profile_setup_complete?: boolean;
+  is_profile_complete?: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface MentorProfilePublic {
+  user_id: number;
+  uuid: string;
+
+  // Mentor-specific fields
+  title?: string;                        // e.g. "Product Manager · Startup Coach"
+  industry?: string;                    // e.g. "Tech", "Finance"
+  expertise?: string[];                 // e.g. ["Agile", "UX", "Startup Coaching"]
+  skills?: string[];                    // optional extra — can mirror or extend expertise
+  experience_level?: string;            // e.g. "Senior", "Mid-Level"
+  available_times?: string[];           // time slots
+  currently_open_to_mentees: boolean;
+  rate?: string;                        // e.g. "Free", "$50/hr"
+  rating?: number;
+  reviews?: Reviews[];                // array of reviews
+  sessions?: number;
+  tags?: string[];                      // for badges, filters
+  badges?: string[];            // e.g. ["Ex-Google", "Y Combinator Advisor"]
+  cover_image_url?: string;
+  is_mentor_profile_complete?: boolean;
+
+  created_at: string;
+  updated_at: string;
+}
+
+interface Reviews {
+  rating: number;
+  comment: string;
+  reviewer: UserPublic;
+  created_at: string;
+}
+
+*/
