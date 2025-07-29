@@ -81,11 +81,14 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Install Poetry
         run: |
-          python -m pip install --upgrade pip
-          pip install -r backend/requirements.txt
-          pip install pytest psycopg2-binary pytest-cov
+          curl -sSL https://install.python-poetry.org | python3
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies
+        working-directory: backend
+        run: poetry install --no-interaction --no-root
 
       - name: Run tests
         working-directory: backend
@@ -103,7 +106,7 @@ jobs:
           name: backend-test-results
           path: backend/test-results.xml
 
-  # --- Gate for deployment ---
+  # --- Gate for deployment --- Only runs for branches that are pushed/merged to main.
   deploy-ready:
     needs: [frontend-lint, frontend-build, backend-test]
     runs-on: ubuntu-latest

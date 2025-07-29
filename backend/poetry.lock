@@ -232,6 +232,20 @@ optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7"
 
 [[package]]
+name = "coverage"
+version = "7.10.1"
+description = "Code coverage measurement for Python"
+category = "dev"
+optional = false
+python-versions = ">=3.9"
+
+[package.dependencies]
+tomli = {version = "*", optional = true, markers = "python_full_version <= \"3.11.0a6\" and extra == \"toml\""}
+
+[package.extras]
+toml = ["tomli"]
+
+[[package]]
 name = "cryptography"
 version = "45.0.4"
 description = "cryptography is a package which provides cryptographic recipes and primitives to Python developers."
@@ -633,6 +647,22 @@ tomli = {version = ">=1", markers = "python_version < \"3.11\""}
 dev = ["argcomplete", "attrs (>=19.2)", "hypothesis (>=3.56)", "mock", "requests", "setuptools", "xmlschema"]
 
 [[package]]
+name = "pytest-cov"
+version = "6.2.1"
+description = "Pytest plugin for measuring coverage."
+category = "dev"
+optional = false
+python-versions = ">=3.9"
+
+[package.dependencies]
+coverage = {version = ">=7.5", extras = ["toml"]}
+pluggy = ">=1.2"
+pytest = ">=6.2.5"
+
+[package.extras]
+testing = ["fields", "hunter", "process-tests", "pytest-xdist", "virtualenv"]
+
+[[package]]
 name = "python-dateutil"
 version = "2.9.0.post0"
 description = "Extensions to the standard Python datetime module"
@@ -949,7 +979,7 @@ python-versions = ">=3.9"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "6b6e04d0bc9e3f243d008bddf0ca60e7156dcb3eb1ab241d2ce917a2afaedca8"
+content-hash = "c578a397ecfbd27280eaed1d75f77dfe6a2fb1556aeed628d0ca83acd2b970be"
 
 [metadata.files]
 alembic = []
@@ -968,6 +998,7 @@ click-didyoumean = []
 click-plugins = []
 click-repl = []
 colorama = []
+coverage = []
 cryptography = []
 ecdsa = []
 exceptiongroup = []
@@ -998,6 +1029,7 @@ pydantic-core = []
 pydantic-settings = []
 pygments = []
 pytest = []
+pytest-cov = []
 python-dateutil = []
 python-dotenv = []
 python-jose = []
