@@ -73,6 +73,7 @@ class User(UserBase, table=True):
     uuid: UUID = Field(default_factory=uuid4, index=True, unique=True)
     # TODO: Consider moving the avatar_url to UserProfile to keep User table clean and focused on authentication
     avatar_url: str | None = None
+    cover_image: str | None = None
     hashed_password: str = Field(repr=False)
     created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -105,6 +106,7 @@ class User(UserBase, table=True):
             full_name=self.full_name,
             email=self.email,
             avatar_url=self.avatar_url or settings.DEFAULT_AVATAR_URL,
+            cover_image=self.cover_image or settings.DEFAULT_COVER_IMAGE_URL,
             is_superuser=self.is_superuser,
             is_mentor=self.is_mentor,
             is_mentee=self.is_mentee,            
@@ -146,6 +148,7 @@ class UserPublic(SQLModel):
     full_name: str
     email: str
     avatar_url: Optional[str] = None
+    cover_image: Optional[str] = None
     is_superuser: bool
     is_mentor: bool
     is_mentee: bool

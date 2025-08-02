@@ -35,6 +35,7 @@ class Settings(BaseSettings):
     
     # Default values:
     DEFAULT_AVATAR_URL: str = "https://cdn.skilllink.dev/default-avatar.png"
+    DEFAULT_COVER_IMAGE_URL: str = "https://i.pinimg.com/736x/23/d5/9a/23d59a2591395108fa1a431d48d4c734.jpg"
     
     TIMEZONE: str = "UTC"
     RABBITMQ_DEFAULT_USER: str

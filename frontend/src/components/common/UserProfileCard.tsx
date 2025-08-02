@@ -53,7 +53,7 @@ const UserProfileCard = () => {
       {/* Banner */}
       <Box position="relative" h="100px">
         <Image
-          src={user.avatar_url || '/fallback-banner.jpg'}
+          src={user.cover_image || '/fallback-banner.jpg'}
           alt="Banner"
           objectFit="cover"
           w="full"

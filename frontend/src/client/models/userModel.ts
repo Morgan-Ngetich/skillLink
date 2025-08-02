@@ -65,6 +65,7 @@ export interface UserPublic {
   full_name: string;
   email: string;
   avatar_url?: string;
+  cover_image?: string;
   is_superuser: boolean;
   is_mentor: boolean;
   is_mentee: boolean;
