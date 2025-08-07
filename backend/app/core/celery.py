@@ -35,11 +35,31 @@ celery_app.conf.update(
         "app.tasks.long_running": {"queue": "long_running"},
         "app.tasks.email": {"queue": "email"},
         "app.tasks.sync_user_from_supabase_task": {"queue": "sync"},
+        # LLM-related routes
+        "app.tasks.process_goal_completion": {"queue":"llm"},
+        "app.tasks.process_llm_generation": {"queue": "llm"},
+        "app.tasks.process_progressive_update": {"queue": "default"},
     },
     task_annotations={
         "app.tasks.long_running": {"rate_limit": "10/m"},
         "app.tasks.email": {"rate_limit": "20/m"},
         "app.tasks.sync_user_from_supabase_task": {"rate_limit": "5/m"},
+        # LLM-related annotations
+        "app.tasks.process_goal_completion": {
+            "rate_limit": "5/m",
+            "acks_late": True,
+            "time_limit": 300,
+            "soft_time_limit": 240
+        },        
+        "app.tasks.process_llm_generation": {
+            "rate_limit": "5/m",
+            "acks_late": True,
+            "time_limit": 300,
+            "soft_time_limit": 240
+        },
+        "app.tasks.process_progressive_update": {
+            "rate_limit": "30/m"
+        }
     },
     worker_log_format="[%(asctime)s: %(levelname)s/%(processName)s] %(message)s",
     worker_task_log_format="[%(asctime)s: %(levelname)s/%(processName)s] [%(task_name)s:%(task_id)s] %(message)s",
@@ -50,12 +70,7 @@ celery_app.conf.beat_schedule = {
         "task": "app.tasks.sync_user_from_supabase_task",
         "schedule": 60.0,
         "args": (),
-    },
-    "send_email_reminders": {
-        "task": "app.tasks.send_email_reminders",
-        "schedule": 3600.0,
-        "args": (),
-    },
+    }
 }
 
 
