@@ -20,45 +20,47 @@ celery_app.conf.update(
     enable_utc=True,
     broker_connection_retry_on_startup=True,
     task_track_started=True,
-    task_time_limit=300,
-    task_soft_time_limit=240, # Catch SoftTimeLimitExceeded exception in your task fro best practice
     task_acks_late=True,
     result_serializer="json",
     task_serializer="json",
     accept_content=["json"],
-    worker_concurrency=4, # Remove this if the app gets bigger. It would defaukt the user sysytem CPU's cores
+    worker_concurrency=4,
     worker_max_tasks_per_child=100,
     task_default_queue="default",
     beat_schedule_filename="celerybeat-schedule.db",
     task_routes={
-        "app.tasks.*": {"queue": "default"},
-        "app.tasks.long_running": {"queue": "long_running"},
-        "app.tasks.email": {"queue": "email"},
-        "app.tasks.sync_user_from_supabase_task": {"queue": "sync"},
-        # LLM-related routes
-        "app.tasks.process_goal_completion": {"queue":"llm"},
+        # LLM processing
+        "app.tasks.process_goal_completion": {"queue": "llm"},
         "app.tasks.process_llm_generation": {"queue": "llm"},
-        "app.tasks.process_progressive_update": {"queue": "default"},
+        "app.tasks.process_progressive_update": {"queue": "llm"},
+        
+        # Everything else falls to default
+        "app.tasks.*": {"queue": "default"},
     },
     task_annotations={
-        "app.tasks.long_running": {"rate_limit": "10/m"},
-        "app.tasks.email": {"rate_limit": "20/m"},
-        "app.tasks.sync_user_from_supabase_task": {"rate_limit": "5/m"},
-        # LLM-related annotations
+        # LLM processing
         "app.tasks.process_goal_completion": {
             "rate_limit": "5/m",
             "acks_late": True,
-            "time_limit": 300,
-            "soft_time_limit": 240
-        },        
+            "time_limit": 600,  # Longer timeout for LLM tasks
+            "soft_time_limit": 540
+        },
         "app.tasks.process_llm_generation": {
             "rate_limit": "5/m",
             "acks_late": True,
+            "time_limit": 600,
+            "soft_time_limit": 540
+        },
+        "app.tasks.process_progressive_update": {
+            "rate_limit": "30/m",
             "time_limit": 300,
             "soft_time_limit": 240
         },
-        "app.tasks.process_progressive_update": {
-            "rate_limit": "30/m"
+        
+        # Default task settings
+        "app.tasks.*": {
+            "time_limit": 300,
+            "soft_time_limit": 240
         }
     },
     worker_log_format="[%(asctime)s: %(levelname)s/%(processName)s] %(message)s",
@@ -70,6 +72,7 @@ celery_app.conf.beat_schedule = {
         "task": "app.tasks.sync_user_from_supabase_task",
         "schedule": 60.0,
         "args": (),
+        "options": {"queue": "default"}  # Now using default queue
     }
 }
 
@@ -82,5 +85,7 @@ celery_app.conf.beat_schedule = {
 # # Force-load task modules so Celery registers them
 # # manual import = manual registration
 # import app.tasks.sync
-
-celery_app.autodiscover_tasks(["app.tasks"])
+from app.tasks import llm_tasks
+from app.tasks import sync
+import app.core.llm_executor
+celery_app.autodiscover_tasks(["app.tasks"], force=True)
