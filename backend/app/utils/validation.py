@@ -1,7 +1,10 @@
 import inspect
+import re
+import json
 from fastapi import Request, HTTPException
 from functools import wraps
-from typing import Callable, TypeVar, ParamSpec, Union, Awaitable
+from app.utils.logger_config import llm_logger
+from typing import Callable, TypeVar, ParamSpec, Optional
 from app.core.db import get_session
 from sqlmodel import Session
 from datetime import datetime
@@ -93,3 +96,56 @@ def is_valid(field):
 #         return async_wrapper if inspect.iscoroutinefunction(func) else sync_wrapper
 
 #     return decorator
+
+
+
+def validate_enum(value, enum_class, default=None):
+    try:
+        return enum_class(value).value
+    except ValueError:
+        llm_logger.warning(
+            f"Invalid {enum_class.__name__} value: {value}, using default",
+            extra={"valid_options": [e.value for e in enum_class]}
+        )
+        return default.value if default else value
+    
+def validate_goal(goal: dict) -> dict:
+    from app.models.users import GoalDifficulty 
+    if "difficulty" in goal:
+        try:
+            goal["difficulty"] = GoalDifficulty(goal["difficulty"]).value
+        except ValueError:
+            llm_logger.warning(f"Invalid difficulty: {goal['difficulty']}")
+            goal["difficulty"] = GoalDifficulty.EASY.value
+    return goal
+
+def validate_roadmap(roadmap: dict) -> dict:
+    if "timeline" in roadmap:
+        for phase in roadmap["timeline"]:
+            phase["duration"] = max(1, int(phase.get("duration", 1)))
+    return roadmap
+
+def validate_card(card: dict) -> dict:
+    card["status"] = card.get("status", "todo")
+    if "due_date" in card:
+        try:
+            datetime.strptime(card["due_date"], "%Y-%m-%d")
+        except ValueError:
+            card["due_date"] = None
+    return card
+
+def extract_json_from_markdown(content: str) -> Optional[dict]:
+    """Handle common LLM JSON response patterns"""
+    patterns = [
+        r"```json\n(.*?)\n```",  # ```json\n{...}\n```
+        r"```(.*?)```",            # ```{...}```
+        r"\{.*\}"                  # Raw JSON
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, content, re.DOTALL)
+        if match:
+            try:
+                return json.loads(match.group(1))
+            except json.JSONDecodeError:
+                continue
+    return None
