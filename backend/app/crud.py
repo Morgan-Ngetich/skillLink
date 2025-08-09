@@ -1,5 +1,7 @@
 from fastapi import HTTPException
+from typing import List, Dict, Optional
 from sqlmodel import Session, select
+from sqlalchemy.orm import selectinload
 from app.models.users import (
     User, 
     UserCreate,
@@ -13,6 +15,15 @@ from app.models.users import (
     MentorProfile,
     MentorProfileCreate,
     MentorProfileUpdate,
+    Goal,
+    GoalStatus,
+    GoalType,
+    GoalDifficulty,
+    Card,
+    CardStatus,
+    Roadmap,
+    RoadmapStatus,
+    
 )
 from app.core.security import get_password_hash, verify_password
 from uuid import UUID
@@ -187,6 +198,10 @@ def get_user_profile_or_404(session: Session, user_id: int) -> UserProfile:
         raise HTTPException(status_code=404, detail="UserProfile not found")
     return profile
 
+def get_user_skills(session: Session, user_id: int) -> List[str]:
+    profile = get_user_profile_or_404(session, user_id)
+    return profile.skills or []
+
 def ensure_user_profile_not_exists(session: Session, user_id: int):
     if get_user_profile(session, user_id):
         raise HTTPException(status_code=409, detail="Profile already exists for this user")
@@ -243,3 +258,180 @@ def update_mentor_profile(session: Session, user_id: int, profile_in: MentorProf
     session.commit()
     session.refresh(profile)
     return profile
+
+
+def create_roadmap_from_llm(
+    session: Session,
+    llm_data: Dict,
+    owner_id: int,
+    goal_id: Optional[int] = None
+) -> Roadmap:
+    """Create roadmap from LLM output with full validation"""
+    if not llm_data.get("title"):
+        raise HTTPException(status_code=422, detail="Roadmap title is required")
+
+    # Validate dates if provided
+    start_date = llm_data.get("start_date")
+    target_date = llm_data.get("target_date")
+    if start_date and target_date and start_date > target_date:
+        raise HTTPException(
+            status_code=422,
+            detail="Start date cannot be after target date"
+        )
+
+    roadmap = Roadmap(
+        title=llm_data["title"],
+        description=llm_data.get("description", ""),
+        visibility=llm_data.get("visibility", "private"),
+        status=llm_data.get("status", "draft"),
+        tags=llm_data.get("tags", []),
+        start_date=start_date,
+        target_date=target_date,
+        owner_id=owner_id,
+        goal_id=goal_id,
+        is_llm_generated=True,
+        llm_metadata=llm_data.get("metadata", {})
+    )
+    
+    session.add(roadmap)
+    session.commit()
+    session.refresh(roadmap)
+    return roadmap
+
+
+def create_cards_from_llm(
+    session: Session,
+    cards_data: List[Dict],
+    created_by_id: int,
+    roadmap_id: Optional[int] = None,
+    goal_id: Optional[int] = None,
+    list_id: Optional[int] = None
+) -> List[Card]:
+    """Batch create validated cards from LLM output"""
+    if not list_id:
+        raise HTTPException(status_code=422, detail="list_id is required for card creation")
+
+    created_cards = []
+    for card_data in cards_data:
+        try:
+            # Validate status
+            status = card_data.get("status", "todo")
+            try:
+                CardStatus(status)
+            except ValueError:
+                status = "todo"
+
+            card = Card(
+                title=card_data.get("title", "New Task"),
+                description=card_data.get("description", ""),
+                status=status,
+                priority=card_data.get("priority", "medium"),
+                position=card_data.get("position", 0),
+                tags=card_data.get("tags", []),
+                due_date=card_data.get("due_date"),
+                estimated_duration=card_data.get("estimated_duration"),
+                list_id=list_id,
+                goal_id=goal_id,
+                roadmap_id=roadmap_id,
+                created_by_id=created_by_id,
+                is_llm_generated=True
+            )
+            session.add(card)
+            created_cards.append(card)
+        except Exception as e:
+            continue
+    
+    session.commit()
+    return created_cards
+
+
+
+def create_goal_from_llm(
+    session: Session,
+    llm_data: Dict,
+    owner_id: int,
+    roadmap_id: Optional[int] = None,
+    parent_goal_id: Optional[int] = None
+) -> Goal:
+    """Create goal from LLM output with full validation"""
+    if not llm_data.get("title"):
+        raise HTTPException(status_code=422, detail="Goal title is required")
+
+    # Validate dates
+    start_date = llm_data.get("start_date")
+    target_date = llm_data.get("target_date")
+    if start_date and target_date and start_date > target_date:
+        raise HTTPException(
+            status_code=422,
+            detail="Start date cannot be after target date"
+        )
+
+    # Validate difficulty
+    difficulty = llm_data.get("difficulty", "easy")
+    try:
+        GoalDifficulty(difficulty)
+    except ValueError:
+        difficulty = "easy"
+
+    # Validate goal type
+    goal_type = llm_data.get("type", "skill")
+    try:
+        GoalType(goal_type)
+    except ValueError:
+        goal_type = "skill"
+
+    goal = Goal(
+        title=llm_data["title"],
+        description=llm_data.get("description", ""),
+        type=goal_type,
+        difficulty=difficulty,
+        importance=llm_data.get("importance", 1),
+        tags=llm_data.get("tags", []),
+        start_date=start_date,
+        target_date=target_date,
+        owner_id=owner_id,
+        roadmap_id=roadmap_id,
+        parent_goal_id=parent_goal_id,
+        is_llm_generated=True,
+        llm_metadata=llm_data.get("metadata", {})
+    )
+
+    session.add(goal)
+    session.commit()
+    session.refresh(goal)
+    return goal
+
+
+
+def get_llm_generated_entities(
+    session: Session,
+    user_id: int,
+    limit: int = 100
+) -> Dict[str, List]:
+    """Get all LLM-generated entities for a user"""
+    roadmaps = session.exec(
+        select(Roadmap)
+        .where(Roadmap.owner_id == user_id)
+        .where(Roadmap.is_llm_generated)
+        .limit(limit)
+    ).all()
+
+    goals = session.exec(
+        select(Goal)
+        .where(Goal.owner_id == user_id)
+        .where(Goal.is_llm_generated)
+        .limit(limit)
+    ).all()
+
+    cards = session.exec(
+        select(Card)
+        .where(Card.created_by_id == user_id)
+        .where(Card.is_llm_generated)
+        .limit(limit)
+    ).all()
+
+    return {
+        "roadmaps": roadmaps,
+        "goals": goals,
+        "cards": cards
+    }
