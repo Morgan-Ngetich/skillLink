@@ -205,13 +205,33 @@ def get_user_skills(session: Session, user_id: int) -> List[str]:
 def ensure_user_profile_not_exists(session: Session, user_id: int):
     if get_user_profile(session, user_id):
         raise HTTPException(status_code=409, detail="Profile already exists for this user")
-    
+
+def serialize_datetime_fields(items):
+    if not items:
+        return items
+    serialized = []
+    for item in items:
+        new_item = item.copy()
+        for date_field in ['start_date', 'end_date']:
+            if date_field in new_item and new_item[date_field] is not None:
+                # Convert datetime to ISO string
+                new_item[date_field] = new_item[date_field].isoformat()
+        serialized.append(new_item)
+    return serialized
+  
 def create_user_profile(session: Session, profile_in: UserProfileCreate, user_id: int) -> UserProfile:
     ensure_user_profile_not_exists(session, user_id)
-    
+
+    create_data = profile_in.model_dump(exclude_unset=True)
+
+    if 'education' in create_data:
+        create_data['education'] = serialize_datetime_fields(create_data['education'])
+    if 'experience' in create_data:
+        create_data['experience'] = serialize_datetime_fields(create_data['experience'])
+
     profile = UserProfile(
         user_id=user_id,
-        ** profile_in.dict(exclude_unset=True)
+        **create_data
     )
     session.add(profile)
     session.commit()
@@ -220,8 +240,16 @@ def create_user_profile(session: Session, profile_in: UserProfileCreate, user_id
 
 def update_user_profile(session: Session, user_id: int, profile_in: UserProfileUpdate):
     profile = get_user_profile_or_404(session, user_id)
+    
+    update_data = profile_in.model_dump(exclude_unset=True)
 
-    for key, value in profile_in.dict(exclude_unset=True).items():
+    # Serialize datetimes inside education and experience before setting
+    if 'education' in update_data:
+        update_data['education'] = serialize_datetime_fields(update_data['education'])
+    if 'experience' in update_data:
+        update_data['experience'] = serialize_datetime_fields(update_data['experience'])
+
+    for key, value in update_data.items():
         setattr(profile, key, value)
     session.add(profile)
     session.commit()
