@@ -5,7 +5,6 @@ import secrets
 import base64
 from typing import Optional
 
-
 class Settings(BaseSettings):
     DOMAIN: str = "localhost"
     API_V1_STR: str = "/api/v1"
@@ -42,6 +41,18 @@ class Settings(BaseSettings):
     RABBITMQ_DEFAULT_PASS : str
     RABBITMQ_PORT: str
     RABBITMQ_HOST: str
+    
+    LOG_LEVEL: str = "INFO"
+    
+    # llms
+    HUGGINGFACE_API_KEY: str
+    HUGGINGFACE_LLAMA_MODEL: str
+    OPENAI_API_KEY: Optional[str] = None
+    ANTHROPIC_API_KEY: Optional[str] = None
+    GROQ_API_KEY: Optional[str] = None
+    
+    LLM_TIMEOUT: int = 360000000
+    LLAMA2_TIMEOUT: int = 45
 
     @computed_field
     def SQLALCHEMY_DATABASE_URI(self) -> str:
