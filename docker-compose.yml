@@ -76,8 +76,8 @@ services:
     networks:
       - default
   
-  celery_worker:
-    container_name: celery_worker
+  celery_worker_default:
+    container_name: celery_worker_default
     image: "backend:latest"
     command: "celery_worker"
     restart: on-failure
@@ -87,7 +87,7 @@ services:
       celery_beat:
         condition: service_started
     env_file:
-    - .env
+      - .env
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
@@ -97,7 +97,27 @@ services:
       - uploads:/shared/uploads
     networks:
       - default
-  
+ 
+  celery_worker_llm:
+    container_name: celery_worker_llm
+    image: "backend:latest"
+    command: "celery_worker --llm"
+    restart: on-failure
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+    volumes:
+      - uploads:/shared/uploads
+    networks:
+      - default
+      
   celery_beat:
     container_name: "celery_beat"
     image: "backend:latest"
