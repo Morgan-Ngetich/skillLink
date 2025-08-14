@@ -776,12 +776,19 @@ class BoardUpdate(SQLModel):
     is_archived: Optional[bool] = None
 
     # ========================= BOARD LIST SCHEMA ========================
-
+    
+class CardStatus(str, Enum):
+    BACKLOG = "backlog"
+    TODO = "todo"
+    IN_PROGRESS = "in_progress"
+    DONE = "done"
+    BLOCKED = "blocked"
 
 class BoardListBase(SQLModel):
     title: str
     position: int = Field(default=0)
     is_archived: bool = Field(default=False)
+    status: Optional[CardStatus] = Field(default=None)
 
 
 class BoardList(BoardListBase, table=True):
@@ -805,15 +812,6 @@ class BoardListUpdate(SQLModel):
     is_archived: Optional[bool] = None
 
     # ================== CARD SCHEMA ==================
-
-
-class CardStatus(str, Enum):
-    BACKLOG = "backlog"
-    TODO = "todo"
-    IN_PROGRESS = "in_progress"
-    DONE = "done"
-    BLOCKED = "blocked"
-
 
 class CardPriority(str, Enum):
     LOW = "low"
