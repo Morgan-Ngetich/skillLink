@@ -9,10 +9,13 @@ RUN apt-get update && apt-get install -y \
     libwebp-dev \
     curl \
     adduser \
+    git \
+    cmake \
+    g++ \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Now create non-root user
+# Create non-root user
 RUN adduser --disabled-password --gecos '' appuser
 
 # Install Poetry
@@ -28,29 +31,34 @@ ARG INSTALL_DEV=false
 # Copy only dependency files first to leverage caching
 COPY pyproject.toml poetry.lock* ./
 
-# Install dependencies
-RUN bash -c "if [ \"$INSTALL_DEV\" = \"true\" ]; then poetry install --no-root --no-interaction --no-ansi; else poetry install --no-root --only main --no-interaction --no-ansi; fi"
+# Install dependencies with cache mounts for Poetry & pip
+RUN --mount=type=cache,target=/root/.cache/pypoetry \
+    --mount=type=cache,target=/root/.cache/pip \
+    bash -c "if [ \"$INSTALL_DEV\" = \"true\" ]; then \
+        poetry install --no-root --no-interaction --no-ansi; \
+    else \
+        poetry install --no-root --only main --no-interaction --no-ansi; \
+    fi"
 
 # Check for syntax issues
 RUN poetry check
 
-# Not neccessary but for clarity
+# App configuration
 ARG PORT=8000
 ENV PORT=${PORT}
 EXPOSE ${PORT}
 ENV PYTHONPATH=/app
 
-# Copy app code
+# Copy app code after dependencies (to leverage cache)
 COPY alembic.ini ./
 COPY ./app /app/app
 COPY entrypoint.sh /app/
 RUN chmod +x /app/entrypoint.sh
 
-# Fix permissions for non-root user
+# Fix permissions
 RUN chown -R appuser:appuser /app
 
-# Switch to non-root user
+# Switch to non-root
 USER appuser
 
 ENTRYPOINT ["/app/entrypoint.sh"]
-# CMD ["./entrypoint.sh"]
