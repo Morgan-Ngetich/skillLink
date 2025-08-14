@@ -34,7 +34,7 @@ def process_goal_completion(
         GoalStatus,
         User,
     )
-    from app.crud import create_roadmap_from_llm, create_cards_from_llm
+    from app.crud import create_roadmap_from_llm, create_cards_from_llm, create_board_from_llm
 
     try:
         current_user = session.get(User, user_id)
@@ -60,6 +60,8 @@ def process_goal_completion(
             and llm_response.output.creations
         ):
             creations = llm_response.output.creations
+            
+            # Create roadmap first if exists
             if creations.get("roadmaps"):
                 try:
                     roadmap = create_roadmap_from_llm(
@@ -73,16 +75,31 @@ def process_goal_completion(
                     result["errors"].append(f"Roadmap creation failed: {str(e)}")
 
             # Create cards if exists in LLM output
-            if creations.get("cards"):
-                cards = create_cards_from_llm(
-                    session=session,
-                    cards_data=creations["cards"],
-                    created_by_id=user_id,
-                    roadmap_id=getattr(roadmap, "id", None),
-                    goal_id=goal_id,
-                )
-                result["generated_cards"] = len(cards)
+            # if creations.get("cards"):
+            #     cards = create_cards_from_llm(
+            #         session=session,
+            #         cards_data=creations["cards"],
+            #         created_by_id=user_id,
+            #         roadmap_id=getattr(roadmap, "id", None),
+            #         goal_id=goal_id,
+            #     )
+            #     result["generated_cards"] = len(cards)
 
+            # Create board which will automatically create lists and cards
+            if creations.get("boards"):
+                try:
+                    board = create_board_from_llm(
+                        session=session,
+                        llm_data=creations["boards"][0],
+                        owner_id=user_id,
+                        roadmap_id=roadmap.id if 'roadmap' in locals() else None,
+                        goal_id=goal_id
+                    )
+                    result["generated_board"] = True
+                    result["generated_cards"] = sum(len(lst.get('cards', [])) for lst in creations["boards"][0].get('lists', []))
+                except Exception as e:
+                    result["errors"].append(f"Board creation failed: {str(e)}")
+                                
             # Update goal status
             goal.status = GoalStatus.IN_PROGRESS
             goal.is_llm_generated = True
