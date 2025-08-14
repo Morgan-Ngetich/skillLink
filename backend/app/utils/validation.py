@@ -4,10 +4,11 @@ import json
 from fastapi import Request, HTTPException
 from functools import wraps
 from app.utils.logger_config import llm_logger
-from typing import Callable, TypeVar, ParamSpec, Optional
+from typing import Callable, TypeVar, ParamSpec, Optional, Union
 from app.core.db import get_session
 from sqlmodel import Session
 from datetime import datetime
+from pydantic import BaseModel
 
 P = ParamSpec("P")
 R = TypeVar("R")
@@ -109,30 +110,53 @@ def validate_enum(value, enum_class, default=None):
         )
         return default.value if default else value
     
-def validate_goal(goal: dict) -> dict:
+def validate_goal(goal_data: Union[dict, BaseModel]) -> dict:
     from app.models.users import GoalDifficulty 
-    if "difficulty" in goal:
+    """Validate goal data, handling both dicts and Pydantic models"""
+    # Convert to dict if it's a model
+    if hasattr(goal_data, 'model_dump'):
+        goal_data = goal_data.model_dump()
+    
+    validated = goal_data.copy()
+    
+    if "difficulty" in validated:
         try:
-            goal["difficulty"] = GoalDifficulty(goal["difficulty"]).value
+            validated["difficulty"] = GoalDifficulty(validated["difficulty"]).value
         except ValueError:
-            llm_logger.warning(f"Invalid difficulty: {goal['difficulty']}")
-            goal["difficulty"] = GoalDifficulty.EASY.value
-    return goal
+            validated["difficulty"] = GoalDifficulty.EASY.value
+            
+    return validated
 
-def validate_roadmap(roadmap: dict) -> dict:
-    if "timeline" in roadmap:
-        for phase in roadmap["timeline"]:
+def validate_roadmap(roadmap_data: Union[dict, BaseModel]) -> dict:
+    """Validate roadmap data, handling both dicts and Pydantic models"""
+    # Convert to dict if it's a model
+    if hasattr(roadmap_data, 'model_dump'):
+        roadmap_data = roadmap_data.model_dump()
+    
+    validated = roadmap_data.copy()
+    
+    if "timeline" in validated:
+        for phase in validated["timeline"]:
             phase["duration"] = max(1, int(phase.get("duration", 1)))
-    return roadmap
+            
+    return validated
 
-def validate_card(card: dict) -> dict:
-    card["status"] = card.get("status", "todo")
-    if "due_date" in card:
+def validate_card(card_data: Union[dict, BaseModel]) -> dict:
+    """Validate card data, handling both dicts and Pydantic models"""
+    # Convert to dict if it's a model
+    if hasattr(card_data, 'model_dump'):
+        card_data = card_data.model_dump()
+    
+    validated = card_data.copy()
+    validated["status"] = validated.get("status", "todo")
+    
+    if "due_date" in validated:
         try:
-            datetime.strptime(card["due_date"], "%Y-%m-%d")
+            datetime.strptime(validated["due_date"], "%Y-%m-%d")
         except ValueError:
-            card["due_date"] = None
-    return card
+            validated["due_date"] = None
+            
+    return validated
 
 def extract_json_from_markdown(content: str) -> Optional[dict]:
     """Handle common LLM JSON response patterns"""
