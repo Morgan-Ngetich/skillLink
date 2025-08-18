@@ -658,6 +658,7 @@ class GoalBase(SQLModel):
 class Goal(GoalBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     owner_id: int = Field(foreign_key="users.id")
+    # TODO consider removing this. Or documment that NUll mean personal
     roadmap_id: Optional[int] = Field(
         foreign_key="roadmap.id", default=None, index=True
     )
@@ -725,7 +726,7 @@ class GoalCreationRequest(GoalCreate):
                     "target_date": "2024-06-30T23:59:59",
                     "generate_plan": True,
                     "ai_settings": {
-                        "model": "compound-beta",
+                        "model": "compound-beta-mini",
                         "temperature": 0.7
                     }
                 }
@@ -983,6 +984,7 @@ class SafetyViolationType(str, Enum):
 
 # TODO :// move to public.py
 class LLMTargetEntity(str, Enum):
+    BOARDS = "boards"
     GOALS = "goals"
     ROADMAPS = "roadmaps"
     CARDS = "cards"
@@ -1033,8 +1035,8 @@ class LLMGenerationRequest(BaseModel):
         "falcon-7b", 
         "falcon-7b-instruct", 
         "claude-2",
-        "compound-beta"
-    ] = "compound-beta"
+        "compound-beta-mini"
+    ] = "compound-beta-mini"
 
     
     temperature: float = Field(default=0.7, ge=0.0, le=1.0)
@@ -1057,7 +1059,7 @@ class LLMGenerationRequest(BaseModel):
                     "prompt": "Explain quantum computing to a 12-year-old.",
                     "context": {"user_level": "beginner"},
                     "action": "create",
-                    "model": "compound-beta",
+                    "model": "compound-beta-mini",
                     "temperature": 0.7,
                     "top_p": 0.9,
                     "frequency_penalty": 0.0,
