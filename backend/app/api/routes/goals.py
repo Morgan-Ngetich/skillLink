@@ -1,7 +1,8 @@
 import json
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, BackgroundTasks
 from sqlmodel import select
 from sqlalchemy import func
+from sqlalchemy.orm import joinedload
 from typing import List, Optional
 from app.api.deps import CurrentUser, SessionDep
 from app.core.celery import celery_app
@@ -16,6 +17,8 @@ from app.models.users import (
     RoadmapDisplay,
     Roadmap,
     GoalCreationRequest,
+    Board,
+    BoardList,
     TaskStatus,
     TaskStatusEnum
 )
@@ -79,7 +82,25 @@ def create_goal(
     }
 
 
-router.get("/", response_model=List[Goal])
+@router.get("/roadmaps/{roadmap_id}/full", response_model=RoadmapDisplay)
+def get_roadmap_details(roadmap_id: int, session: SessionDep, current_user: CurrentUser):
+    roadmap = session.exec(
+        select(Roadmap)
+        .where(Roadmap.id == roadmap_id)
+        .options(
+            joinedload(Roadmap.goals).joinedload(Goal.cards),
+            joinedload(Roadmap.boards).joinedload(Board.lists).joinedload(BoardList.cards)
+        )
+    ).unique().one()
+    
+    if not roadmap:
+        raise HTTPException(status_code=404, detail="Roadmap not found")
+    if roadmap.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    return RoadmapDisplay.from_roadmap(roadmap)
+
+@router.get("/", response_model=dict)
 def read_goals(
     session: SessionDep,
     current_user: CurrentUser,
@@ -182,7 +203,11 @@ async def confirm_progressive_update(
 
 
 @router.get("/task/{task_id}", response_model=TaskStatus)
-async def check_task_status(task_id: str, session: SessionDep) -> TaskStatus:
+async def check_task_status(
+    task_id: str, 
+    session: SessionDep,
+    background_tasks: BackgroundTasks
+) -> TaskStatus:
     """
     Check the status of an async LLM generation task.
     """
@@ -201,20 +226,33 @@ async def check_task_status(task_id: str, session: SessionDep) -> TaskStatus:
     if task_result.state == "SUCCESS":
         result = task_result.result
 
-        # Optional: Attach roadmap_display if it exists
-        if result.get("status") == "success":
-            roadmap = session.get(
-                Roadmap, 
-                result["response"]["output"]["creations"]["roadmaps"][0]["id"]
+        if not result or not isinstance(result, dict):
+            return TaskStatus(
+                task_id=task_id,
+                status=TaskStatusEnum.FAILED,
+                message="Malformed result from task"
             )
-            if roadmap:
-                roadmap_display = RoadmapDisplay.from_roadmap(roadmap)
-                result["response"]["output"]["roadmap_display"] = roadmap_display.dict()
 
-        return TaskStatus(
-            task_id=task_id,
-            status=TaskStatusEnum.COMPLETED,
-            result=LLMGenerationResponse(**result["response"]).to_public()
-        )
+        if result.get("status") == "success":
+            roadmap_id = result.get("goal_id")  # Assuming roadmap is linked to the goal
+
+            if roadmap_id:
+                roadmap = session.get(Roadmap, roadmap_id)
+                if roadmap:
+                    roadmap_display = RoadmapDisplay.from_roadmap(roadmap)
+                    # Inject this display info directly into result
+                    result["roadmap_display"] = roadmap_display.dict()
+
+            return TaskStatus(
+                task_id=task_id,
+                status=TaskStatusEnum.COMPLETED,
+                result=LLMGenerationResponse(**{
+                    "output": {
+                        "creations": {},
+                        "roadmap_display": result.get("roadmap_display"),
+                    }
+                }).to_public()
+            )
+
 
     return TaskStatus(task_id=task_id, status=TaskStatusEnum.PROCESSING)
