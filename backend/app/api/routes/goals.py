@@ -2,11 +2,12 @@ import json
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from sqlmodel import select
 from sqlalchemy import func
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import selectinload  
 from typing import List, Optional
 from app.api.deps import CurrentUser, SessionDep
 from app.core.celery import celery_app
 from app.models.users import (
+    Card,
     Goal,
     GoalCreate,
     GoalUpdate,
@@ -88,8 +89,18 @@ def get_roadmap_details(roadmap_id: int, session: SessionDep, current_user: Curr
         select(Roadmap)
         .where(Roadmap.id == roadmap_id)
         .options(
-            joinedload(Roadmap.goals).joinedload(Goal.cards),
-            joinedload(Roadmap.boards).joinedload(Board.lists).joinedload(BoardList.cards)
+            # Load goals with their cards, subgoals, and subgoal cards
+            selectinload(Roadmap.goals)
+            .selectinload(Goal.cards),
+            selectinload(Roadmap.goals)
+            .selectinload(Goal.sub_goals)  # Load subgoals
+            .selectinload(Goal.cards),     # Load cards for subgoals
+            
+            # Load boards with lists, cards, and card goals
+            selectinload(Roadmap.boards)
+            .selectinload(Board.lists)
+            .selectinload(BoardList.cards)
+            .selectinload(Card.goal),      # Load goal for each card
         )
     ).unique().one()
     
@@ -98,7 +109,7 @@ def get_roadmap_details(roadmap_id: int, session: SessionDep, current_user: Curr
     if roadmap.owner_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not authorized")
     
-    return RoadmapDisplay.from_roadmap(roadmap)
+    return RoadmapDisplay.from_roadmap(roadmap, session)
 
 @router.get("/", response_model=dict)
 def read_goals(
