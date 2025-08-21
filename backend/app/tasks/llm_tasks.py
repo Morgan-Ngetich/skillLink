@@ -34,8 +34,9 @@ def process_goal_completion(
         GoalStatus,
         User,
     )
-    from app.crud import create_roadmap_from_llm, create_cards_from_llm, create_board_from_llm
-
+    from app.crud import create_roadmap_from_llm, create_board_from_llm
+  
+    roadmap = None
     try:
         current_user = session.get(User, user_id)
         goal = session.get(Goal, goal_id)
@@ -50,9 +51,10 @@ def process_goal_completion(
             context=build_goal_context(session, current_user, goal=goal),
         )
 
-        # Call LLM (using yout existing service)
+        # Call LLM
         llm_response: LLMGenerationResponse = call_llm_service(llm_request)
-        result = {"generated_roadmap": False, "generated_cards": 0, "errors": []}
+        print("LLM Response:", llm_response.model_dump_json(indent=2))
+        result = {"generated_roadmap": False, "generated_cards": 0, "generated_board": False, "errors": []}
 
         # Process creations if they exist
         if (
@@ -68,40 +70,70 @@ def process_goal_completion(
                         session=session,
                         llm_data=creations["roadmaps"][0],
                         owner_id=user_id,
-                        goal_id=goal_id,
                     )
                     result["generated_roadmap"] = True
                 except Exception as e:
                     result["errors"].append(f"Roadmap creation failed: {str(e)}")
 
-            # Create cards if exists in LLM output
-            # if creations.get("cards"):
-            #     cards = create_cards_from_llm(
-            #         session=session,
-            #         cards_data=creations["cards"],
-            #         created_by_id=user_id,
-            #         roadmap_id=getattr(roadmap, "id", None),
-            #         goal_id=goal_id,
-            #     )
-            #     result["generated_cards"] = len(cards)
-
             # Create board which will automatically create lists and cards
-            if creations.get("boards"):
+            # Check for boards_with_lists data stored as custom attribute
+            if creations.get("boards_with_lists"):
                 try:
-                    board = create_board_from_llm(
+                    # Get the first board structure
+                    board_structure = creations["boards_with_lists"][0]
+                    board_data = board_structure["board"]
+                    lists_data = board_structure["lists"]
+                    
+                    # Extract all cards from all lists
+                    cards_data = []
+                    for list_info in lists_data:
+                        if "cards" in list_info and list_info["cards"]:
+                            cards_data.extend(list_info["cards"])
+                    
+                    print(f"DEBUG: About to create board '{board_data.title}' with {len(cards_data)} cards")
+                    for i, card in enumerate(cards_data):
+                        print(f"DEBUG: Card {i}: '{card.get('title') if hasattr(card, 'get') else getattr(card, 'title', 'Unknown')}'")
+                                                               
+                    board, cards_created = create_board_from_llm(
                         session=session,
-                        llm_data=creations["boards"][0],
+                        llm_data=board_data,
                         owner_id=user_id,
-                        roadmap_id=roadmap.id if 'roadmap' in locals() else None,
-                        goal_id=goal_id
-                    )
+                        roadmap_id=roadmap.id if roadmap else None,
+                        goal_id=goal_id,
+                        cards_data=cards_data
+                    )                    
                     result["generated_board"] = True
-                    result["generated_cards"] = sum(len(lst.get('cards', [])) for lst in creations["boards"][0].get('lists', []))
+                    result["generated_cards"] = cards_created
+                   
+                except Exception as e:
+                    result["errors"].append(f"Board creation failed: {str(e)}")
+            
+            # Fallback: Check for regular 'boards' if _boards_with_lists doesn't exist
+            elif creations.get("boards"):
+                try:
+                    board_data = creations["boards"][0]
+                    cards_data = creations.get("cards", [])
+                    
+                    print(f"DEBUG: Fallback - About to create board '{board_data.title}' with {len(cards_data)} cards")
+                                                               
+                    board, cards_created = create_board_from_llm(
+                        session=session,
+                        llm_data=board_data,
+                        owner_id=user_id,
+                        roadmap_id=roadmap.id if roadmap else None,
+                        goal_id=goal_id,
+                        cards_data=cards_data
+                    )                    
+                    result["generated_board"] = True
+                    result["generated_cards"] = cards_created
+                   
                 except Exception as e:
                     result["errors"].append(f"Board creation failed: {str(e)}")
                                 
             # Update goal status
             goal.status = GoalStatus.IN_PROGRESS
+            if roadmap:
+                goal.roadmap_id = roadmap.id
             goal.is_llm_generated = True
             session.add(goal)
             session.commit()
@@ -115,14 +147,13 @@ def process_goal_completion(
             extra={"attempt": self.request.retries},
         )
 
-        # Mark goal as failed (add these fields to your Goal model)
-        if goal:
+        # Mark goal as failed
+        if goal and "goal" in locals():
             goal.is_llm_generated = False
             session.add(goal)
             session.commit()
 
         raise self.retry(exc=e)
-
 
 @celery_app.task(
     name="app.tasks.process_llm_generation",
@@ -193,7 +224,9 @@ def process_llm_generation(
             for goal_data in llm_response.output.creations.get("goals", []):
                 try:
                     goal = create_goal_from_llm(
-                        session=session, llm_data=goal_data, owner_id=user_id
+                        session=session, 
+                        llm_data=goal_data, 
+                        owner_id=user_id
                     )
                     result["created_goals"].append(goal.id)
 
