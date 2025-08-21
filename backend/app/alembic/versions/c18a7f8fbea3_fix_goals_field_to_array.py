@@ -20,26 +20,25 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
-    # Step 1: Clean malformed arrays where elements are stringified JSON parts, fix them to simple text array
-    op.execute("""
-        UPDATE userprofile
-        SET goals = ARRAY(
-            SELECT regexp_replace(elem, '(^\\"|\\")', '', 'g')
-            FROM unnest(goals) AS elem
-        )
-        WHERE goals IS NOT NULL
-          AND goals[1] LIKE '{%"%'
-          AND goals[array_length(goals,1)] LIKE '%"}';
-    """)
-
-    # Step 2: Alter column type to ARRAY(TEXT) if not already
+    # Step 1: Convert 'goals' column from text to TEXT[] safely
     op.alter_column(
         'userprofile',
         'goals',
         type_=postgresql.ARRAY(sa.String()),
         existing_type=sa.Text(),
-        postgresql_using='goals::text::text[]'
+        postgresql_using="string_to_array(goals, ',')"
     )
+
+    # Step 2: Clean up array values (remove stray quotes from each element)
+    op.execute("""
+        UPDATE userprofile
+        SET goals = ARRAY(
+            SELECT regexp_replace(elem, '(^"|"$)', '', 'g')
+            FROM unnest(goals) AS elem
+        )
+        WHERE goals IS NOT NULL;
+    """)
+
 
 
 def downgrade() -> None:
