@@ -139,6 +139,7 @@ class TestUserProfileModel:
             area_of_focus=["Tech", "Education"],
             goals=["Learn Python", "Become mentor"],
             interests=["Programming", "Teaching"],
+            skills=["Programming", "Architecture"]
         )
         session.add_all([user, profile])
         session.commit()
