@@ -17,7 +17,7 @@ from datetime import datetime, timezone
 from sqlalchemy import Column, String
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from app.utils.validation import is_valid
-from app.utils.helper import calculate_goal_progress
+from app.utils.helper import ProgressService
 
 
 # ================== PUBLIC MODELS ==================
@@ -62,7 +62,7 @@ class CardPublic(SQLModel):
     description: Optional[str] = None
     status: str  # CardStatus as string
     priority: str  # CardPriority as string
-    posistion: int = 0
+    position: int = 0
     tags: Optional[List[str]] = None
     due_date: Optional[datetime] = None
     estimated_duration: Optional[int] = None
@@ -117,7 +117,6 @@ class MentorProfilePublic(SQLModel):
     is_mentor_profile_complete: Optional[bool] = None
     created_at: datetime
     updated_at: datetime
-
 
 
 # ================== ROLES AND PERMISSIONS ==================
@@ -582,6 +581,7 @@ class RoadmapBase(SQLModel):
 class Roadmap(RoadmapBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     owner_id: int = Field(foreign_key="users.id")
+    is_llm_generated: bool = Field(default=False)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -654,6 +654,15 @@ class GoalBase(SQLModel):
             raise ValueError("Start date cannot be after target date")
         return v
 
+class GoalPublic(GoalBase):
+    id: int
+    owner_id: int
+    roadmap_id: Optional[int] = None
+    parent_goal_id: Optional[int] = None
+    status: GoalStatus
+    is_llm_generated: bool
+    created_at: datetime
+    updated_at: datetime
 
 class Goal(GoalBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -678,6 +687,27 @@ class Goal(GoalBase, table=True):
     parent_goal: Optional["Goal"] = Relationship(
         back_populates="sub_goals", sa_relationship_kwargs={"remote_side": "Goal.id"}
     )
+    
+    def to_public(self) -> "GoalPublic":
+        """Convert Goal ORM instance to public representation"""
+        return GoalPublic(
+            id=self.id,
+            title=self.title,
+            description=self.description,
+            type=self.type,
+            difficulty=self.difficulty,
+            importance=self.importance,
+            tags=self.tags,
+            start_date=self.start_date,
+            target_date=self.target_date,
+            owner_id=self.owner_id,
+            roadmap_id=self.roadmap_id,
+            parent_goal_id=self.parent_goal_id,
+            status=self.status,
+            is_llm_generated=self.is_llm_generated,
+            created_at=self.created_at,
+            updated_at=self.updated_at
+        )
 
 
 class GoalCreate(GoalBase):
@@ -757,13 +787,17 @@ class Board(BoardBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     owner_id: int = Field(foreign_key="users.id")
     roadmap_id: Optional[int] = Field(foreign_key="roadmap.id", default=None)
+    goal_id: Optional[int] = Field(foreign_key="goal.id", default=None)
+    is_llm_generated: bool = Field(default=False)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     # Relationships
     owner: User = Relationship(back_populates="boards")
     roadmap: Optional[Roadmap] = Relationship(back_populates="boards")
+    goal: Optional[Goal] = Relationship()
     lists: List["BoardList"] = Relationship(back_populates="board")
+    
 
 
 class BoardCreate(BoardBase):
@@ -795,6 +829,7 @@ class BoardListBase(SQLModel):
 class BoardList(BoardListBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     board_id: int = Field(foreign_key="board.id")
+    is_llm_generated: bool = Field(default=False)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -826,7 +861,7 @@ class CardBase(SQLModel):
     description: Optional[str] = None
     status: CardStatus = Field(default=CardStatus.TODO)
     priority: CardPriority = Field(default=CardPriority.MEDIUM)
-    posistion: int = Field(default=0)  # for ordering wihtin the list of the todos
+    position: int = Field(default=0)  # for ordering wihtin the list of the todos
     tags: Optional[List[str]] = Field(sa_column=Column(ARRAY(String)), default=None)
     due_date: Optional[datetime] = None
     estimated_duration: Optional[int] = None  # in minutes
@@ -837,6 +872,7 @@ class Card(CardBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     list_id: int = Field(foreign_key="boardlist.id")
     goal_id: Optional[int] = Field(foreign_key="goal.id", default=None)
+    roadmap_id: Optional[int] = Field(foreign_key="roadmap.id", default=None)
     assignee_id: Optional[int] = Field(foreign_key="users.id", default=None)
     created_by_id: int = Field(foreign_key="users.id")
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -863,7 +899,7 @@ class Card(CardBase, table=True):
             description=self.description,
             status=self.status.value,
             priority=self.priority.value,
-            posistion=self.posistion,
+            posistion=self.position,
             tags=self.tags,
             due_date=self.due_date,
             estimated_duration=self.estimated_duration,
@@ -1096,9 +1132,10 @@ class LLMGenerationRequest(BaseModel):
         if not (0.0 <= v <= 2.0):
             raise ValueError("presence_penalty must be between 0.0 and 2.0")
         return v
-    
+
+# TODO create BOADWITHLISTCREATE that will have `boards`: & `lists` instead of `Dict[str, Any]`, to house the `board_with_lists`
 class LLMStructuredOutput(BaseModel):
-    creations: Optional[Dict[str, List[Union[GoalCreate, RoadCreate, CardCreate]]]] = (
+    creations: Optional[Dict[str, List[Union[GoalCreate, RoadCreate, CardCreate, BoardCreate, Dict[str, Any]]]]] = (
         Field(
             default_factory=dict,
             description="Structured output containing created entities like goals, roadmaps, or cards",
@@ -1223,56 +1260,79 @@ class TaskStatus(BaseModel):
 class CardWithGoal(SQLModel):
     """Card with goal context"""
     card: CardPublic
-    goal: Optional[Goal] = None
+    goal: Optional[GoalPublic] = None
     
     @classmethod
     def from_card(cls, card: Card):
         return cls(
             card=card.to_public(),
-            goal=card.goal
+            goal=card.goal.to_public() if card.goal else None
         )
 
 
 class ListWithCards(SQLModel):
     """List with its cards"""
-    list: BoardList
+    boardlist: BoardList
     cards: List[CardWithGoal]
+    
+    @computed_field
+    def card_count(self) -> int:
+        return len(self.cards)
     
     @classmethod
     def from_list(cls, board_list: BoardList):
         return cls(
-            list=board_list,
-            cards=[CardWithGoal.from_card(c) for c in board_list.cards]
-        )
+            boardlist=board_list,
+            cards=sorted(
+                [CardWithGoal.from_card(c) for c in board_list.cards],
+                key=lambda x : x.card.position
+        ))
 
 
 class BoardWithLists(SQLModel):
     """Board with nested lists and cards"""
     board: Board
-    lists: List["ListWithCards"]
+    lists: List[ListWithCards]
+    
+    @computed_field
+    def active_card_count(self) -> int:
+        return sum(len(lst.cards) for lst in self.lists)
     
     @classmethod
     def from_board(cls, board: Board):
         return cls(
             board=board,
-            lists=[ListWithCards.from_list(l) for l in board.lists]
+            lists=sorted(
+                [ListWithCards.from_list(l) for l in board.lists],
+                key=lambda x: x.boardlist.position
+            )
         )
 
 
 class GoalWithSubgoals(SQLModel):
     """Goal with nested subgoals structure"""
-    goal: Goal
+    goal: GoalPublic
     subgoals: List["GoalWithSubgoals"]
     cards: List[CardPublic]
     progress: float = Field(0.0, ge=0.0, le=1.0)
     
     @classmethod
-    def from_goal(cls, goal: Goal):
+    def from_goal(cls, goal: Goal, progress_service: ProgressService, depth: int = 3):
+        """takes progress_service as dependency"""
+        if depth <= 0:
+            return cls(
+                goal=goal.to_public(),
+                subgoals=[],
+                cards=[],
+                progress=progress_service.calculate_goal_progress(goal)
+            )
+            
         return cls(
-            goal=goal,
-            subgoals=[cls.from_goal(g) for g in goal.sub_goals],
+            goal=goal.to_public(),
+            subgoals=[cls.from_goal(subgoal, progress_service, depth-1) 
+                      for subgoal in goal.sub_goals],
             cards=[c.to_public() for c in goal.cards],
-            progress=calculate_goal_progress(goal)
+            progress=progress_service.calculate_goal_progress(goal)
         )
         
 class RoadmapDisplay(SQLModel):
@@ -1282,11 +1342,16 @@ class RoadmapDisplay(SQLModel):
     boards: List[BoardWithLists]
     
     @classmethod
-    def from_roadmap(cls, roadmap: Roadmap):
+    def from_roadmap(cls, roadmap: Roadmap, session):
+        """Now takes session to create ProgressService"""
+        progress_service = ProgressService(session)
+        
         return cls(
             roadmap=roadmap,
-            goals=[GoalWithSubgoals.from_goal(g) for g in roadmap.goals],
-            boards=[BoardWithLists.from_board(b) for b in roadmap.boards]
+            goals=[GoalWithSubgoals.from_goal(goal, progress_service) 
+                  for goal in roadmap.goals if goal.parent_goal_id is None],  # Only top-level
+            boards=[BoardWithLists.from_board(board) for board in roadmap.boards],
+            # progress_summary=progress_service.calculate_roadmap_progress(roadmap)
         )
 
 
@@ -1414,6 +1479,450 @@ class RoadmapDisplay(SQLModel):
         "violations": []
       }
     }
+  }
+}
+
+
+
+
+{
+  "roadmap": {
+    "id": 1,
+    "title": "Become Full-Stack Developer",
+    "description": "Master both frontend and backend technologies to become a complete full-stack developer within 6 months",
+    "visibility": "private",
+    "status": "active",
+    "tags": ["programming", "career", "web-development"],
+    "start_date": "2024-01-01T00:00:00Z",
+    "target_date": "2024-06-30T23:59:59Z",
+    "owner_id": 101,
+    "is_llm_generated": true,
+    "created_at": "2024-01-01T09:00:00Z",
+    "updated_at": "2024-01-15T14:30:00Z",
+    
+    "owner": {
+      "id": 101,
+      "uuid": "550e8400-e29b-41d4-a716-446655440001",
+      "full_name": "John Doe",
+      "email": "john.doe@example.com",
+      "avatar_url": "https://example.com/avatars/john.jpg",
+      "cover_image": "https://example.com/covers/john.jpg",
+      "is_superuser": false,
+      "is_mentor": true,
+      "is_mentee": false,
+      "created_at": "2023-12-01T10:00:00Z",
+      "updated_at": "2024-01-15T14:30:00Z"
+    }
+  },
+
+  "goals": [
+    {
+      "id": 10,
+      "title": "Master Frontend Development",
+      "description": "Learn modern frontend frameworks and best practices",
+      "type": "skill",
+      "difficulty": "hard",
+      "importance": 5,
+      "status": "in_progress",
+      "tags": ["frontend", "javascript", "react"],
+      "start_date": "2024-01-01T00:00:00Z",
+      "target_date": "2024-03-31T23:59:59Z",
+      "owner_id": 101,
+      "roadmap_id": 1,
+      "parent_goal_id": null,
+      "is_llm_generated": true,
+      "llm_metadata": {
+        "confidence_score": 0.85,
+        "generated_at": "2024-01-01T09:05:00Z",
+        "model": "compound-beta-mini",
+        "prompt": "Create frontend learning path"
+      },
+      "created_at": "2024-01-01T09:05:00Z",
+      "updated_at": "2024-01-10T16:20:00Z",
+      
+      "sub_goals": [
+        {
+          "id": 11,
+          "title": "Learn React Fundamentals",
+          "description": "Master React components, hooks, and state management",
+          "type": "skill",
+          "difficulty": "medium",
+          "importance": 4,
+          "status": "in_progress",
+          "tags": ["react", "javascript", "components"],
+          "start_date": "2024-01-01T00:00:00Z",
+          "target_date": "2024-01-31T23:59:59Z",
+          "owner_id": 101,
+          "roadmap_id": 1,
+          "parent_goal_id": 10,
+          "is_llm_generated": true,
+          "llm_metadata": {
+            "confidence_score": 0.90,
+            "generated_at": "2024-01-01T09:05:00Z"
+          },
+          "created_at": "2024-01-01T09:06:00Z",
+          "updated_at": "2024-01-10T16:20:00Z",
+          
+          "sub_goals": [],
+          
+          "cards": [
+            {
+              "id": 101,
+              "title": "Complete React Tutorial Series",
+              "description": "Work through official React documentation tutorial",
+              "status": "done",
+              "priority": "high",
+              "position": 1,
+              "tags": ["tutorial", "documentation"],
+              "due_date": "2024-01-10T23:59:59Z",
+              "estimated_duration": 480,
+              "is_archived": false,
+              "created_at": "2024-01-01T09:10:00Z",
+              "updated_at": "2024-01-08T14:00:00Z"
+            },
+            {
+              "id": 102,
+              "title": "Build Todo App with React",
+              "description": "Create a fully functional todo application using React hooks",
+              "status": "in_progress",
+              "priority": "high",
+              "position": 2,
+              "tags": ["project", "hands-on"],
+              "due_date": "2024-01-20T23:59:59Z",
+              "estimated_duration": 720,
+              "is_archived": false,
+              "created_at": "2024-01-01T09:12:00Z",
+              "updated_at": "2024-01-15T11:30:00Z"
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "title": "Master CSS and Styling",
+          "description": "Learn advanced CSS techniques and responsive design",
+          "type": "skill",
+          "difficulty": "medium",
+          "importance": 3,
+          "status": "not_started",
+          "tags": ["css", "styling", "responsive"],
+          "start_date": "2024-02-01T00:00:00Z",
+          "target_date": "2024-02-29T23:59:59Z",
+          "owner_id": 101,
+          "roadmap_id": 1,
+          "parent_goal_id": 10,
+          "is_llm_generated": true,
+          "created_at": "2024-01-01T09:07:00Z",
+          "updated_at": "2024-01-01T09:07:00Z",
+          
+          "sub_goals": [],
+          "cards": []
+        }
+      ],
+      
+      "cards": [
+        {
+          "id": 100,
+          "title": "Research Frontend Frameworks Comparison",
+          "description": "Compare React, Vue, Angular to understand ecosystem",
+          "status": "done",
+          "priority": "medium",
+          "position": 0,
+          "tags": ["research", "strategic"],
+          "due_date": "2024-01-05T23:59:59Z",
+          "estimated_duration": 240,
+          "is_archived": false,
+          "created_at": "2024-01-01T09:08:00Z",
+          "updated_at": "2024-01-03T16:45:00Z"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "title": "Master Backend Development",
+      "description": "Learn server-side programming and database management",
+      "type": "skill",
+      "difficulty": "hard",
+      "importance": 5,
+      "status": "not_started",
+      "tags": ["backend", "nodejs", "database"],
+      "start_date": "2024-04-01T00:00:00Z",
+      "target_date": "2024-06-30T23:59:59Z",
+      "owner_id": 101,
+      "roadmap_id": 1,
+      "parent_goal_id": null,
+      "is_llm_generated": true,
+      "created_at": "2024-01-01T09:08:00Z",
+      "updated_at": "2024-01-01T09:08:00Z",
+      
+      "sub_goals": [
+        {
+          "id": 21,
+          "title": "Learn Node.js and Express",
+          "description": "Master server-side JavaScript development",
+          "type": "skill",
+          "difficulty": "medium",
+          "importance": 4,
+          "status": "not_started",
+          "tags": ["nodejs", "express", "api"],
+          "start_date": "2024-04-01T00:00:00Z",
+          "target_date": "2024-04-30T23:59:59Z",
+          "owner_id": 101,
+          "roadmap_id": 1,
+          "parent_goal_id": 20,
+          "is_llm_generated": true,
+          "created_at": "2024-01-01T09:09:00Z",
+          "updated_at": "2024-01-01T09:09:00Z",
+          
+          "sub_goals": [],
+          "cards": []
+        }
+      ],
+      
+      "cards": []
+    }
+  ],
+
+  "boards": [
+    {
+      "id": 200,
+      "title": "Frontend Development Sprint",
+      "description": "Weekly sprint board for frontend tasks",
+      "position": 0,
+      "is_archived": false,
+      "owner_id": 101,
+      "roadmap_id": 1,
+      "goal_id": 10,
+      "is_llm_generated": true,
+      "created_at": "2024-01-01T09:15:00Z",
+      "updated_at": "2024-01-15T14:30:00Z",
+      
+      "lists": [
+        {
+          "id": 2001,
+          "title": "Backlog",
+          "position": 0,
+          "is_archived": false,
+          "status": "backlog",
+          "board_id": 200,
+          "is_llm_generated": true,
+          "created_at": "2024-01-01T09:16:00Z",
+          "updated_at": "2024-01-01T09:16:00Z",
+          
+          "cards": [
+            {
+              "id": 103,
+              "title": "Setup React Testing Library",
+              "description": "Configure testing environment for React components",
+              "status": "backlog",
+              "priority": "medium",
+              "position": 1,
+              "tags": ["testing", "setup"],
+              "due_date": "2024-01-25T23:59:59Z",
+              "estimated_duration": 180,
+              "is_archived": false,
+              "list_id": 2001,
+              "goal_id": 11,
+              "roadmap_id": 1,
+              "assignee_id": 101,
+              "created_by_id": 101,
+              "created_at": "2024-01-01T09:20:00Z",
+              "updated_at": "2024-01-15T11:30:00Z",
+              
+              "assignee": {
+                "id": 101,
+                "uuid": "550e8400-e29b-41d4-a716-446655440001",
+                "full_name": "John Doe",
+                "email": "john.doe@example.com"
+              },
+              
+              "created_by": {
+                "id": 101,
+                "uuid": "550e8400-e29b-41d4-a716-446655440001",
+                "full_name": "John Doe",
+                "email": "john.doe@example.com"
+              },
+              
+              "comments": [
+                {
+                  "id": 1001,
+                  "content": "Should include Jest and React Testing Library setup",
+                  "card_id": 103,
+                  "author_id": 101,
+                  "created_at": "2024-01-02T10:15:00Z",
+                  "updated_at": "2024-01-02T10:15:00Z",
+                  
+                  "author": {
+                    "id": 101,
+                    "uuid": "550e8400-e29b-41d4-a716-446655440001",
+                    "full_name": "John Doe",
+                    "email": "john.doe@example.com"
+                  }
+                }
+              ],
+              
+              "checklists": [
+                {
+                  "id": 1001,
+                  "title": "Testing Setup Requirements",
+                  "position": 0,
+                  "card_id": 103,
+                  "created_at": "2024-01-01T09:25:00Z",
+                  "updated_at": "2024-01-01T09:25:00Z",
+                  
+                  "items": [
+                    {
+                      "id": 10001,
+                      "content": "Install Jest testing framework",
+                      "is_completed": false,
+                      "position": 0,
+                      "checklist_id": 1001,
+                      "created_at": "2024-01-01T09:26:00Z",
+                      "updated_at": "2024-01-01T09:26:00Z"
+                    },
+                    {
+                      "id": 10002,
+                      "content": "Configure React Testing Library",
+                      "is_completed": false,
+                      "position": 1,
+                      "checklist_id": 1001,
+                      "created_at": "2024-01-01T09:27:00Z",
+                      "updated_at": "2024-01-01T09:27:00Z"
+                    },
+                    {
+                      "id": 10003,
+                      "content": "Write first component test",
+                      "is_completed": false,
+                      "position": 2,
+                      "checklist_id": 1001,
+                      "created_at": "2024-01-01T09:28:00Z",
+                      "updated_at": "2024-01-01T09:28:00Z"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2002,
+          "title": "In Progress",
+          "position": 1,
+          "is_archived": false,
+          "status": "in_progress",
+          "board_id": 200,
+          "is_llm_generated": true,
+          "created_at": "2024-01-01T09:17:00Z",
+          "updated_at": "2024-01-01T09:17:00Z",
+          
+          "cards": [
+            {
+              "id": 102,
+              "title": "Build Todo App with React",
+              "description": "Create a fully functional todo application using React hooks",
+              "status": "in_progress",
+              "priority": "high",
+              "position": 1,
+              "tags": ["project", "hands-on"],
+              "due_date": "2024-01-20T23:59:59Z",
+              "estimated_duration": 720,
+              "is_archived": false,
+              "list_id": 2002,
+              "goal_id": 11,
+              "roadmap_id": 1,
+              "assignee_id": 101,
+              "created_by_id": 101,
+              "created_at": "2024-01-01T09:12:00Z",
+              "updated_at": "2024-01-15T11:30:00Z",
+              
+              "assignee": {
+                "id": 101,
+                "uuid": "550e8400-e29b-41d4-a716-446655440001",
+                "full_name": "John Doe",
+                "email": "john.doe@example.com"
+              },
+              
+              "created_by": {
+                "id": 101,
+                "uuid": "550e8400-e29b-41d4-a716-446655440001",
+                "full_name": "John Doe",
+                "email": "john.doe@example.com"
+              },
+              
+              "comments": [],
+              "checklists": []
+            }
+          ]
+        },
+        {
+          "id": 2003,
+          "title": "Done",
+          "position": 2,
+          "is_archived": false,
+          "status": "done",
+          "board_id": 200,
+          "is_llm_generated": true,
+          "created_at": "2024-01-01T09:18:00Z",
+          "updated_at": "2024-01-01T09:18:00Z",
+          
+          "cards": [
+            {
+              "id": 101,
+              "title": "Complete React Tutorial Series",
+              "description": "Work through official React documentation tutorial",
+              "status": "done",
+              "priority": "high",
+              "position": 1,
+              "tags": ["tutorial", "documentation"],
+              "due_date": "2024-01-10T23:59:59Z",
+              "estimated_duration": 480,
+              "is_archived": false,
+              "list_id": 2003,
+              "goal_id": 11,
+              "roadmap_id": 1,
+              "assignee_id": 101,
+              "created_by_id": 101,
+              "created_at": "2024-01-01T09:10:00Z",
+              "updated_at": "2024-01-08T14:00:00Z",
+              
+              "assignee": {
+                "id": 101,
+                "uuid": "550e8400-e29b-41d4-a716-446655440001",
+                "full_name": "John Doe",
+                "email": "john.doe@example.com"
+              },
+              
+              "created_by": {
+                "id": 101,
+                "uuid": "550e8400-e29b-41d4-a716-446655440001",
+                "full_name": "John Doe",
+                "email": "john.doe@example.com"
+              },
+              
+              "comments": [],
+              "checklists": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+
+  "progress_summary": {
+    "roadmap_progress": 0.15,
+    "total_goals": 2,
+    "completed_goals": 0,
+    "in_progress_goals": 1,
+    "total_cards": 4,
+    "completed_cards": 2,
+    "in_progress_cards": 1,
+    "backlog_cards": 1
+  },
+
+  "metadata": {
+    "generated_by_llm": true,
+    "last_updated": "2024-01-15T14:30:00Z",
+    "total_estimated_hours": 25.2,
+    "days_remaining": 166
   }
 }
 """
