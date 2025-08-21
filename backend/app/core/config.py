@@ -45,8 +45,8 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
     
     # llms
-    HUGGINGFACE_API_KEY: str
-    HUGGINGFACE_LLAMA_MODEL: str
+    HUGGINGFACE_API_KEY: Optional[str]
+    HUGGINGFACE_LLAMA_MODEL: Optional[str]
     OPENAI_API_KEY: Optional[str] = None
     ANTHROPIC_API_KEY: Optional[str] = None
     GROQ_API_KEY: Optional[str] = None
