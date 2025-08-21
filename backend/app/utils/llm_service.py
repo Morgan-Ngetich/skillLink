@@ -3,14 +3,19 @@ import threading
 from sqlmodel import Session
 from typing import List, Dict, Any, Union, Optional, Literal
 from app.models.users import (
+    BoardCreate,
+    RoadCreate,
+    BoardCreate,
     RoadmapVisibility,
     RoadmapStatus,
+    CardCreate,
     CardStatus,
     CardPriority,
     SafetyReport,
     SafetyViolation,
     SafetyViolationType,
     ProgressiveUpdateProposal,
+    GoalCreate,
     Goal,
     GoalDifficulty,
     GoalType,
@@ -26,8 +31,9 @@ from app.utils.validation import (
     validate_goal,
     validate_roadmap,
     extract_json_from_markdown,
+    clean_malformed_json,
 )
-from app.utils.helper import calculate_goal_progress
+from app.utils.helper import ProgressService
 from app.crud import get_user_skills
 from app.api.deps import CurrentUser
 import json
@@ -56,7 +62,7 @@ class LLMProvider(str, Enum):
 class GroqGenerator:
     def __init__(self):
         self.client = Groq(api_key=settings.GROQ_API_KEY)
-        self.model_name = "compound-beta"
+        self.model_name = "compound-beta-mini"
         
     def generate_roadmap(self, goal_description: str, start_date: Optional[str] = None, end_date: Optional[str] = None) -> str:
         """Generate roadmap text given a goal description and timeframe."""
@@ -205,7 +211,7 @@ def build_goal_context(
                     "id": g.id,
                     "title": g.title,
                     "difficulty": g.difficulty,
-                    "progress": calculate_goal_progress(g),
+                    "progress": ProgressService.calculate_goal_progress(g),
                 }
                 for g in current_user.goals  # Optionally: add `if not g.is_archived`
             ],
@@ -373,7 +379,7 @@ async def _call_llm_service_async(llm_request: LLMGenerationRequest) -> LLMGener
         "claude-2": LLMProvider.ANTHROPIC,
         "falcon-7b": LLMProvider.HUGGINGFACE,
         "falcon-7b-instruct": LLMProvider.HUGGINGFACE,
-        "compound-beta": LLMProvider.GROQ
+        "compound-beta-mini": LLMProvider.GROQ
     }
     
     provider = provider_map.get(llm_request.model, LLMProvider.MOCK)
@@ -1033,199 +1039,266 @@ def _parse_llm_output(
     llm_request: Optional[LLMGenerationRequest] = None
 ) -> Union[LLMStructuredOutput, str]:
     """Parse and validate LLM output with comprehensive safety checking"""
+    print(f"Raw LLM content: {content[:500]}...")
     if format != "structured":
         return content.strip()
 
     try:
-        # Initial parse attempt
+        data = None
+        
+        # Step 1: Try direct JSON parse
         try:
             data = json.loads(content)
+            print(f"✅ Direct JSON parse successful. Keys: {list(data.keys())}")
         except json.JSONDecodeError as je:
-            # Fallback to markdown extraction
-            llm_logger.debug(
-                f"Initial JSON parse failed, trying markdown extraction: {str(je)}"
+            print(f"❌ Direct JSON parse failed: {str(je)}")
+            
+            # Step 2: Try markdown extraction
+            print("🔄 Attempting markdown extraction...")
+            data = extract_json_from_markdown(content)
+            
+            if data is None:
+                print("❌ All extraction methods failed")
+                print(f"Raw content sample: {content[:500]}...")
+                
+                # Try a manual extraction as last resort
+                try:
+                    # Look for { and } positions
+                    start = content.find('{')
+                    end = content.rfind('}')
+                    if start != -1 and end != -1 and end > start:
+                        manual_json = content[start:end+1]
+                        print(f"Manual extraction attempt: {manual_json[:200]}...")
+                        data = json.loads(manual_json)
+                        print("✅ Manual extraction succeeded!")
+                except Exception as e:
+                    print(f"❌ Manual extraction also failed: {e}")
+                        
+        if data is None:
+            print("❌ All JSON parsing methods failed, returning error structure")
+            return LLMStructuredOutput(
+                analysis=f"JSON parsing failed. Raw content: {content[:200]}...",
+                safety_report=SafetyReport(
+                    violations=[
+                        SafetyViolation(
+                            type=SafetyViolationType.SYSTEM,
+                            message="JSON parse failure - malformed response",
+                            severity="blocker",
+                            entity_type=[LLMTargetEntity.SYSTEM],
+                        )
+                    ],
+                    passes=False,
+                    requires_human_review=True
+                ),
             )
 
-            if (data := extract_json_from_markdown(content)) is None:
-                llm_logger.warning(
-                    "Returning raw content after JSON parse failure",
-                    extra={"content_sample": content[:200]},
-                )
-                return LLMStructuredOutput(
-                    analysis=content.strip(),
-                    safety_report=SafetyReport(
-                        violations=[
-                            SafetyViolation(
-                                type=SafetyViolationType.SYSTEM,
-                                message="JSON parse failure",
-                                severity="blocker",
-                                entity_type=[LLMTargetEntity.SYSTEM],
-                            )
-                        ],
-                        passes=False,
-                        requires_human_review=True
-                    ),
-                )
-
-        output = LLMStructuredOutput(**data)
+        # Continue with existing processing...
         violations = []
+        processed_creations = {}
+        all_dates = []
+        all_entities = []
+        
+        print(f"✅ Processing data structure: {list(data.keys())}")
 
-        if output.creations:
-            processed_creations = {}
-            all_dates = []
-            all_entities = []
-            
+        if "creations" in data:
+            creations = data["creations"]
+            print(f"✅ Found creations with keys: {list(creations.keys())}")
+
             # Process boards first to extract cards from lists
-            if "boards" in output.creations:
-                processed_creations["boards"] = []
-                processed_creations["cards"] = []  # Initialize cards collection
+            if "boards" in creations and creations["boards"]:
+                print(f"📋 Processing {len(creations['boards'])} boards")
+                processed_creations["boards_with_lists"] = []
+                processed_creations["cards"] = []
                 
-                for board_data in output.creations["boards"]:
+                for board_index, board_data in enumerate(creations["boards"]):
                     try:
-                        # Convert to dict if needed
-                        if hasattr(board_data, "model_dump"):
-                            board_data = board_data.model_dump()
+                        print(f"📋 Processing board {board_index}: {board_data.get('title', 'Unknown')}")
                         
-                        # Basic validation
+                        # Validate board data structure
                         if not isinstance(board_data, dict):
-                            raise ValueError("Board data must be a dictionary")
+                            raise ValueError(f"Board {board_index} is not a dictionary: {type(board_data)}")
                             
                         # Required fields check
-                        required_fields = ["title", "description"]
-                        for field in required_fields:
-                            if field not in board_data:
-                                raise ValueError(f"Board missing required field: {field}")
+                        if not board_data.get("title"):
+                            raise ValueError(f"Board {board_index} missing title")
                         
-                        # Type validation
-                        if not isinstance(board_data.get("title"), str):
-                            raise ValueError("Board title must be a string")
-                            
-                        # Add default values if needed
-                        board_data.setdefault("visibility", "private")
-                        board_data.setdefault("status", "active")
+                        # Extract lists data BEFORE processing board
+                        lists_data = board_data.pop("lists", [])
+                        print(f"📝 Extracted {len(lists_data)} lists from board")
+                        
+                        # Create board model WITHOUT lists
+                        board_model = BoardCreate(
+                            title=board_data.get("title"),
+                            description=board_data.get("description", ""),
+                            position=board_data.get("position", board_index),
+                            is_archived=board_data.get("is_archived", False)
+                        )
                         
                         # Process lists and their cards
-                        if "lists" in board_data:
-                            for list_data in board_data["lists"]:
-                                if "cards" in list_data:
-                                    for card_data in list_data["cards"]:
+                        processed_lists = []
+                        if lists_data:
+                            print(f"📝 Processing {len(lists_data)} lists")
+                            
+                            for list_index, list_data in enumerate(lists_data):
+                                try:
+                                    print(f"📝 Processing list {list_index}: {list_data.get('title', 'Unknown')}")
+                                    
+                                    if not isinstance(list_data, dict):
+                                        print(f"⚠️  List {list_index} is not a dict, skipping")
+                                        continue
+                                        
+                                    cards_in_list = list_data.get("cards", [])
+                                    print(f"🎯 Found {len(cards_in_list)} cards in list")
+                                    
+                                    validated_cards = []
+                                    for card_index, card_data in enumerate(cards_in_list):
                                         try:
                                             # Ensure card status matches list status
                                             if "status" in list_data:
                                                 card_data["status"] = list_data["status"]
                                             
                                             validated = validate_card(card_data)
+                                            card_model = CardCreate(**validated)
+                                            validated_cards.append(card_model)
+                                            processed_creations["cards"].append(card_model)
                                             
                                             # Track due dates
                                             if validated.get("due_date"):
                                                 all_dates.append(validated["due_date"])
                                             
-                                            processed_creations["cards"].append(validated)
                                             all_entities.append((
                                                 validated.get("id"),
                                                 LLMTargetEntity.CARDS,
-                                                validated.get("title")
+                                                validated.get("title", f"Card {card_index}")
                                             ))
+                                            print(f"✅ Card {card_index} validated: {validated.get('title')}")
+                                            
                                         except Exception as e:
+                                            print(f"❌ Card {card_index} validation failed: {e}")
                                             violations.append(
                                                 SafetyViolation(
                                                     type=SafetyViolationType.SYSTEM,
-                                                    message=str(e),
-                                                    severity="blocker",
+                                                    message=f"Card validation failed: {str(e)}",
+                                                    severity="warning",
                                                     entity_type=[LLMTargetEntity.CARDS],
-                                                    affected_entities=[card_data.get("id") or 0],
+                                                    affected_entities=[card_data.get("id", card_index)],
                                                     suggested_action={
                                                         "fix_type": "content_review",
                                                         "original_data": card_data
                                                     }
                                                 )
                                             )
+                                    
+                                    # Update list with validated cards
+                                    list_data["cards"] = validated_cards
+                                    processed_lists.append(list_data)
+                                    print(f"✅ List {list_index} processed with {len(validated_cards)} valid cards")
+                                    
+                                except Exception as e:
+                                    print(f"❌ List {list_index} processing failed: {e}")
+                                    violations.append(
+                                        SafetyViolation(
+                                            type=SafetyViolationType.SYSTEM,
+                                            message=f"List processing failed: {str(e)}",
+                                            severity="warning",
+                                            entity_type=[LLMTargetEntity.BOARDS],
+                                        )
+                                    )
                         
-                        processed_creations["boards"].append(board_data)
+                        # Store board with its lists
+                        processed_creations["boards_with_lists"].append({
+                            "board": board_model,
+                            "lists": processed_lists
+                        })
+                        
+                        print(f"✅ Board processed: {board_model.title} with {len(processed_lists)} lists")
+                        
                         all_entities.append((
-                            board_data.get("id"),
+                            board_data.get("id", board_index),
                             LLMTargetEntity.BOARDS,
-                            board_data.get("title", "Untitled Board")
+                            board_model.title
                         ))
                         
-                    except ValueError as e:
+                    except Exception as e:
+                        print(f"❌ Board {board_index} processing failed: {e}")
                         violations.append(
                             SafetyViolation(
                                 type=SafetyViolationType.SYSTEM,
-                                message=str(e),
+                                message=f"Board processing failed: {str(e)}",
                                 severity="blocker",
                                 entity_type=[LLMTargetEntity.BOARDS],
-                                affected_entities=[board_data.get("id") or 0],
-                                suggested_action={
-                                    "fix_type": "content_review",
-                                    "original_data": board_data
-                                }
+                                affected_entities=[board_data.get("id", board_index)],
                             )
                         )
 
             # Process goals with validation
-            if "goals" in output.creations:
+            if "goals" in creations and creations["goals"]:
+                print(f"🎯 Processing {len(creations['goals'])} goals")
                 processed_creations["goals"] = []
-                for goal_data in output.creations["goals"]:
+                for goal_index, goal_data in enumerate(creations["goals"]):
                     try:
                         # Ensure we're working with a dictionary
                         if hasattr(goal_data, 'model_dump'):
                             goal_data = goal_data.model_dump()
+                        elif not isinstance(goal_data, dict):
+                            print(f"⚠️  Goal {goal_index} is not a dict: {type(goal_data)}")
+                            continue
                             
                         validated = validate_goal(goal_data)
                         
                         # Validate required fields
                         if not validated.get("title"):
-                            raise ValueError("Goal missing title")
+                            raise ValueError(f"Goal {goal_index} missing title")
                             
                         # Date validation
                         start_date = validated.get("start_date")
                         target_date = validated.get("target_date")
                         if start_date and target_date and start_date > target_date:
-                            raise ValueError(f"Goal '{validated.get('title')}': Dates invalid")
+                            raise ValueError(f"Goal '{validated.get('title')}': Start date after target date")
                         
                         if start_date and target_date:
                             all_dates.extend([start_date, target_date])
                             
-                        processed_creations["goals"].append(validated)
+                        # Convert to GoalCreate model
+                        goal_model = GoalCreate(**validated)
+                        processed_creations["goals"].append(goal_model)
                         all_entities.append((
-                            validated.get("id"),
+                            validated.get("id", goal_index),
                             LLMTargetEntity.GOALS,
                             validated.get("title")
                         ))
-                    except ValueError as e:
-                        violation_type = (
-                            SafetyViolationType.TIMING if "date" in str(e).lower()
-                            else SafetyViolationType.SYSTEM
-                        )
+                        print(f"✅ Goal {goal_index} processed: {validated.get('title')}")
+                        
+                    except Exception as e:
+                        print(f"❌ Goal {goal_index} processing failed: {e}")
                         violations.append(
                             SafetyViolation(
-                                type=violation_type,
-                                message=str(e),
-                                severity="blocker",
+                                type=SafetyViolationType.SYSTEM,
+                                message=f"Goal processing failed: {str(e)}",
+                                severity="blocker" if "title" in str(e) else "warning",
                                 entity_type=[LLMTargetEntity.GOALS],
-                                affected_entities=[goal_data.get("id") or 0],
-                                suggested_action={
-                                    "fix_type": "date_adjustment" if violation_type == SafetyViolationType.TIMING else "content_review",
-                                    "original_data": goal_data
-                                }
+                                affected_entities=[goal_data.get("id", goal_index)],
                             )
                         )
 
-            # Process roadmaps with validation
-            if "roadmaps" in output.creations:
+            # Process roadmaps with validation  
+            if "roadmaps" in creations and creations["roadmaps"]:
+                print(f"🛣️  Processing {len(creations['roadmaps'])} roadmaps")
                 processed_creations["roadmaps"] = []
-                for roadmap_data in output.creations["roadmaps"]:
+                for roadmap_index, roadmap_data in enumerate(creations["roadmaps"]):
                     try:
                         # Ensure we're working with a dictionary
                         if hasattr(roadmap_data, 'model_dump'):
                             roadmap_data = roadmap_data.model_dump()
+                        elif not isinstance(roadmap_data, dict):
+                            print(f"⚠️  Roadmap {roadmap_index} is not a dict: {type(roadmap_data)}")
+                            continue
                             
                         validated = validate_roadmap(roadmap_data)
                         
                         # Validate required fields
                         if not validated.get("title"):
-                            raise ValueError("Roadmap missing title")
+                            raise ValueError(f"Roadmap {roadmap_index} missing title")
                             
                         # Set default status if not provided
                         if not validated.get("status"):
@@ -1235,53 +1308,76 @@ def _parse_llm_output(
                         start_date = validated.get("start_date")
                         target_date = validated.get("target_date")
                         if start_date and target_date and start_date > target_date:
-                            raise ValueError("Roadmap start date cannot be after target date")
+                            raise ValueError(f"Roadmap '{validated.get('title')}': Start date after target date")
                         
                         if start_date and target_date:
                             all_dates.extend([start_date, target_date])
-                            
-                        processed_creations["roadmaps"].append(validated)
+                         
+                        # Convert to RoadCreate model
+                        roadmap_model = RoadCreate(**validated)
+                        processed_creations["roadmaps"].append(roadmap_model)
                         all_entities.append((
-                            validated.get("id"),
+                            validated.get("id", roadmap_index),
                             LLMTargetEntity.ROADMAPS,
-                            validated.get("title", "Untitled Roadmap")
+                            validated.get("title", f"Roadmap {roadmap_index}")
                         ))
-                    except ValueError as e:
-                        violation_type = (
-                            SafetyViolationType.TIMING if "date" in str(e).lower()
-                            else SafetyViolationType.SYSTEM
-                        )
+                        print(f"✅ Roadmap {roadmap_index} processed: {validated.get('title')}")
+                        
+                    except Exception as e:
+                        print(f"❌ Roadmap {roadmap_index} processing failed: {e}")
                         violations.append(
                             SafetyViolation(
-                                type=violation_type,
-                                message=str(e),
-                                severity="blocker",
+                                type=SafetyViolationType.SYSTEM,
+                                message=f"Roadmap processing failed: {str(e)}",
+                                severity="blocker" if "title" in str(e) else "warning",
                                 entity_type=[LLMTargetEntity.ROADMAPS],
-                                affected_entities=[roadmap_data.get("id") or 0],
-                                suggested_action={
-                                    "fix_type": "date_adjustment" if violation_type == SafetyViolationType.TIMING else "content_review",
-                                    "original_data": roadmap_data
-                                }
+                                affected_entities=[roadmap_data.get("id", roadmap_index)],
                             )
                         )
 
-            output.creations = processed_creations
+        # Create the final output with processed data
+        # Note: Don't include boards_with_lists in the creations dict as it's not part of the LLMStructuredOutput model
+        output_data = {
+            "creations": {
+                "boards": [item["board"] for item in processed_creations.get("boards_with_lists", [])],
+                "boards_with_lists": processed_creations.get("boards_with_lists", []),
+                "cards": processed_creations.get("cards", []),
+                "goals": processed_creations.get("goals", []),
+                "roadmaps": processed_creations.get("roadmaps", [])
+            },
+            "analysis": data.get("analysis", "Processing completed"),
+            "progressive_updates": data.get("progressive_updates", []),
+            "resources": data.get("resources", []),
+            "safety_report": SafetyReport(
+                violations=violations,
+                passes=len([v for v in violations if v.severity == "blocker"]) == 0,
+                requires_human_review=len(violations) > 0
+            )
+        }
 
-            #TODO [Rest of the existing timeframe validation and conflict detection code...]
-
-        return output
+        print(f"✅ Final output created with {len(violations)} violations")
+        
+        # Create the LLMStructuredOutput object
+        structured_output = LLMStructuredOutput(**output_data)
+        
+        # Store boards_with_lists as a custom attribute for later access
+        if processed_creations.get("boards_with_lists"):
+            structured_output.__dict__["_boards_with_lists"] = processed_creations["boards_with_lists"]
+            
+        return structured_output
 
     except Exception as e:
+        print(f"❌ Critical error in _parse_llm_output: {e}")
         llm_logger.error("Structured output validation failed", exc_info=e)
         return LLMStructuredOutput(
-            analysis=content.strip(),
+            analysis=f"Critical parsing error: {str(e)}. Raw content: {content[:200]}...",
             safety_report=SafetyReport(
                 violations=[
                     SafetyViolation(
                         type=SafetyViolationType.SYSTEM,
-                        message=f"Output validation failed: {str(e)}",
+                        message=f"Critical parsing error: {str(e)}",
                         severity="blocker",
-                        entity_type=[LLMTargetEntity.GOALS, LLMTargetEntity.CARDS, LLMTargetEntity.ROADMAPS]
+                        entity_type=[LLMTargetEntity.SYSTEM]
                     )
                 ],
                 passes=False,
