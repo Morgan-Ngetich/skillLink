@@ -44,7 +44,7 @@ from fastapi import status, HTTPException
 from datetime import datetime, timezone
 from tenacity import retry, stop_after_attempt, wait_exponential
 from functools import lru_cache
-from app.core.llm_executor import get_llm_executor
+from app.core.llm.llm_executor import get_llm_executor
 # from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM, BitsAndBytesConfig
 from groq import Groq
 
@@ -88,6 +88,7 @@ class GroqGenerator:
             llm_logger.error(f"Groq generation failed: {str(e)}")
             raise RuntimeError(f"Groq generation failed: {str(e)}")
             
+    # TODO: when creating card add `Comments`, `Checklist`, `Checklist Items`
     def _build_prompt(self, goal: str, start_date: Optional[str] = None, end_date: Optional[str] = None) -> str:
         timeframe_clause = ""
         if start_date and end_date:
