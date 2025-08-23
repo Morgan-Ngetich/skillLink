@@ -1,4 +1,4 @@
-from app.core.async_executor import AsyncExecutor
+from app.core.llm.async_executor import AsyncExecutor
 from celery.signals import worker_process_init, worker_shutdown
 from app.utils.logger_config import llm_logger
 

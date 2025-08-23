@@ -60,7 +60,6 @@ class AsyncExecutor:
       future.cancel()
       llm_logger.error(f"Unexpected error in async execution: {e}")
       raise
-    
   
   def shutdown(self):
     """Clean shutdown of the executor."""
