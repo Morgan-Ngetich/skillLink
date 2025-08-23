@@ -11,6 +11,9 @@ import { Toaster } from '@/components/ui/toaster';
 import { useSession } from './hooks/auth/useSession'; // <-- import your hook here
 import { GlobalStyles } from './components/ui/GlobalStyles';
 
+import { MDXProvider } from "@mdx-js/react"
+import MDXComponents from "@/crackmode/components/MDXComponents"
+
 const queryClient = new QueryClient();
 
 const router = createRouter({
@@ -43,8 +46,10 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ChakraProvider value={themeSystem}> {/* ✅ ChakraProvider wraps everything */}
       <ColorModeProvider>
-      <GlobalStyles />
-        <App />
+        <GlobalStyles />
+        <MDXProvider components={MDXComponents}>
+          <App />
+        </MDXProvider>
       </ColorModeProvider>
     </ChakraProvider>
   </StrictMode>
