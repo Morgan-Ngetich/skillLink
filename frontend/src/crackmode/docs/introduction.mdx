@@ -1,0 +1,275 @@
+import {
+  Box,
+  Heading,
+  Text,
+  Button,
+  VStack,
+  HStack,
+  Separator,
+  Badge,
+  SimpleGrid,
+  Card,
+  Icon,
+  Avatar,
+  Flex,
+  Kbd,
+  Code,
+} from "@chakra-ui/react";
+import {
+  FaCode,
+  FaUsers,
+  FaTrophy,
+  FaRocket,
+  FaFire,
+  FaBrain,
+  FaChartLine,
+  FaSun,
+  FaBullseye,
+  FaBolt,
+} from "react-icons/fa";
+import { Progress } from "@/components/ui/progress";
+
+<Box position="relative" overflow="hidden">
+  <Box textAlign="center" position="relative" py={16}>
+    <Box position="relative">
+      <Box 
+        bg="green.600" 
+        variant="solid" 
+        fontSize="md" 
+        px={4}   
+        w="2xs"
+        mx="auto"
+        borderRadius="full"
+        mb={6}
+        boxShadow="0 0 20px rgba(72, 187, 120, 0.4)"
+      >
+      <Text textAlign="center" mt="4">
+        🔥 CRACK MODE ACTIVE
+      </Text>
+      </Box>
+
+      <Heading size="4xl" mb={6} fontWeight="bold">
+        ⚡ Welcome to CrackMode!
+      </Heading>
+
+      <Text
+        fontSize="xl"
+        color="gray.300"
+        maxW="3xl"
+        mx="auto"
+        lineHeight="tall"
+        mb={8}
+      >
+        The ultimate community for <Text as="span" color="orange.300" fontWeight="bold">crushing LeetCode</Text> and
+        <Text as="span" color="orange.300" fontWeight="bold"> mastering algorithms</Text>.
+        Join elite coders who don't just solve problems—they <Text as="span" color="green.300" fontWeight="bold">dominate</Text> them! 🚀
+      </Text>
+
+      <VStack gap={6} mt={10}>
+        <HStack gap={4} flexWrap="wrap" justify="center">
+          <Button variant="solid" size="lg">
+            <HStack>
+              <FaRocket />
+              <Text>Start Grinding</Text>
+            </HStack>
+          </Button>
+          <Button
+            variant="outline"
+            border="1px solid"
+            size="lg"
+            transition="all 0.3s ease"
+          >
+            <HStack>
+              <FaUsers />
+              <Text>Join Community</Text>
+            </HStack>
+          </Button>
+        </HStack>
+      </VStack>
+    </Box>
+
+  </Box>
+</Box>
+
+<Separator my={12} />
+
+
+# 🌟 What Makes CrackMode Different?
+
+CrackMode isn’t just another coding community — it’s a **movement**.  
+We believe consistent practice and accountability are the fastest ways to grow as a developer.  
+
+## Why We’re Different
+
+- **Community-Driven**  
+  Members push each other to solve **LeetCode problems** daily.  
+  Everyone is both a learner and a motivator.  
+
+- **Accountability First**  
+  Progress comes from **discipline**, not just motivation.  
+  The community ensures no one falls off track.  
+
+- **Practical Problem-Solving**  
+  Beyond streaks, we discuss **patterns, optimization, and real-world applications**.  
+
+- **Growth-Oriented**  
+  Perfect for FAANG prep or sharpening **DSA skills** with peers who keep you consistent.  
+
+## The CrackMode Mindset
+
+- Fail fast, learn faster.  
+- Celebrate progress, not perfection.  
+- One problem a day compounds into mastery.  
+
+---
+
+
+{/* <Box maxW="7xl" mx="auto" mt={12}>
+  <Box as="section">
+    <Heading as="h2" size="2xl" textAlign="center" mb={10}>
+      🚀 Core Features That Set Us Apart
+    </Heading>
+    <SimpleGrid columns={{ base: 1, md: 2}} gap={8} mb={12}>
+      
+      <Card.Root variant="outline" borderWidth="1px" _hover={{ shadow: "md", transform: "translateY(-4px)", transition: "all 0.2s ease-in-out" }}>
+        <Card.Body gap="2">
+          <HStack gap={4}>
+            <Avatar.Root size="lg" shape="rounded">
+              <Avatar.Image src="https://picsum.photos/200/300?1" />
+              <Avatar.Fallback name="Smart Problem Sets" />
+            </Avatar.Root>
+            <Card.Title mt="2">Smart Problem Sets</Card.Title>
+          </HStack>
+          <Card.Description>
+            AI-curated problems that **adapt to your skill level** and target weak spots.
+          </Card.Description>
+        </Card.Body>
+      </Card.Root>
+
+      <Card.Root variant="outline" borderWidth="1px" _hover={{ shadow: "md", transform: "translateY(-4px)", transition: "all 0.2s ease-in-out" }}>
+        <Card.Body gap="2">
+          <HStack gap={4}>
+            <Avatar.Root size="lg" shape="rounded">
+              <Avatar.Image src="https://picsum.photos/200/300?2" />
+              <Avatar.Fallback name="Live Coding Sessions" />
+            </Avatar.Root>
+            <Card.Title mt="2">Live Coding Sessions</Card.Title>
+          </HStack>
+          <Card.Description>
+            Real-time collaborative solving with **voice chat** and **screen sharing**.
+          </Card.Description>
+        </Card.Body>
+      </Card.Root>
+
+      <Card.Root variant="outline" borderWidth="1px" _hover={{ shadow: "md", transform: "translateY(-4px)", transition: "all 0.2s ease-in-out" }}>
+        <Card.Body gap="2">
+          <HStack gap={4}>
+            <Avatar.Root size="lg" shape="rounded">
+              <Avatar.Image src="https://picsum.photos/200/300?3" />
+              <Avatar.Fallback name="Progress Tracking" />
+            </Avatar.Root>
+            <Card.Title mt="2">Progress Tracking</Card.Title>
+          </HStack>
+          <Card.Description>
+            Detailed analytics on your solving **patterns, speed, and improvement areas**.
+          </Card.Description>
+        </Card.Body>
+      </Card.Root>
+
+      <Card.Root variant="outline" borderWidth="1px" _hover={{ shadow: "md", transform: "translateY(-4px)", transition: "all 0.2s ease-in-out" }}>
+        <Card.Body gap="2">
+          <HStack gap={4}>
+            <Avatar.Root size="lg" shape="rounded">
+              <Avatar.Image src="https://picsum.photos/200/300?4" />
+              <Avatar.Fallback name="Interview Prep" />
+            </Avatar.Root>
+            <Card.Title mt="2">Interview Prep</Card.Title>
+          </HStack>
+          <Card.Description>
+            Mock interviews with **FAANG engineers** and **real-time feedback**.
+          </Card.Description>
+        </Card.Body>
+      </Card.Root>
+
+    </SimpleGrid>
+  </Box>
+</Box> */}
+
+
+
+<Box mt={12}/>
+# CrackMode Daily Grinding Schedule
+
+<Box 
+  bg="orange.50"
+  border="1px solid"
+  borderColor="orange.200"
+  borderRadius="lg"
+  p={4}
+  mb={8}
+  borderLeftWidth="4px"
+  borderLeftColor="orange.400"
+>
+  <HStack mb={2}>
+    <Icon as={FaFire} color="orange.500" />
+    <Heading color="orange.700">Daily Grinding Sessions</Heading>
+  </HStack>
+  <Text fontSize="sm" color="orange.600">
+    We run **structured sessions every day** — join live or catch up with recordings anytime.
+  </Text>
+</Box>
+
+<VStack align="stretch" gap={4}>
+
+
+  <ScheduleItem 
+    icon={FaBullseye} 
+    color="blue.400" 
+    title="Focused Deep Dives" 
+    desc="Hard problems with detailed walkthroughs"
+  />
+
+  <ScheduleItem 
+    icon={FaBolt} 
+    color="purple.400" 
+    title="Speed Rounds" 
+    desc="Contest-style rapid problem solving"
+  />
+
+  <ScheduleItem 
+    icon={FaBrain} 
+    color="teal.400" 
+    title="System Design Weekends" 
+    desc="Large-scale architecture discussions"
+  />
+
+  <ScheduleItem 
+    icon={FaChartLine} 
+    color="green.400" 
+    title="Weekly Progress Reviews" 
+    desc="Track your improvement and set goals"
+  />
+
+</VStack>
+
+
+
+<SimpleGrid columns={{ base: 1, md: 2 }} gap={6} my={8}>
+
+  {/* This Week's Themes */}
+  <VStack align="stretch" gap={4}>
+    <Text fontWeight="bold" fontSize="lg">🎯 This Week's Themes</Text>
+    <ThemeItem label="Dynamic Programming" color="blue" desc="Master the classics" />
+    <ThemeItem label="Tree Traversals" color="green" desc="All variations covered" />
+    <ThemeItem label="Graph Algorithms" color="purple" desc="BFS, DFS, and beyond" />
+  </VStack>
+
+  {/* Community Progress */}
+  <VStack align="stretch" gap={4}>
+    <Text fontWeight="bold" fontSize="lg">📊 Community Progress</Text>
+    <ProgressStat label="Easy Problems" value={84.7} count="847/1000" color="green" />
+    <ProgressStat label="Medium Problems" value={61.7} count="1,234/2000" color="yellow" />
+    <ProgressStat label="Hard Problems" value={57} count="456/800" color="red" />
+  </VStack>
+
+</SimpleGrid>
