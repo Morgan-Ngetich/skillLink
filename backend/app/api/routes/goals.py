@@ -16,7 +16,10 @@ from app.models.users import (
     LLMTargetEntity,
     ProgressiveUpdateProposal,
     RoadmapDisplay,
+    RoadmapVisibility,
     Roadmap,
+    RoadmapPublic,
+    RoadmapUpdate,
     GoalCreationRequest,
     Board,
     BoardList,
@@ -82,9 +85,17 @@ def create_goal(
         "task": task_status
     }
 
+@router.get("/roadmaps", response_model=List[RoadmapPublic])
+def get_all_roadmap(session: SessionDep, current_user: CurrentUser):
+    """Get all user's roadmaps"""
+    roadmaps = session.exec(
+        select(Roadmap).where(Roadmap.owner_id == current_user.id)
+    ).all()
+    return roadmaps
 
 @router.get("/roadmaps/{roadmap_id}/full", response_model=RoadmapDisplay)
 def get_roadmap_details(roadmap_id: int, session: SessionDep, current_user: CurrentUser):
+    """Get full roadmap display. (roadmap, goals, boards)"""
     roadmap = session.exec(
         select(Roadmap)
         .where(Roadmap.id == roadmap_id)
@@ -110,6 +121,46 @@ def get_roadmap_details(roadmap_id: int, session: SessionDep, current_user: Curr
         raise HTTPException(status_code=403, detail="Not authorized")
     
     return RoadmapDisplay.from_roadmap(roadmap, session)
+
+@router.get("/users/{user_id}/public-roadmaps", response_model=List[RoadmapPublic])
+def get_public_roadmaps_by_user(
+    user_id: int,
+    session: SessionDep
+):
+    """Get users public roadmaps"""
+    roadmaps = session.exec(
+        select(Roadmap).where(
+            Roadmap.owner_id == user_id,
+            Roadmap.visibility == RoadmapVisibility.PUBLIC
+        )
+    ).all()
+    return roadmaps
+
+@router.patch("/roadmaps/{roadmap_id}", response_model=RoadmapPublic)
+def update_roadmap(
+    roadmap_id: int,
+    roadmap_in: RoadmapUpdate,
+    session: SessionDep,
+    current_user: CurrentUser    
+):
+    roadmap = session.get(Roadmap, roadmap_id)
+    
+    if not roadmap:
+        raise HTTPException(status_code=404, detail="Roadmap not found")
+
+    if roadmap.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to update this roadmap")
+
+    update_dict = roadmap_in.dict(exclude_unset=True)
+    for field, value in update_dict.items():
+        setattr(roadmap, field, value)
+    
+    session.add(roadmap)
+    session.commit()
+    session.refresh(roadmap)
+    
+    return roadmap
+
 
 @router.get("/", response_model=dict)
 def read_goals(
