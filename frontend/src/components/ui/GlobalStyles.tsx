@@ -7,6 +7,8 @@ export function GlobalStyles() {
   return (
     <Global
       styles={css`
+        scroll-behavior: smooth;
+        
         ::-webkit-scrollbar {
           width: 4px;
           height: 4px;
