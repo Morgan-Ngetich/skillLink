@@ -71,6 +71,7 @@ class CardPublic(SQLModel):
     updated_at: datetime
     assignee: Optional["UserPublic"] = None
     created_by: Optional["UserPublic"] = None
+    goal: Optional["GoalPublic"] = None
 
 
 class UserPublic(SQLModel):
@@ -603,7 +604,39 @@ class RoadmapUpdate(SQLModel):
     tags: Optional[List[str]] = None
     start_date: Optional[datetime] = None
     target_date: Optional[datetime] = None
+    
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "title": "Apply Python in Real-World Projects",
+                    "description": "Create a complete implementation plan for applying Python in real-world projects",
+                    "visibility": "public",
+                    "status": "draft",
+                    "tags": [
+                        "Python",
+                        "Real-World Projects"
+                    ],
+                    "start_date": "2024-01-01T00:00:00",
+                    "target_date": "2024-12-31T00:00:00"
+                }
+            ]
+        }
+    )
 
+
+class RoadmapPublic(SQLModel):
+    id: int
+    title: str
+    description: Optional[str] = None
+    visibility: RoadmapVisibility
+    status: RoadmapStatus
+    tags: Optional[List[str]]
+    start_date: Optional[datetime]
+    target_date: Optional[datetime]
+    is_llm_generated: bool
+    created_at: datetime
+    updated_at: datetime
 
 # ========================= GOAL SCHEMA (LLM-Generated) ============================
 # TODO: Add other(relevant, any) goaltypes
@@ -908,6 +941,7 @@ class Card(CardBase, table=True):
             updated_at=self.updated_at,
             assignee=self.assignee.to_public() if self.assignee else None,
             created_by=self.created_by.to_public() if self.created_by else None,
+            goal=self.goal.to_public() if self.goal else None,
         )
 
 
@@ -1257,23 +1291,10 @@ class TaskStatus(BaseModel):
     
 
 # TODO: Place this in the public folder.
-class CardWithGoal(SQLModel):
-    """Card with goal context"""
-    card: CardPublic
-    goal: Optional[GoalPublic] = None
-    
-    @classmethod
-    def from_card(cls, card: Card):
-        return cls(
-            card=card.to_public(),
-            goal=card.goal.to_public() if card.goal else None
-        )
-
-
 class ListWithCards(SQLModel):
     """List with its cards"""
     boardlist: BoardList
-    cards: List[CardWithGoal]
+    cards: List[CardPublic]
     
     @computed_field
     def card_count(self) -> int:
@@ -1284,8 +1305,8 @@ class ListWithCards(SQLModel):
         return cls(
             boardlist=board_list,
             cards=sorted(
-                [CardWithGoal.from_card(c) for c in board_list.cards],
-                key=lambda x : x.card.position
+                [card.to_public() for card in board_list.cards],
+                key=lambda x : x.position
         ))
 
 
