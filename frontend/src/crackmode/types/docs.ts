@@ -4,9 +4,15 @@ export interface HeadingData {
   level: number
 }
 
+interface Children {
+  title: string
+  href: string
+}
+
 export interface DocLink {
   title: string
   href: string
+  children?: Children[]
 }
 
 export interface DocSection {
