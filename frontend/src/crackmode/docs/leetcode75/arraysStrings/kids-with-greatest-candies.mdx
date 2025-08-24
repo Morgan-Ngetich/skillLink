@@ -1,0 +1,244 @@
+import { VStack, HStack, Text } from "@chakra-ui/react"
+
+# Kids With the Greatest Number of Candies
+
+**Difficulty:** <span style={{color: "#4ade80"}}>Easy</span>  
+**LeetCode:** [1431. Kids With the Greatest Number of Candies](https://leetcode.com/problems/kids-with-the-greatest-number-of-candies/)
+
+---
+
+## Problem
+
+There are `n` kids with candies. You are given an integer array `candies`, where each `candies[i]` represents the number of candies the `ith` kid has, and an integer `extraCandies`, denoting the number of extra candies that you have.
+
+Return a boolean array `result` of length `n`, where `result[i]` is `true` if, after giving the `ith` kid all the `extraCandies`, they will have the **greatest number of candies** among all the kids, or `false` otherwise.
+
+Note that **multiple kids** can have the **greatest number of candies**.
+
+**Example 1:**
+```
+Input: candies = [2,3,5,1,3], extraCandies = 3
+Output: [true,true,true,false,true]
+Explanation: If you give all extraCandies to:
+- Kid 1: 2 + 3 = 5 candies, which is the greatest among the kids
+- Kid 2: 3 + 3 = 6 candies, which is the greatest among the kids
+- Kid 3: 5 + 3 = 8 candies, which is the greatest among the kids
+- Kid 4: 1 + 3 = 4 candies, which is not the greatest among the kids
+- Kid 5: 3 + 3 = 6 candies, which is the greatest among the kids
+```
+
+**Example 2:**
+```
+Input: candies = [4,2,1,1,2], extraCandies = 1
+Output: [true,false,false,false,false]
+Explanation: There is only one kid who can have the greatest number of candies.
+```
+
+---
+
+## Simple Explanation
+
+Think of this as a **"what if" game**:
+
+1. Find the kid who currently has the **most candies**
+2. For each kid, ask: "If I give them ALL extra candies, will they have at least as many as the current leader?"
+3. If yes → `true`, if no → `false`
+
+It's like checking if each player can become the champion with a power-up!
+
+---
+
+## Solution
+
+<TabbedCode
+  files={[
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function kidsWithCandies(candies, extraCandies) {
+  // Find the maximum candies any kid currently has
+  const maxCandies = Math.max(...candies);
+  
+  // Check if each kid can reach or exceed the maximum
+  return candies.map(candy => candy + extraCandies >= maxCandies);
+}`
+    },
+    {
+      title: "Python",
+      language: "python",
+      code: `def kids_with_candies(candies, extra_candies):
+    # Find the maximum candies any kid currently has
+    max_candies = max(candies)
+    
+    # Check if each kid can reach or exceed the maximum
+    return [candy + extra_candies >= max_candies for candy in candies]`
+    },
+    {
+      title: "C++",
+      language: "cpp",
+      code: `#include <vector>
+#include <algorithm>
+using namespace std;
+
+vector<bool> kidsWithCandies(vector<int>& candies, int extraCandies) {
+    // Find the maximum candies any kid currently has
+    int maxCandies = *max_element(candies.begin(), candies.end());
+    
+    vector<bool> result;
+    for (int candy : candies) {
+        result.push_back(candy + extraCandies >= maxCandies);
+    }
+    
+    return result;
+}`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `import java.util.*;
+
+public class KidsWithCandies {
+    public static List<Boolean> kidsWithCandies(int[] candies, int extraCandies) {
+        // Find the maximum candies any kid currently has
+        int maxCandies = Arrays.stream(candies).max().getAsInt();
+        
+        List<Boolean> result = new ArrayList<>();
+        for (int candy : candies) {
+            result.add(candy + extraCandies >= maxCandies);
+        }
+        
+        return result;
+    }
+}`
+    },
+  ]}
+/>
+
+---
+
+## Step-by-Step Walkthrough
+
+Let's trace through `candies = [2,3,5,1,3]`, `extraCandies = 3`:
+
+```
+Step 1: Find maximum candies
+        max(2,3,5,1,3) = 5
+
+Step 2: Check each kid
+        Kid 0: 2 + 3 = 5 >= 5? ✓ true
+        Kid 1: 3 + 3 = 6 >= 5? ✓ true  
+        Kid 2: 5 + 3 = 8 >= 5? ✓ true
+        Kid 3: 1 + 3 = 4 >= 5? ✗ false
+        Kid 4: 3 + 3 = 6 >= 5? ✓ true
+
+Result: [true, true, true, false, true]
+```
+
+---
+
+## Alternative Solution (Manual Loop)
+
+<TabbedCode
+  files={[
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function kidsWithCandies(candies, extraCandies) {
+  // Find maximum manually (more memory efficient for large arrays)
+  let maxCandies = 0;
+  for (let candy of candies) {
+    maxCandies = Math.max(maxCandies, candy);
+  }
+  
+  // Build result array
+  const result = [];
+  for (let candy of candies) {
+    result.push(candy + extraCandies >= maxCandies);
+  }
+  
+  return result;
+}`
+    },
+    {
+      title: "Python",
+      language: "python",
+      code: `def kids_with_candies(candies, extra_candies):
+    # Find maximum manually
+    max_candies = 0
+    for candy in candies:
+        max_candies = max(max_candies, candy)
+    
+    # Build result array
+    result = []
+    for candy in candies:
+        result.append(candy + extra_candies >= max_candies)
+    
+    return result`
+    },
+    {
+      title: "C++",
+      language: "cpp",
+      code: `#include <vector>
+using namespace std;
+
+vector<bool> kidsWithCandies(vector<int>& candies, int extraCandies) {
+    // Find maximum manually
+    int maxCandies = 0;
+    for (int candy : candies) {
+        maxCandies = max(maxCandies, candy);
+    }
+    
+    // Build result array
+    vector<bool> result;
+    for (int candy : candies) {
+        result.push_back(candy + extraCandies >= maxCandies);
+    }
+    
+    return result;
+}`
+    },
+  ]}
+/>
+
+---
+
+## Complexity Analysis
+
+**Time Complexity: O(n)**
+- Finding maximum: O(n)
+- Building result array: O(n)
+- Total: O(n) where n = number of kids
+
+**Space Complexity: O(1)**
+- Only using constant extra space
+- Output array doesn't count toward space complexity
+
+---
+
+## Key Insights
+
+<VStack align="start" spacing={2}>
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">Single pass optimization</Text>
+    <Text>- Find max and build result in one go if needed</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">Comparison logic</Text>
+    <Text>- Use >= instead of > (ties are allowed)</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">Array transformation</Text>
+    <Text>- Map/transform pattern is perfect here</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">Edge cases</Text>
+    <Text>- All kids equal, single kid, zero extra candies</Text>
+  </HStack>
+</VStack>
+
+---
+
+This problem introduces array transformation patterns and comparative logic - essential skills for many algorithm problems!

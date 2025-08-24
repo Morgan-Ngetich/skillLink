@@ -1,0 +1,361 @@
+import { VStack, HStack, Text } from "@chakra-ui/react"
+
+
+# String Compression
+
+**Difficulty:** <span style={{color: "#fbbf24"}}>Medium</span>  
+**LeetCode:** [443. String Compression](https://leetcode.com/problems/string-compression/)
+
+---
+
+## Problem
+
+Given an array of characters `chars`, compress it using the following algorithm:
+
+Begin with an empty string `s`. For each group of **consecutive repeating characters** in `chars`:
+
+- If the group's length is `1`, append the character to `s`.
+- Otherwise, append the character followed by the group's length.
+
+After you finish the algorithm above, **return the new length of the string**.
+
+You must write an algorithm that uses only **constant extra space**.
+
+**Example 1:**
+```
+Input: chars = ["a","a","b","b","c","c","c"]
+Output: Return 6, and the first 6 characters of the input array should be: ["a","2","b","2","c","3"]
+Explanation: The groups are "aa", "bb", and "ccc". This compresses to "a2b2c3".
+```
+
+**Example 2:**
+```
+Input: chars = ["a"]
+Output: Return 1, and the first character of the input array should be: ["a"]
+Explanation: The only group is "a", which remains uncompressed since it's a single character.
+```
+
+**Example 3:**
+```
+Input: chars = ["a","b","b","b","b","b","b","b","b","b","b","b","b"]
+Output: Return 4, and the first 4 characters of the input array should be: ["a","b","1","2"]
+Explanation: The groups are "a" and "bbbbbbbbbbbb". This compresses to "ab12".
+```
+
+---
+
+## Simple Explanation
+
+Think of this as **"counting consecutive characters"**:
+
+1. **Group consecutive characters**: "aaa" → character 'a', count 3
+2. **Write compressed form**: 'a' + '3' if count > 1, just 'a' if count = 1
+3. **Do this in-place**: overwrite the original array to save space
+
+It's like shorthand notation: instead of writing "aaabbb", write "a3b3"!
+
+---
+
+## Solution
+
+<TabbedCode
+  files={[
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function compress(chars) {
+  let write = 0;  // Where to write the compressed result
+  let read = 0;   // Where to read the current group
+  
+  while (read < chars.length) {
+    const currentChar = chars[read];
+    let count = 0;
+    
+    // Count consecutive characters
+    while (read < chars.length && chars[read] === currentChar) {
+      read++;
+      count++;
+    }
+    
+    // Write the character
+    chars[write++] = currentChar;
+    
+    // Write the count if > 1
+    if (count > 1) {
+      const countStr = count.toString();
+      for (let digit of countStr) {
+        chars[write++] = digit;
+      }
+    }
+  }
+  
+  return write;
+}`
+    },
+    {
+      title: "Python",
+      language: "python",
+      code: `def compress(chars):
+    write = 0  # Where to write the compressed result
+    read = 0   # Where to read the current group
+    
+    while read < len(chars):
+        current_char = chars[read]
+        count = 0
+        
+        # Count consecutive characters
+        while read < len(chars) and chars[read] == current_char:
+            read += 1
+            count += 1
+        
+        # Write the character
+        chars[write] = current_char
+        write += 1
+        
+        # Write the count if > 1
+        if count > 1:
+            count_str = str(count)
+            for digit in count_str:
+                chars[write] = digit
+                write += 1
+    
+    return write`
+    },
+    {
+      title: "C++",
+      language: "cpp",
+      code: `#include <vector>
+#include <string>
+using namespace std;
+
+int compress(vector<char>& chars) {
+    int write = 0;  // Where to write the compressed result
+    int read = 0;   // Where to read the current group
+    
+    while (read < chars.size()) {
+        char currentChar = chars[read];
+        int count = 0;
+        
+        // Count consecutive characters
+        while (read < chars.size() && chars[read] == currentChar) {
+            read++;
+            count++;
+        }
+        
+        // Write the character
+        chars[write++] = currentChar;
+        
+        // Write the count if > 1
+        if (count > 1) {
+            string countStr = to_string(count);
+            for (char digit : countStr) {
+                chars[write++] = digit;
+            }
+        }
+    }
+    
+    return write;
+}`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `public class StringCompression {
+    public static int compress(char[] chars) {
+        int write = 0;  // Where to write the compressed result
+        int read = 0;   // Where to read the current group
+        
+        while (read < chars.length) {
+            char currentChar = chars[read];
+            int count = 0;
+            
+            // Count consecutive characters
+            while (read < chars.length && chars[read] == currentChar) {
+                read++;
+                count++;
+            }
+            
+            // Write the character
+            chars[write++] = currentChar;
+            
+            // Write the count if > 1
+            if (count > 1) {
+                String countStr = Integer.toString(count);
+                for (char digit : countStr.toCharArray()) {
+                    chars[write++] = digit;
+                }
+            }
+        }
+        
+        return write;
+    }
+}`
+    },
+  ]}
+/>
+
+---
+
+## Step-by-Step Walkthrough
+
+Let's trace through `chars = ["a","a","b","b","c","c","c"]`:
+
+```
+Initial: chars = ['a','a','b','b','c','c','c']
+         write = 0, read = 0
+
+ITERATION 1 - Process 'a' group:
+read=0: chars[0]='a', currentChar='a'
+Count consecutive 'a's: read=0→1→2 (stopped at 'b'), count=2
+Write 'a' at position 0: chars = ['a','a','b','b','c','c','c']
+                         write = 1
+Count > 1, so write "2": chars = ['a','2','b','b','c','c','c']
+                         write = 2
+
+ITERATION 2 - Process 'b' group:
+read=2: chars[2]='b', currentChar='b'  
+Count consecutive 'b's: read=2→3→4 (stopped at 'c'), count=2
+Write 'b' at position 2: chars = ['a','2','b','b','c','c','c']
+                         write = 3
+Count > 1, so write "2": chars = ['a','2','b','2','c','c','c']
+                         write = 4
+
+ITERATION 3 - Process 'c' group:
+read=4: chars[4]='c', currentChar='c'
+Count consecutive 'c's: read=4→5→6→7 (end), count=3  
+Write 'c' at position 4: chars = ['a','2','b','2','c','c','c']
+                         write = 5
+Count > 1, so write "3": chars = ['a','2','b','2','c','3','c']
+                         write = 6
+
+Final: Return write = 6
+       First 6 characters: ['a','2','b','2','c','3']
+```
+
+---
+
+## Handling Large Counts
+
+For counts ≥ 10, we need multiple digits:
+
+```javascript
+// Example: "aaaaaaaaaaaa" (12 a's) → "a12"
+chars = ['a','a','a','a','a','a','a','a','a','a','a','a']
+
+After compression:
+chars[0] = 'a'
+chars[1] = '1'  // First digit of 12
+chars[2] = '2'  // Second digit of 12
+
+Result length: 3
+```
+
+---
+
+## Alternative Solution (More Explicit)
+
+<TabbedCode
+  files={[
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function compress(chars) {
+  if (chars.length <= 1) return chars.length;
+  
+  let writeIndex = 0;
+  let i = 0;
+  
+  while (i < chars.length) {
+    let currentChar = chars[i];
+    let count = 1;
+    
+    // Count consecutive occurrences
+    while (i + count < chars.length && chars[i + count] === currentChar) {
+      count++;
+    }
+    
+    // Write the character
+    chars[writeIndex] = currentChar;
+    writeIndex++;
+    
+    // Write count if greater than 1
+    if (count > 1) {
+      let countDigits = count.toString().split('');
+      for (let digit of countDigits) {
+        chars[writeIndex] = digit;
+        writeIndex++;
+      }
+    }
+    
+    // Move to next group
+    i += count;
+  }
+  
+  return writeIndex;
+}`
+    },
+  ]}
+/>
+
+---
+
+## Edge Cases
+
+```javascript
+// Single character
+compress(['a']) // Return 1: ['a']
+
+// No compression needed
+compress(['a','b','c']) // Return 3: ['a','b','c']
+
+// All same characters
+compress(['a','a','a','a']) // Return 2: ['a','4']
+
+// Large count
+compress(['a'].repeat(100)) // Return 4: ['a','1','0','0']
+
+// Mixed groups
+compress(['a','a','a','b','b','a','a']) // Return 6: ['a','3','b','2','a','2']
+```
+
+---
+
+## Complexity Analysis
+
+**Time Complexity: O(n)**
+- Single pass through the array
+- Each character is read and written at most once
+
+**Space Complexity: O(1)**
+- Only using a constant amount of extra space
+- Modifying the input array in-place
+
+---
+
+## Key Insights
+
+<VStack align="start" spacing={2}>
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">Two pointers technique</Text>
+    <Text>- Read pointer and write pointer move independently</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">In-place modification</Text>
+    <Text>- Overwrite original array to save space</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">Count to string conversion</Text>
+    <Text>- Handle multi-digit counts properly</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">Group processing</Text>
+    <Text>- Process one group of consecutive characters at a time</Text>
+  </HStack>
+</VStack>
+
+---
+
+This problem combines **two pointers**, **string manipulation**, and **in-place algorithms** - essential skills for many coding challenges!

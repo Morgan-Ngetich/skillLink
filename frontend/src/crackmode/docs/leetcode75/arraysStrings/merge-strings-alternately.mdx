@@ -1,0 +1,276 @@
+import { VStack, HStack, Text } from "@chakra-ui/react"
+
+# Merge Strings Alternately
+
+**Difficulty:** <span style={{color: "#4ade80"}}>Easy</span>  
+**LeetCode:** [1768. Merge Strings Alternately](https://leetcode.com/problems/merge-strings-alternately/)
+
+---
+
+## Problem
+
+You are given two strings `` `word` `` and `word2`. Merge the strings by adding letters in alternating order, starting with `word1`. 
+
+If a string is longer than the other, append the additional letters onto the end of the merged string.
+
+**Example 1:**
+```
+Input: word1 = "abc", word2 = "pqr"
+Output: "apbqcr"
+Explanation: The merged string will be merged as so:
+word1:  a   b   c
+word2:    p   q   r
+merged: a p b q c r
+```
+
+**Example 2:**
+```
+Input: word1 = "ab", word2 = "pqrs"
+Output: "apbqrs"
+Explanation: Notice that as word2 is longer, "rs" is appended to the end.
+word1:  a   b 
+word2:    p   q   r   s
+merged: a p b q   r   s
+```
+
+---
+
+## Simple Explanation
+
+Think of this like **taking turns**:
+
+1. Take a letter from `word1`
+2. Take a letter from `word2` 
+3. Repeat until one string runs out
+4. Add any remaining letters from the longer string
+
+It's like merging two lines of people, alternating between each line!
+
+---
+
+## Solution
+
+<TabbedCode
+  files={[
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function mergeAlternately(word1, word2) {
+  let result = '';
+  let i = 0; 
+  let j = 0; 
+
+  while (i < word1.length && j < word2.length) {
+    result += word1[i];
+    result += word2[j];
+    i++;
+    j++;
+  }
+
+  while (i < word1.length) result += word1[i++];
+  while (j < word2.length) result += word2[j++];
+
+  return result;
+}`
+    },
+
+    {
+      title: "Python",
+      language: "python",
+      code: `def merge_alternately(word1, word2):
+    result = ""
+    i = j = 0
+
+    while i < len(word1) and j < len(word2):
+        result += word1[i]
+        result += word2[j]
+        i += 1
+        j += 1
+
+    result += word1[i:]
+    result += word2[j:]
+
+    return result`
+    },
+    {
+      title: "C++",
+      language: "cpp",
+      code: `#include <string>
+using namespace std;
+
+string mergeAlternately(string word1, string word2) {
+    string result;
+    int i = 0, j = 0;
+
+    while (i < word1.size() && j < word2.size()) {
+        result += word1[i++];
+        result += word2[j++];
+    }
+
+    while (i < word1.size()) result += word1[i++];
+    while (j < word2.size()) result += word2[j++];
+
+    return result;
+}`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `public class MergeStrings {
+    public static String mergeAlternately(String word1, String word2) {
+        StringBuilder result = new StringBuilder();
+        int i = 0, j = 0;
+
+        while (i < word1.length() && j < word2.length()) {
+            result.append(word1.charAt(i++));
+            result.append(word2.charAt(j++));
+        }
+
+        while (i < word1.length()) result.append(word1.charAt(i++));
+        while (j < word2.length()) result.append(word2.charAt(j++));
+
+        return result.toString();
+    }
+}`
+    },
+  ]}
+/>
+
+
+---
+
+## Step-by-Step Walkthrough
+
+Let's trace through `word1 = "abc"`, `word2 = "pqr"`:
+
+```
+Step 1: result = "", i = 0, j = 0
+        Add word1[0] = 'a' → result = "a"
+        Add word2[0] = 'p' → result = "ap"
+
+Step 2: result = "ap", i = 1, j = 1  
+        Add word1[1] = 'b' → result = "apb"
+        Add word2[1] = 'q' → result = "apbq"
+
+Step 3: result = "apbq", i = 2, j = 2
+        Add word1[2] = 'c' → result = "apbqc"
+        Add word2[2] = 'r' → result = "apbqcr"
+
+Final: Both strings exhausted → return "apbqcr"
+```
+
+---
+
+## Alternative Solution (Cleaner)
+
+<TabbedCode
+  files={[
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function mergeAlternately(word1, word2) {
+  let result = '';
+  const maxLength = Math.max(word1.length, word2.length);
+
+  for (let i = 0; i < maxLength; i++) {
+    if (i < word1.length) result += word1[i];
+    if (i < word2.length) result += word2[i];
+  }
+
+  return result;
+}`
+    },
+    {
+      title: "Python",
+      language: "python",
+      code: `def merge_alternately(word1, word2):
+    result = ""
+    max_length = max(len(word1), len(word2))
+
+    for i in range(max_length):
+        if i < len(word1):
+            result += word1[i]
+        if i < len(word2):
+            result += word2[i]
+
+    return result`
+    },
+    {
+      title: "C++",
+      language: "cpp",
+      code: `#include <string>
+using namespace std;
+
+string mergeAlternately(string word1, string word2) {
+    string result;
+    int maxLength = max(word1.size(), word2.size());
+
+    for (int i = 0; i < maxLength; i++) {
+        if (i < word1.size()) result += word1[i];
+        if (i < word2.size()) result += word2[i];
+    }
+
+    return result;
+}`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `public class MergeStrings {
+    public static String mergeAlternately(String word1, String word2) {
+        StringBuilder result = new StringBuilder();
+        int maxLength = Math.max(word1.length(), word2.length());
+
+        for (int i = 0; i < maxLength; i++) {
+            if (i < word1.length()) result.append(word1.charAt(i));
+            if (i < word2.length()) result.append(word2.charAt(i));
+        }
+
+        return result.toString();
+    }
+}`
+    },
+  ]}
+/>
+
+
+---
+
+## Complexity Analysis
+
+<Text color="green.400" fontWeight="bold">Time Complexity: O(m + n)</Text>
+<Text ml={4} as="li">We visit each character in both strings exactly once</Text>
+<Text ml={4} as="li"> m = length of word1, n = length of word2</Text>
+
+<Text color="green.400" fontWeight="bold" mt={4}>Space Complexity: O(m + n)</Text>
+<Text ml={4}  as="li"> We build a new string containing all characters</Text>
+
+
+---
+
+## Key Insights
+
+<VStack align="start" spacing={2}>
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">Two pointers pattern</Text>
+    <Text>- track position in each string independently</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">Handle unequal lengths</Text>
+    <Text>- don't forget the remaining characters</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">String building</Text>
+    <Text>- concatenate characters one by one</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">Index bounds</Text>
+    <Text>- always check `i < length` before accessing</Text>
+  </HStack>
+</VStack>
+
+---
+This is a great warm-up problem that introduces the two-pointers technique in its simplest form!

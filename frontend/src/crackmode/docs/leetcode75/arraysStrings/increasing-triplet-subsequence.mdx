@@ -1,0 +1,330 @@
+import { VStack, HStack, Text } from "@chakra-ui/react"
+
+# Increasing Triplet Subsequence
+
+**Difficulty:** <span style={{color: "#fbbf24"}}>Medium</span>  
+**LeetCode:** [334. Increasing Triplet Subsequence](https://leetcode.com/problems/increasing-triplet-subsequence/)
+
+---
+
+## Problem
+
+Given an integer array `nums`, return `true` if there exists a triple of indices `(i, j, k)` such that `i < j < k` and `nums[i] < nums[j] < nums[k]`.
+
+If no such indices exists, return `false`.
+
+**Example 1:**
+```
+Input: nums = [1,2,3,4,5]
+Output: true
+Explanation: Any triplet where i < j < k is valid.
+```
+
+**Example 2:**
+```
+Input: nums = [5,4,3,2,1]
+Output: true
+Explanation: No triplet exists.
+```
+
+**Example 3:**
+```
+Input: nums = [2,1,5,0,4,6]
+Output: true
+Explanation: The triplet (3, 4, 5) is valid because nums[3] == 0 < nums[4] == 4 < nums[5] == 6.
+```
+
+---
+
+## Simple Explanation
+
+We need to find **3 numbers in increasing order**, but they don't have to be consecutive!
+
+**Key insight:** Keep track of the **smallest** and **second smallest** numbers we've seen so far. If we find a number larger than both, we have our triplet!
+
+Think of it as **"building a staircase"**:
+- Step 1: Find the lowest step
+- Step 2: Find a higher step  
+- Step 3: Find an even higher step → Success!
+
+---
+
+## Solution
+
+<TabbedCode
+  files={[
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function increasingTriplet(nums) {
+  let first = Infinity;   // Smallest number so far
+  let second = Infinity;  // Second smallest number so far
+  
+  for (let num of nums) {
+    if (num <= first) {
+      first = num;        // Update smallest
+    } else if (num <= second) {
+      second = num;       // Update second smallest
+    } else {
+      return true;        // Found third number > second > first
+    }
+  }
+  
+  return false;
+}`
+    },
+    {
+      title: "Python",
+      language: "python",
+      code: `def increasing_triplet(nums):
+    first = float('inf')    # Smallest number so far
+    second = float('inf')   # Second smallest number so far
+    
+    for num in nums:
+        if num <= first:
+            first = num     # Update smallest
+        elif num <= second:
+            second = num    # Update second smallest
+        else:
+            return True     # Found third number > second > first
+    
+    return False`
+    },
+    {
+      title: "C++",
+      language: "cpp",
+      code: `#include <vector>
+#include <climits>
+using namespace std;
+
+bool increasingTriplet(vector<int>& nums) {
+    int first = INT_MAX;    // Smallest number so far
+    int second = INT_MAX;   // Second smallest number so far
+    
+    for (int num : nums) {
+        if (num <= first) {
+            first = num;    // Update smallest
+        } else if (num <= second) {
+            second = num;   // Update second smallest
+        } else {
+            return true;    // Found third number > second > first
+        }
+    }
+    
+    return false;
+}`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `public class IncreasingTriplet {
+    public static boolean increasingTriplet(int[] nums) {
+        int first = Integer.MAX_VALUE;   // Smallest number so far
+        int second = Integer.MAX_VALUE;  // Second smallest number so far
+        
+        for (int num : nums) {
+            if (num <= first) {
+                first = num;             // Update smallest
+            } else if (num <= second) {
+                second = num;            // Update second smallest
+            } else {
+                return true;             // Found third number > second > first
+            }
+        }
+        
+        return false;
+    }
+}`
+    },
+  ]}
+/>
+
+---
+
+## Step-by-Step Walkthrough
+
+Let's trace through `nums = [2,1,5,0,4,6]`:
+
+```
+Initial: first = ∞, second = ∞
+
+num = 2:
+  2 <= ∞ (first) → first = 2
+  State: first = 2, second = ∞
+
+num = 1:
+  1 <= 2 (first) → first = 1  
+  State: first = 1, second = ∞
+
+num = 5:
+  5 > 1 (first), 5 <= ∞ (second) → second = 5
+  State: first = 1, second = 5
+
+num = 0:
+  0 <= 1 (first) → first = 0
+  State: first = 0, second = 5
+
+num = 4:
+  4 > 0 (first), 4 <= 5 (second) → second = 4
+  State: first = 0, second = 4
+
+num = 6:
+  6 > 0 (first), 6 > 4 (second) → return true!
+  
+Found triplet: (0, 4, 6) at positions (3, 4, 5)
+```
+
+---
+
+## Why This Algorithm Works
+
+**The magic:** Even though we update `first` and `second`, we maintain the **relationship**:
+
+```
+When we find a number > second:
+- We know second was set when first < second
+- Even if first gets updated later, the original relationship existed
+- The indices i < j < k are preserved in time order!
+
+Example: [2,1,5,0,4,6]
+- When we see 5: first=1, second=5 (relationship: 1 < 5)
+- When we see 0: first=0, but we still remember second=5 came after some first
+- When we see 6: 6 > 5, so triplet exists!
+```
+
+---
+
+## Visual Understanding
+
+```
+Array: [2, 1, 5, 0, 4, 6]
+Index:  0  1  2  3  4  5
+
+Step by step:
+2: first=2, second=∞
+1: first=1, second=∞      (1 is smaller than 2)
+5: first=1, second=5      (5 > 1, so becomes second)
+0: first=0, second=5      (0 is smaller than 1)  
+4: first=0, second=4      (4 is between 0 and 5)
+6: FOUND! 6 > 4 > 0       (indices: some i < 4 < 5)
+
+The actual triplet uses indices where the relationship was established:
+Position of 0 (index 3) < Position of 4 (index 4) < Position of 6 (index 5)
+```
+
+---
+
+## Alternative Solution (Brute Force)
+
+<TabbedCode
+  files={[
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function increasingTriplet(nums) {
+  const n = nums.length;
+  
+  // Try all possible triplets
+  for (let i = 0; i < n - 2; i++) {
+    for (let j = i + 1; j < n - 1; j++) {
+      if (nums[j] > nums[i]) {
+        for (let k = j + 1; k < n; k++) {
+          if (nums[k] > nums[j]) {
+            return true;  // Found increasing triplet
+          }
+        }
+      }
+    }
+  }
+  
+  return false;
+}
+
+// Time: O(n³), Space: O(1)
+// This works but is too slow for large inputs`
+    },
+    {
+      title: "Python",
+      language: "python",
+      code: `def increasing_triplet(nums):
+    n = len(nums)
+    
+    # Try all possible triplets
+    for i in range(n - 2):
+        for j in range(i + 1, n - 1):
+            if nums[j] > nums[i]:
+                for k in range(j + 1, n):
+                    if nums[k] > nums[j]:
+                        return True  # Found increasing triplet
+    
+    return False
+
+# Time: O(n³), Space: O(1)
+# This works but is too slow for large inputs`
+    },
+  ]}
+/>
+
+---
+
+## Edge Cases
+
+```javascript
+// Empty or small arrays
+increasingTriplet([]) // false
+increasingTriplet([1]) // false  
+increasingTriplet([1,2]) // false
+
+// Decreasing sequence
+increasingTriplet([5,4,3,2,1]) // false
+
+// All equal elements  
+increasingTriplet([1,1,1,1,1]) // false
+
+// Minimum valid case
+increasingTriplet([1,2,3]) // true
+
+// With duplicates
+increasingTriplet([1,1,1,2,2,3]) // true
+```
+
+---
+
+## Complexity Analysis
+
+**Time Complexity: O(n)**
+- Single pass through the array
+- Constant time operations for each element
+
+**Space Complexity: O(1)**
+- Only using two variables regardless of input size
+
+---
+
+## Key Insights
+
+<VStack align="start" spacing={2}>
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">Greedy approach</Text>
+    <Text>- Always keep the smallest possible first and second</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">Temporal relationships</Text>
+    <Text>- Variables remember when relationships were established</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">Early termination</Text>
+    <Text>- Return true as soon as we find the third element</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">State tracking</Text>
+    <Text>- Two variables track the "best so far" candidates</Text>
+  </HStack>
+</VStack>
+
+---
+
+This problem showcases an elegant **greedy algorithm** that's both intuitive and mathematically sound!

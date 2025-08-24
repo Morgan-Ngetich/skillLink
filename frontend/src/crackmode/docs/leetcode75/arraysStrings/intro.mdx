@@ -1,0 +1,123 @@
+import { Table } from "@chakra-ui/react"
+
+# What are Arrays & Strings?
+
+Before diving into problems, let's understand what we're working with.
+
+---
+
+## Array
+
+An **array** is a **collection of items** stored together and accessed by **index**.
+
+Think of it like a row of numbered boxes, each holding a value:
+
+```javascript
+numbers = [5, 10, 15]
+```
+
+- `numbers[0] → 5`
+- `numbers[1] → 10`
+- `numbers[2] → 15`
+
+**Arrays are great for:**
+- Storing multiple items of the same type
+- Looping through data
+- Mathematical operations on lists
+- Keeping data organized in order
+
+---
+
+## String
+
+A **string** is a **sequence of characters** - like a word or sentence.
+
+Internally, it works like an array of characters:
+
+```javascript
+text = "hello"
+```
+
+- `text[0] → 'h'`
+- `text[1] → 'e'`
+- `text[4] → 'o'`
+
+**Strings are perfect for:**
+- Handling names, messages, or any text
+- Text searching and manipulation
+- Pattern matching
+- Building user interfaces
+
+---
+
+## Key Similarities
+
+Both arrays and strings:
+- Use **zero-based indexing** (start counting from 0)
+- Have a **length** property
+- Can be **iterated** through with loops
+- Support many of the same operations
+
+```javascript
+// Both have length
+numbers.length  // 3
+text.length     // 5
+
+// Both can be looped through
+for (let i = 0; i < numbers.length; i++) {
+    console.log(numbers[i]);
+}
+
+for (let i = 0; i < text.length; i++) {
+    console.log(text[i]);
+}
+```
+
+---
+
+## Quick Comparison
+
+    <Table.Root size="sm" variant="line" showColumnBorder interactive>
+      <Table.Caption mt={3}>Quick Comparison of Arrays vs Strings</Table.Caption>
+      <Table.Header>
+        <Table.Row>
+          <Table.ColumnHeader>Feature</Table.ColumnHeader>
+          <Table.ColumnHeader>Array</Table.ColumnHeader>
+          <Table.ColumnHeader>String</Table.ColumnHeader>
+        </Table.Row>
+      </Table.Header>
+      <Table.Body>
+        <Table.Row>
+          <Table.Cell>Data Type</Table.Cell>
+          <Table.Cell>Any values</Table.Cell>
+          <Table.Cell>Characters only</Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell>Use Case</Table.Cell>
+          <Table.Cell>Lists of items</Table.Cell>
+          <Table.Cell>Words / sentences</Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell>Access</Table.Cell>
+          <Table.Cell>By index <code>arr[0]</code></Table.Cell>
+          <Table.Cell>By index <code>str[0]</code></Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell>Mutable</Table.Cell>
+          <Table.Cell>Yes (can change)</Table.Cell>
+          <Table.Cell>No (immutable)</Table.Cell>
+        </Table.Row>
+      </Table.Body>
+    </Table.Root>
+---
+
+## In Simple Terms
+
+- **Array** = List of values `[1, 2, 3]`
+- **String** = List of characters `"abc"`
+
+Think of a string as a special type of array that only holds characters!
+
+---
+
+Ready to solve some problems? Let's start with the fundamentals! 🚀
