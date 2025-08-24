@@ -5,7 +5,19 @@ export const shikiAdapter = createShikiAdapter<Highlighter>({
   async load() {
     const { createHighlighter } = await import("shiki")
     return createHighlighter({
-      langs: ["tsx", "js", "json", "bash", "html", "css"],
+      langs: [
+        "tsx",
+        "ts",
+        "js",
+        "python",
+        "c++",
+        "java",
+        "json",
+        "bash",
+        "html",
+        "css",
+        "scss"
+      ],
       themes: ["github-dark", "github-light"],
     })
   },
