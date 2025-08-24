@@ -3,10 +3,13 @@ import {
   Text,
   Link,
   Separator,
+  CodeBlock,
+  Kbd,
 } from "@chakra-ui/react"
 import type { MDXComponents } from "mdx/types"
 import type { ComponentProps } from "react"
-import { ScheduleItem, ProgressStat, ThemeItem } from "./ui"
+import { ScheduleItem, ProgressStat, ThemeItem, TabbedCode } from "./ui"
+import { shikiAdapter } from "../hooks/shikiAdapter"
 
 const components: MDXComponents = {
   h1: (props: ComponentProps<"h1">) => (
@@ -31,9 +34,9 @@ const components: MDXComponents = {
     <Heading as="h4" size="md" mt={4} mb={2} {...props} />
   ),
   p: (props: ComponentProps<"p">) => (
-    <Text mb={4} lineHeight="tall" {...props} />
+    <Text mb={3} lineHeight="tall" {...props} />
   ),
-  a: (props: ComponentProps<"a">) => <Link color="blue.500" {...props} />,
+  a: (props: ComponentProps<"a">) => <Link color="blue.400" {...props} />,
   hr: (props: ComponentProps<"hr">) => <Separator my={6} {...props} />,
   
   // Simplified list components - remove List.Root and List.Item
@@ -47,41 +50,41 @@ const components: MDXComponents = {
     <li style={{ marginBottom: '0.25rem' }} {...props} />
   ),
 
-  // Simplified code block - remove complex CodeBlock structure
-  code: ({ className, children, ...props }: ComponentProps<"code">) => {
-    // If it's a code block (has className), render as pre + code
-    if (className) {
+  code: ({ className, children, ...props}) => {
+    // MDX usually passes language in className like "language-js"
+    const isBlock = className || String(children).includes("\n")
+    const language = className?.replace("language-", "")
+
+    if (isBlock) {      
       return (
-        <pre style={{ 
-          background: '#f7fafc', 
-          padding: '1rem', 
-          borderRadius: '0.5rem', 
-          overflow: 'auto',
-          marginBottom: '1rem'
-        }}>
-          <code {...props}>{children}</code>
-        </pre>
+        <CodeBlock.AdapterProvider value={shikiAdapter}>
+          <CodeBlock.Root code={String(children).trim()} language={language}>
+            {language && (
+            <CodeBlock.Header>
+              <CodeBlock.Title>{language}</CodeBlock.Title>
+              <CodeBlock.Control>
+                <CodeBlock.CopyTrigger />
+                <CodeBlock.CollapseTrigger />
+              </CodeBlock.Control>
+            </CodeBlock.Header>
+            )}
+            <CodeBlock.Content>
+              <CodeBlock.Code>
+                <CodeBlock.CodeText />
+              </CodeBlock.Code>
+            </CodeBlock.Content>
+          </CodeBlock.Root>
+        </CodeBlock.AdapterProvider>
       )
     }
-    // If it's inline code
-    return (
-      <code 
-        style={{ 
-          background: '#f7fafc', 
-          padding: '0.125rem 0.25rem', 
-          borderRadius: '0.25rem',
-          fontSize: '0.875em'
-        }} 
-        {...props}
-      >
-        {children}
-      </code>
-    )
+
+    return <Kbd {...props} variant="outline" border="1px solid" size="lg" bg="cardbg">{children}</Kbd>
   },
 
   ScheduleItem,
   ProgressStat,
-  ThemeItem
+  ThemeItem,
+  TabbedCode
 }
 
 export default components
