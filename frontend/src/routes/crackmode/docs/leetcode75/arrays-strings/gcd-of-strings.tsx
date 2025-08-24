@@ -1,12 +1,12 @@
 import { Spinner } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from 'react';
-import Home from "@/crackmode/Home"
+import GcdOfStrings from "@/crackmode/docs/leetcode75/arraysStrings/gcd-of-strings.mdx"
 
-export const Route = createFileRoute("/crackmode/")({
+export const Route = createFileRoute("/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings")({
   component: () => (
     <Suspense fallback={<Spinner />}>
-      <Home />
+      <GcdOfStrings />
     </Suspense>
-  ),
+  )
 });
