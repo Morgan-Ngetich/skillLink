@@ -10,8 +10,15 @@ import { AuthCallbackLoader } from '@/components/common/AuthCallBackLoader';
 import { storage } from '@/utils/localstorage';
 import { type GoogleUserInfo, type Identity, type SupabaseUser } from '@/client';
 import { getApiErrorMessage } from '@/utils/errorUtils';
+import type { Session } from '@supabase/supabase-js';
 
 const LOCAL_STORAGE_KEY = 'googleUser';
+const SESSION_CACHE_KEY = "supabase_session_cache";
+
+interface CachedSession {
+  session: Session;
+  timestamp: number;
+}
 
 function isUserFromGoogle(user: SupabaseUser): boolean {
   return user?.identities?.some((i: Identity) => i.provider === 'google') ?? false;
@@ -36,7 +43,19 @@ function AuthCallbackPage() {
         await syncUserToBackend(user);
         await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
 
-        // ✅ Save Google user info to localStorage
+
+        // cache the session for faster susbsequent loads
+        try {
+          const cacheData: CachedSession = {
+            session: data.session,
+            timestamp: Date.now()
+          }
+          storage.set(SESSION_CACHE_KEY, JSON.stringify(cacheData))
+        } catch (error) {
+          console.warn('Failed to cache session:', error);
+        }
+
+        // Save Google user info to localStorage
         const isGoogle = isUserFromGoogle(user);
         const email = user.email;
 
@@ -45,7 +64,7 @@ function AuthCallbackPage() {
           const avatar_url = user.user_metadata?.avatar_url
 
           const googleUser: GoogleUserInfo = { name, email, avatar_url };
-          console.log('✅ Saving Google user to localStorage:', googleUser);
+          console.log(' Saving Google user to localStorage:', googleUser);
           storage.set(LOCAL_STORAGE_KEY, JSON.stringify(googleUser));
         } else {
           // Clear if not a Google user
@@ -55,6 +74,10 @@ function AuthCallbackPage() {
         redirect()
       } catch (err: unknown) {
         console.error('Error during auth callback:', err);
+
+        // clear caches on error
+        storage.remove(SESSION_CACHE_KEY)
+        storage.remove(LOCAL_STORAGE_KEY)
 
         toast({
           id: 'auth-error',
