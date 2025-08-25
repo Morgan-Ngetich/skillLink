@@ -1,0 +1,558 @@
+[
+  {
+    "id": "introduction",
+    "title": "Introduction",
+    "content": "Box, Heading, Text, Button, VStack, HStack, Separator, Badge, SimpleGrid, Card, Icon, Avatar, Flex, Kbd, Code, } from \"@chakra-ui/react\"; FaCode, FaUsers, FaTrophy, FaRocket, FaFire, FaBrain, FaChartLine, FaSun, FaBullseye, FaBolt, } from \"react-icons/fa\"; 🔥 CRACK MODE ACTIVE ⚡ Welcome to CrackMode! The ultimate community for crushing LeetCode and mastering algorithms. Join elite coders who don't just solve problems—they dominate them! 🚀 Start Grinding Join Community 🌟 What Makes CrackMode Different? CrackMode isn’t just another coding community — it’s a movement. We believe consistent practice and accountability are the fastest ways to grow as a developer. Why We’re Different - Community-Driven Members push each other to solve LeetCode problems daily. Everyone is both a learner and a motivator. - Accountability First Progress comes from discipline, not just motivation. The community ensures no one falls off track. - Practical Problem-Solving Beyond streaks, we discuss patterns, optimization, and real-world applications. - Growth-Oriented Perfect for FAANG prep or sharpening DSA skills with peers who keep you consistent. The CrackMode Mindset - Fail fast, learn faster. - Celebrate progress, not perfection. - One problem a day compounds into mastery. --- {/ 🚀 Core Features That Set Us Apart Smart Problem Sets AI-curated problems that adapt to your skill level and target weak spots. Live Coding Sessions Real-time collaborative solving with voice chat and screen sharing. Progress Tracking Detailed analytics on your solving patterns, speed, and improvement areas. Interview Prep Mock interviews with FAANG engineers and real-time feedback. /} CrackMode Daily Grinding Schedule Daily Grinding Sessions We run structured sessions every day — join live or catch up with recordings anytime. {/ This Week's Themes /} 🎯 This Week's Themes {/ Community Progress /} 📊 Community Progress",
+    "excerpt": "Box, Heading, Text, Button, VStack, HStack, Separator, Badge, SimpleGrid, Card, Icon, Avatar, Flex, Kbd, Code, } from \"@chakra-ui/react\"; FaCode, FaUsers,...",
+    "url": "/crackmode/docs/introduction",
+    "section": "Getting Started",
+    "tags": [
+      "react"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "🌟 What Makes CrackMode Different?",
+        "id": "what-makes-crackmode-different"
+      },
+      {
+        "level": 2,
+        "text": "Why We’re Different",
+        "id": "why-were-different"
+      },
+      {
+        "level": 2,
+        "text": "The CrackMode Mindset",
+        "id": "the-crackmode-mindset"
+      },
+      {
+        "level": 1,
+        "text": "CrackMode Daily Grinding Schedule",
+        "id": "crackmode-daily-grinding-schedule"
+      }
+    ]
+  },
+  {
+    "id": "leetcode75/arrays-strings",
+    "title": "Arrays Strings",
+    "content": "Arrays & Strings (LeetCode 75) In this section, we explore core problems around arrays and strings. We'll cover patterns, approaches, and common pitfalls with examples. --- Table of Contents - Introduction - Patterns to Learn - Problems - Merge Strings Alternately - Greatest Common Divisor of Strings - Kids With the Greatest Number of Candies - Summary --- Introduction Arrays and strings are the foundation of most coding problems. They're essential data structures that appear in countless interview questions and real-world applications. In this comprehensive module, you'll practice: - Iteration techniques - Learn different ways to traverse data - Two pointers approach - Solve problems with dual index tracking - Sliding window patterns - Handle dynamic subarray problems - Hash maps for optimization - Use frequency counting effectively These fundamental concepts will serve as building blocks for more complex algorithmic challenges. --- Patterns to Learn Two Pointers Use start and end pointers to solve problems efficiently Two pointers technique involves using two index variables to traverse data structures. This approach is particularly powerful for: - Palindrome checking - Array reversal - Finding pairs with target sum - Removing duplicates Example scenario: Checking if a string is a palindrome by comparing characters from both ends moving inward. Sliding Window Handle substrings/subarrays with dynamic window size The sliding window technique maintains a window of elements and slides it across the data structure. Perfect for: - Maximum sum subarray problems - Longest substring without repeating characters - Finding anagrams in strings - Minimum window substring Example scenario: Finding the maximum sum of k consecutive elements in an array. Hashing/Counting Use frequency maps for character or number counting Hash maps provide O(1) lookup time and are essential for: - Anagram detection - Finding duplicates - Character frequency counting - Two sum problems Example scenario: Determining if two strings are anagrams by comparing character frequencies. --- Problems Merge Strings Alternately Difficulty: Easy Problem: You are given two strings word1 and word2. Merge the strings by adding letters in alternating order, starting with word1. If a string is longer than the other, append the additional letters onto the end of the merged string. Approach Use two pointers to iterate through both strings simultaneously, alternating between characters. Handle remaining characters after one string is exhausted. Solution ``javascript function mergeAlternately(word1, word2) { let result = ''; let i = 0, j = 0; // Alternate between characters while both strings have characters while (i b === 0 ? a : gcd(b, a % b); // Find GCD of the lengths const gcdLength = gcd(str1.length, str2.length); // Return the substring of that length return str1.substring(0, gcdLength); } // Example usage: // gcdOfStrings(\"ABCABC\", \"ABC\") → \"ABC\" // gcdOfStrings(\"ABABAB\", \"ABAB\") → \"AB\" // gcdOfStrings(\"LEET\", \"CODE\") → \"\" ` Time Complexity: O(min(m, n)) for the GCD calculation Space Complexity: O(min(m, n)) for the substring creation --- Kids With the Greatest Number of Candies Difficulty: Easy Problem: There are n kids with candies. You are given an integer array candies, where each candies[i] represents the number of candies the ith kid has, and an integer extraCandies, denoting the number of extra candies that you have. Return a boolean array result of length n, where result[i] is true if, after giving the ith kid all the extraCandies, they will have the greatest number of candies among all the kids, or false otherwise. Approach Find the maximum number of candies any kid currently has. Then check if each kid can reach or exceed this maximum when given the extra candies. Solution `javascript function kidsWithCandies(candies, extraCandies) { // Find the maximum candies any kid currently has const maxCandies = Math.max(...candies); // Check if each kid can have >= maxCandies with extra candies return candies.map(candy => candy + extraCandies >= maxCandies ); } // Alternative approach without spread operator (more efficient for large arrays) function kidsWithCandiesOptimized(candies, extraCandies) { let maxCandies = 0; // Find maximum in single pass for (let candy of candies) { maxCandies = Math.max(maxCandies, candy); } // Create result array const result = []; for (let candy of candies) { result.push(candy + extraCandies >= maxCandies); } return result; } // Example usage: // kidsWithCandies([2,3,5,1,3], 3) → [true,true,true,false,true] // kidsWithCandies([4,2,1,1,2], 1) → [true,false,false,false,false] `` Time Complexity: O(n) where n is the number of kids Space Complexity: O(1) excluding the output array --- Summary Key Takeaways You've now covered the fundamental patterns for arrays and strings. These concepts will serve as building blocks for more complex problems: - Two pointers technique is powerful for palindromes, sorted arrays, and finding pairs - Sliding window optimizes substring/subarray problems by avoiding redundant work - Hash maps provide O(1) lookups for counting and frequency problems - Pattern recognition helps you quickly identify the right approach for new problems Problem-Solving Strategy When approaching array and string problems: 1. Identify the pattern - Is this a two-pointer, sliding window, or hashing problem? 2. Consider edge cases - Empty arrays/strings, single elements, duplicates 3. Optimize step by step - Start with brute force, then optimize 4. Analyze complexity - Always consider both time and space complexity Next Steps Continue building on these foundations with more advanced topics: - Two Pointers (Advanced) - Fast and slow pointers, cycle detection - Sliding Window (Advanced) - Variable window size, multiple conditions - String Algorithms - KMP, Z-algorithm, suffix arrays - Array Techniques - Prefix sums, difference arrays, binary search Practice consistently and focus on understanding the underlying patterns rather than memorizing solutions. Each problem you solve strengthens your pattern recognition abilities! --- Ready for the next challenge? Let's dive into more advanced two-pointer techniques!",
+    "excerpt": "Arrays & Strings (LeetCode 75) In this section, we explore core problems around arrays and strings. We'll cover patterns, approaches, and common pitfalls with...",
+    "url": "/crackmode/docs/leetcode75/arrays-strings",
+    "section": "Leetcode75",
+    "tags": [
+      "example",
+      "advanced",
+      "javascript"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "Arrays & Strings (LeetCode 75)",
+        "id": "arrays-strings-leetcode-75"
+      },
+      {
+        "level": 2,
+        "text": "Table of Contents",
+        "id": "table-of-contents"
+      },
+      {
+        "level": 2,
+        "text": "Introduction",
+        "id": "introduction"
+      },
+      {
+        "level": 2,
+        "text": "Patterns to Learn",
+        "id": "patterns-to-learn"
+      },
+      {
+        "level": 3,
+        "text": "Two Pointers",
+        "id": "two-pointers"
+      },
+      {
+        "level": 3,
+        "text": "Sliding Window",
+        "id": "sliding-window"
+      },
+      {
+        "level": 3,
+        "text": "Hashing/Counting",
+        "id": "hashingcounting"
+      },
+      {
+        "level": 2,
+        "text": "Problems",
+        "id": "problems"
+      },
+      {
+        "level": 3,
+        "text": "Merge Strings Alternately",
+        "id": "merge-strings-alternately"
+      },
+      {
+        "level": 4,
+        "text": "Approach",
+        "id": "approach"
+      },
+      {
+        "level": 4,
+        "text": "Solution",
+        "id": "solution"
+      },
+      {
+        "level": 3,
+        "text": "Greatest Common Divisor of Strings",
+        "id": "greatest-common-divisor-of-strings"
+      },
+      {
+        "level": 4,
+        "text": "Approach",
+        "id": "approach-1"
+      },
+      {
+        "level": 4,
+        "text": "Solution",
+        "id": "solution-1"
+      },
+      {
+        "level": 3,
+        "text": "Kids With the Greatest Number of Candies",
+        "id": "kids-with-the-greatest-number-of-candies"
+      },
+      {
+        "level": 4,
+        "text": "Approach",
+        "id": "approach-2"
+      },
+      {
+        "level": 4,
+        "text": "Solution",
+        "id": "solution-2"
+      },
+      {
+        "level": 2,
+        "text": "Summary",
+        "id": "summary"
+      },
+      {
+        "level": 3,
+        "text": "Key Takeaways",
+        "id": "key-takeaways"
+      },
+      {
+        "level": 3,
+        "text": "Problem-Solving Strategy",
+        "id": "problem-solving-strategy"
+      },
+      {
+        "level": 3,
+        "text": "Next Steps",
+        "id": "next-steps"
+      }
+    ]
+  },
+  {
+    "id": "leetcode75/arraysStrings/gcd-of-strings",
+    "title": "Gcd Of Strings",
+    "content": "Greatest Common Divisor of Strings Difficulty: Easy LeetCode: 1071. Greatest Common Divisor of Strings --- Problem For two strings s and t, we say t divides s if and only if s = t + t + t + ... + t (i.e., t is concatenated with itself one or more times). Given two strings str1 and str2, return the largest string x such that x divides both str1 and str2. Example 1: `` Input: str1 = \"ABCABC\", str2 = \"ABC\" Output: \"ABC\" Explanation: \"ABC\" divides \"ABCABC\" (ABC + ABC) and divides \"ABC\" (ABC). ` Example 2: ` Input: str1 = \"ABABAB\", str2 = \"ABAB\" Output: \"AB\" Explanation: \"AB\" divides \"ABABAB\" (AB+AB+AB) and \"ABAB\" (AB+AB). ` Example 3: ` Input: str1 = \"LEET\", str2 = \"CODE\" Output: \"\" Explanation: There is no string that divides both \"LEET\" and \"CODE\". ` --- Simple Explanation Think of this like finding the greatest common factor but for strings! Just like numbers have common factors: - 12 = 3 × 4, 18 = 3 × 6 → GCD is 3 - \"ABCABC\" = \"ABC\" × 2, \"ABC\" = \"ABC\" × 1 → GCD is \"ABC\" Key insight: If two strings share a common divisor, then concatenating them in different orders should give the same result! --- Solution b === 0 ? a : gcd(b, a % b); // Find GCD of the lengths const gcdLength = gcd(str1.length, str2.length); // Return the substring of that length return str1.substring(0, gcdLength); } }, { title: \"Python\", language: \"python\", code: def gcd_of_strings(str1, str2): # Check if concatenation works both ways if str1 + str2 != str2 + str1: return \"\" # Helper function to find GCD of two numbers def gcd(a, b): return a if b == 0 else gcd(b, a % b) # Find GCD of the lengths gcd_length = gcd(len(str1), len(str2)) # Return the substring of that length return str1[:gcd_length] }, { title: \"C++\", language: \"cpp\", code: #include using namespace std; class Solution { public: string gcdOfStrings(string str1, string str2) { // Check if concatenation works both ways if (str1 + str2 != str2 + str1) { return \"\"; } // Find GCD of the lengths int gcdLength = gcd(str1.length(), str2.length()); // Return the substring of that length return str1.substr(0, gcdLength); } private: int gcd(int a, int b) { return b == 0 ? a : gcd(b, a % b); } }; }, { title: \"Java\", language: \"java\", code: public class GCDOfStrings { public static String gcdOfStrings(String str1, String str2) { // Check if concatenation works both ways if (!(str1 + str2).equals(str2 + str1)) { return \"\"; } // Find GCD of the lengths int gcdLength = gcd(str1.length(), str2.length()); // Return the substring of that length return str1.substring(0, gcdLength); } private static int gcd(int a, int b) { return b == 0 ? a : gcd(b, a % b); } } }, ]} /> --- Step-by-Step Walkthrough Let's trace through str1 = \"ABCABC\", str2 = \"ABC\": `` Step 1: Check if common divisor exists str1 + str2 = \"ABCABC\" + \"ABC\" = \"ABCABCABC\" str2 + str1 = \"ABC\" + \"ABCABC\" = \"ABCABCABC\" ✓ They are equal, so common divisor exists Step 2: Find GCD of lengths str1.length = 6, str2.length = 3 gcd(6, 3) = gcd(3, 6%3) = gcd(3, 0) = 3 Step 3: Return substring str1.substring(0, 3) = \"ABC\" Result: \"ABC\" Let's verify: \"ABCABC\" = \"ABC\" + \"ABC\" ✓ and \"ABC\" = \"ABC\" ✓ ` --- Why the Concatenation Check Works This is the key insight: If strings have a common divisor, then: ` str1 = pattern × m str2 = pattern × n Therefore: str1 + str2 = (pattern × m) + (pattern × n) = pattern × (m + n) str2 + str1 = (pattern × n) + (pattern × m) = pattern × (n + m) Since addition is commutative: m + n = n + m So: str1 + str2 = str2 + str1 `` If concatenation gives different results, no common pattern exists! --- Complexity Analysis Time Complexity: O(min(m, n)) Concatenation check: O(m + n) GCD calculation: O(log(min(m, n))) Overall: O(m + n) for the concatenation dominates Space Complexity: O(m + n) We build a new string containing all characters --- Key Insights Mathematical insight - GCD concept applies to strings through repetition Concatenation test - str1+str2 == str2+str1 iff common divisor exists Length relationship - GCD length = GCD of string lengths Early termination - Concatenation check eliminates impossible cases --- This problem beautifully combines string manipulation with number theory concepts!",
+    "excerpt": "Greatest Common Divisor of Strings Difficulty: Easy LeetCode: 1071. Greatest Common Divisor of Strings --- Problem For two strings s and t, we say t divides s...",
+    "url": "/crackmode/docs/leetcode75/arraysStrings/gcd-of-strings",
+    "section": "Leetcode75",
+    "tags": [
+      "example"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "Greatest Common Divisor of Strings",
+        "id": "greatest-common-divisor-of-strings"
+      },
+      {
+        "level": 2,
+        "text": "Problem",
+        "id": "problem"
+      },
+      {
+        "level": 2,
+        "text": "Simple Explanation",
+        "id": "simple-explanation"
+      },
+      {
+        "level": 2,
+        "text": "Solution",
+        "id": "solution"
+      },
+      {
+        "level": 2,
+        "text": "Step-by-Step Walkthrough",
+        "id": "step-by-step-walkthrough"
+      },
+      {
+        "level": 2,
+        "text": "Why the Concatenation Check Works",
+        "id": "why-the-concatenation-check-works"
+      },
+      {
+        "level": 2,
+        "text": "Complexity Analysis",
+        "id": "complexity-analysis"
+      },
+      {
+        "level": 2,
+        "text": "Key Insights",
+        "id": "key-insights"
+      }
+    ]
+  },
+  {
+    "id": "leetcode75/arraysStrings/increasing-triplet-subsequence",
+    "title": "Increasing Triplet Subsequence",
+    "content": "Increasing Triplet Subsequence Difficulty: Medium LeetCode: 334. Increasing Triplet Subsequence --- Problem Given an integer array nums, return true if there exists a triple of indices (i, j, k) such that i second > first } } return false; } }, { title: \"Python\", language: \"python\", code: def increasing_triplet(nums): first = float('inf') # Smallest number so far second = float('inf') # Second smallest number so far for num in nums: if num second > first return False }, { title: \"C++\", language: \"cpp\", code: #include #include using namespace std; bool increasingTriplet(vector& nums) { int first = INT_MAX; // Smallest number so far int second = INT_MAX; // Second smallest number so far for (int num : nums) { if (num second > first } } return false; } }, { title: \"Java\", language: \"java\", code: public class IncreasingTriplet { public static boolean increasingTriplet(int[] nums) { int first = Integer.MAX_VALUE; // Smallest number so far int second = Integer.MAX_VALUE; // Second smallest number so far for (int num : nums) { if (num second > first } } return false; } } }, ]} /> --- Step-by-Step Walkthrough Let's trace through nums = [2,1,5,0,4,6]: `` Initial: first = ∞, second = ∞ num = 2: 2 1 (first), 5 0 (first), 4 0 (first), 6 > 4 (second) → return true! Found triplet: (0, 4, 6) at positions (3, 4, 5) ` --- Why This Algorithm Works The magic: Even though we update first and second, we maintain the relationship: ` When we find a number > second: - We know second was set when first 5, so triplet exists! ` --- Visual Understanding ` Array: [2, 1, 5, 0, 4, 6] Index: 0 1 2 3 4 5 Step by step: 2: first=2, second=∞ 1: first=1, second=∞ (1 is smaller than 2) 5: first=1, second=5 (5 > 1, so becomes second) 0: first=0, second=5 (0 is smaller than 1) 4: first=0, second=4 (4 is between 0 and 5) 6: FOUND! 6 > 4 > 0 (indices: some i nums[i]) { for (let k = j + 1; k nums[j]) { return true; // Found increasing triplet } } } } } return false; } // Time: O(n³), Space: O(1) // This works but is too slow for large inputs }, { title: \"Python\", language: \"python\", code: def increasing_triplet(nums): n = len(nums) # Try all possible triplets for i in range(n - 2): for j in range(i + 1, n - 1): if nums[j] > nums[i]: for k in range(j + 1, n): if nums[k] > nums[j]: return True # Found increasing triplet return False Time: O(n³), Space: O(1) This works but is too slow for large inputs }, ]} /> --- Edge Cases ``javascript // Empty or small arrays increasingTriplet([]) // false increasingTriplet([1]) // false increasingTriplet([1,2]) // false // Decreasing sequence increasingTriplet([5,4,3,2,1]) // false // All equal elements increasingTriplet([1,1,1,1,1]) // false // Minimum valid case increasingTriplet([1,2,3]) // true // With duplicates increasingTriplet([1,1,1,2,2,3]) // true `` --- Complexity Analysis Time Complexity: O(n) - Single pass through the array - Constant time operations for each element Space Complexity: O(1) - Only using two variables regardless of input size --- Key Insights Greedy approach - Always keep the smallest possible first and second Temporal relationships - Variables remember when relationships were established Early termination - Return true as soon as we find the third element State tracking - Two variables track the \"best so far\" candidates --- This problem showcases an elegant greedy algorithm that's both intuitive and mathematically sound!",
+    "excerpt": "Increasing Triplet Subsequence Difficulty: Medium LeetCode: 334. Increasing Triplet Subsequence --- Problem Given an integer array nums, return true if there...",
+    "url": "/crackmode/docs/leetcode75/arraysStrings/increasing-triplet-subsequence",
+    "section": "Leetcode75",
+    "tags": [
+      "javascript",
+      "state"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "Increasing Triplet Subsequence",
+        "id": "increasing-triplet-subsequence"
+      },
+      {
+        "level": 2,
+        "text": "Problem",
+        "id": "problem"
+      },
+      {
+        "level": 2,
+        "text": "Simple Explanation",
+        "id": "simple-explanation"
+      },
+      {
+        "level": 2,
+        "text": "Solution",
+        "id": "solution"
+      },
+      {
+        "level": 2,
+        "text": "Step-by-Step Walkthrough",
+        "id": "step-by-step-walkthrough"
+      },
+      {
+        "level": 2,
+        "text": "Why This Algorithm Works",
+        "id": "why-this-algorithm-works"
+      },
+      {
+        "level": 2,
+        "text": "Visual Understanding",
+        "id": "visual-understanding"
+      },
+      {
+        "level": 2,
+        "text": "Alternative Solution (Brute Force)",
+        "id": "alternative-solution-brute-force"
+      },
+      {
+        "level": 1,
+        "text": "Time: O(n³), Space: O(1)",
+        "id": "time-on-space-o1"
+      },
+      {
+        "level": 1,
+        "text": "This works but is too slow for large inputs`",
+        "id": "this-works-but-is-too-slow-for-large-inputs"
+      },
+      {
+        "level": 2,
+        "text": "Edge Cases",
+        "id": "edge-cases"
+      },
+      {
+        "level": 2,
+        "text": "Complexity Analysis",
+        "id": "complexity-analysis"
+      },
+      {
+        "level": 2,
+        "text": "Key Insights",
+        "id": "key-insights"
+      }
+    ]
+  },
+  {
+    "id": "leetcode75/arraysStrings/intro",
+    "title": "Intro",
+    "content": "What are Arrays & Strings? Before diving into problems, let's understand what we're working with. --- Array An array is a collection of items stored together and accessed by index. Think of it like a row of numbered boxes, each holding a value: ``javascript numbers = [5, 10, 15] ` - numbers[0] → 5 - numbers[1] → 10 - numbers[2] → 15 Arrays are great for: - Storing multiple items of the same type - Looping through data - Mathematical operations on lists - Keeping data organized in order --- String A string is a sequence of characters - like a word or sentence. Internally, it works like an array of characters: `javascript text = \"hello\" ` - text[0] → 'h' - text[1] → 'e' - text[4] → 'o' Strings are perfect for: - Handling names, messages, or any text - Text searching and manipulation - Pattern matching - Building user interfaces --- Key Similarities Both arrays and strings: - Use zero-based indexing (start counting from 0) - Have a length property - Can be iterated through with loops - Support many of the same operations `javascript // Both have length numbers.length // 3 text.length // 5 // Both can be looped through for (let i = 0; i Quick Comparison of Arrays vs Strings Feature Array String Data Type Any values Characters only Use Case Lists of items Words / sentences Access By index arr[0] By index str[0] Mutable Yes (can change) No (immutable) --- In Simple Terms - Array = List of values [1, 2, 3] - String = List of characters \"abc\"` Think of a string as a special type of array that only holds characters! --- Ready to solve some problems? Let's start with the fundamentals! 🚀",
+    "excerpt": "What are Arrays & Strings? Before diving into problems, let's understand what we're working with. --- Array An array is a collection of items stored together...",
+    "url": "/crackmode/docs/leetcode75/arraysStrings/intro",
+    "section": "Leetcode75",
+    "tags": [
+      "javascript"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "What are Arrays & Strings?",
+        "id": "what-are-arrays-strings"
+      },
+      {
+        "level": 2,
+        "text": "Array",
+        "id": "array"
+      },
+      {
+        "level": 2,
+        "text": "String",
+        "id": "string"
+      },
+      {
+        "level": 2,
+        "text": "Key Similarities",
+        "id": "key-similarities"
+      },
+      {
+        "level": 2,
+        "text": "Quick Comparison",
+        "id": "quick-comparison"
+      },
+      {
+        "level": 2,
+        "text": "In Simple Terms",
+        "id": "in-simple-terms"
+      }
+    ]
+  },
+  {
+    "id": "leetcode75/arraysStrings/kids-with-greatest-candies",
+    "title": "Kids With Greatest Candies",
+    "content": "Kids With the Greatest Number of Candies Difficulty: Easy LeetCode: 1431. Kids With the Greatest Number of Candies --- Problem There are n kids with candies. You are given an integer array candies, where each candies[i] represents the number of candies the ith kid has, and an integer extraCandies, denoting the number of extra candies that you have. Return a boolean array result of length n, where result[i] is true if, after giving the ith kid all the extraCandies, they will have the greatest number of candies among all the kids, or false otherwise. Note that multiple kids can have the greatest number of candies. Example 1: `` Input: candies = [2,3,5,1,3], extraCandies = 3 Output: [true,true,true,false,true] Explanation: If you give all extraCandies to: - Kid 1: 2 + 3 = 5 candies, which is the greatest among the kids - Kid 2: 3 + 3 = 6 candies, which is the greatest among the kids - Kid 3: 5 + 3 = 8 candies, which is the greatest among the kids - Kid 4: 1 + 3 = 4 candies, which is not the greatest among the kids - Kid 5: 3 + 3 = 6 candies, which is the greatest among the kids ` Example 2: ` Input: candies = [4,2,1,1,2], extraCandies = 1 Output: [true,false,false,false,false] Explanation: There is only one kid who can have the greatest number of candies. ` --- Simple Explanation Think of this as a \"what if\" game: 1. Find the kid who currently has the most candies 2. For each kid, ask: \"If I give them ALL extra candies, will they have at least as many as the current leader?\" 3. If yes → true, if no → false It's like checking if each player can become the champion with a power-up! --- Solution candy + extraCandies >= maxCandies); } }, { title: \"Python\", language: \"python\", code: def kids_with_candies(candies, extra_candies): # Find the maximum candies any kid currently has max_candies = max(candies) # Check if each kid can reach or exceed the maximum return [candy + extra_candies >= max_candies for candy in candies] }, { title: \"C++\", language: \"cpp\", code: #include #include using namespace std; vector kidsWithCandies(vector& candies, int extraCandies) { // Find the maximum candies any kid currently has int maxCandies = max_element(candies.begin(), candies.end()); vector result; for (int candy : candies) { result.push_back(candy + extraCandies >= maxCandies); } return result; } }, { title: \"Java\", language: \"java\", code: import java.util.; public class KidsWithCandies { public static List kidsWithCandies(int[] candies, int extraCandies) { // Find the maximum candies any kid currently has int maxCandies = Arrays.stream(candies).max().getAsInt(); List result = new ArrayList<>(); for (int candy : candies) { result.add(candy + extraCandies >= maxCandies); } return result; } } }, ]} /> --- Step-by-Step Walkthrough Let's trace through candies = [2,3,5,1,3], extraCandies = 3: `` Step 1: Find maximum candies max(2,3,5,1,3) = 5 Step 2: Check each kid Kid 0: 2 + 3 = 5 >= 5? ✓ true Kid 1: 3 + 3 = 6 >= 5? ✓ true Kid 2: 5 + 3 = 8 >= 5? ✓ true Kid 3: 1 + 3 = 4 >= 5? ✗ false Kid 4: 3 + 3 = 6 >= 5? ✓ true Result: [true, true, true, false, true] ` --- Alternative Solution (Manual Loop) = maxCandies); } return result; } }, { title: \"Python\", language: \"python\", code: def kids_with_candies(candies, extra_candies): # Find maximum manually max_candies = 0 for candy in candies: max_candies = max(max_candies, candy) # Build result array result = [] for candy in candies: result.append(candy + extra_candies >= max_candies) return result }, { title: \"C++\", language: \"cpp\", code: #include using namespace std; vector kidsWithCandies(vector& candies, int extraCandies) { // Find maximum manually int maxCandies = 0; for (int candy : candies) { maxCandies = max(maxCandies, candy); } // Build result array vector result; for (int candy : candies) { result.push_back(candy + extraCandies >= maxCandies); } return result; } }, ]} /> --- Complexity Analysis Time Complexity: O(n) - Finding maximum: O(n) - Building result array: O(n) - Total: O(n) where n = number of kids Space Complexity: O(1) - Only using constant extra space - Output array doesn't count toward space complexity --- Key Insights Single pass optimization - Find max and build result in one go if needed Comparison logic - Use >= instead of > (ties are allowed) Array transformation - Map/transform pattern is perfect here Edge cases - All kids equal, single kid, zero extra candies --- This problem introduces array transformation patterns and comparative logic - essential skills for many algorithm problems!",
+    "excerpt": "Kids With the Greatest Number of Candies Difficulty: Easy LeetCode: 1431. Kids With the Greatest Number of Candies --- Problem There are n kids with candies....",
+    "url": "/crackmode/docs/leetcode75/arraysStrings/kids-with-greatest-candies",
+    "section": "Leetcode75",
+    "tags": [
+      "example"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "Kids With the Greatest Number of Candies",
+        "id": "kids-with-the-greatest-number-of-candies"
+      },
+      {
+        "level": 2,
+        "text": "Problem",
+        "id": "problem"
+      },
+      {
+        "level": 2,
+        "text": "Simple Explanation",
+        "id": "simple-explanation"
+      },
+      {
+        "level": 2,
+        "text": "Solution",
+        "id": "solution"
+      },
+      {
+        "level": 2,
+        "text": "Step-by-Step Walkthrough",
+        "id": "step-by-step-walkthrough"
+      },
+      {
+        "level": 2,
+        "text": "Alternative Solution (Manual Loop)",
+        "id": "alternative-solution-manual-loop"
+      },
+      {
+        "level": 2,
+        "text": "Complexity Analysis",
+        "id": "complexity-analysis"
+      },
+      {
+        "level": 2,
+        "text": "Key Insights",
+        "id": "key-insights"
+      }
+    ]
+  },
+  {
+    "id": "leetcode75/arraysStrings/merge-strings-alternately",
+    "title": "Merge Strings Alternately",
+    "content": "Merge Strings Alternately Difficulty: Easy LeetCode: 1768. Merge Strings Alternately --- Problem You are given two strings ` word and word2. Merge the strings by adding letters in alternating order, starting with word1. If a string is longer than the other, append the additional letters onto the end of the merged string. Example 1: ` Input: word1 = \"abc\", word2 = \"pqr\" Output: \"apbqcr\" Explanation: The merged string will be merged as so: word1: a b c word2: p q r merged: a p b q c r ` Example 2: ` Input: word1 = \"ab\", word2 = \"pqrs\" Output: \"apbqrs\" Explanation: Notice that as word2 is longer, \"rs\" is appended to the end. word1: a b word2: p q r s merged: a p b q r s ` --- Simple Explanation Think of this like taking turns: 1. Take a letter from word1 2. Take a letter from word2 3. Repeat until one string runs out 4. Add any remaining letters from the longer string It's like merging two lines of people, alternating between each line! --- Solution using namespace std; string mergeAlternately(string word1, string word2) { string result; int i = 0, j = 0; while (i --- Step-by-Step Walkthrough Let's trace through word1 = \"abc\", word2 = \"pqr\": ` Step 1: result = \"\", i = 0, j = 0 Add word1[0] = 'a' → result = \"a\" Add word2[0] = 'p' → result = \"ap\" Step 2: result = \"ap\", i = 1, j = 1 Add word1[1] = 'b' → result = \"apb\" Add word2[1] = 'q' → result = \"apbq\" Step 3: result = \"apbq\", i = 2, j = 2 Add word1[2] = 'c' → result = \"apbqc\" Add word2[2] = 'r' → result = \"apbqcr\" Final: Both strings exhausted → return \"apbqcr\" ` --- Alternative Solution (Cleaner) using namespace std; string mergeAlternately(string word1, string word2) { string result; int maxLength = max(word1.size(), word2.size()); for (int i = 0; i --- Complexity Analysis Time Complexity: O(m + n) We visit each character in both strings exactly once m = length of word1, n = length of word2 Space Complexity: O(m + n) We build a new string containing all characters --- Key Insights Two pointers pattern - track position in each string independently Handle unequal lengths - don't forget the remaining characters String building - concatenate characters one by one Index bounds - always check i --- This is a great warm-up problem that introduces the two-pointers technique in its simplest form!",
+    "excerpt": "Merge Strings Alternately Difficulty: Easy LeetCode: 1768. Merge Strings Alternately --- Problem You are given two strings ` word and word2. Merge the strings...",
+    "url": "/crackmode/docs/leetcode75/arraysStrings/merge-strings-alternately",
+    "section": "Leetcode75",
+    "tags": [
+      "example"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "Merge Strings Alternately",
+        "id": "merge-strings-alternately"
+      },
+      {
+        "level": 2,
+        "text": "Problem",
+        "id": "problem"
+      },
+      {
+        "level": 2,
+        "text": "Simple Explanation",
+        "id": "simple-explanation"
+      },
+      {
+        "level": 2,
+        "text": "Solution",
+        "id": "solution"
+      },
+      {
+        "level": 2,
+        "text": "Step-by-Step Walkthrough",
+        "id": "step-by-step-walkthrough"
+      },
+      {
+        "level": 2,
+        "text": "Alternative Solution (Cleaner)",
+        "id": "alternative-solution-cleaner"
+      },
+      {
+        "level": 2,
+        "text": "Complexity Analysis",
+        "id": "complexity-analysis"
+      },
+      {
+        "level": 2,
+        "text": "Key Insights",
+        "id": "key-insights"
+      }
+    ]
+  },
+  {
+    "id": "leetcode75/arraysStrings/product-of-array-except-self",
+    "title": "Product Of Array Except Self",
+    "content": "Product of Array Except Self Difficulty: Medium LeetCode: 238. Product of Array Except Self --- Problem Given an integer array nums, return an array answer such that answer[i] is equal to the product of all the elements of nums except nums[i]. The product of any prefix or suffix of nums is guaranteed to fit in a 32-bit integer. You must write an algorithm that runs in O(n) time and without using the division operator. Example 1: `` Input: nums = [1,2,3,4] Output: [24,12,8,6] Explanation: - answer[0] = 234 = 24 - answer[1] = 134 = 12 - answer[2] = 124 = 8 - answer[3] = 123 = 6 ` Example 2: ` Input: nums = [-1,1,0,-3,3] Output: [0,0,9,0,0] Explanation: - answer[0] = 10(-3)3 = 0 - answer[1] = (-1)0(-3)3 = 0 - answer[2] = (-1)1(-3)3 = 9 - answer[3] = (-1)103 = 0 - answer[4] = (-1)10(-3) = 0 ` --- Simple Explanation Think of this as \"what's the product if I remove this element?\" Key insight: For each position, we need: - Left side product × Right side product ` Array: [1, 2, 3, 4] Index: 0 1 2 3 For index 1 (value 2): - Left product: 1 (just 1) - Right product: 34 = 12 - Result: 1 12 = 12 ` We can do this in two passes: left-to-right, then right-to-left! --- Solution = 0; i--) { result[i] = rightProduct; rightProduct = nums[i]; } return result; } }, { title: \"Python\", language: \"python\", code: def product_except_self(nums): n = len(nums) result = [0] n # First pass: calculate left products result[0] = 1 for i in range(1, n): result[i] = result[i - 1] nums[i - 1] # Second pass: multiply by right products right_product = 1 for i in range(n - 1, -1, -1): result[i] = right_product right_product = nums[i] return result }, { title: \"C++\", language: \"cpp\", code: #include using namespace std; vector productExceptSelf(vector& nums) { int n = nums.size(); vector result(n); // First pass: calculate left products result[0] = 1; for (int i = 1; i = 0; i--) { result[i] = rightProduct; rightProduct = nums[i]; } return result; } }, { title: \"Java\", language: \"java\", code: public class ProductExceptSelf { public static int[] productExceptSelf(int[] nums) { int n = nums.length; int[] result = new int[n]; // First pass: calculate left products result[0] = 1; for (int i = 1; i = 0; i--) { result[i] = rightProduct; rightProduct = nums[i]; } return result; } } }, ]} /> --- Step-by-Step Walkthrough Let's trace through nums = [1,2,3,4]: `` Initial: nums = [1, 2, 3, 4] result = [_, _, _, _] PASS 1 - Left products: result[0] = 1 → [1, _, _, _] result[1] = result[0] nums[0] = 1 1 = 1 → [1, 1, _, _] result[2] = result[1] nums[1] = 1 2 = 2 → [1, 1, 2, _] result[3] = result[2] nums[2] = 2 3 = 6 → [1, 1, 2, 6] PASS 2 - Multiply by right products: rightProduct = 1 i=3: result[3] = rightProduct = 6 1 = 6 → [1, 1, 2, 6] rightProduct = nums[3] = 1 4 = 4 i=2: result[2] = rightProduct = 2 4 = 8 → [1, 1, 8, 6] rightProduct = nums[2] = 4 3 = 12 i=1: result[1] = rightProduct = 1 12 = 12 → [1, 12, 8, 6] rightProduct = nums[1] = 12 2 = 24 i=0: result[0] = rightProduct = 1 24 = 24 → [24, 12, 8, 6] rightProduct = nums[0] = 24 1 = 24 Final result: [24, 12, 8, 6] ` --- Visual Understanding For nums = [1, 2, 3, 4]: ` Index: 0 1 2 3 Values: [1] [2] [3] [4] Left products (what's to the left): result[0] = 1 (nothing to left) result[1] = 1 (1) result[2] = 12 = 2 (1,2) result[3] = 123 = 6 (1,2,3) Right products (what's to the right): result[3] = 1 (nothing to right) result[2] = 4 = 24 = 8 (4) result[1] = 34 = 112 = 12 (3,4) result[0] = 234 = 124 = 24 (2,3,4) `` --- Alternative Solution (With Extra Arrays) = 0; i--) { rightProducts[i] = rightProducts[i + 1] * nums[i + 1]; } // Multiply left and right products for (let i = 0; i --- Complexity Analysis Time Complexity: O(n) - First pass through array: O(n) - Second pass through array: O(n) - Total: O(n) Space Complexity: O(1) - Only using the output array and a single variable - Output array doesn't count toward space complexity --- Key Insights Two-pass technique - Left products, then right products Space optimization - Use output array to store intermediate results No division needed - Handles zeros naturally without special cases Prefix/suffix pattern - Common technique for \"except self\" problems --- This problem demonstrates the powerful prefix/suffix sum pattern that appears in many array problems!",
+    "excerpt": "Product of Array Except Self Difficulty: Medium LeetCode: 238. Product of Array Except Self --- Problem Given an integer array nums, return an array answer...",
+    "url": "/crackmode/docs/leetcode75/arraysStrings/product-of-array-except-self",
+    "section": "Leetcode75",
+    "tags": [
+      "example"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "Product of Array Except Self",
+        "id": "product-of-array-except-self"
+      },
+      {
+        "level": 2,
+        "text": "Problem",
+        "id": "problem"
+      },
+      {
+        "level": 2,
+        "text": "Simple Explanation",
+        "id": "simple-explanation"
+      },
+      {
+        "level": 2,
+        "text": "Solution",
+        "id": "solution"
+      },
+      {
+        "level": 2,
+        "text": "Step-by-Step Walkthrough",
+        "id": "step-by-step-walkthrough"
+      },
+      {
+        "level": 2,
+        "text": "Visual Understanding",
+        "id": "visual-understanding"
+      },
+      {
+        "level": 2,
+        "text": "Alternative Solution (With Extra Arrays)",
+        "id": "alternative-solution-with-extra-arrays"
+      },
+      {
+        "level": 2,
+        "text": "Complexity Analysis",
+        "id": "complexity-analysis"
+      },
+      {
+        "level": 2,
+        "text": "Key Insights",
+        "id": "key-insights"
+      }
+    ]
+  },
+  {
+    "id": "leetcode75/arraysStrings/string-compression",
+    "title": "String Compression",
+    "content": "String Compression Difficulty: Medium LeetCode: 443. String Compression --- Problem Given an array of characters chars, compress it using the following algorithm: Begin with an empty string s. For each group of consecutive repeating characters in chars: - If the group's length is 1, append the character to s. - Otherwise, append the character followed by the group's length. After you finish the algorithm above, return the new length of the string. You must write an algorithm that uses only constant extra space. Example 1: `` Input: chars = [\"a\",\"a\",\"b\",\"b\",\"c\",\"c\",\"c\"] Output: Return 6, and the first 6 characters of the input array should be: [\"a\",\"2\",\"b\",\"2\",\"c\",\"3\"] Explanation: The groups are \"aa\", \"bb\", and \"ccc\". This compresses to \"a2b2c3\". ` Example 2: ` Input: chars = [\"a\"] Output: Return 1, and the first character of the input array should be: [\"a\"] Explanation: The only group is \"a\", which remains uncompressed since it's a single character. ` Example 3: ` Input: chars = [\"a\",\"b\",\"b\",\"b\",\"b\",\"b\",\"b\",\"b\",\"b\",\"b\",\"b\",\"b\",\"b\"] Output: Return 4, and the first 4 characters of the input array should be: [\"a\",\"b\",\"1\",\"2\"] Explanation: The groups are \"a\" and \"bbbbbbbbbbbb\". This compresses to \"ab12\". ` --- Simple Explanation Think of this as \"counting consecutive characters\": 1. Group consecutive characters: \"aaa\" → character 'a', count 3 2. Write compressed form: 'a' + '3' if count > 1, just 'a' if count = 1 3. Do this in-place: overwrite the original array to save space It's like shorthand notation: instead of writing \"aaabbb\", write \"a3b3\"! --- Solution 1 if (count > 1) { const countStr = count.toString(); for (let digit of countStr) { chars[write++] = digit; } } } return write; } }, { title: \"Python\", language: \"python\", code: def compress(chars): write = 0 # Where to write the compressed result read = 0 # Where to read the current group while read 1 if count > 1: count_str = str(count) for digit in count_str: chars[write] = digit write += 1 return write }, { title: \"C++\", language: \"cpp\", code: #include #include using namespace std; int compress(vector& chars) { int write = 0; // Where to write the compressed result int read = 0; // Where to read the current group while (read 1 if (count > 1) { string countStr = to_string(count); for (char digit : countStr) { chars[write++] = digit; } } } return write; } }, { title: \"Java\", language: \"java\", code: public class StringCompression { public static int compress(char[] chars) { int write = 0; // Where to write the compressed result int read = 0; // Where to read the current group while (read 1 if (count > 1) { String countStr = Integer.toString(count); for (char digit : countStr.toCharArray()) { chars[write++] = digit; } } } return write; } } }, ]} /> --- Step-by-Step Walkthrough Let's trace through chars = [\"a\",\"a\",\"b\",\"b\",\"c\",\"c\",\"c\"]: `` Initial: chars = ['a','a','b','b','c','c','c'] write = 0, read = 0 ITERATION 1 - Process 'a' group: read=0: chars[0]='a', currentChar='a' Count consecutive 'a's: read=0→1→2 (stopped at 'b'), count=2 Write 'a' at position 0: chars = ['a','a','b','b','c','c','c'] write = 1 Count > 1, so write \"2\": chars = ['a','2','b','b','c','c','c'] write = 2 ITERATION 2 - Process 'b' group: read=2: chars[2]='b', currentChar='b' Count consecutive 'b's: read=2→3→4 (stopped at 'c'), count=2 Write 'b' at position 2: chars = ['a','2','b','b','c','c','c'] write = 3 Count > 1, so write \"2\": chars = ['a','2','b','2','c','c','c'] write = 4 ITERATION 3 - Process 'c' group: read=4: chars[4]='c', currentChar='c' Count consecutive 'c's: read=4→5→6→7 (end), count=3 Write 'c' at position 4: chars = ['a','2','b','2','c','c','c'] write = 5 Count > 1, so write \"3\": chars = ['a','2','b','2','c','3','c'] write = 6 Final: Return write = 6 First 6 characters: ['a','2','b','2','c','3'] ` --- Handling Large Counts For counts ≥ 10, we need multiple digits: `javascript // Example: \"aaaaaaaaaaaa\" (12 a's) → \"a12\" chars = ['a','a','a','a','a','a','a','a','a','a','a','a'] After compression: chars[0] = 'a' chars[1] = '1' // First digit of 12 chars[2] = '2' // Second digit of 12 Result length: 3 ` --- Alternative Solution (More Explicit) 1) { let countDigits = count.toString().split(''); for (let digit of countDigits) { chars[writeIndex] = digit; writeIndex++; } } // Move to next group i += count; } return writeIndex; } }, ]} /> --- Edge Cases ``javascript // Single character compress(['a']) // Return 1: ['a'] // No compression needed compress(['a','b','c']) // Return 3: ['a','b','c'] // All same characters compress(['a','a','a','a']) // Return 2: ['a','4'] // Large count compress(['a'].repeat(100)) // Return 4: ['a','1','0','0'] // Mixed groups compress(['a','a','a','b','b','a','a']) // Return 6: ['a','3','b','2','a','2'] `` --- Complexity Analysis Time Complexity: O(n) - Single pass through the array - Each character is read and written at most once Space Complexity: O(1) - Only using a constant amount of extra space - Modifying the input array in-place --- Key Insights Two pointers technique - Read pointer and write pointer move independently In-place modification - Overwrite original array to save space Count to string conversion - Handle multi-digit counts properly Group processing - Process one group of consecutive characters at a time --- This problem combines two pointers, string manipulation, and in-place algorithms - essential skills for many coding challenges!",
+    "excerpt": "String Compression Difficulty: Medium LeetCode: 443. String Compression --- Problem Given an array of characters chars, compress it using the following...",
+    "url": "/crackmode/docs/leetcode75/arraysStrings/string-compression",
+    "section": "Leetcode75",
+    "tags": [
+      "example",
+      "javascript"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "String Compression",
+        "id": "string-compression"
+      },
+      {
+        "level": 2,
+        "text": "Problem",
+        "id": "problem"
+      },
+      {
+        "level": 2,
+        "text": "Simple Explanation",
+        "id": "simple-explanation"
+      },
+      {
+        "level": 2,
+        "text": "Solution",
+        "id": "solution"
+      },
+      {
+        "level": 2,
+        "text": "Step-by-Step Walkthrough",
+        "id": "step-by-step-walkthrough"
+      },
+      {
+        "level": 2,
+        "text": "Handling Large Counts",
+        "id": "handling-large-counts"
+      },
+      {
+        "level": 2,
+        "text": "Alternative Solution (More Explicit)",
+        "id": "alternative-solution-more-explicit"
+      },
+      {
+        "level": 2,
+        "text": "Edge Cases",
+        "id": "edge-cases"
+      },
+      {
+        "level": 2,
+        "text": "Complexity Analysis",
+        "id": "complexity-analysis"
+      },
+      {
+        "level": 2,
+        "text": "Key Insights",
+        "id": "key-insights"
+      }
+    ]
+  }
+]
