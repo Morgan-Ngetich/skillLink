@@ -13,12 +13,23 @@ import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LayoutRouteImport } from './routes/_layout'
+import { Route as CrackmodeIndexRouteImport } from './routes/crackmode/index'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
+import { Route as CrackmodeDocsRouteImport } from './routes/crackmode/docs'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as LayoutProfileSetupRouteImport } from './routes/_layout/profile-setup'
 import { Route as LayoutExploreRouteImport } from './routes/_layout/explore'
+import { Route as CrackmodeDocsIndexRouteImport } from './routes/crackmode/docs/index'
 import { Route as LayoutDashboardIndexRouteImport } from './routes/_layout/dashboard/index'
 import { Route as LayoutDashboardProfileRouteImport } from './routes/_layout/dashboard/profile'
+import { Route as CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/index'
+import { Route as CrackmodeDocsLeetcode75ArraysStringsStringCompressionRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/string-compression'
+import { Route as CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self'
+import { Route as CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately'
+import { Route as CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies'
+import { Route as CrackmodeDocsLeetcode75ArraysStringsIntroductionRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/introduction'
+import { Route as CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
+import { Route as CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
 
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
@@ -39,10 +50,20 @@ const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CrackmodeIndexRoute = CrackmodeIndexRouteImport.update({
+  id: '/crackmode/',
+  path: '/crackmode/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LayoutIndexRoute = LayoutIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => LayoutRoute,
+} as any)
+const CrackmodeDocsRoute = CrackmodeDocsRouteImport.update({
+  id: '/crackmode/docs',
+  path: '/crackmode/docs',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/auth/callback',
@@ -59,6 +80,11 @@ const LayoutExploreRoute = LayoutExploreRouteImport.update({
   path: '/explore',
   getParentRoute: () => LayoutRoute,
 } as any)
+const CrackmodeDocsIndexRoute = CrackmodeDocsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CrackmodeDocsRoute,
+} as any)
 const LayoutDashboardIndexRoute = LayoutDashboardIndexRouteImport.update({
   id: '/dashboard/',
   path: '/dashboard/',
@@ -69,6 +95,62 @@ const LayoutDashboardProfileRoute = LayoutDashboardProfileRouteImport.update({
   path: '/dashboard/profile',
   getParentRoute: () => LayoutRoute,
 } as any)
+const CrackmodeDocsLeetcode75ArraysStringsIndexRoute =
+  CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport.update({
+    id: '/leetcode75/arrays-strings/',
+    path: '/leetcode75/arrays-strings/',
+    getParentRoute: () => CrackmodeDocsRoute,
+  } as any)
+const CrackmodeDocsLeetcode75ArraysStringsStringCompressionRoute =
+  CrackmodeDocsLeetcode75ArraysStringsStringCompressionRouteImport.update({
+    id: '/leetcode75/arrays-strings/string-compression',
+    path: '/leetcode75/arrays-strings/string-compression',
+    getParentRoute: () => CrackmodeDocsRoute,
+  } as any)
+const CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRoute =
+  CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRouteImport.update(
+    {
+      id: '/leetcode75/arrays-strings/product-of-array-except-self',
+      path: '/leetcode75/arrays-strings/product-of-array-except-self',
+      getParentRoute: () => CrackmodeDocsRoute,
+    } as any,
+  )
+const CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRoute =
+  CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRouteImport.update(
+    {
+      id: '/leetcode75/arrays-strings/merge-strings-alternately',
+      path: '/leetcode75/arrays-strings/merge-strings-alternately',
+      getParentRoute: () => CrackmodeDocsRoute,
+    } as any,
+  )
+const CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRoute =
+  CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRouteImport.update(
+    {
+      id: '/leetcode75/arrays-strings/kids-with-greatest-candies',
+      path: '/leetcode75/arrays-strings/kids-with-greatest-candies',
+      getParentRoute: () => CrackmodeDocsRoute,
+    } as any,
+  )
+const CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute =
+  CrackmodeDocsLeetcode75ArraysStringsIntroductionRouteImport.update({
+    id: '/leetcode75/arrays-strings/introduction',
+    path: '/leetcode75/arrays-strings/introduction',
+    getParentRoute: () => CrackmodeDocsRoute,
+  } as any)
+const CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute =
+  CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRouteImport.update(
+    {
+      id: '/leetcode75/arrays-strings/increasing-triplet-subsequence',
+      path: '/leetcode75/arrays-strings/increasing-triplet-subsequence',
+      getParentRoute: () => CrackmodeDocsRoute,
+    } as any,
+  )
+const CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute =
+  CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRouteImport.update({
+    id: '/leetcode75/arrays-strings/gcd-of-strings',
+    path: '/leetcode75/arrays-strings/gcd-of-strings',
+    getParentRoute: () => CrackmodeDocsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
@@ -77,9 +159,20 @@ export interface FileRoutesByFullPath {
   '/explore': typeof LayoutExploreRoute
   '/profile-setup': typeof LayoutProfileSetupRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/crackmode/docs': typeof CrackmodeDocsRouteWithChildren
   '/': typeof LayoutIndexRoute
+  '/crackmode': typeof CrackmodeIndexRoute
   '/dashboard/profile': typeof LayoutDashboardProfileRoute
   '/dashboard': typeof LayoutDashboardIndexRoute
+  '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
+  '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
+  '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence': typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
+  '/crackmode/docs/leetcode75/arrays-strings/introduction': typeof CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute
+  '/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies': typeof CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRoute
+  '/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately': typeof CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRoute
+  '/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self': typeof CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRoute
+  '/crackmode/docs/leetcode75/arrays-strings/string-compression': typeof CrackmodeDocsLeetcode75ArraysStringsStringCompressionRoute
+  '/crackmode/docs/leetcode75/arrays-strings': typeof CrackmodeDocsLeetcode75ArraysStringsIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -89,8 +182,18 @@ export interface FileRoutesByTo {
   '/profile-setup': typeof LayoutProfileSetupRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/': typeof LayoutIndexRoute
+  '/crackmode': typeof CrackmodeIndexRoute
   '/dashboard/profile': typeof LayoutDashboardProfileRoute
   '/dashboard': typeof LayoutDashboardIndexRoute
+  '/crackmode/docs': typeof CrackmodeDocsIndexRoute
+  '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
+  '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence': typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
+  '/crackmode/docs/leetcode75/arrays-strings/introduction': typeof CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute
+  '/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies': typeof CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRoute
+  '/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately': typeof CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRoute
+  '/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self': typeof CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRoute
+  '/crackmode/docs/leetcode75/arrays-strings/string-compression': typeof CrackmodeDocsLeetcode75ArraysStringsStringCompressionRoute
+  '/crackmode/docs/leetcode75/arrays-strings': typeof CrackmodeDocsLeetcode75ArraysStringsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -101,9 +204,20 @@ export interface FileRoutesById {
   '/_layout/explore': typeof LayoutExploreRoute
   '/_layout/profile-setup': typeof LayoutProfileSetupRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/crackmode/docs': typeof CrackmodeDocsRouteWithChildren
   '/_layout/': typeof LayoutIndexRoute
+  '/crackmode/': typeof CrackmodeIndexRoute
   '/_layout/dashboard/profile': typeof LayoutDashboardProfileRoute
   '/_layout/dashboard/': typeof LayoutDashboardIndexRoute
+  '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
+  '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
+  '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence': typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
+  '/crackmode/docs/leetcode75/arrays-strings/introduction': typeof CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute
+  '/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies': typeof CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRoute
+  '/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately': typeof CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRoute
+  '/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self': typeof CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRoute
+  '/crackmode/docs/leetcode75/arrays-strings/string-compression': typeof CrackmodeDocsLeetcode75ArraysStringsStringCompressionRoute
+  '/crackmode/docs/leetcode75/arrays-strings/': typeof CrackmodeDocsLeetcode75ArraysStringsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -114,9 +228,20 @@ export interface FileRouteTypes {
     | '/explore'
     | '/profile-setup'
     | '/auth/callback'
+    | '/crackmode/docs'
     | '/'
+    | '/crackmode'
     | '/dashboard/profile'
     | '/dashboard'
+    | '/crackmode/docs/'
+    | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
+    | '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
+    | '/crackmode/docs/leetcode75/arrays-strings/introduction'
+    | '/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies'
+    | '/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately'
+    | '/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self'
+    | '/crackmode/docs/leetcode75/arrays-strings/string-compression'
+    | '/crackmode/docs/leetcode75/arrays-strings'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -126,8 +251,18 @@ export interface FileRouteTypes {
     | '/profile-setup'
     | '/auth/callback'
     | '/'
+    | '/crackmode'
     | '/dashboard/profile'
     | '/dashboard'
+    | '/crackmode/docs'
+    | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
+    | '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
+    | '/crackmode/docs/leetcode75/arrays-strings/introduction'
+    | '/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies'
+    | '/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately'
+    | '/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self'
+    | '/crackmode/docs/leetcode75/arrays-strings/string-compression'
+    | '/crackmode/docs/leetcode75/arrays-strings'
   id:
     | '__root__'
     | '/_layout'
@@ -137,9 +272,20 @@ export interface FileRouteTypes {
     | '/_layout/explore'
     | '/_layout/profile-setup'
     | '/auth/callback'
+    | '/crackmode/docs'
     | '/_layout/'
+    | '/crackmode/'
     | '/_layout/dashboard/profile'
     | '/_layout/dashboard/'
+    | '/crackmode/docs/'
+    | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
+    | '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
+    | '/crackmode/docs/leetcode75/arrays-strings/introduction'
+    | '/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies'
+    | '/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately'
+    | '/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self'
+    | '/crackmode/docs/leetcode75/arrays-strings/string-compression'
+    | '/crackmode/docs/leetcode75/arrays-strings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -148,6 +294,8 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
+  CrackmodeDocsRoute: typeof CrackmodeDocsRouteWithChildren
+  CrackmodeIndexRoute: typeof CrackmodeIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -180,12 +328,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/crackmode/': {
+      id: '/crackmode/'
+      path: '/crackmode'
+      fullPath: '/crackmode'
+      preLoaderRoute: typeof CrackmodeIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_layout/': {
       id: '/_layout/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof LayoutIndexRouteImport
       parentRoute: typeof LayoutRoute
+    }
+    '/crackmode/docs': {
+      id: '/crackmode/docs'
+      path: '/crackmode/docs'
+      fullPath: '/crackmode/docs'
+      preLoaderRoute: typeof CrackmodeDocsRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/auth/callback': {
       id: '/auth/callback'
@@ -208,6 +370,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutExploreRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/crackmode/docs/': {
+      id: '/crackmode/docs/'
+      path: '/'
+      fullPath: '/crackmode/docs/'
+      preLoaderRoute: typeof CrackmodeDocsIndexRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
     '/_layout/dashboard/': {
       id: '/_layout/dashboard/'
       path: '/dashboard'
@@ -221,6 +390,62 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/profile'
       preLoaderRoute: typeof LayoutDashboardProfileRouteImport
       parentRoute: typeof LayoutRoute
+    }
+    '/crackmode/docs/leetcode75/arrays-strings/': {
+      id: '/crackmode/docs/leetcode75/arrays-strings/'
+      path: '/leetcode75/arrays-strings'
+      fullPath: '/crackmode/docs/leetcode75/arrays-strings'
+      preLoaderRoute: typeof CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
+    '/crackmode/docs/leetcode75/arrays-strings/string-compression': {
+      id: '/crackmode/docs/leetcode75/arrays-strings/string-compression'
+      path: '/leetcode75/arrays-strings/string-compression'
+      fullPath: '/crackmode/docs/leetcode75/arrays-strings/string-compression'
+      preLoaderRoute: typeof CrackmodeDocsLeetcode75ArraysStringsStringCompressionRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
+    '/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self': {
+      id: '/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self'
+      path: '/leetcode75/arrays-strings/product-of-array-except-self'
+      fullPath: '/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self'
+      preLoaderRoute: typeof CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
+    '/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately': {
+      id: '/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately'
+      path: '/leetcode75/arrays-strings/merge-strings-alternately'
+      fullPath: '/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately'
+      preLoaderRoute: typeof CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
+    '/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies': {
+      id: '/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies'
+      path: '/leetcode75/arrays-strings/kids-with-greatest-candies'
+      fullPath: '/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies'
+      preLoaderRoute: typeof CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
+    '/crackmode/docs/leetcode75/arrays-strings/introduction': {
+      id: '/crackmode/docs/leetcode75/arrays-strings/introduction'
+      path: '/leetcode75/arrays-strings/introduction'
+      fullPath: '/crackmode/docs/leetcode75/arrays-strings/introduction'
+      preLoaderRoute: typeof CrackmodeDocsLeetcode75ArraysStringsIntroductionRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
+    '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence': {
+      id: '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
+      path: '/leetcode75/arrays-strings/increasing-triplet-subsequence'
+      fullPath: '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
+      preLoaderRoute: typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
+    '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': {
+      id: '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
+      path: '/leetcode75/arrays-strings/gcd-of-strings'
+      fullPath: '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
+      preLoaderRoute: typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
     }
   }
 }
@@ -244,12 +469,50 @@ const LayoutRouteChildren: LayoutRouteChildren = {
 const LayoutRouteWithChildren =
   LayoutRoute._addFileChildren(LayoutRouteChildren)
 
+interface CrackmodeDocsRouteChildren {
+  CrackmodeDocsIndexRoute: typeof CrackmodeDocsIndexRoute
+  CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute: typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
+  CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute: typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
+  CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute: typeof CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute
+  CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRoute: typeof CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRoute
+  CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRoute: typeof CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRoute
+  CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRoute: typeof CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRoute
+  CrackmodeDocsLeetcode75ArraysStringsStringCompressionRoute: typeof CrackmodeDocsLeetcode75ArraysStringsStringCompressionRoute
+  CrackmodeDocsLeetcode75ArraysStringsIndexRoute: typeof CrackmodeDocsLeetcode75ArraysStringsIndexRoute
+}
+
+const CrackmodeDocsRouteChildren: CrackmodeDocsRouteChildren = {
+  CrackmodeDocsIndexRoute: CrackmodeDocsIndexRoute,
+  CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute:
+    CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute,
+  CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute:
+    CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute,
+  CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute:
+    CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute,
+  CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRoute:
+    CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRoute,
+  CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRoute:
+    CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRoute,
+  CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRoute:
+    CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRoute,
+  CrackmodeDocsLeetcode75ArraysStringsStringCompressionRoute:
+    CrackmodeDocsLeetcode75ArraysStringsStringCompressionRoute,
+  CrackmodeDocsLeetcode75ArraysStringsIndexRoute:
+    CrackmodeDocsLeetcode75ArraysStringsIndexRoute,
+}
+
+const CrackmodeDocsRouteWithChildren = CrackmodeDocsRoute._addFileChildren(
+  CrackmodeDocsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   LayoutRoute: LayoutRouteWithChildren,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
   VerifyEmailRoute: VerifyEmailRoute,
   AuthCallbackRoute: AuthCallbackRoute,
+  CrackmodeDocsRoute: CrackmodeDocsRouteWithChildren,
+  CrackmodeIndexRoute: CrackmodeIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
