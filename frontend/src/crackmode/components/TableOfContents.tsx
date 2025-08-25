@@ -42,7 +42,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ headings }) => {
   if (headings.length === 0) return null
 
   return (
-    <Box borderLeft="1px solid" borderColor="gray.200" pl={4}>
+    <Box borderLeft="1px solid" borderColor="gray.200" pl={4} pr={2}>
       <Text
         fontWeight="semibold"
         fontSize="sm"
@@ -53,7 +53,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ headings }) => {
       >
         On This Page
       </Text>
-      <VStack align={"stretch"} gap={2}>
+      <VStack align={"stretch"} gap={0}>
         {headings.map((heading) => (
           <Link
             key={heading.id}
@@ -62,6 +62,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ headings }) => {
             px={2}
             ml={(heading.level - 2) * 4}
             borderRadius="md"
+            fontSize={"14px"}
             color={activeId === heading.id ? activeLinkColor : linkColor}
             fontWeight={activeId === heading.id ? "medium" : "normal"}
             aria-current={activeId === heading.id ? "true" : undefined}
