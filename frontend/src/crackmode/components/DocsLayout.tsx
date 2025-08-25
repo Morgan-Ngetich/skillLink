@@ -48,7 +48,7 @@ const DocsLayout = ({ children, headings }: DocsLayoutProps) => {
             <Box
               mb={{base: 1, md: 6}}
               position="sticky"
-              top={{base: -1, md: 0}}
+              top={0}
               zIndex="999"
               bg={bgColor}
               py={2}
