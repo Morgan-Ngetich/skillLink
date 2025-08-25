@@ -2,16 +2,12 @@ import {
   Box,
   Container,
   Flex,
-  IconButton,
-  Drawer,
-  Portal,
 } from "@chakra-ui/react"
-import { IoMenu } from "react-icons/io5"
-import { useState } from "react"
-import Sidebar from "./Sidebar"
 import TableOfContents from "./TableOfContents"
 import type { HeadingData } from "../types/docs"
-import { useColorModeValue } from "@/components/ui"
+import { useColorModeValue, BreadcrumbRoot, BreadcrumbLink, BreadcrumbCurrentLink } from "@/components/ui"
+import { useBreadcrumbItems } from "../hooks/useBreadcrumbItems"
+import { useState, useRef, useEffect } from "react"
 
 interface DocsLayoutProps {
   children: React.ReactNode
@@ -19,53 +15,73 @@ interface DocsLayoutProps {
 }
 
 const DocsLayout = ({ children, headings }: DocsLayoutProps) => {
-  const [open, setOpen] = useState(false)
-  const borderColor = useColorModeValue("gray.200", "gray.700")
+  const [scrolled, setScrolled] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
 
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      setScrolled(scrollRef.current.scrollTop > 0)
+    }
+  }
+
+  useEffect(() => {
+    const current = scrollRef.current
+    if (current) {
+      current.addEventListener("scroll", handleScroll)
+      return () => current.removeEventListener("scroll", handleScroll)
+    }
+  }, [])
+  
+  const bgColor = useColorModeValue(
+    scrolled ? "white" : "transparent",
+    scrolled ? "gray.900" : "transparent"
+  )
+  
+  const borderColor = useColorModeValue("gray.200", "gray.700")
+  const breadcrumbItems = useBreadcrumbItems()
   return (
     <Flex h="100vh" overflow="hidden">
-      {/* Mobile Menu Button */}
-      <Drawer.Root
-        open={open}
-        onOpenChange={(e) => setOpen(e.open)}
-        placement="start"
-      >
-        <Drawer.Trigger asChild>
-          <IconButton
-            aria-label="Open menu"
-            display={{ base: "flex", md: "none" }}
-            position="fixed"
-            top={4}
-            right={4}
-            zIndex={20}
-            size="sm"
-          >
-            <IoMenu />
-          </IconButton>
-        </Drawer.Trigger>
-        <Portal>
-          <Drawer.Backdrop />
-          <Drawer.Positioner>
-            <Drawer.Content>
-              <Drawer.Header>
-                <Drawer.Title>Menu</Drawer.Title>
-                <Drawer.CloseTrigger />
-              </Drawer.Header>
-              <Drawer.Body pt={4}>
-                <Sidebar />
-              </Drawer.Body>
-            </Drawer.Content>
-          </Drawer.Positioner>
-        </Portal>
-      </Drawer.Root>
-
-
       {/* Main Content (scrollable) */}
-      <Box flex="1" h="100vh" overflowY="auto">
-        <Container maxW="4xl" py={8} px={{ base: 4, md: 8 }}>
+      <Box flex="1" h="100vh" overflowY="auto" ref={scrollRef}>
+        <Container maxW="4xl" pt={4} pb={8} px={{ base: 4, md: 8 }}>
+          {breadcrumbItems && (
+            <Box
+              mb={6}
+              position="sticky"
+              top={{base: -1, md: 0}}
+              zIndex="sticky"
+              bg={bgColor}
+              transition="background-color 0.3s ease"
+              py={2}
+              pt={2}
+              w="full"
+              overflowX={"auto"}
+              whiteSpace={"nowrap"}
+              scrollbar={"hidden"}
+            >
+              <BreadcrumbRoot separator="/" separatorGap={2}>
+                {breadcrumbItems.map((item, index) => {
+                  const isLast = index === breadcrumbItems.length - 1
+
+                  return isLast ? (
+                    <BreadcrumbCurrentLink key={index}>
+                      {item.title}
+                    </BreadcrumbCurrentLink>
+                  ) : (
+                    <BreadcrumbLink key={index} href={item.url}>
+                      {item.title}
+                    </BreadcrumbLink>
+                  )
+                })}
+              </BreadcrumbRoot>
+            </Box>
+          )}
+
+          {/* Content */}
           <Box>{children}</Box>
         </Container>
       </Box>
+
 
       {/* Desktop TOC */}
       <Box
