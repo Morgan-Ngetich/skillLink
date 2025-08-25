@@ -4,9 +4,34 @@ export const sidebarConfig: DocSection[] = [
   {
     title: "Introduction",
     links: [
-      { title: "What is Crackmode?", href: "/docs/introduction/what-is-crackmode" },
-      { title: "Getting Started", href: "/docs/introduction/getting-started" },
-      { title: "How to Use This Platform", href: "/docs/introduction/how-to-use" }
+      { title: "What is Crackmode?", href: "/crackmode/docs#welcome-to-crackmode" },
+      // { title: "Getting Started", href: "/docs/introduction/getting-started" },
+      // { title: "How to Use This Platform", href: "/docs/introduction/how-to-use" }
+    ]
+  },
+  {
+    title: "LeetCode 75",
+    links: [
+      {
+        title: "Arrays & Strings",
+        href: "/crackmode/docs/leetcode75/arrays-strings",
+        children: [
+          { title: "Merge Strings Alternately", href: "/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately" },
+          { title: "GCD of Strings", href: "/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings" },
+          { title: "Kids With Greatest Candies", href: "/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies" },
+          { title: "Product of Array Except Self", href: "/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self" },
+          { title: "Increasing Triplet Subsequence", href: "/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence" },
+          { title: "String Compression", href: "/crackmode/docs/leetcode75/arrays-strings/string-compression" },
+        ],
+      },
+      { title: "Linked Lists", href: "/docs/leetcode75/linked-lists" },
+      { title: "Trees & Graphs", href: "/docs/leetcode75/trees-graphs" },
+      { title: "Dynamic Programming", href: "/docs/leetcode75/dynamic-programming" },
+      { title: "Binary Search", href: "/docs/leetcode75/binary-search" },
+      { title: "Intervals", href: "/docs/leetcode75/intervals" },
+      { title: "Backtracking", href: "/docs/leetcode75/backtracking" },
+      { title: "Stack & Queue", href: "/docs/leetcode75/stack-queue" },
+      { title: "Heap / Priority Queue", href: "/docs/leetcode75/heap" }
     ]
   },
   {
@@ -18,20 +43,6 @@ export const sidebarConfig: DocSection[] = [
       { title: "Caching Strategies", href: "/docs/system-design/caching" },
       { title: "Message Queues & Events", href: "/docs/system-design/message-queues" },
       { title: "Case Studies", href: "/docs/system-design/case-studies" }
-    ]
-  },
-  {
-    title: "LeetCode 75",
-    links: [
-      { title: "Arrays & Strings", href: "/docs/leetcode75/arrays-strings" },
-      { title: "Linked Lists", href: "/docs/leetcode75/linked-lists" },
-      { title: "Trees & Graphs", href: "/docs/leetcode75/trees-graphs" },
-      { title: "Dynamic Programming", href: "/docs/leetcode75/dynamic-programming" },
-      { title: "Binary Search", href: "/docs/leetcode75/binary-search" },
-      { title: "Intervals", href: "/docs/leetcode75/intervals" },
-      { title: "Backtracking", href: "/docs/leetcode75/backtracking" },
-      { title: "Stack & Queue", href: "/docs/leetcode75/stack-queue" },
-      { title: "Heap / Priority Queue", href: "/docs/leetcode75/heap" }
     ]
   },
   {
