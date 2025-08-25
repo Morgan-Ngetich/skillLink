@@ -48,7 +48,6 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ headings }) => {
         fontSize="sm"
         textTransform="uppercase"
         letterSpacing="wide"
-        color="gray.500"
         mb={4}
       >
         On This Page

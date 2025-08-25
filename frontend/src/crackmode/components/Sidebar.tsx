@@ -6,7 +6,6 @@ import {
   Flex,
   Icon,
   Collapsible,
-  Box
 } from "@chakra-ui/react"
 import { useColorModeValue } from "@/components/ui"
 import { useRouter } from "@tanstack/react-router"
@@ -43,22 +42,8 @@ const Sidebar = () => {
   const linkHoverBg = useColorModeValue("gray.100", "gray.700")
   const activeLinkBg = useColorModeValue("blue.50", "blue.900")
   const activeLinkColor = useColorModeValue("blue.600", "blue.200")
-  const borderColor = useColorModeValue("gray.200", "gray.700")
 
   return (
-    <Box
-      as="nav"
-      w="280px"
-      borderRight="1px solid"
-      borderColor={borderColor}
-      pl={6}
-      pt={8}
-      display={{ base: "none", md: "block" }}
-      position="sticky"
-      top={0}
-      h="100vh"
-      overflowY="auto"
-    >
       <VStack align="stretch" gap={1}>
         {sidebarConfig.map((section) => (
           <Collapsible.Root
@@ -174,7 +159,6 @@ const Sidebar = () => {
           </Collapsible.Root>
         ))}
       </VStack>
-    </Box>
   )
 }
 
