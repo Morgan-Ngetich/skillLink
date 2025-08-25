@@ -8,6 +8,17 @@ export function GlobalStyles() {
     <Global
       styles={css`
         scroll-behavior: smooth;
+
+        .search-highlight {
+          background-color: #fef08a;
+          color: #92400e;
+          font-weight: 600;
+        }
+        
+        [data-theme="dark"] .search-highlight {
+          background-color: #365314;
+          color: #bef264;
+        }
         
         ::-webkit-scrollbar {
           width: 4px;
@@ -16,8 +27,8 @@ export function GlobalStyles() {
 
         ::-webkit-scrollbar-thumb {
           background: ${colorMode === 'dark'
-            ? 'rgba(255, 255, 255, 0.2)'
-            : 'rgba(0, 0, 0, 0.2)'};
+          ? 'rgba(255, 255, 255, 0.2)'
+          : 'rgba(0, 0, 0, 0.2)'};
           border-radius: 8px;
         }
 
@@ -28,8 +39,8 @@ export function GlobalStyles() {
         * {
           scrollbar-width: thin;
           scrollbar-color: ${colorMode === 'dark'
-            ? 'rgba(255, 255, 255, 0.2) transparent'
-            : 'rgba(0, 0, 0, 0.2) transparent'};
+          ? 'rgba(255, 255, 255, 0.2) transparent'
+          : 'rgba(0, 0, 0, 0.2) transparent'};
         }
       `}
     />
