@@ -46,14 +46,13 @@ const DocsLayout = ({ children, headings }: DocsLayoutProps) => {
         <Container maxW="4xl" pt={4} pb={8} px={{ base: 4, md: 8 }}>
           {breadcrumbItems && (
             <Box
-              mb={6}
+              mb={{base: 1, md: 6}}
               position="sticky"
               top={{base: -1, md: 0}}
-              zIndex="sticky"
+              zIndex="999"
               bg={bgColor}
-              transition="background-color 0.3s ease"
               py={2}
-              pt={2}
+              pt={{base:0, md: 2}}
               w="full"
               overflowX={"auto"}
               whiteSpace={"nowrap"}

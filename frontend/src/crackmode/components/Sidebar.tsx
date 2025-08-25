@@ -132,6 +132,7 @@ const Sidebar = () => {
                                 href={child.href}
                                 py={1}
                                 px={3}
+                                w="100%"
                                 borderRadius="md"
                                 fontSize="sm"
                                 color={isChildActive ? activeLinkColor : "fg.muted"}
