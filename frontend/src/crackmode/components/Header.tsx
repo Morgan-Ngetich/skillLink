@@ -23,13 +23,15 @@ import Sidebar from './Sidebar';
 import { Avatar } from '@/components/ui/avatar';
 import { FaChevronDown, FaSearch, FaTimes } from 'react-icons/fa';
 import { useAuth } from '@/hooks/auth/useAuth';
+import { useSession } from '@/hooks/auth/useSession';
 import { useNavigate } from '@tanstack/react-router';
 import { ColorModeButton, useColorModeValue } from '@/components/ui';
 import { useNavigateWithRedirect } from '@/hooks/auth/authState';
 import { DocsSearch } from './DocsSearch';
 
 const Header = () => {
-  const { user, isLoading, isLoggingOut, signOut } = useAuth();
+  const { user, isLoggingOut, signOut } = useAuth();
+  const { isLoading } = useSession()
   const navigate = useNavigate();
   const navigateWithRedirect = useNavigateWithRedirect();
 
