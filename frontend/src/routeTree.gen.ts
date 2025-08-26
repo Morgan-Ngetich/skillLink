@@ -22,6 +22,7 @@ import { Route as LayoutExploreRouteImport } from './routes/_layout/explore'
 import { Route as CrackmodeDocsIndexRouteImport } from './routes/crackmode/docs/index'
 import { Route as LayoutDashboardIndexRouteImport } from './routes/_layout/dashboard/index'
 import { Route as LayoutDashboardProfileRouteImport } from './routes/_layout/dashboard/profile'
+import { Route as CrackmodeDocsLeetcode75IndexRouteImport } from './routes/crackmode/docs/leetcode75/index'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/index'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsStringCompressionRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/string-compression'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self'
@@ -95,6 +96,12 @@ const LayoutDashboardProfileRoute = LayoutDashboardProfileRouteImport.update({
   path: '/dashboard/profile',
   getParentRoute: () => LayoutRoute,
 } as any)
+const CrackmodeDocsLeetcode75IndexRoute =
+  CrackmodeDocsLeetcode75IndexRouteImport.update({
+    id: '/leetcode75/',
+    path: '/leetcode75/',
+    getParentRoute: () => CrackmodeDocsRoute,
+  } as any)
 const CrackmodeDocsLeetcode75ArraysStringsIndexRoute =
   CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport.update({
     id: '/leetcode75/arrays-strings/',
@@ -165,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/profile': typeof LayoutDashboardProfileRoute
   '/dashboard': typeof LayoutDashboardIndexRoute
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
+  '/crackmode/docs/leetcode75': typeof CrackmodeDocsLeetcode75IndexRoute
   '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
   '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence': typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
   '/crackmode/docs/leetcode75/arrays-strings/introduction': typeof CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute
@@ -186,6 +194,7 @@ export interface FileRoutesByTo {
   '/dashboard/profile': typeof LayoutDashboardProfileRoute
   '/dashboard': typeof LayoutDashboardIndexRoute
   '/crackmode/docs': typeof CrackmodeDocsIndexRoute
+  '/crackmode/docs/leetcode75': typeof CrackmodeDocsLeetcode75IndexRoute
   '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
   '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence': typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
   '/crackmode/docs/leetcode75/arrays-strings/introduction': typeof CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute
@@ -210,6 +219,7 @@ export interface FileRoutesById {
   '/_layout/dashboard/profile': typeof LayoutDashboardProfileRoute
   '/_layout/dashboard/': typeof LayoutDashboardIndexRoute
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
+  '/crackmode/docs/leetcode75/': typeof CrackmodeDocsLeetcode75IndexRoute
   '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
   '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence': typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
   '/crackmode/docs/leetcode75/arrays-strings/introduction': typeof CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute
@@ -234,6 +244,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard'
     | '/crackmode/docs/'
+    | '/crackmode/docs/leetcode75'
     | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
     | '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
     | '/crackmode/docs/leetcode75/arrays-strings/introduction'
@@ -255,6 +266,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard'
     | '/crackmode/docs'
+    | '/crackmode/docs/leetcode75'
     | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
     | '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
     | '/crackmode/docs/leetcode75/arrays-strings/introduction'
@@ -278,6 +290,7 @@ export interface FileRouteTypes {
     | '/_layout/dashboard/profile'
     | '/_layout/dashboard/'
     | '/crackmode/docs/'
+    | '/crackmode/docs/leetcode75/'
     | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
     | '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
     | '/crackmode/docs/leetcode75/arrays-strings/introduction'
@@ -391,6 +404,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutDashboardProfileRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/crackmode/docs/leetcode75/': {
+      id: '/crackmode/docs/leetcode75/'
+      path: '/leetcode75'
+      fullPath: '/crackmode/docs/leetcode75'
+      preLoaderRoute: typeof CrackmodeDocsLeetcode75IndexRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
     '/crackmode/docs/leetcode75/arrays-strings/': {
       id: '/crackmode/docs/leetcode75/arrays-strings/'
       path: '/leetcode75/arrays-strings'
@@ -471,6 +491,7 @@ const LayoutRouteWithChildren =
 
 interface CrackmodeDocsRouteChildren {
   CrackmodeDocsIndexRoute: typeof CrackmodeDocsIndexRoute
+  CrackmodeDocsLeetcode75IndexRoute: typeof CrackmodeDocsLeetcode75IndexRoute
   CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute: typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
   CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute: typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
   CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute: typeof CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute
@@ -483,6 +504,7 @@ interface CrackmodeDocsRouteChildren {
 
 const CrackmodeDocsRouteChildren: CrackmodeDocsRouteChildren = {
   CrackmodeDocsIndexRoute: CrackmodeDocsIndexRoute,
+  CrackmodeDocsLeetcode75IndexRoute: CrackmodeDocsLeetcode75IndexRoute,
   CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute:
     CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute,
   CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute:

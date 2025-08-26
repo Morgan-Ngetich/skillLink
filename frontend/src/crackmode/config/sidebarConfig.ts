@@ -13,6 +13,10 @@ export const sidebarConfig: DocSection[] = [
     title: "LeetCode 75",
     links: [
       {
+        title: "What is Leetcode75",
+        href: "/crackmode/docs/leetcode75/"
+      },
+      {
         title: "Arrays & Strings",
         href: "/crackmode/docs/leetcode75/arrays-strings",
         children: [

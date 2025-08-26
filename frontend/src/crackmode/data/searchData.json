@@ -2,7 +2,7 @@
   {
     "id": "introduction",
     "title": "Introduction",
-    "content": "Box, Heading, Text, Button, VStack, HStack, Separator, Badge, SimpleGrid, Card, Icon, Avatar, Flex, Kbd, Code, } from \"@chakra-ui/react\"; FaCode, FaUsers, FaTrophy, FaRocket, FaFire, FaBrain, FaChartLine, FaSun, FaBullseye, FaBolt, } from \"react-icons/fa\"; 🔥 CRACK MODE ACTIVE ⚡ Welcome to CrackMode! The ultimate community for crushing LeetCode and mastering algorithms. Join elite coders who don't just solve problems—they dominate them! 🚀 Start Grinding Join Community 🌟 What Makes CrackMode Different? CrackMode isn’t just another coding community — it’s a movement. We believe consistent practice and accountability are the fastest ways to grow as a developer. Why We’re Different - Community-Driven Members push each other to solve LeetCode problems daily. Everyone is both a learner and a motivator. - Accountability First Progress comes from discipline, not just motivation. The community ensures no one falls off track. - Practical Problem-Solving Beyond streaks, we discuss patterns, optimization, and real-world applications. - Growth-Oriented Perfect for FAANG prep or sharpening DSA skills with peers who keep you consistent. The CrackMode Mindset - Fail fast, learn faster. - Celebrate progress, not perfection. - One problem a day compounds into mastery. --- {/ 🚀 Core Features That Set Us Apart Smart Problem Sets AI-curated problems that adapt to your skill level and target weak spots. Live Coding Sessions Real-time collaborative solving with voice chat and screen sharing. Progress Tracking Detailed analytics on your solving patterns, speed, and improvement areas. Interview Prep Mock interviews with FAANG engineers and real-time feedback. /} CrackMode Daily Grinding Schedule Daily Grinding Sessions We run structured sessions every day — join live or catch up with recordings anytime. {/ This Week's Themes /} 🎯 This Week's Themes {/ Community Progress /} 📊 Community Progress",
+    "content": "Box, Heading, Text, Button, VStack, HStack, Separator, Badge, SimpleGrid, Card, Icon, Avatar, Flex, Kbd, Code, } from \"@chakra-ui/react\"; FaCode, FaUsers, FaTrophy, FaRocket, FaFire, FaBrain, FaChartLine, FaSun, FaBullseye, FaBolt, } from \"react-icons/fa\"; 🔥 CRACK MODE ACTIVE ⚡Welcome to CrackMode! The ultimate community for crushing LeetCode and mastering algorithms. Join elite coders who don't just solve problems—they dominate them! 🚀 Start Grinding Join Community 🌟 What Makes CrackMode Different? CrackMode isn’t just another coding community — it’s a movement. We believe consistent practice and accountability are the fastest ways to grow as a developer. Why We’re Different - Community-Driven Members push each other to solve LeetCode problems daily. Everyone is both a learner and a motivator. - Accountability First Progress comes from discipline, not just motivation. The community ensures no one falls off track. - Practical Problem-Solving Beyond streaks, we discuss patterns, optimization, and real-world applications. - Growth-Oriented Perfect for FAANG prep or sharpening DSA skills with peers who keep you consistent. The CrackMode Mindset - Fail fast, learn faster. - Celebrate progress, not perfection. - One problem a day compounds into mastery. --- CrackMode Daily Grinding Schedule Daily Grinding Sessions We run structured sessions every day — join live or catch up with recordings anytime. {/ This Week's Themes /} 🎯 This Week's Themes {/ Community Progress /} 📊 Community Progress",
     "excerpt": "Box, Heading, Text, Button, VStack, HStack, Separator, Badge, SimpleGrid, Card, Icon, Avatar, Flex, Kbd, Code, } from \"@chakra-ui/react\"; FaCode, FaUsers,...",
     "url": "/crackmode/docs/introduction",
     "section": "Getting Started",
@@ -35,120 +35,134 @@
   {
     "id": "leetcode75/arrays-strings",
     "title": "Arrays Strings",
-    "content": "Arrays & Strings (LeetCode 75) In this section, we explore core problems around arrays and strings. We'll cover patterns, approaches, and common pitfalls with examples. --- Table of Contents - Introduction - Patterns to Learn - Problems - Merge Strings Alternately - Greatest Common Divisor of Strings - Kids With the Greatest Number of Candies - Summary --- Introduction Arrays and strings are the foundation of most coding problems. They're essential data structures that appear in countless interview questions and real-world applications. In this comprehensive module, you'll practice: - Iteration techniques - Learn different ways to traverse data - Two pointers approach - Solve problems with dual index tracking - Sliding window patterns - Handle dynamic subarray problems - Hash maps for optimization - Use frequency counting effectively These fundamental concepts will serve as building blocks for more complex algorithmic challenges. --- Patterns to Learn Two Pointers Use start and end pointers to solve problems efficiently Two pointers technique involves using two index variables to traverse data structures. This approach is particularly powerful for: - Palindrome checking - Array reversal - Finding pairs with target sum - Removing duplicates Example scenario: Checking if a string is a palindrome by comparing characters from both ends moving inward. Sliding Window Handle substrings/subarrays with dynamic window size The sliding window technique maintains a window of elements and slides it across the data structure. Perfect for: - Maximum sum subarray problems - Longest substring without repeating characters - Finding anagrams in strings - Minimum window substring Example scenario: Finding the maximum sum of k consecutive elements in an array. Hashing/Counting Use frequency maps for character or number counting Hash maps provide O(1) lookup time and are essential for: - Anagram detection - Finding duplicates - Character frequency counting - Two sum problems Example scenario: Determining if two strings are anagrams by comparing character frequencies. --- Problems Merge Strings Alternately Difficulty: Easy Problem: You are given two strings word1 and word2. Merge the strings by adding letters in alternating order, starting with word1. If a string is longer than the other, append the additional letters onto the end of the merged string. Approach Use two pointers to iterate through both strings simultaneously, alternating between characters. Handle remaining characters after one string is exhausted. Solution ``javascript function mergeAlternately(word1, word2) { let result = ''; let i = 0, j = 0; // Alternate between characters while both strings have characters while (i b === 0 ? a : gcd(b, a % b); // Find GCD of the lengths const gcdLength = gcd(str1.length, str2.length); // Return the substring of that length return str1.substring(0, gcdLength); } // Example usage: // gcdOfStrings(\"ABCABC\", \"ABC\") → \"ABC\" // gcdOfStrings(\"ABABAB\", \"ABAB\") → \"AB\" // gcdOfStrings(\"LEET\", \"CODE\") → \"\" ` Time Complexity: O(min(m, n)) for the GCD calculation Space Complexity: O(min(m, n)) for the substring creation --- Kids With the Greatest Number of Candies Difficulty: Easy Problem: There are n kids with candies. You are given an integer array candies, where each candies[i] represents the number of candies the ith kid has, and an integer extraCandies, denoting the number of extra candies that you have. Return a boolean array result of length n, where result[i] is true if, after giving the ith kid all the extraCandies, they will have the greatest number of candies among all the kids, or false otherwise. Approach Find the maximum number of candies any kid currently has. Then check if each kid can reach or exceed this maximum when given the extra candies. Solution `javascript function kidsWithCandies(candies, extraCandies) { // Find the maximum candies any kid currently has const maxCandies = Math.max(...candies); // Check if each kid can have >= maxCandies with extra candies return candies.map(candy => candy + extraCandies >= maxCandies ); } // Alternative approach without spread operator (more efficient for large arrays) function kidsWithCandiesOptimized(candies, extraCandies) { let maxCandies = 0; // Find maximum in single pass for (let candy of candies) { maxCandies = Math.max(maxCandies, candy); } // Create result array const result = []; for (let candy of candies) { result.push(candy + extraCandies >= maxCandies); } return result; } // Example usage: // kidsWithCandies([2,3,5,1,3], 3) → [true,true,true,false,true] // kidsWithCandies([4,2,1,1,2], 1) → [true,false,false,false,false] `` Time Complexity: O(n) where n is the number of kids Space Complexity: O(1) excluding the output array --- Summary Key Takeaways You've now covered the fundamental patterns for arrays and strings. These concepts will serve as building blocks for more complex problems: - Two pointers technique is powerful for palindromes, sorted arrays, and finding pairs - Sliding window optimizes substring/subarray problems by avoiding redundant work - Hash maps provide O(1) lookups for counting and frequency problems - Pattern recognition helps you quickly identify the right approach for new problems Problem-Solving Strategy When approaching array and string problems: 1. Identify the pattern - Is this a two-pointer, sliding window, or hashing problem? 2. Consider edge cases - Empty arrays/strings, single elements, duplicates 3. Optimize step by step - Start with brute force, then optimize 4. Analyze complexity - Always consider both time and space complexity Next Steps Continue building on these foundations with more advanced topics: - Two Pointers (Advanced) - Fast and slow pointers, cycle detection - Sliding Window (Advanced) - Variable window size, multiple conditions - String Algorithms - KMP, Z-algorithm, suffix arrays - Array Techniques - Prefix sums, difference arrays, binary search Practice consistently and focus on understanding the underlying patterns rather than memorizing solutions. Each problem you solve strengthens your pattern recognition abilities! --- Ready for the next challenge? Let's dive into more advanced two-pointer techniques!",
-    "excerpt": "Arrays & Strings (LeetCode 75) In this section, we explore core problems around arrays and strings. We'll cover patterns, approaches, and common pitfalls with...",
+    "content": "Arrays & Strings Overview (LeetCode 75) Welcome to the Arrays & Strings section! This foundational module introduces you to the most essential data structures in programming and sets the stage for everything that follows in your coding journey. --- What You'll Learn Arrays and strings form the backbone of algorithmic problem-solving. In this section, you'll develop intuition around the most fundamental patterns that appear across countless coding interviews and real-world applications. Core Concepts String Manipulation - Character-by-character processing - Pattern matching and recognition - Building and transforming strings efficiently Array Traversal Techniques - Single and multiple pointer approaches - Forward and backward iteration strategies - Efficient element comparison methods Optimization Strategies - When to use extra space vs. in-place solutions - Recognizing opportunities for early termination - Balancing time and space complexity trade-offs --- Key Patterns You'll Master Two Pointers Technique Learn to use dual index tracking to solve problems that would otherwise require nested loops. This elegant approach helps you: - Compare elements from different positions - Process data from both ends simultaneously - Avoid redundant comparisons You'll see this pattern in palindrome checking, merging operations, and array reversal problems. Sliding Window Approach Discover how to handle dynamic subarray and substring problems by maintaining a \"window\" of elements: - Process contiguous elements efficiently - Expand and contract your focus area - Avoid recalculating overlapping regions Perfect for problems involving consecutive elements or substring analysis. Hash Maps for Smart Counting Master the art of frequency counting and fast lookups: - Track character or element occurrences - Enable O(1) retrieval of previously seen data - Solve \"two sum\" style problems elegantly Essential for anagram detection, duplicate finding, and optimization challenges. --- Problem Categories You'll Encounter String Processing Challenges - Alternating Operations: Learn to merge and interweave strings using systematic approaches - Mathematical String Properties: Explore how mathematical concepts like GCD apply to string patterns - Pattern Recognition: Develop skills to identify repeating structures and divisibility Array Analysis Problems - Comparative Analysis: Determine relative standings and maximum potential outcomes - Element Relationships: Understand how individual elements relate to the whole dataset - Conditional Logic: Master boolean array generation based on specific criteria Optimization Scenarios - Space vs. Time Trade-offs: Learn when to use additional memory for faster execution - Single vs. Multiple Passes: Understand when one traversal is sufficient vs. when multiple passes are needed - Early Termination: Recognize opportunities to stop processing early --- Skills You'll Develop Pattern Recognition By the end of this section, you'll quickly identify: - When a problem calls for two pointers vs. sliding window - Whether hash maps will provide the optimal solution - How to break down complex string operations into manageable steps Problem-Solving Approach You'll develop a systematic method for tackling new challenges: 1. Pattern Identification: Quickly categorize the problem type 2. Edge Case Consideration: Automatically think about boundary conditions 3. Complexity Analysis: Evaluate solutions before implementation 4. Iterative Optimization: Start simple, then enhance Interview Readiness These fundamentals prepare you for more advanced topics while building confidence in: - Clear problem decomposition - Efficient algorithm selection - Code organization and readability - Time and space complexity discussions --- What Makes This Section Special Building Block Approach Every concept here serves as a foundation for more advanced algorithms. The two-pointer technique you learn here will be crucial for tree traversals later. Hash map usage here prepares you for graph algorithms. Real-World Relevance These aren't just interview problems—they're practical skills used daily in software development: - String processing for data validation - Array manipulation for data transformation - Pattern matching for search functionality Progressive Difficulty Start with straightforward problems that build confidence, then gradually tackle more nuanced challenges that combine multiple patterns. --- Getting the Most From This Section Focus on Understanding, Not Memorization Rather than memorizing solutions, concentrate on: - Why certain patterns work for specific problem types - How to recognize when to apply each technique - The trade-offs between different approaches Practice Pattern Recognition Before jumping into coding: - Read the problem statement carefully - Identify which pattern(s) might apply - Consider multiple approaches before choosing one Build Your Intuition Ask yourself: - What makes this problem unique? - Have I seen similar patterns before? - What would happen with edge cases? --- Ready to Begin? This section sets you up for success in the entire LeetCode 75 journey. The patterns you'll learn here appear throughout the remaining categories—from linked lists to dynamic programming. Take your time with each concept. Mastery here pays dividends later! --- Next up: Dive into the first problem and start building your pattern recognition skills!",
+    "excerpt": "Arrays & Strings Overview (LeetCode 75) Welcome to the Arrays & Strings section! This foundational module introduces you to the most essential data structures...",
     "url": "/crackmode/docs/leetcode75/arrays-strings",
     "section": "Leetcode75",
     "tags": [
-      "example",
       "advanced",
-      "javascript"
+      "state"
     ],
     "headings": [
       {
         "level": 1,
-        "text": "Arrays & Strings (LeetCode 75)",
-        "id": "arrays-strings-leetcode-75"
+        "text": "Arrays & Strings Overview (LeetCode 75)",
+        "id": "arrays-strings-overview-leetcode-75"
       },
       {
         "level": 2,
-        "text": "Table of Contents",
-        "id": "table-of-contents"
+        "text": "What You'll Learn",
+        "id": "what-youll-learn"
+      },
+      {
+        "level": 3,
+        "text": "Core Concepts",
+        "id": "core-concepts"
       },
       {
         "level": 2,
-        "text": "Introduction",
-        "id": "introduction"
+        "text": "Key Patterns You'll Master",
+        "id": "key-patterns-youll-master"
+      },
+      {
+        "level": 3,
+        "text": "Two Pointers Technique",
+        "id": "two-pointers-technique"
+      },
+      {
+        "level": 3,
+        "text": "Sliding Window Approach",
+        "id": "sliding-window-approach"
+      },
+      {
+        "level": 3,
+        "text": "Hash Maps for Smart Counting",
+        "id": "hash-maps-for-smart-counting"
       },
       {
         "level": 2,
-        "text": "Patterns to Learn",
-        "id": "patterns-to-learn"
+        "text": "Problem Categories You'll Encounter",
+        "id": "problem-categories-youll-encounter"
       },
       {
         "level": 3,
-        "text": "Two Pointers",
-        "id": "two-pointers"
+        "text": "String Processing Challenges",
+        "id": "string-processing-challenges"
       },
       {
         "level": 3,
-        "text": "Sliding Window",
-        "id": "sliding-window"
+        "text": "Array Analysis Problems",
+        "id": "array-analysis-problems"
       },
       {
         "level": 3,
-        "text": "Hashing/Counting",
-        "id": "hashingcounting"
+        "text": "Optimization Scenarios",
+        "id": "optimization-scenarios"
       },
       {
         "level": 2,
-        "text": "Problems",
-        "id": "problems"
+        "text": "Skills You'll Develop",
+        "id": "skills-youll-develop"
       },
       {
         "level": 3,
-        "text": "Merge Strings Alternately",
-        "id": "merge-strings-alternately"
-      },
-      {
-        "level": 4,
-        "text": "Approach",
-        "id": "approach"
-      },
-      {
-        "level": 4,
-        "text": "Solution",
-        "id": "solution"
+        "text": "Pattern Recognition",
+        "id": "pattern-recognition"
       },
       {
         "level": 3,
-        "text": "Greatest Common Divisor of Strings",
-        "id": "greatest-common-divisor-of-strings"
-      },
-      {
-        "level": 4,
-        "text": "Approach",
-        "id": "approach-1"
-      },
-      {
-        "level": 4,
-        "text": "Solution",
-        "id": "solution-1"
+        "text": "Problem-Solving Approach",
+        "id": "problem-solving-approach"
       },
       {
         "level": 3,
-        "text": "Kids With the Greatest Number of Candies",
-        "id": "kids-with-the-greatest-number-of-candies"
-      },
-      {
-        "level": 4,
-        "text": "Approach",
-        "id": "approach-2"
-      },
-      {
-        "level": 4,
-        "text": "Solution",
-        "id": "solution-2"
+        "text": "Interview Readiness",
+        "id": "interview-readiness"
       },
       {
         "level": 2,
-        "text": "Summary",
-        "id": "summary"
+        "text": "What Makes This Section Special",
+        "id": "what-makes-this-section-special"
       },
       {
         "level": 3,
-        "text": "Key Takeaways",
-        "id": "key-takeaways"
+        "text": "Building Block Approach",
+        "id": "building-block-approach"
       },
       {
         "level": 3,
-        "text": "Problem-Solving Strategy",
-        "id": "problem-solving-strategy"
+        "text": "Real-World Relevance",
+        "id": "real-world-relevance"
       },
       {
         "level": 3,
-        "text": "Next Steps",
-        "id": "next-steps"
+        "text": "Progressive Difficulty",
+        "id": "progressive-difficulty"
+      },
+      {
+        "level": 2,
+        "text": "Getting the Most From This Section",
+        "id": "getting-the-most-from-this-section"
+      },
+      {
+        "level": 3,
+        "text": "Focus on Understanding, Not Memorization",
+        "id": "focus-on-understanding-not-memorization"
+      },
+      {
+        "level": 3,
+        "text": "Practice Pattern Recognition",
+        "id": "practice-pattern-recognition"
+      },
+      {
+        "level": 3,
+        "text": "Build Your Intuition",
+        "id": "build-your-intuition"
+      },
+      {
+        "level": 2,
+        "text": "Ready to Begin?",
+        "id": "ready-to-begin"
       }
     ]
   },
@@ -377,6 +391,219 @@
         "level": 2,
         "text": "Key Insights",
         "id": "key-insights"
+      }
+    ]
+  },
+  {
+    "id": "leetcode75/leetcode75",
+    "title": "Leetcode75",
+    "content": "LeetCode 75: Your Complete Coding Interview Roadmap Welcome to LeetCode 75 – the most comprehensive and strategically curated collection of coding problems designed to transform you from a coding enthusiast into an interview-ready software engineer. --- What Makes LeetCode 75 Special? The Science Behind the Selection LeetCode 75 isn't just another random collection of problems. It's a carefully crafted progression that: - Covers 90% of interview patterns you'll encounter at top tech companies - Builds knowledge incrementally – each topic reinforces previous concepts - Balances breadth and depth across all major algorithmic categories - Focuses on high-frequency problems that actually appear in interviews Your Transformation Journey By completing LeetCode 75, you'll develop: - Pattern recognition that lets you categorize new problems instantly - Problem-solving intuition that guides you to optimal solutions - Interview confidence to tackle any coding challenge - Systematic thinking that breaks complex problems into manageable pieces --- The Complete Learning Path Phase 1: Foundations (Problems 1-25) Arrays & Strings • Two Pointers - Master the fundamentals that underpin all other algorithms - Develop core manipulation and traversal techniques - Build pattern recognition for the most common problem types - Learn space-time complexity trade-offs What you'll gain: Solid foundation in basic data structure manipulation and fundamental algorithmic thinking. Phase 2: Core Techniques (Problems 26-45) Sliding Window • Prefix Sum • Hash Map / Set - Unlock powerful optimization techniques for array and string problems - Master dynamic window management for substring challenges - Learn efficient counting and lookup strategies - Develop intuition for when to use auxiliary data structures What you'll gain: Ability to optimize brute force solutions and handle complex constraint problems. Phase 3: Essential Structures (Problems 46-60) Stack • Linked List • Binary Tree - DFS - Dive into fundamental data structures that appear in countless variations - Master recursive thinking and tree traversal patterns - Learn stack-based problem solving for parsing and validation - Develop comfort with pointer manipulation and node relationships What you'll gain: Deep understanding of hierarchical data and recursive problem decomposition. Phase 4: Advanced Traversals (Problems 61-70) Binary Tree - BFS • Binary Search Tree • Graphs - DFS - Expand your tree knowledge with level-order processing - Master BST properties and validation techniques - Enter the world of graph algorithms with depth-first approaches - Learn to handle complex, interconnected data structures What you'll gain: Ability to navigate and analyze complex, multi-dimensional data relationships. Phase 5: Master Level (Problems 71-75) Graphs - BFS • Dynamic Programming • Intervals - Tackle the most challenging algorithmic concepts - Master optimal substructure and memoization techniques - Learn advanced graph algorithms for shortest paths and connectivity - Handle complex scheduling and optimization problems What you'll gain: Complete algorithmic toolkit for solving any coding interview problem. --- What You'll Master by Topic Arrays & Strings (Foundation) - Multi-pointer techniques for efficient array processing - String manipulation and pattern matching strategies - Character frequency analysis and string transformation - Foundation for all subsequent topics Sliding Window (Optimization) - Dynamic subarray and substring problem solving - Window expansion and contraction strategies - Optimization of nested loop solutions - Template approaches for various window types Two Pointers (Elegance) - Opposite-direction pointer techniques - Same-direction pointer strategies - Cycle detection and list manipulation - Space-efficient problem solving approaches Hash Maps & Sets (Intelligence) - Fast lookup and counting strategies - Duplicate detection and uniqueness problems - Mapping relationships and frequency analysis - Trade memory for speed optimizations Stacks (Structure) - Parsing and validation problem patterns - Monotonic stack techniques - Expression evaluation strategies - Backtracking and undo operation support Linked Lists (Manipulation) - Node relationship management - List reversal and rearrangement techniques - Cycle detection and slow-fast pointer methods - In-place list modification strategies Binary Trees (Hierarchy) - Recursive tree traversal mastery - Tree construction and validation - Path finding and sum calculation techniques - Tree modification and balancing concepts Binary Search Trees (Efficiency) - BST property utilization - Efficient search and insertion strategies - Tree validation and balancing - Range query optimization Graphs (Connectivity) - Graph representation and traversal - Shortest path algorithms - Connectivity and component analysis - Cycle detection in directed/undirected graphs Dynamic Programming (Optimization) - Optimal substructure identification - Memoization and tabulation techniques - Multi-dimensional problem solving - State transition and recurrence relations --- The Skills You'll Develop Technical Mastery - Algorithm Design: Create efficient solutions from scratch - Pattern Recognition: Instantly categorize problem types - Complexity Analysis: Evaluate and optimize solution performance - Data Structure Selection: Choose the right tool for each problem Interview Excellence - Problem Decomposition: Break complex challenges into manageable parts - Communication: Explain your thought process clearly - Edge Case Handling: Anticipate and address boundary conditions - Code Quality: Write clean, readable, and maintainable solutions Professional Growth - Systematic Thinking: Approach problems methodically - Debugging Skills: Identify and fix issues efficiently - Optimization Mindset: Always seek better solutions - Confidence Building: Tackle any coding challenge with assurance --- Your Success Timeline Weeks 1-2: Foundation Building Focus on Arrays, Strings, and Two Pointers. Build confidence with fundamental concepts. Weeks 3-4: Technique Expansion Master Sliding Window, Hash Maps, and Stack problems. Develop optimization intuition. Weeks 5-6: Structure Mastery Dive deep into Linked Lists and Binary Trees. Embrace recursive thinking. Weeks 7-8: Advanced Concepts Tackle BSTs, Graph fundamentals, and BFS techniques. Push your boundaries. Weeks 9-10: Expert Level Conquer Dynamic Programming and complex Graph problems. Achieve mastery. --- Why LeetCode 75 Works Proven Success Stories Thousands of engineers have landed jobs at: - FAANG Companies: Google, Meta, Amazon, Apple, Netflix - Unicorn Startups: Stripe, Airbnb, Uber, Spotify - Top Tech Companies: Microsoft, Salesforce, Adobe, Twitter Strategic Advantages - Time Efficient: 75 problems vs. thousands of random practice - Pattern Complete: Covers all major interview patterns - Progressive Difficulty: Builds confidence while challenging growth - Industry Relevant: Based on real interview experiences Beyond Just Coding LeetCode 75 develops: - Problem-solving methodology - Technical communication skills - Code quality standards - Interview composure and confidence --- Getting Started Your Mindset - Quality over quantity: Deep understanding beats superficial coverage - Pattern focus: Learn the why, not just the how - Consistent progress: Regular practice trumps marathon sessions - Growth orientation: Embrace challenges as learning opportunities Success Strategies - Daily Practice: Commit to consistent problem-solving sessions - Pattern Journaling: Document insights and template solutions - Mock Interviews: Practice explaining solutions under pressure - Community Engagement: Learn from others and share knowledge --- Ready to Transform Your Career? LeetCode 75 is more than just problem practice – it's your pathway to joining the world's most innovative companies. Each problem you solve builds toward a comprehensive skill set that will serve you throughout your engineering career. The journey ahead is challenging but rewarding. You'll develop not just coding skills, but the systematic thinking and problem-solving abilities that define exceptional software engineers. Your future self will thank you for starting today. --- Begin your transformation. Master the patterns. Land your dream job.",
+    "excerpt": "LeetCode 75: Your Complete Coding Interview Roadmap Welcome to LeetCode 75 – the most comprehensive and strategically curated collection of coding problems...",
+    "url": "/crackmode/docs/leetcode75/leetcode75",
+    "section": "Leetcode75",
+    "tags": [
+      "getting-started",
+      "guide",
+      "component",
+      "advanced",
+      "state",
+      "performance"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "LeetCode 75: Your Complete Coding Interview Roadmap",
+        "id": "leetcode-75-your-complete-coding-interview-roadmap"
+      },
+      {
+        "level": 2,
+        "text": "What Makes LeetCode 75 Special?",
+        "id": "what-makes-leetcode-75-special"
+      },
+      {
+        "level": 3,
+        "text": "The Science Behind the Selection",
+        "id": "the-science-behind-the-selection"
+      },
+      {
+        "level": 3,
+        "text": "Your Transformation Journey",
+        "id": "your-transformation-journey"
+      },
+      {
+        "level": 2,
+        "text": "The Complete Learning Path",
+        "id": "the-complete-learning-path"
+      },
+      {
+        "level": 3,
+        "text": "Phase 1: Foundations (Problems 1-25)",
+        "id": "phase-1-foundations-problems-1-25"
+      },
+      {
+        "level": 3,
+        "text": "Phase 2: Core Techniques (Problems 26-45)",
+        "id": "phase-2-core-techniques-problems-26-45"
+      },
+      {
+        "level": 3,
+        "text": "Phase 3: Essential Structures (Problems 46-60)",
+        "id": "phase-3-essential-structures-problems-46-60"
+      },
+      {
+        "level": 3,
+        "text": "Phase 4: Advanced Traversals (Problems 61-70)",
+        "id": "phase-4-advanced-traversals-problems-61-70"
+      },
+      {
+        "level": 3,
+        "text": "Phase 5: Master Level (Problems 71-75)",
+        "id": "phase-5-master-level-problems-71-75"
+      },
+      {
+        "level": 2,
+        "text": "What You'll Master by Topic",
+        "id": "what-youll-master-by-topic"
+      },
+      {
+        "level": 3,
+        "text": "Arrays & Strings (Foundation)",
+        "id": "arrays-strings-foundation"
+      },
+      {
+        "level": 3,
+        "text": "Sliding Window (Optimization)",
+        "id": "sliding-window-optimization"
+      },
+      {
+        "level": 3,
+        "text": "Two Pointers (Elegance)",
+        "id": "two-pointers-elegance"
+      },
+      {
+        "level": 3,
+        "text": "Hash Maps & Sets (Intelligence)",
+        "id": "hash-maps-sets-intelligence"
+      },
+      {
+        "level": 3,
+        "text": "Stacks (Structure)",
+        "id": "stacks-structure"
+      },
+      {
+        "level": 3,
+        "text": "Linked Lists (Manipulation)",
+        "id": "linked-lists-manipulation"
+      },
+      {
+        "level": 3,
+        "text": "Binary Trees (Hierarchy)",
+        "id": "binary-trees-hierarchy"
+      },
+      {
+        "level": 3,
+        "text": "Binary Search Trees (Efficiency)",
+        "id": "binary-search-trees-efficiency"
+      },
+      {
+        "level": 3,
+        "text": "Graphs (Connectivity)",
+        "id": "graphs-connectivity"
+      },
+      {
+        "level": 3,
+        "text": "Dynamic Programming (Optimization)",
+        "id": "dynamic-programming-optimization"
+      },
+      {
+        "level": 2,
+        "text": "The Skills You'll Develop",
+        "id": "the-skills-youll-develop"
+      },
+      {
+        "level": 3,
+        "text": "Technical Mastery",
+        "id": "technical-mastery"
+      },
+      {
+        "level": 3,
+        "text": "Interview Excellence",
+        "id": "interview-excellence"
+      },
+      {
+        "level": 3,
+        "text": "Professional Growth",
+        "id": "professional-growth"
+      },
+      {
+        "level": 2,
+        "text": "Your Success Timeline",
+        "id": "your-success-timeline"
+      },
+      {
+        "level": 3,
+        "text": "Weeks 1-2: Foundation Building",
+        "id": "weeks-1-2-foundation-building"
+      },
+      {
+        "level": 3,
+        "text": "Weeks 3-4: Technique Expansion",
+        "id": "weeks-3-4-technique-expansion"
+      },
+      {
+        "level": 3,
+        "text": "Weeks 5-6: Structure Mastery",
+        "id": "weeks-5-6-structure-mastery"
+      },
+      {
+        "level": 3,
+        "text": "Weeks 7-8: Advanced Concepts",
+        "id": "weeks-7-8-advanced-concepts"
+      },
+      {
+        "level": 3,
+        "text": "Weeks 9-10: Expert Level",
+        "id": "weeks-9-10-expert-level"
+      },
+      {
+        "level": 2,
+        "text": "Why LeetCode 75 Works",
+        "id": "why-leetcode-75-works"
+      },
+      {
+        "level": 3,
+        "text": "Proven Success Stories",
+        "id": "proven-success-stories"
+      },
+      {
+        "level": 3,
+        "text": "Strategic Advantages",
+        "id": "strategic-advantages"
+      },
+      {
+        "level": 3,
+        "text": "Beyond Just Coding",
+        "id": "beyond-just-coding"
+      },
+      {
+        "level": 2,
+        "text": "Getting Started",
+        "id": "getting-started"
+      },
+      {
+        "level": 3,
+        "text": "Your Mindset",
+        "id": "your-mindset"
+      },
+      {
+        "level": 3,
+        "text": "Success Strategies",
+        "id": "success-strategies"
+      },
+      {
+        "level": 2,
+        "text": "Ready to Transform Your Career?",
+        "id": "ready-to-transform-your-career"
       }
     ]
   },
