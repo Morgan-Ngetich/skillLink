@@ -20,6 +20,7 @@ export const sidebarConfig: DocSection[] = [
         title: "Arrays & Strings",
         href: "/crackmode/docs/leetcode75/arrays-strings",
         children: [
+          { title: "Introduction", href: "/crackmode/docs/leetcode75/arrays-strings" },
           { title: "Merge Strings Alternately", href: "/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately" },
           { title: "GCD of Strings", href: "/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings" },
           { title: "Kids With Greatest Candies", href: "/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies" },
