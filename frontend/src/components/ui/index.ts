@@ -16,3 +16,4 @@ export * from './progress'
 export * from './switch'
 export * from './select'
 export * from './breadcrumb'
+export * from "./dialog"
