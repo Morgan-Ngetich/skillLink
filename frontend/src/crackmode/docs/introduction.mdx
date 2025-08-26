@@ -15,6 +15,7 @@ import {
   Kbd,
   Code,
 } from "@chakra-ui/react";
+import { Link } from "@tanstack/react-router"
 import {
   FaCode,
   FaUsers,
@@ -27,10 +28,14 @@ import {
   FaBullseye,
   FaBolt,
 } from "react-icons/fa";
-import { Progress } from "@/components/ui/progress";
+import { Progress } from "@/components/ui";
 
 <Box position="relative" overflow="hidden">
-  <Box textAlign="center" position="relative" py={{base: 0, md: 10}}>
+    <Box 
+      textAlign="center" 
+      position="relative" 
+      py={{base: 0, md: 10}} 
+    >
     <Box position="relative">
       <Box
         bg="green.500" 
@@ -66,23 +71,27 @@ import { Progress } from "@/components/ui/progress";
 
       <VStack>
         <HStack gap={4} justify="center">
+        <Link to="leetcode75">        
           <Button variant="solid" size="lg">
             <HStack>
               <FaRocket />
               <Text fontSize={{base: "sm", md: "md"}}>Start Grinding</Text>
             </HStack>
           </Button>
-          <Button
-            variant="outline"
-            border="1px solid"
-            size="lg"
-            transition="all 0.3s ease"
-          >
-            <HStack>
-              <FaUsers />
-              <Text fontSize={{base: "sm", md: "md"}}>Join Community</Text>
-            </HStack>
-          </Button>
+        </Link>
+          <a href="https://chat.whatsapp.com/Biz5sc2ow3v8Mg2aId6yOH">
+            <Button
+              variant="outline"
+              border="1px solid"
+              size="lg"
+              transition="all 0.3s ease"
+            >
+              <HStack>
+                <FaUsers />
+                <Text fontSize={{base: "sm", md: "md"}}>Join Community</Text>
+              </HStack>
+            </Button>
+          </a>
         </HStack>
       </VStack>
     </Box>
