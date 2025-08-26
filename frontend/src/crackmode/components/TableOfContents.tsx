@@ -42,7 +42,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ headings }) => {
   if (headings.length === 0) return null
 
   return (
-    <Box borderLeft="1px solid" borderColor="gray.200" pl={4} pr={2}>
+    <Box borderLeft="1px solid" borderColor="gray.200" pl={4} pr={2} pb={16}>
       <Text
         fontWeight="semibold"
         fontSize="sm"
@@ -82,6 +82,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ headings }) => {
               outlineColor: activeLinkColor,
               outlineOffset: "2px"
             }}
+            lineClamp={1}
           >
             {heading.text}
           </Link>

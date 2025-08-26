@@ -77,7 +77,7 @@ const DocsLayout = ({ children, headings }: DocsLayoutProps) => {
           )}
 
           {/* Content */}
-          <Box>{children}</Box>
+          <Box pb={16}>{children}</Box>
         </Container>
       </Box>
 
