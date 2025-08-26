@@ -31,14 +31,16 @@ const DocsLayout = ({ children, headings }: DocsLayoutProps) => {
       return () => current.removeEventListener("scroll", handleScroll)
     }
   }, [])
-  
+
   const bgColor = useColorModeValue(
     scrolled ? "white" : "transparent",
     scrolled ? "gray.900" : "transparent"
   )
   
+
   const borderColor = useColorModeValue("gray.200", "gray.700")
   const breadcrumbItems = useBreadcrumbItems()
+
   return (
     <Flex h="100vh" overflow="hidden">
       {/* Main Content (scrollable) */}
@@ -46,13 +48,13 @@ const DocsLayout = ({ children, headings }: DocsLayoutProps) => {
         <Container maxW="4xl" pt={4} pb={8} px={{ base: 4, md: 8 }}>
           {breadcrumbItems && (
             <Box
-              mb={{base: 1, md: 6}}
+              mb={{ base: 1, md: 6 }}
               position="sticky"
               top={0}
               zIndex="999"
               bg={bgColor}
               py={2}
-              pt={{base:0, md: 2}}
+              pt={{ base: 0, md: 2 }}
               w="full"
               overflowX={"auto"}
               whiteSpace={"nowrap"}
