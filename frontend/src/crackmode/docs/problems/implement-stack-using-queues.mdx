@@ -1,0 +1,359 @@
+import { VStack, HStack, Text } from "@chakra-ui/react"
+
+# Implement Stack using Queues
+
+**Difficulty:** <span style={{color: "#4ade80"}}>Easy</span>  
+**LeetCode:** [225. Implement Stack using Queues](https://leetcode.com/problems/implement-stack-using-queues/)
+
+---
+
+## Problem
+
+Implement a last-in-first-out (LIFO) stack using only two queues. The implemented stack should support all the functions of a normal stack (`push`, `top`, `pop`, and `empty`).
+
+Implement the `MyStack` class:
+
+- `void push(int x)` - Pushes element x to the top of the stack.
+- `int pop()` - Removes the element on the top of the stack and returns it.
+- `int top()` - Returns the element on the top of the stack.
+- `boolean empty()` - Returns true if the stack is empty, false otherwise.
+
+**Notes:**
+- You must use only standard operations of a queue, which means that only `push to back`, `peek/pop from front`, `size` and `is empty` operations are valid.
+
+**Example 1:**
+```
+Input
+["MyStack", "push", "push", "top", "pop", "empty"]
+[[], [1], [2], [], [], []]
+
+Output
+[null, null, null, 2, 2, false]
+
+Explanation
+MyStack myStack = new MyStack();
+myStack.push(1);
+myStack.push(2);
+myStack.top(); // return 2
+myStack.pop(); // return 2
+myStack.empty(); // return False
+```
+
+---
+
+## Simple Explanation
+
+Think of this like **reversing the order** using two containers:
+
+1. **Queue = FIFO** (First In, First Out) - like a line at a store
+2. **Stack = LIFO** (Last In, First Out) - like a stack of plates
+
+The trick is to use the queue's rotation ability to simulate stack behavior:
+- When pushing: add to queue, then rotate all previous elements
+- When popping: just remove from the front (which is now the "top")
+
+---
+
+## Solution Approach
+
+There are **two main approaches**:
+
+### Approach 1: Make Push Operation Heavy
+- **Push:** Add new element, then rotate all previous elements to maintain stack order
+- **Pop:** Simply remove from front
+
+### Approach 2: Make Pop Operation Heavy  
+- **Push:** Simply add to back of queue
+- **Pop:** Move all elements except the last one to another queue, then pop the last element
+
+Let's implement **Approach 1** (more efficient for multiple pops):
+
+---
+
+## Solution
+
+<TabbedCode
+  files={[
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `class MyStack {
+    constructor() {
+        this.queue = [];
+    }
+    
+    push(x) {
+        this.queue.push(x);
+        // Rotate the queue to bring the new element to front
+        let size = this.queue.length;
+        for (let i = 0; i < size - 1; i++) {
+            this.queue.push(this.queue.shift());
+        }
+    }
+    
+    pop() {
+        return this.queue.shift();
+    }
+    
+    top() {
+        return this.queue[0];
+    }
+    
+    empty() {
+        return this.queue.length === 0;
+    }
+}`
+    },
+    {
+      title: "Python",
+      language: "python",
+      code: `from collections import deque
+
+class MyStack:
+    def __init__(self):
+        self.queue = deque()
+    
+    def push(self, x: int) -> None:
+        self.queue.append(x)
+        # Rotate the queue to bring the new element to front
+        for _ in range(len(self.queue) - 1):
+            self.queue.append(self.queue.popleft())
+    
+    def pop(self) -> int:
+        return self.queue.popleft()
+    
+    def top(self) -> int:
+        return self.queue[0]
+    
+    def empty(self) -> bool:
+        return len(self.queue) == 0`
+    },
+    {
+      title: "C++",
+      language: "cpp",
+      code: `#include <queue>
+using namespace std;
+
+class MyStack {
+private:
+    queue<int> q;
+
+public:
+    MyStack() {}
+    
+    void push(int x) {
+        q.push(x);
+        int size = q.size();
+        // Rotate the queue to bring the new element to front
+        for (int i = 0; i < size - 1; i++) {
+            q.push(q.front());
+            q.pop();
+        }
+    }
+    
+    int pop() {
+        int top = q.front();
+        q.pop();
+        return top;
+    }
+    
+    int top() {
+        return q.front();
+    }
+    
+    bool empty() {
+        return q.empty();
+    }
+};`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `import java.util.*;
+
+class MyStack {
+    private Queue<Integer> queue;
+    
+    public MyStack() {
+        queue = new LinkedList<>();
+    }
+    
+    public void push(int x) {
+        queue.offer(x);
+        int size = queue.size();
+        // Rotate the queue to bring the new element to front
+        for (int i = 0; i < size - 1; i++) {
+            queue.offer(queue.poll());
+        }
+    }
+    
+    public int pop() {
+        return queue.poll();
+    }
+    
+    public int top() {
+        return queue.peek();
+    }
+    
+    public boolean empty() {
+        return queue.isEmpty();
+    }
+}`
+    },
+  ]}
+/>
+
+---
+
+## Step-by-Step Walkthrough
+
+Let's trace through the operations: `push(1)`, `push(2)`, `push(3)`, `top()`, `pop()`:
+
+```
+Initial: queue = []
+
+Step 1: push(1)
+        queue = [1]
+        No rotation needed (size = 1)
+        Final: queue = [1]
+
+Step 2: push(2) 
+        queue = [1, 2]
+        Rotate 1 time: move 1 to back
+        queue = [2, 1] 
+        Final: queue = [2, 1]
+
+Step 3: push(3)
+        queue = [2, 1, 3]
+        Rotate 2 times: move 2,1 to back
+        After 1st rotation: [1, 3, 2]
+        After 2nd rotation: [3, 2, 1]
+        Final: queue = [3, 2, 1]
+
+Step 4: top()
+        Return queue[0] = 3
+
+Step 5: pop()
+        Remove and return queue[0] = 3
+        Final: queue = [2, 1]
+```
+
+---
+
+## Alternative Solution (Two Queues)
+
+<TabbedCode
+  files={[
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `class MyStack {
+    constructor() {
+        this.q1 = [];
+        this.q2 = [];
+    }
+    
+    push(x) {
+        this.q1.push(x);
+    }
+    
+    pop() {
+        // Move all elements except last to q2
+        while (this.q1.length > 1) {
+            this.q2.push(this.q1.shift());
+        }
+        
+        let result = this.q1.shift();
+        
+        // Swap queues
+        [this.q1, this.q2] = [this.q2, this.q1];
+        
+        return result;
+    }
+    
+    top() {
+        // Move all elements except last to q2
+        while (this.q1.length > 1) {
+            this.q2.push(this.q1.shift());
+        }
+        
+        let result = this.q1[0];
+        this.q2.push(this.q1.shift());
+        
+        // Swap queues
+        [this.q1, this.q2] = [this.q2, this.q1];
+        
+        return result;
+    }
+    
+    empty() {
+        return this.q1.length === 0;
+    }
+}`
+    }
+  ]}
+/>
+
+---
+
+## Complexity Analysis
+
+### Approach 1 (One Queue - Heavy Push):
+<Text color="green.400" fontWeight="bold">Time Complexity:</Text>
+<Text ml={4} as="li">Push: O(n) - need to rotate n-1 elements</Text>
+<Text ml={4} as="li">Pop: O(1) - just remove from front</Text>
+<Text ml={4} as="li">Top: O(1) - just peek at front</Text>
+<Text ml={4} as="li">Empty: O(1) - check queue size</Text>
+
+<Text color="green.400" fontWeight="bold" mt={4}>Space Complexity: O(n)</Text>
+<Text ml={4} as="li">One queue to store all elements</Text>
+
+### Approach 2 (Two Queues - Heavy Pop):
+<Text color="orange.400" fontWeight="bold">Time Complexity:</Text>
+<Text ml={4} as="li">Push: O(1) - just add to back</Text>
+<Text ml={4} as="li">Pop: O(n) - need to move n-1 elements</Text>
+<Text ml={4} as="li">Top: O(n) - need to move and restore elements</Text>
+
+---
+
+## Key Insights
+
+<VStack align="start" spacing={2}>
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">Queue rotation trick</Text>
+    <Text>- use queue's own operations to reorder elements</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">Trade-off decision</Text>
+    <Text>- make either push or pop operations expensive</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">LIFO simulation</Text>
+    <Text>- maintain stack order using FIFO operations</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">Single queue preferred</Text>
+    <Text>- simpler implementation than using two queues</Text>
+  </HStack>
+</VStack>
+
+---
+
+## Follow-up Questions
+
+1. **Which approach is better?** 
+   - If you do more pops than pushes → Make push heavy (Approach 1)
+   - If you do more pushes than pops → Make pop heavy (Approach 2)
+
+2. **Can you implement it with just one queue?** 
+   - Yes! That's our main solution above.
+
+3. **What about space optimization?**
+   - Single queue approach uses minimum space O(n)
+
+---
+
+This problem teaches us how to **simulate one data structure using another** by cleverly manipulating the order of operations!
