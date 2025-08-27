@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import DocsLayout from "@/crackmode/components/DocsLayout";
 import { useHeadings } from "@/crackmode/hooks/useHeading";
 import Sidebar from "@/crackmode/components/Sidebar";
-import Header from "@/crackmode/components/Header"
+import CrackModeHeader from "@/crackmode/components/CrackModeHeader"
 import { useColorModeValue } from "@/components/ui";
 
 function DocsRouteComponent() {
@@ -13,7 +13,7 @@ function DocsRouteComponent() {
 
   return (
     <Box h="100vh" display="flex" flexDirection="column">
-      <Header />
+      <CrackModeHeader page="crackmode/docs"/>
       <HStack flex="1" align="start" gap={0} w="100%" overflow="hidden">
         {/* Sidebar */}
         <Box
