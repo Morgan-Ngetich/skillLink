@@ -397,138 +397,69 @@
   {
     "id": "leetcode75/leetcode75",
     "title": "Leetcode75",
-    "content": "LeetCode 75: Your Complete Coding Interview Roadmap Welcome to LeetCode 75 – the most comprehensive and strategically curated collection of coding problems designed to transform you from a coding enthusiast into an interview-ready software engineer. --- What Makes LeetCode 75 Special? The Science Behind the Selection LeetCode 75 isn't just another random collection of problems. It's a carefully crafted progression that: - Covers 90% of interview patterns you'll encounter at top tech companies - Builds knowledge incrementally – each topic reinforces previous concepts - Balances breadth and depth across all major algorithmic categories - Focuses on high-frequency problems that actually appear in interviews Your Transformation Journey By completing LeetCode 75, you'll develop: - Pattern recognition that lets you categorize new problems instantly - Problem-solving intuition that guides you to optimal solutions - Interview confidence to tackle any coding challenge - Systematic thinking that breaks complex problems into manageable pieces --- The Complete Learning Path Phase 1: Foundations (Problems 1-25) Arrays & Strings • Two Pointers - Master the fundamentals that underpin all other algorithms - Develop core manipulation and traversal techniques - Build pattern recognition for the most common problem types - Learn space-time complexity trade-offs What you'll gain: Solid foundation in basic data structure manipulation and fundamental algorithmic thinking. Phase 2: Core Techniques (Problems 26-45) Sliding Window • Prefix Sum • Hash Map / Set - Unlock powerful optimization techniques for array and string problems - Master dynamic window management for substring challenges - Learn efficient counting and lookup strategies - Develop intuition for when to use auxiliary data structures What you'll gain: Ability to optimize brute force solutions and handle complex constraint problems. Phase 3: Essential Structures (Problems 46-60) Stack • Linked List • Binary Tree - DFS - Dive into fundamental data structures that appear in countless variations - Master recursive thinking and tree traversal patterns - Learn stack-based problem solving for parsing and validation - Develop comfort with pointer manipulation and node relationships What you'll gain: Deep understanding of hierarchical data and recursive problem decomposition. Phase 4: Advanced Traversals (Problems 61-70) Binary Tree - BFS • Binary Search Tree • Graphs - DFS - Expand your tree knowledge with level-order processing - Master BST properties and validation techniques - Enter the world of graph algorithms with depth-first approaches - Learn to handle complex, interconnected data structures What you'll gain: Ability to navigate and analyze complex, multi-dimensional data relationships. Phase 5: Master Level (Problems 71-75) Graphs - BFS • Dynamic Programming • Intervals - Tackle the most challenging algorithmic concepts - Master optimal substructure and memoization techniques - Learn advanced graph algorithms for shortest paths and connectivity - Handle complex scheduling and optimization problems What you'll gain: Complete algorithmic toolkit for solving any coding interview problem. --- What You'll Master by Topic Arrays & Strings (Foundation) - Multi-pointer techniques for efficient array processing - String manipulation and pattern matching strategies - Character frequency analysis and string transformation - Foundation for all subsequent topics Sliding Window (Optimization) - Dynamic subarray and substring problem solving - Window expansion and contraction strategies - Optimization of nested loop solutions - Template approaches for various window types Two Pointers (Elegance) - Opposite-direction pointer techniques - Same-direction pointer strategies - Cycle detection and list manipulation - Space-efficient problem solving approaches Hash Maps & Sets (Intelligence) - Fast lookup and counting strategies - Duplicate detection and uniqueness problems - Mapping relationships and frequency analysis - Trade memory for speed optimizations Stacks (Structure) - Parsing and validation problem patterns - Monotonic stack techniques - Expression evaluation strategies - Backtracking and undo operation support Linked Lists (Manipulation) - Node relationship management - List reversal and rearrangement techniques - Cycle detection and slow-fast pointer methods - In-place list modification strategies Binary Trees (Hierarchy) - Recursive tree traversal mastery - Tree construction and validation - Path finding and sum calculation techniques - Tree modification and balancing concepts Binary Search Trees (Efficiency) - BST property utilization - Efficient search and insertion strategies - Tree validation and balancing - Range query optimization Graphs (Connectivity) - Graph representation and traversal - Shortest path algorithms - Connectivity and component analysis - Cycle detection in directed/undirected graphs Dynamic Programming (Optimization) - Optimal substructure identification - Memoization and tabulation techniques - Multi-dimensional problem solving - State transition and recurrence relations --- The Skills You'll Develop Technical Mastery - Algorithm Design: Create efficient solutions from scratch - Pattern Recognition: Instantly categorize problem types - Complexity Analysis: Evaluate and optimize solution performance - Data Structure Selection: Choose the right tool for each problem Interview Excellence - Problem Decomposition: Break complex challenges into manageable parts - Communication: Explain your thought process clearly - Edge Case Handling: Anticipate and address boundary conditions - Code Quality: Write clean, readable, and maintainable solutions Professional Growth - Systematic Thinking: Approach problems methodically - Debugging Skills: Identify and fix issues efficiently - Optimization Mindset: Always seek better solutions - Confidence Building: Tackle any coding challenge with assurance --- Your Success Timeline Weeks 1-2: Foundation Building Focus on Arrays, Strings, and Two Pointers. Build confidence with fundamental concepts. Weeks 3-4: Technique Expansion Master Sliding Window, Hash Maps, and Stack problems. Develop optimization intuition. Weeks 5-6: Structure Mastery Dive deep into Linked Lists and Binary Trees. Embrace recursive thinking. Weeks 7-8: Advanced Concepts Tackle BSTs, Graph fundamentals, and BFS techniques. Push your boundaries. Weeks 9-10: Expert Level Conquer Dynamic Programming and complex Graph problems. Achieve mastery. --- Why LeetCode 75 Works Proven Success Stories Thousands of engineers have landed jobs at: - FAANG Companies: Google, Meta, Amazon, Apple, Netflix - Unicorn Startups: Stripe, Airbnb, Uber, Spotify - Top Tech Companies: Microsoft, Salesforce, Adobe, Twitter Strategic Advantages - Time Efficient: 75 problems vs. thousands of random practice - Pattern Complete: Covers all major interview patterns - Progressive Difficulty: Builds confidence while challenging growth - Industry Relevant: Based on real interview experiences Beyond Just Coding LeetCode 75 develops: - Problem-solving methodology - Technical communication skills - Code quality standards - Interview composure and confidence --- Getting Started Your Mindset - Quality over quantity: Deep understanding beats superficial coverage - Pattern focus: Learn the why, not just the how - Consistent progress: Regular practice trumps marathon sessions - Growth orientation: Embrace challenges as learning opportunities Success Strategies - Daily Practice: Commit to consistent problem-solving sessions - Pattern Journaling: Document insights and template solutions - Mock Interviews: Practice explaining solutions under pressure - Community Engagement: Learn from others and share knowledge --- Ready to Transform Your Career? LeetCode 75 is more than just problem practice – it's your pathway to joining the world's most innovative companies. Each problem you solve builds toward a comprehensive skill set that will serve you throughout your engineering career. The journey ahead is challenging but rewarding. You'll develop not just coding skills, but the systematic thinking and problem-solving abilities that define exceptional software engineers. Your future self will thank you for starting today. --- Begin your transformation. Master the patterns. Land your dream job.",
-    "excerpt": "LeetCode 75: Your Complete Coding Interview Roadmap Welcome to LeetCode 75 – the most comprehensive and strategically curated collection of coding problems...",
+    "content": "LeetCode 75: Your Fast-Track Coding Interview Guide LeetCode 75 is a curated list of 75 problems designed to help you master core coding patterns and ace tech interviews — without grinding 1,000+ problems. Why LeetCode 75? Covers 90% of common interview questions Builds knowledge step-by-step Focuses on repeatable patterns Efficient and structured for fast learning The 5-Phase Learning Plan Phase 1: Foundations (1–25) Arrays, Strings, Two Pointers Master the basics Build core logic and efficiency Learn problem patterns that appear in most interviews What you gain: Confidence with fundamentals. Phase 2: Core Techniques (26–45) Sliding Window, Prefix Sum, Hash Maps Spot optimization patterns Learn how to reduce time complexity Solve tricky substring/array problems What you gain: Pattern recognition and smarter solutions. Phase 3: Data Structures (46–60) Stacks, Linked Lists, Trees (DFS) Build comfort with recursive logic and pointers Learn stack-based problem solving What you gain: Strong grasp of classic structures. Phase 4: Traversals & Graphs (61–70) BFS, DFS, Graphs, BSTs Tackle tree & graph problems Learn to navigate complex structures What you gain: Confidence with trees and graph traversal. Phase 5: Master Level (71–75) Dynamic Programming, Intervals, Graphs (BFS) Solve the toughest problems Learn to break problems into subproblems Handle advanced scheduling & optimization What you gain: Interview-ready skills for any challenge. Skills You'll Build Technical Algorithm design & efficiency Pattern spotting Clean, optimized code Interview Skills Clear communication Edge case handling Real-time problem-solving Professional Growth Problem-solving mindset Confidence under pressure Debugging & optimization 10-Week Success Timeline 10-Week Success Timeline Week Focus 1–2 Arrays, Strings, Two Pointers 3–4 Sliding Window, Hash Maps, Stack 5–6 Linked Lists, Trees 7–8 BSTs, Graphs 9–10 DP, Intervals, BFS Why It Works All patterns, no fluff Structured progression Used by thousands to land jobs at FAANG & startups Teaches you how to think, not just code How to Get Started 1. Be consistent – daily practice beats cramming 2. Learn patterns, not just solutions 3. Write notes – build your own cheat sheet 4. Mock interviews – practice explaining out loud Final Thought LeetCode 75 = your fast lane to interview success. Start solving. Build confidence. Land the job.",
+    "excerpt": "LeetCode 75: Your Fast-Track Coding Interview Guide LeetCode 75 is a curated list of 75 problems designed to help you master core coding patterns and ace tech...",
     "url": "/crackmode/docs/leetcode75/leetcode75",
     "section": "Leetcode75",
     "tags": [
-      "getting-started",
       "guide",
-      "component",
-      "advanced",
-      "state",
-      "performance"
+      "advanced"
     ],
     "headings": [
       {
         "level": 1,
-        "text": "LeetCode 75: Your Complete Coding Interview Roadmap",
-        "id": "leetcode-75-your-complete-coding-interview-roadmap"
+        "text": "LeetCode 75: Your Fast-Track Coding Interview Guide",
+        "id": "leetcode-75-your-fast-track-coding-interview-guide"
       },
       {
         "level": 2,
-        "text": "What Makes LeetCode 75 Special?",
-        "id": "what-makes-leetcode-75-special"
-      },
-      {
-        "level": 3,
-        "text": "The Science Behind the Selection",
-        "id": "the-science-behind-the-selection"
-      },
-      {
-        "level": 3,
-        "text": "Your Transformation Journey",
-        "id": "your-transformation-journey"
+        "text": "Why LeetCode 75?",
+        "id": "why-leetcode-75"
       },
       {
         "level": 2,
-        "text": "The Complete Learning Path",
-        "id": "the-complete-learning-path"
+        "text": "The 5-Phase Learning Plan",
+        "id": "the-5-phase-learning-plan"
       },
       {
         "level": 3,
-        "text": "Phase 1: Foundations (Problems 1-25)",
-        "id": "phase-1-foundations-problems-1-25"
+        "text": "Phase 1: Foundations (1–25)",
+        "id": "phase-1-foundations-125"
       },
       {
         "level": 3,
-        "text": "Phase 2: Core Techniques (Problems 26-45)",
-        "id": "phase-2-core-techniques-problems-26-45"
+        "text": "Phase 2: Core Techniques (26–45)",
+        "id": "phase-2-core-techniques-2645"
       },
       {
         "level": 3,
-        "text": "Phase 3: Essential Structures (Problems 46-60)",
-        "id": "phase-3-essential-structures-problems-46-60"
+        "text": "Phase 3: Data Structures (46–60)",
+        "id": "phase-3-data-structures-4660"
       },
       {
         "level": 3,
-        "text": "Phase 4: Advanced Traversals (Problems 61-70)",
-        "id": "phase-4-advanced-traversals-problems-61-70"
+        "text": "Phase 4: Traversals & Graphs (61–70)",
+        "id": "phase-4-traversals-graphs-6170"
       },
       {
         "level": 3,
-        "text": "Phase 5: Master Level (Problems 71-75)",
-        "id": "phase-5-master-level-problems-71-75"
+        "text": "Phase 5: Master Level (71–75)",
+        "id": "phase-5-master-level-7175"
       },
       {
         "level": 2,
-        "text": "What You'll Master by Topic",
-        "id": "what-youll-master-by-topic"
+        "text": "Skills You'll Build",
+        "id": "skills-youll-build"
       },
       {
         "level": 3,
-        "text": "Arrays & Strings (Foundation)",
-        "id": "arrays-strings-foundation"
+        "text": "Technical",
+        "id": "technical"
       },
       {
         "level": 3,
-        "text": "Sliding Window (Optimization)",
-        "id": "sliding-window-optimization"
-      },
-      {
-        "level": 3,
-        "text": "Two Pointers (Elegance)",
-        "id": "two-pointers-elegance"
-      },
-      {
-        "level": 3,
-        "text": "Hash Maps & Sets (Intelligence)",
-        "id": "hash-maps-sets-intelligence"
-      },
-      {
-        "level": 3,
-        "text": "Stacks (Structure)",
-        "id": "stacks-structure"
-      },
-      {
-        "level": 3,
-        "text": "Linked Lists (Manipulation)",
-        "id": "linked-lists-manipulation"
-      },
-      {
-        "level": 3,
-        "text": "Binary Trees (Hierarchy)",
-        "id": "binary-trees-hierarchy"
-      },
-      {
-        "level": 3,
-        "text": "Binary Search Trees (Efficiency)",
-        "id": "binary-search-trees-efficiency"
-      },
-      {
-        "level": 3,
-        "text": "Graphs (Connectivity)",
-        "id": "graphs-connectivity"
-      },
-      {
-        "level": 3,
-        "text": "Dynamic Programming (Optimization)",
-        "id": "dynamic-programming-optimization"
-      },
-      {
-        "level": 2,
-        "text": "The Skills You'll Develop",
-        "id": "the-skills-youll-develop"
-      },
-      {
-        "level": 3,
-        "text": "Technical Mastery",
-        "id": "technical-mastery"
-      },
-      {
-        "level": 3,
-        "text": "Interview Excellence",
-        "id": "interview-excellence"
+        "text": "Interview Skills",
+        "id": "interview-skills"
       },
       {
         "level": 3,
@@ -537,73 +468,23 @@
       },
       {
         "level": 2,
-        "text": "Your Success Timeline",
-        "id": "your-success-timeline"
-      },
-      {
-        "level": 3,
-        "text": "Weeks 1-2: Foundation Building",
-        "id": "weeks-1-2-foundation-building"
-      },
-      {
-        "level": 3,
-        "text": "Weeks 3-4: Technique Expansion",
-        "id": "weeks-3-4-technique-expansion"
-      },
-      {
-        "level": 3,
-        "text": "Weeks 5-6: Structure Mastery",
-        "id": "weeks-5-6-structure-mastery"
-      },
-      {
-        "level": 3,
-        "text": "Weeks 7-8: Advanced Concepts",
-        "id": "weeks-7-8-advanced-concepts"
-      },
-      {
-        "level": 3,
-        "text": "Weeks 9-10: Expert Level",
-        "id": "weeks-9-10-expert-level"
+        "text": "10-Week Success Timeline",
+        "id": "10-week-success-timeline"
       },
       {
         "level": 2,
-        "text": "Why LeetCode 75 Works",
-        "id": "why-leetcode-75-works"
-      },
-      {
-        "level": 3,
-        "text": "Proven Success Stories",
-        "id": "proven-success-stories"
-      },
-      {
-        "level": 3,
-        "text": "Strategic Advantages",
-        "id": "strategic-advantages"
-      },
-      {
-        "level": 3,
-        "text": "Beyond Just Coding",
-        "id": "beyond-just-coding"
+        "text": "Why It Works",
+        "id": "why-it-works"
       },
       {
         "level": 2,
-        "text": "Getting Started",
-        "id": "getting-started"
-      },
-      {
-        "level": 3,
-        "text": "Your Mindset",
-        "id": "your-mindset"
-      },
-      {
-        "level": 3,
-        "text": "Success Strategies",
-        "id": "success-strategies"
+        "text": "How to Get Started",
+        "id": "how-to-get-started"
       },
       {
         "level": 2,
-        "text": "Ready to Transform Your Career?",
-        "id": "ready-to-transform-your-career"
+        "text": "Final Thought",
+        "id": "final-thought"
       }
     ]
   },
@@ -779,6 +660,89 @@
         "level": 2,
         "text": "Key Insights",
         "id": "key-insights"
+      }
+    ]
+  },
+  {
+    "id": "problems/implement-stack-using-queues",
+    "title": "Implement Stack Using Queues",
+    "content": "Implement Stack using Queues Difficulty: Easy LeetCode: 225. Implement Stack using Queues --- Problem Implement a last-in-first-out (LIFO) stack using only two queues. The implemented stack should support all the functions of a normal stack (push, top, pop, and empty). Implement the MyStack class: - void push(int x) - Pushes element x to the top of the stack. - int pop() - Removes the element on the top of the stack and returns it. - int top() - Returns the element on the top of the stack. - boolean empty() - Returns true if the stack is empty, false otherwise. Notes: - You must use only standard operations of a queue, which means that only push to back, peek/pop from front, size and is empty operations are valid. Example 1: `` Input [\"MyStack\", \"push\", \"push\", \"top\", \"pop\", \"empty\"] [[], [1], [2], [], [], []] Output [null, null, null, 2, 2, false] Explanation MyStack myStack = new MyStack(); myStack.push(1); myStack.push(2); myStack.top(); // return 2 myStack.pop(); // return 2 myStack.empty(); // return False ` --- Simple Explanation Think of this like reversing the order using two containers: 1. Queue = FIFO (First In, First Out) - like a line at a store 2. Stack = LIFO (Last In, First Out) - like a stack of plates The trick is to use the queue's rotation ability to simulate stack behavior: - When pushing: add to queue, then rotate all previous elements - When popping: just remove from the front (which is now the \"top\") --- Solution Approach There are two main approaches: Approach 1: Make Push Operation Heavy - Push: Add new element, then rotate all previous elements to maintain stack order - Pop: Simply remove from front Approach 2: Make Pop Operation Heavy - Push: Simply add to back of queue - Pop: Move all elements except the last one to another queue, then pop the last element Let's implement Approach 1 (more efficient for multiple pops): --- Solution None: self.queue.append(x) # Rotate the queue to bring the new element to front for _ in range(len(self.queue) - 1): self.queue.append(self.queue.popleft()) def pop(self) -> int: return self.queue.popleft() def top(self) -> int: return self.queue[0] def empty(self) -> bool: return len(self.queue) == 0 }, { title: \"C++\", language: \"cpp\", code: #include using namespace std; class MyStack { private: queue q; public: MyStack() {} void push(int x) { q.push(x); int size = q.size(); // Rotate the queue to bring the new element to front for (int i = 0; i queue; public MyStack() { queue = new LinkedList<>(); } public void push(int x) { queue.offer(x); int size = queue.size(); // Rotate the queue to bring the new element to front for (int i = 0; i --- Step-by-Step Walkthrough Let's trace through the operations: push(1), push(2), push(3), top(), pop(): ` Initial: queue = [] Step 1: push(1) queue = [1] No rotation needed (size = 1) Final: queue = [1] Step 2: push(2) queue = [1, 2] Rotate 1 time: move 1 to back queue = [2, 1] Final: queue = [2, 1] Step 3: push(3) queue = [2, 1, 3] Rotate 2 times: move 2,1 to back After 1st rotation: [1, 3, 2] After 2nd rotation: [3, 2, 1] Final: queue = [3, 2, 1] Step 4: top() Return queue[0] = 3 Step 5: pop() Remove and return queue[0] = 3 Final: queue = [2, 1] ` --- Alternative Solution (Two Queues) 1) { this.q2.push(this.q1.shift()); } let result = this.q1.shift(); // Swap queues [this.q1, this.q2] = [this.q2, this.q1]; return result; } top() { // Move all elements except last to q2 while (this.q1.length > 1) { this.q2.push(this.q1.shift()); } let result = this.q1[0]; this.q2.push(this.q1.shift()); // Swap queues [this.q1, this.q2] = [this.q2, this.q1]; return result; } empty() { return this.q1.length === 0; } } } ]} /> --- Complexity Analysis Approach 1 (One Queue - Heavy Push): Time Complexity: Push: O(n) - need to rotate n-1 elements Pop: O(1) - just remove from front Top: O(1) - just peek at front Empty: O(1) - check queue size Space Complexity: O(n) One queue to store all elements Approach 2 (Two Queues - Heavy Pop): Time Complexity: Push: O(1) - just add to back Pop: O(n) - need to move n-1 elements Top: O(n) - need to move and restore elements --- Key Insights Queue rotation trick - use queue's own operations to reorder elements Trade-off decision - make either push or pop operations expensive LIFO simulation - maintain stack order using FIFO operations Single queue preferred - simpler implementation than using two queues --- Follow-up Questions 1. Which approach is better? - If you do more pops than pushes → Make push heavy (Approach 1) - If you do more pushes than pops → Make pop heavy (Approach 2) 2. Can you implement it with just one queue? - Yes! That's our main solution above. 3. What about space optimization? - Single queue approach uses minimum space O(n) --- This problem teaches us how to simulate one data structure using another by cleverly manipulating the order of operations!",
+    "excerpt": "Implement Stack using Queues Difficulty: Easy LeetCode: 225. Implement Stack using Queues --- Problem Implement a last-in-first-out (LIFO) stack using only two...",
+    "url": "/crackmode/docs/problems/implement-stack-using-queues",
+    "section": "Problems",
+    "tags": [
+      "example"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "Implement Stack using Queues",
+        "id": "implement-stack-using-queues"
+      },
+      {
+        "level": 2,
+        "text": "Problem",
+        "id": "problem"
+      },
+      {
+        "level": 2,
+        "text": "Simple Explanation",
+        "id": "simple-explanation"
+      },
+      {
+        "level": 2,
+        "text": "Solution Approach",
+        "id": "solution-approach"
+      },
+      {
+        "level": 3,
+        "text": "Approach 1: Make Push Operation Heavy",
+        "id": "approach-1-make-push-operation-heavy"
+      },
+      {
+        "level": 3,
+        "text": "Approach 2: Make Pop Operation Heavy",
+        "id": "approach-2-make-pop-operation-heavy"
+      },
+      {
+        "level": 2,
+        "text": "Solution",
+        "id": "solution"
+      },
+      {
+        "level": 2,
+        "text": "Step-by-Step Walkthrough",
+        "id": "step-by-step-walkthrough"
+      },
+      {
+        "level": 2,
+        "text": "Alternative Solution (Two Queues)",
+        "id": "alternative-solution-two-queues"
+      },
+      {
+        "level": 2,
+        "text": "Complexity Analysis",
+        "id": "complexity-analysis"
+      },
+      {
+        "level": 3,
+        "text": "Approach 1 (One Queue - Heavy Push):",
+        "id": "approach-1-one-queue-heavy-push"
+      },
+      {
+        "level": 3,
+        "text": "Approach 2 (Two Queues - Heavy Pop):",
+        "id": "approach-2-two-queues-heavy-pop"
+      },
+      {
+        "level": 2,
+        "text": "Key Insights",
+        "id": "key-insights"
+      },
+      {
+        "level": 2,
+        "text": "Follow-up Questions",
+        "id": "follow-up-questions"
       }
     ]
   }

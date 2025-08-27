@@ -23,6 +23,7 @@ import { Route as CrackmodeDocsIndexRouteImport } from './routes/crackmode/docs/
 import { Route as LayoutDashboardIndexRouteImport } from './routes/_layout/dashboard/index'
 import { Route as LayoutDashboardProfileRouteImport } from './routes/_layout/dashboard/profile'
 import { Route as CrackmodeDocsLeetcode75IndexRouteImport } from './routes/crackmode/docs/leetcode75/index'
+import { Route as CrackmodeDocsProblemsImplementStackUsingQueuesRouteImport } from './routes/crackmode/docs/problems/implement-stack-using-queues'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/index'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsStringCompressionRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/string-compression'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self'
@@ -102,6 +103,12 @@ const CrackmodeDocsLeetcode75IndexRoute =
     path: '/leetcode75/',
     getParentRoute: () => CrackmodeDocsRoute,
   } as any)
+const CrackmodeDocsProblemsImplementStackUsingQueuesRoute =
+  CrackmodeDocsProblemsImplementStackUsingQueuesRouteImport.update({
+    id: '/problems/implement-stack-using-queues',
+    path: '/problems/implement-stack-using-queues',
+    getParentRoute: () => CrackmodeDocsRoute,
+  } as any)
 const CrackmodeDocsLeetcode75ArraysStringsIndexRoute =
   CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport.update({
     id: '/leetcode75/arrays-strings/',
@@ -172,6 +179,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/profile': typeof LayoutDashboardProfileRoute
   '/dashboard': typeof LayoutDashboardIndexRoute
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
+  '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   '/crackmode/docs/leetcode75': typeof CrackmodeDocsLeetcode75IndexRoute
   '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
   '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence': typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
@@ -194,6 +202,7 @@ export interface FileRoutesByTo {
   '/dashboard/profile': typeof LayoutDashboardProfileRoute
   '/dashboard': typeof LayoutDashboardIndexRoute
   '/crackmode/docs': typeof CrackmodeDocsIndexRoute
+  '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   '/crackmode/docs/leetcode75': typeof CrackmodeDocsLeetcode75IndexRoute
   '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
   '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence': typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
@@ -219,6 +228,7 @@ export interface FileRoutesById {
   '/_layout/dashboard/profile': typeof LayoutDashboardProfileRoute
   '/_layout/dashboard/': typeof LayoutDashboardIndexRoute
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
+  '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   '/crackmode/docs/leetcode75/': typeof CrackmodeDocsLeetcode75IndexRoute
   '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
   '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence': typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
@@ -244,6 +254,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard'
     | '/crackmode/docs/'
+    | '/crackmode/docs/problems/implement-stack-using-queues'
     | '/crackmode/docs/leetcode75'
     | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
     | '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
@@ -266,6 +277,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard'
     | '/crackmode/docs'
+    | '/crackmode/docs/problems/implement-stack-using-queues'
     | '/crackmode/docs/leetcode75'
     | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
     | '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
@@ -290,6 +302,7 @@ export interface FileRouteTypes {
     | '/_layout/dashboard/profile'
     | '/_layout/dashboard/'
     | '/crackmode/docs/'
+    | '/crackmode/docs/problems/implement-stack-using-queues'
     | '/crackmode/docs/leetcode75/'
     | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
     | '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
@@ -411,6 +424,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrackmodeDocsLeetcode75IndexRouteImport
       parentRoute: typeof CrackmodeDocsRoute
     }
+    '/crackmode/docs/problems/implement-stack-using-queues': {
+      id: '/crackmode/docs/problems/implement-stack-using-queues'
+      path: '/problems/implement-stack-using-queues'
+      fullPath: '/crackmode/docs/problems/implement-stack-using-queues'
+      preLoaderRoute: typeof CrackmodeDocsProblemsImplementStackUsingQueuesRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
     '/crackmode/docs/leetcode75/arrays-strings/': {
       id: '/crackmode/docs/leetcode75/arrays-strings/'
       path: '/leetcode75/arrays-strings'
@@ -491,6 +511,7 @@ const LayoutRouteWithChildren =
 
 interface CrackmodeDocsRouteChildren {
   CrackmodeDocsIndexRoute: typeof CrackmodeDocsIndexRoute
+  CrackmodeDocsProblemsImplementStackUsingQueuesRoute: typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   CrackmodeDocsLeetcode75IndexRoute: typeof CrackmodeDocsLeetcode75IndexRoute
   CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute: typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
   CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute: typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
@@ -504,6 +525,8 @@ interface CrackmodeDocsRouteChildren {
 
 const CrackmodeDocsRouteChildren: CrackmodeDocsRouteChildren = {
   CrackmodeDocsIndexRoute: CrackmodeDocsIndexRoute,
+  CrackmodeDocsProblemsImplementStackUsingQueuesRoute:
+    CrackmodeDocsProblemsImplementStackUsingQueuesRoute,
   CrackmodeDocsLeetcode75IndexRoute: CrackmodeDocsLeetcode75IndexRoute,
   CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute:
     CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute,
