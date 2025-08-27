@@ -1,9 +1,7 @@
-import { useState } from "react"
 import {
   Box,
   Button,
   Container,
-  VStack,
   Flex,
   Heading,
   SimpleGrid,
@@ -14,11 +12,9 @@ import { Link } from "@tanstack/react-router"
 import { useColorModeValue } from "@/components/ui/color-mode"
 import { BsFillPatchCheckFill } from "react-icons/bs";
 import { FaPlayCircle } from "react-icons/fa";
-import { type LeetcodeProblem, mockProblems } from "./types/calendar";
-import { Calendar } from "./components/calendar/Calendar";
-import { ProblemDetails } from "./components/calendar/ProblemDetails";
-import Header from "./components/Header";
+import CrackModeHeader from "./components/CrackModeHeader";
 import { IoLogoWhatsapp } from "react-icons/io";
+import ViewCalendar from "./components/calendar/ViewCalendar";
 
 // // Example dynamic rotating words (you can expand this array)
 // const dynamicWords = [
@@ -29,26 +25,12 @@ import { IoLogoWhatsapp } from "react-icons/io";
 
 const Home = () => {
   const checkerbgColor = useColorModeValue("gray.200", "gray.700");
-  const [selectedDate, setSelectedDate] = useState<string | null>(null)
-  const [selectedProblems, setSelectedProblems] = useState<LeetcodeProblem[]>([])
-
-  const handleDateClick = (dateString: string) => {
-    const problems = mockProblems[dateString] || []
-    setSelectedDate(dateString)
-    setSelectedProblems(problems)
-  }
-
-  const handleCloseDetails = () => {
-    setSelectedDate(null)
-    setSelectedProblems([])
-  }
-
   const gradientFrom = useColorModeValue("white", "bg")
   const gradientTo = useColorModeValue("gray.150", "gray.800")
 
   return (
     <>
-      <Header />
+      <CrackModeHeader />
       <Box
         // px={{ base: 0, md: 14 }}
         display="flex"
@@ -57,7 +39,6 @@ const Home = () => {
         gradientFrom={gradientFrom}
         gradientTo={gradientTo}
         alignItems={'center'}
-
       >
         <Container w="100%" my={{ base: 0, lg: 7 }} p={0}>
           <Flex
@@ -238,35 +219,13 @@ const Home = () => {
             </Box>
 
             {/* Right Section (Image) */}
-            <Box flex={1} p={0} display="flex" justifyContent="center">
+            <Box flex={1} display="flex" justifyContent="center" my={{base: 6, md: 0}}>
               {/* <Image
                 src={LandingPageimage} // Update with CrackMode branded illustration
                 alt="CrackMode Community"
                 borderRadius="lg"
               /> */}
-              <Box>
-                <Container>
-                  <VStack gap={4}>
-                    <VStack gap={2} textAlign="center">
-
-                      <Text color="gray.600" _dark={{ color: "gray.400" }}>
-                        Track our daily coding practice and problem-solving journey
-                      </Text>
-                    </VStack>
-
-                    <Calendar problems={mockProblems} onDateClick={handleDateClick} />
-
-                    {selectedDate && (
-                      <ProblemDetails
-                        isOpen={!!selectedDate}
-                        date={selectedDate}
-                        problems={selectedProblems}
-                        onClose={handleCloseDetails}
-                      />
-                    )}
-                  </VStack>
-                </Container>
-              </Box>
+              <ViewCalendar />
             </Box>
 
             {/* Mobile CTA */}
@@ -279,9 +238,8 @@ const Home = () => {
                 href="https://chat.whatsapp.com/Biz5sc2ow3v8Mg2aId6yOH"
                 target="_blank"
               >
-
                 <Button
-                  size="lg"
+                  size="md"
                   mr={3}
                 >
                   <HStack>
@@ -295,12 +253,13 @@ const Home = () => {
 
               <Link to="/crackmode/docs">
                 <Button
-                  colorScheme="gray"
-                  bg="#C39BBF"
                   borderRadius="full"
-                  size="lg"
-                  p={3}
-                  variant="solid"
+                  size="md"
+                  variant="outline"
+                  border={"1px solid"}
+                  _hover={{
+                    border: "1px solid gray"
+                  }}
                 >
                   <FaPlayCircle style={{ fontSize: "24px", color: "#008080" }} /> Start Learning
                 </Button>
@@ -309,7 +268,6 @@ const Home = () => {
           </Flex>
         </Container>
       </Box>
-
     </>
   );
 };
