@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Flex,
   Text,
   Button,
   HStack,
-  VStack,
   Spacer,
   Menu,
   SkeletonCircle,
@@ -28,8 +27,16 @@ import { useNavigate } from '@tanstack/react-router';
 import { ColorModeButton, useColorModeValue } from '@/components/ui';
 import { useNavigateWithRedirect } from '@/hooks/auth/authState';
 import { DocsSearch } from './DocsSearch';
+import { FaCalendar } from 'react-icons/fa6';
+import ViewCalendar from './calendar/ViewCalendar';
 
-const Header = () => {
+interface HeaderProps {
+  page?: "crackmode/docs";
+}
+
+const CrackModeHeader: React.FC<HeaderProps> = ({ page }) => {
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
   const { user, isLoggingOut, signOut } = useAuth();
   const { isLoading } = useSession()
   const navigate = useNavigate();
@@ -59,6 +66,13 @@ const Header = () => {
     navigate({ to: url });
     closeSearch(); // Close search on mobile after navigation
   };
+
+  const handleRenderDialog = () => {
+    setIsCalendarOpen(true); // <-- toggle state instead of returning JSX
+  };
+
+  // const isMobile = useBreakpointValue({base: true, md: false})
+
 
   return (
     <>
@@ -146,8 +160,29 @@ const Header = () => {
               </IconButton>
             )}
 
-            {/* Color Mode Toggle */}
-            <ColorModeButton size="sm" />
+            {page === "crackmode/docs" && (
+              <>
+                <IconButton
+                  variant="plain"
+                  onClick={handleRenderDialog}
+                  aria-label="Open Calendar"
+                >
+                  <FaCalendar />
+                </IconButton>
+                {(isMobile || page === "crackmode/docs") && (
+                  <ViewCalendar
+                    isOpen={isCalendarOpen}
+                    onClose={() => setIsCalendarOpen(false)}
+                    page="crackmode/docs"
+                  />
+                )}
+              </>
+            )}
+
+
+            {!isMobile && (
+              < ColorModeButton size="sm" />
+            )}
 
             {/* User Menu */}
             {isLoading ? (
@@ -289,7 +324,7 @@ const Header = () => {
                     </HStack>
 
                     {/* User info in drawer header */}
-                    {isLoading ? (
+                    {/* {isLoading ? (
                       <HStack gap={2}>
                         <SkeletonCircle size="6" />
                         <SkeletonText noOfLines={1} width="60px" />
@@ -326,7 +361,8 @@ const Header = () => {
                       >
                         Login
                       </Button>
-                    )}
+                    )} */}
+                    <ColorModeButton variant={"surface"}/>
                   </HStack>
                 </Drawer.Title>
                 <Drawer.CloseTrigger />
@@ -343,4 +379,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default CrackModeHeader;
