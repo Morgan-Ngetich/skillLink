@@ -60,18 +60,12 @@ export const Calendar: React.FC<CalendarProps> = ({ problems, onDateClick }) => 
     }
   }, [problems])
 
-  console.log("earliestDate", earliestDate)
-  console.log("latestDate", latestDate)
   // initialize current date to the latest problem date on mount
   useEffect(() => {
     if (latestDate) {
       setCurrentDate(latestDate)
     }
   }, [latestDate])
-
-  console.log("earliestDate2", earliestDate)
-  console.log("latestDate2", latestDate)
-
 
   // Check if navigation is allowed
   const canNavigatePrev = useMemo(() => {
@@ -92,9 +86,6 @@ export const Calendar: React.FC<CalendarProps> = ({ problems, onDateClick }) => 
     const latestAllowed = new Date(latestDate.getFullYear(), latestDate.getMonth(), 1)
     latestAllowed.setHours(0, 0, 0, 0)
 
-    console.log("nextMonth", nextMonth.toString())
-    console.log("latestAllowed", latestAllowed.toString())
-    console.log( nextMonth <= latestAllowed)
 
     return nextMonth <= latestAllowed
   }, [latestDate, currentDate])
