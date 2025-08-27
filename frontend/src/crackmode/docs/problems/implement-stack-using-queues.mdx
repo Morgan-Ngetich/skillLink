@@ -290,6 +290,432 @@ Step 5: pop()
         return this.q1.length === 0;
     }
 }`
+    },
+    {
+      title: "Python",
+      language: "python",
+      code: `from collections import deque
+
+class MyStack:
+    def __init__(self):
+        self.q1 = deque()
+        self.q2 = deque()
+    
+    def push(self, x: int) -> None:
+        self.q1.append(x)
+    
+    def pop(self) -> int:
+        # Move all elements except last to q2
+        while len(self.q1) > 1:
+            self.q2.append(self.q1.popleft())
+        
+        result = self.q1.popleft()
+        
+        # Swap queues
+        self.q1, self.q2 = self.q2, self.q1
+        
+        return result
+    
+    def top(self) -> int:
+        # Move all elements except last to q2
+        while len(self.q1) > 1:
+            self.q2.append(self.q1.popleft())
+        
+        result = self.q1[0]
+        self.q2.append(self.q1.popleft())
+        
+        # Swap queues
+        self.q1, self.q2 = self.q2, self.q1
+        
+        return result
+    
+    def empty(self) -> bool:
+        return len(self.q1) == 0`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `import java.util.*;
+
+class MyStack {
+    private Queue<Integer> q1;
+    private Queue<Integer> q2;
+    
+    public MyStack() {
+        q1 = new LinkedList<>();
+        q2 = new LinkedList<>();
+    }
+    
+    public void push(int x) {
+        q1.offer(x);
+    }
+    
+    public int pop() {
+        // Move all elements except last to q2
+        while (q1.size() > 1) {
+            q2.offer(q1.poll());
+        }
+        
+        int result = q1.poll();
+        
+        // Swap queues
+        Queue<Integer> temp = q1;
+        q1 = q2;
+        q2 = temp;
+        
+        return result;
+    }
+    
+    public int top() {
+        // Move all elements except last to q2
+        while (q1.size() > 1) {
+            q2.offer(q1.poll());
+        }
+        
+        int result = q1.peek();
+        q2.offer(q1.poll());
+        
+        // Swap queues
+        Queue<Integer> temp = q1;
+        q1 = q2;
+        q2 = temp;
+        
+        return result;
+    }
+    
+    public boolean empty() {
+        return q1.isEmpty();
+    }
+}`
+    },
+    {
+      title: "C++",
+      language: "cpp",
+      code: `#include <queue>
+using namespace std;
+
+class MyStack {
+private:
+    queue<int> q1;
+    queue<int> q2;
+
+public:
+    MyStack() {}
+    
+    void push(int x) {
+        q1.push(x);
+    }
+    
+    int pop() {
+        // Move all elements except last to q2
+        while (q1.size() > 1) {
+            q2.push(q1.front());
+            q1.pop();
+        }
+        
+        int result = q1.front();
+        q1.pop();
+        
+        // Swap queues
+        swap(q1, q2);
+        
+        return result;
+    }
+    
+    int top() {
+        // Move all elements except last to q2
+        while (q1.size() > 1) {
+            q2.push(q1.front());
+            q1.pop();
+        }
+        
+        int result = q1.front();
+        q2.push(q1.front());
+        q1.pop();
+        
+        // Swap queues
+        swap(q1, q2);
+        
+        return result;
+    }
+    
+    bool empty() {
+        return q1.empty();
+    }
+};`
+    },
+    {
+      title: "C#",
+      language: "csharp",
+      code: `using System;
+using System.Collections.Generic;
+
+public class MyStack {
+    private Queue<int> q1;
+    private Queue<int> q2;
+    
+    public MyStack() {
+        q1 = new Queue<int>();
+        q2 = new Queue<int>();
+    }
+    
+    public void Push(int x) {
+        q1.Enqueue(x);
+    }
+    
+    public int Pop() {
+        // Move all elements except last to q2
+        while (q1.Count > 1) {
+            q2.Enqueue(q1.Dequeue());
+        }
+        
+        int result = q1.Dequeue();
+        
+        // Swap queues
+        var temp = q1;
+        q1 = q2;
+        q2 = temp;
+        
+        return result;
+    }
+    
+    public int Top() {
+        // Move all elements except last to q2
+        while (q1.Count > 1) {
+            q2.Enqueue(q1.Dequeue());
+        }
+        
+        int result = q1.Peek();
+        q2.Enqueue(q1.Dequeue());
+        
+        // Swap queues
+        var temp = q1;
+        q1 = q2;
+        q2 = temp;
+        
+        return result;
+    }
+    
+    public bool Empty() {
+        return q1.Count == 0;
+    }
+}`
+    },
+    {
+      title: "Go",
+      language: "go",
+      code: `type MyStack struct {
+    q1 []int
+    q2 []int
+}
+
+func Constructor() MyStack {
+    return MyStack{
+        q1: make([]int, 0),
+        q2: make([]int, 0),
+    }
+}
+
+func (this *MyStack) Push(x int) {
+    this.q1 = append(this.q1, x)
+}
+
+func (this *MyStack) Pop() int {
+    // Move all elements except last to q2
+    for len(this.q1) > 1 {
+        this.q2 = append(this.q2, this.q1[0])
+        this.q1 = this.q1[1:]
+    }
+    
+    result := this.q1[0]
+    this.q1 = this.q1[1:]
+    
+    // Swap queues
+    this.q1, this.q2 = this.q2, this.q1
+    
+    return result
+}
+
+func (this *MyStack) Top() int {
+    // Move all elements except last to q2
+    for len(this.q1) > 1 {
+        this.q2 = append(this.q2, this.q1[0])
+        this.q1 = this.q1[1:]
+    }
+    
+    result := this.q1[0]
+    this.q2 = append(this.q2, this.q1[0])
+    this.q1 = this.q1[1:]
+    
+    // Swap queues
+    this.q1, this.q2 = this.q2, this.q1
+    
+    return result
+}
+
+func (this *MyStack) Empty() bool {
+    return len(this.q1) == 0
+}`
+    },
+    {
+      title: "Rust",
+      language: "rust",
+      code: `use std::collections::VecDeque;
+
+struct MyStack {
+    q1: VecDeque<i32>,
+    q2: VecDeque<i32>,
+}
+
+impl MyStack {
+    fn new() -> Self {
+        MyStack {
+            q1: VecDeque::new(),
+            q2: VecDeque::new(),
+        }
+    }
+    
+    fn push(&mut self, x: i32) {
+        self.q1.push_back(x);
+    }
+    
+    fn pop(&mut self) -> i32 {
+        // Move all elements except last to q2
+        while self.q1.len() > 1 {
+            if let Some(val) = self.q1.pop_front() {
+                self.q2.push_back(val);
+            }
+        }
+        
+        let result = self.q1.pop_front().unwrap();
+        
+        // Swap queues
+        std::mem::swap(&mut self.q1, &mut self.q2);
+        
+        result
+    }
+    
+    fn top(&mut self) -> i32 {
+        // Move all elements except last to q2
+        while self.q1.len() > 1 {
+            if let Some(val) = self.q1.pop_front() {
+                self.q2.push_back(val);
+            }
+        }
+        
+        let result = *self.q1.front().unwrap();
+        if let Some(val) = self.q1.pop_front() {
+            self.q2.push_back(val);
+        }
+        
+        // Swap queues
+        std::mem::swap(&mut self.q1, &mut self.q2);
+        
+        result
+    }
+    
+    fn empty(&self) -> bool {
+        self.q1.is_empty()
+    }
+}`
+    },
+    {
+      title: "Swift",
+      language: "swift",
+      code: `class MyStack {
+    private var q1: [Int] = []
+    private var q2: [Int] = []
+    
+    init() {}
+    
+    func push(_ x: Int) {
+        q1.append(x)
+    }
+    
+    func pop() -> Int {
+        // Move all elements except last to q2
+        while q1.count > 1 {
+            q2.append(q1.removeFirst())
+        }
+        
+        let result = q1.removeFirst()
+        
+        // Swap queues
+        swap(&q1, &q2)
+        
+        return result
+    }
+    
+    func top() -> Int {
+        // Move all elements except last to q2
+        while q1.count > 1 {
+            q2.append(q1.removeFirst())
+        }
+        
+        let result = q1.first!
+        q2.append(q1.removeFirst())
+        
+        // Swap queues
+        swap(&q1, &q2)
+        
+        return result
+    }
+    
+    func empty() -> Bool {
+        return q1.isEmpty
+    }
+}`
+    },
+    {
+      title: "Kotlin",
+      language: "kotlin",
+      code: `import java.util.*
+
+class MyStack() {
+    private var q1: Queue<Int> = LinkedList()
+    private var q2: Queue<Int> = LinkedList()
+    
+    fun push(x: Int) {
+        q1.offer(x)
+    }
+    
+    fun pop(): Int {
+        // Move all elements except last to q2
+        while (q1.size > 1) {
+            q2.offer(q1.poll())
+        }
+        
+        val result = q1.poll()
+        
+        // Swap queues
+        val temp = q1
+        q1 = q2
+        q2 = temp
+        
+        return result
+    }
+    
+    fun top(): Int {
+        // Move all elements except last to q2
+        while (q1.size > 1) {
+            q2.offer(q1.poll())
+        }
+        
+        val result = q1.peek()
+        q2.offer(q1.poll())
+        
+        // Swap queues
+        val temp = q1
+        q1 = q2
+        q2 = temp
+        
+        return result
+    }
+    
+    fun empty(): Boolean {
+        return q1.isEmpty()
+    }
+}`
     }
   ]}
 />
@@ -309,7 +735,7 @@ Step 5: pop()
 <Text ml={4} as="li">One queue to store all elements</Text>
 
 ### Approach 2 (Two Queues - Heavy Pop):
-<Text color="orange.400" fontWeight="bold">Time Complexity:</Text>
+<Text color="green.400" fontWeight="bold">Time Complexity:</Text>
 <Text ml={4} as="li">Push: O(1) - just add to back</Text>
 <Text ml={4} as="li">Pop: O(n) - need to move n-1 elements</Text>
 <Text ml={4} as="li">Top: O(n) - need to move and restore elements</Text>
@@ -318,23 +744,23 @@ Step 5: pop()
 
 ## Key Insights
 
-<VStack align="start" spacing={2}>
-  <HStack spacing={2}>
+<VStack align="start" gap={2}>
+  <HStack gap={2}>
     <Text color="orange.400" fontWeight="extrabold">Queue rotation trick</Text>
     <Text>- use queue's own operations to reorder elements</Text>
   </HStack>
 
-  <HStack spacing={2}>
+  <HStack gap={2}>
     <Text color="orange.400" fontWeight="extrabold">Trade-off decision</Text>
     <Text>- make either push or pop operations expensive</Text>
   </HStack>
 
-  <HStack spacing={2}>
+  <HStack gap={2}>
     <Text color="orange.400" fontWeight="extrabold">LIFO simulation</Text>
     <Text>- maintain stack order using FIFO operations</Text>
   </HStack>
 
-  <HStack spacing={2}>
+  <HStack gap={2}>
     <Text color="orange.400" fontWeight="extrabold">Single queue preferred</Text>
     <Text>- simpler implementation than using two queues</Text>
   </HStack>
