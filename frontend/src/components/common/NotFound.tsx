@@ -1,7 +1,12 @@
 import { Flex, Box, Text, Button } from "@chakra-ui/react";
-import { Link } from "@tanstack/react-router";
+import { useLocation } from "@tanstack/react-router";
 
 const NotFound = () => {
+  const location = useLocation();
+
+  // Check if the current path starts with /crackmode/
+  const isCrackMode = location.pathname.startsWith('/crackmode');
+
   return (
     <Flex
       justify="center"
@@ -11,18 +16,32 @@ const NotFound = () => {
       textAlign="center"
     >
       <Box>
-        <Text fontSize="4xl" fontWeight="bold" mb={2}>
-          Oops! Page not found.
-        </Text>
-        <Text fontSize="md" mb={6}>
-          The page you're looking for doesn't exist or has been moved.
-        </Text>
+        {isCrackMode ? (
+          <>
+            <Text fontSize="4xl" fontWeight="bold" mb={2} color={"orange"}>
+              Coming Soon!
+            </Text>
+            <Text fontSize="md" mb={6}>
+              This page is under development and will be available soon.
+            </Text>
+          </>
+        ) : (
+          <>
+            <Text fontSize="4xl" fontWeight="bold" mb={2}>
+              Oops! Page not found.
+            </Text>
+            <Text fontSize="md" mb={6}>
+              The page you're looking for doesn't exist or has been moved.
+            </Text>
+          </>
+        )}
 
-        <Link to="/">
-          <Button>
-            Go Home
-          </Button>
-        </Link>
+        <Button
+          onClick={() => history.back()}
+        >
+          Go Back
+        </Button>
+
       </Box>
     </Flex>
   );
