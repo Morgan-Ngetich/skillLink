@@ -6,9 +6,9 @@ import {
   Text,
   VStack,
   Card,
-  Link,
   CloseButton,
 } from "@chakra-ui/react"
+import { Link } from "@tanstack/react-router";
 import { IoTimeSharp } from "react-icons/io5";
 import { SiLeetcode } from "react-icons/si";
 import {
@@ -111,7 +111,7 @@ export function ProblemDetails({ isOpen, date, problems, onClose }: ProblemDetai
                       </HStack>
                     </Flex>
                     <Link
-                      href={problem.url}
+                      to={problem.url}
                       target="_blank"
                       color="fg.inverted"
                     >
@@ -146,7 +146,7 @@ export function ProblemDetails({ isOpen, date, problems, onClose }: ProblemDetai
                       </HStack>
                     )}
                     <Link
-                      href={problem.url}
+                      to={problem.docs}
                       target="_blank"
                       color="fg.inverted"
                     >
