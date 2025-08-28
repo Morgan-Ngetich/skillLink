@@ -1,18 +1,27 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ChakraProvider, Spinner, Flex } from '@chakra-ui/react';
-import { routeTree } from "./routeTree.gen";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { RouterProvider, createRouter } from "@tanstack/react-router";
+import {
+  ChakraProvider,
+  Spinner,
+  Flex
+} from '@chakra-ui/react';
+
+import { routeTree } from './routeTree.gen';
+import {
+  RouterProvider,
+  createRouter
+} from '@tanstack/react-router';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ColorModeProvider } from '@/components/ui/color-mode';
 import themeSystem from './theme';
-
 import { Toaster } from '@/components/ui/toaster';
-import { useSession } from './hooks/auth/useSession'; // <-- import your hook here
 import { GlobalStyles } from './components/ui/GlobalStyles';
+import { useSession } from './hooks/auth/useSession';
 
-import { MDXProvider } from "@mdx-js/react"
-import MDXComponents from "@/crackmode/components/MDXComponents"
+import { MDXProvider } from '@mdx-js/react';
+import MDXComponents from '@/crackmode/components/MDXComponents';
+import { HelmetProvider } from 'react-helmet-async';
 
 const queryClient = new QueryClient();
 
@@ -34,23 +43,23 @@ const App = () => {
     );
   }
 
-  return (
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <Toaster />
-    </QueryClientProvider>
-  );
+  return <RouterProvider router={router} />;
 };
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ChakraProvider value={themeSystem}> {/* ✅ ChakraProvider wraps everything */}
-      <ColorModeProvider>
-        <GlobalStyles />
-        <MDXProvider components={MDXComponents}>
-          <App />
-        </MDXProvider>
-      </ColorModeProvider>
-    </ChakraProvider>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <ChakraProvider value={themeSystem}>
+          <ColorModeProvider>
+            <GlobalStyles />
+            <MDXProvider components={MDXComponents}>
+              <App />
+              <Toaster />
+            </MDXProvider>
+          </ColorModeProvider>
+        </ChakraProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
   </StrictMode>
 );
