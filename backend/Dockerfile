@@ -31,14 +31,12 @@ ARG INSTALL_DEV=false
 # Copy only dependency files first to leverage caching
 COPY pyproject.toml poetry.lock* ./
 
-# Install dependencies with cache mounts for Poetry & pip
-RUN --mount=type=cache,key=poetry-cache,id=poetry-cache,target=/root/.cache/pypoetry \
-    --mount=type=cache,key=pip-cache,id=pip-cache,target=/root/.cache/pip \
-    bash -c "if [ \"$INSTALL_DEV\" = \"true\" ]; then \
-        poetry install --no-root --no-interaction --no-ansi; \
-    else \
-        poetry install --no-root --only main --no-interaction --no-ansi; \
-    fi"
+# Install dependencies (no --mount needed for Railway)
+RUN bash -c "if [ \"$INSTALL_DEV\" = \"true\" ]; then \
+    poetry install --no-root --no-interaction --no-ansi; \
+else \
+    poetry install --no-root --only main --no-interaction --no-ansi; \
+fi"
 
 # Check for syntax issues
 RUN poetry check
