@@ -43,6 +43,7 @@ if settings.ENVIRONMENT == "local":
 else:
     origins = [
         "https://frontend-production-a85f.up.railway.app",
+        "https://backend-production-3e33.up.railway.app"
     ]
 
 app.add_middleware(
