@@ -6,6 +6,9 @@ import { useHeadings } from "@/crackmode/hooks/useHeading";
 import Sidebar from "@/crackmode/components/Sidebar";
 import CrackModeHeader from "@/crackmode/components/CrackModeHeader"
 import { useColorModeValue } from "@/components/ui";
+// import { useDocumentFromPath } from "@/crackmode/hooks/useDocumentFromPath";
+// import { useBreadcrumbItems } from "@/crackmode/hooks/useBreadcrumbItems";
+import DocumentSEOHead from "@/crackmode/components/seo/DocumentSEOHead";
 
 function DocsRouteComponent() {
   const headings = useHeadings();
@@ -13,7 +16,9 @@ function DocsRouteComponent() {
 
   return (
     <Box h="100vh" display="flex" flexDirection="column">
-      <CrackModeHeader page="crackmode/docs"/>
+      <DocumentSEOHead />
+
+      <CrackModeHeader page="crackmode/docs" />
       <HStack flex="1" align="start" gap={0} w="100%" overflow="hidden">
         {/* Sidebar */}
         <Box
