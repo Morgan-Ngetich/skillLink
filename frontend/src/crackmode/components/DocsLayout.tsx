@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from "react"
 import {
   Box,
   Container,
@@ -7,7 +8,6 @@ import TableOfContents from "./TableOfContents"
 import type { HeadingData } from "../types/docs"
 import { useColorModeValue, BreadcrumbRoot, BreadcrumbLink, BreadcrumbCurrentLink } from "@/components/ui"
 import { useBreadcrumbItems } from "../hooks/useBreadcrumbItems"
-import { useState, useRef, useEffect } from "react"
 
 interface DocsLayoutProps {
   children: React.ReactNode
@@ -17,6 +17,9 @@ interface DocsLayoutProps {
 const DocsLayout = ({ children, headings }: DocsLayoutProps) => {
   const [scrolled, setScrolled] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
+
+  // Get breadcrumbs with structured data
+  const { displayItems  } = useBreadcrumbItems()
 
   const handleScroll = () => {
     if (scrollRef.current) {
@@ -36,33 +39,32 @@ const DocsLayout = ({ children, headings }: DocsLayoutProps) => {
     scrolled ? "white" : "transparent",
     scrolled ? "gray.900" : "transparent"
   )
-  
+
 
   const borderColor = useColorModeValue("gray.200", "gray.700")
-  const breadcrumbItems = useBreadcrumbItems()
 
   return (
     <Flex h="100vh" overflow="hidden">
       {/* Main Content (scrollable) */}
       <Box flex="1" h="100vh" overflowY="auto" ref={scrollRef}>
         <Container maxW="4xl" pt={4} pb={8} px={{ base: 4, md: 8 }}>
-          {breadcrumbItems && (
+          {displayItems && displayItems.length > 0 && (
             <Box
               mb={{ base: 1, md: 6 }}
               position="sticky"
               top={0}
               zIndex="999"
               bg={bgColor}
-              py={2}
-              pt={{ base: 0, md: 2 }}
+              pb={2}
+              pt={{ base: 1, md: 2 }}
               w="full"
               overflowX={"auto"}
               whiteSpace={"nowrap"}
               scrollbar={"hidden"}
             >
               <BreadcrumbRoot separator="/" separatorGap={2}>
-                {breadcrumbItems.map((item, index) => {
-                  const isLast = index === breadcrumbItems.length - 1
+                {displayItems.map((item, index) => {
+                  const isLast = index === displayItems.length - 1
 
                   return isLast ? (
                     <BreadcrumbCurrentLink key={index}>
