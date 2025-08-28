@@ -32,8 +32,8 @@ ARG INSTALL_DEV=false
 COPY pyproject.toml poetry.lock* ./
 
 # Install dependencies with cache mounts for Poetry & pip
-RUN --mount=type=cache,id=poetry-cache,target=/root/.cache/pypoetry \
-    --mount=type=cache,id=pip-cache,target=/root/.cache/pip \
+RUN --mount=type=cache,id=cache-poetry,target=/root/.cache/pypoetry \
+    --mount=type=cache,id=cache-pip,target=/root/.cache/pip \
     bash -c "if [ \"$INSTALL_DEV\" = \"true\" ]; then \
         poetry install --no-root --no-interaction --no-ansi; \
     else \
