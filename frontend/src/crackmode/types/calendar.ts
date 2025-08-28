@@ -25,4 +25,16 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
       solvedAt: "2025-08-26T22:00:00Z"
     },
   ],
+  "2025-08-27": [
+    {
+      id: 1,
+      title: "Longest Consecutive Sequence",
+      difficulty: "Medium",
+      tags: ["Array", "Hash Table", "Union Find"],
+      url: "https://leetcode.com/problems/longest-consecutive-sequence",
+      docs: "/crackmode/docs/problems/longest-consecutive-sequence",
+      solved: true,
+      solvedAt: "2025-08-26T22:00:00Z"
+    }
+  ]
 }

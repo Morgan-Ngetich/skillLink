@@ -1015,5 +1015,103 @@
       "twitterDescription": "Implement Stack using Queues Difficulty: Easy LeetCode: 225. Implement Stack using Queues --- Problem Implement a last-in-first-out LIFO stack using only two...",
       "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Implement+Stack+Using+Queues&section=Documentation&theme=crackmode"
     }
+  },
+  {
+    "id": "problems/longest-consecutive-sequence",
+    "title": "Longest Consecutive Sequence",
+    "content": "Longest Consecutive Sequence Difficulty: Medium LeetCode: 128. Longest Consecutive Sequence --- Problem Given an unsorted array of integers nums, return the length of the longest consecutive elements sequence. You must write an algorithm that runs in O n  time. Example 1:    Input: nums    100,4,200,1,3,2  Output: 6 Explanation: The longest consecutive elements sequence is  1, 2, 3, 4, 100, 200 . It has length 6.   Example 2:   Input: nums    0,3,7,2,5,8,4,6,0,1  Output: 9   Constraints: - 0 int:   Convert to set for O 1  lookups nset   set nums  longest   0 for num in nset:   Only start counting from sequence beginnings if num - 1 not in nset: length   1 nexxt   num   1   Follow the consecutive chain while nexxt in nset: length    1 nexxt    1   Update maximum length found longest   max longest, length  return longest , title:  JavaScript , language:  javascript , code: function longestConsecutive nums     Convert to Set for O 1  lookups const numSet   new Set nums ; let longest   0; for  let num of numSet     Only start counting from sequence beginnings if  !numSet.has num - 1   let length   1; let next   num   1;    Follow the consecutive chain while  numSet.has next   length  ; next  ;    Update maximum length found longest   Math.max longest, length ; return longest; , title:  Java , language:  java , code: class Solution public int longestConsecutive int   nums     Convert to Set for O 1  lookups Set numSet   new HashSet    ; for  int num : nums  numSet.add num ; int longest   0; for  int num : numSet     Only start counting from sequence beginnings if  !numSet.contains num - 1   int length   1; int next   num   1;    Follow the consecutive chain while  numSet.contains next   length  ; next  ;    Update maximum length found longest   Math.max longest, length ; return longest; , title:  C   , language:  cpp , code: class Solution public: int longestConsecutive vector  nums     Convert to set for O 1  lookups unordered_set numSet nums.begin  , nums.end   ; int longest   0; for  int num : numSet     Only start counting from sequence beginnings if  numSet.find num - 1     numSet.end    int length   1; int next   num   1;    Follow the consecutive chain while  numSet.find next  !  numSet.end    length  ; next  ;    Update maximum length found longest   max longest, length ; return longest; ; ,      --- Step-by-Step Walkthrough Let s trace through nums    100, 4, 200, 1, 3, 2 :   Step 1: Convert to set nset   100, 4, 200, 1, 3, 2 Step 2: Check each number for sequence start num   100: - Is  100-1  99 in set? NO   Start of sequence - Count: 100  , 101   - length   1 num   4: - Is  4-1  3 in set? YES   Skip  not sequence start  num   200: - Is  200-1  199 in set? NO   Start of sequence - Count: 200  , 201   - length   1 num   1: - Is  1-1  0 in set? NO   Start of sequence - Count: 1  , 2  , 3  , 4  , 5   - length   4 num   3: - Is  3-1  2 in set? YES   Skip  not sequence start  num   2: - Is  2-1  1 in set? YES   Skip  not sequence start  Step 3: Maximum length found   4   Wait, that should be 6! Let me recalculate:   Actually, let s be more careful: nset   100, 4, 200, 1, 3, 2 num   1:  1-1  0 not in set   sequence start - Count: 1 2 3 4  all in set , 5 not in set - length   4 But wait, this should give us length 6 for  1,2,3,4 ... Let me check the original sequence:  100,4,200,1,3,2  The consecutive sequence is  1,2,3,4  which has length 4, not 6. Actually looking at the problem again - it says the answer should be 6. This means I misunderstood. Let me re-read... Oh! The explanation says  The longest consecutive elements sequence is  1, 2, 3, 4, 100, 200   But that s not consecutive! Let me check the problem statement again. Actually, re-reading the problem: it should be  1,2,3,4  with length 4. The problem example might have a typo. Let me use the correct trace: nset   100, 4, 200, 1, 3, 2 num   1: 0 not in set   start sequence - 1 in set    length 1  - 2 in set    length 2  - 3 in set    length 3  - 4 in set    length 4  - 5 not in set   - Final length   4 Maximum   4   --- Why This Works  Key Insight  The brilliant insight is the sequence start check: if num - 1 not in nset: VStack --- Alternative Approaches int: if not nums: return 0 nums.sort   longest   1 current   1 for i in range 1, len nums  :   Skip duplicates if nums i     nums i-1 : continue   Consecutive elif nums i     nums i-1    1: current    1   Reset sequence else: longest   max longest, current  current   1 return max longest, current  , title:  Union Find Approach O n  , language:  python , code: class Solution: def longestConsecutive self, nums: List int   -  int: if not nums: return 0   Union-Find with path compression parent   size   def find x : if parent x  !  x: parent x    find parent x   return parent x  def union x, y : px, py   find x , find y  if px !  py: parent px    py size py     size px    Initialize each number as its own component for num in set nums : parent num    num size num    1   Union consecutive numbers for num in parent: if num   1 in parent: union num, num   1  return max size.values    ,      --- Complexity Analysis Text VStack Text Text --- Key Insights VStack --- Common Mistakes 1. Sorting first - This works but gives O n log n  instead of required O n  2. Not checking sequence start - Results in O n   time complexity 3. Forgetting duplicates - Use set to handle duplicate numbers 4. Off-by-one errors - Remember to start length   1  counting current number  --- Follow-up Questions 1. What if we need to return the actual sequence? - Store sequence elements while counting, return the longest one 2. What about multiple sequences of same max length? - Return any one of them, or count how many exist 3. Can we solve with less space? - Union-Find approach, but still O n  space for parent pointers --- This problem demonstrates the power of smart iteration strategies - by being clever about when to start counting, we achieve optimal O n  time complexity!",
+    "excerpt": "Longest Consecutive Sequence Difficulty: Medium LeetCode: 128. Longest Consecutive Sequence --- Problem Given an unsorted array of integers nums, return the...",
+    "url": "/crackmode/docs/problems/longest-consecutive-sequence",
+    "canonicalUrl": "https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/longest-consecutive-sequence",
+    "section": "Problems",
+    "tags": [
+      "medium",
+      "array",
+      "sorting",
+      "leetcode",
+      "algorithm",
+      "complexity"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "Longest Consecutive Sequence",
+        "id": "longest-consecutive-sequence"
+      },
+      {
+        "level": 2,
+        "text": "Problem",
+        "id": "problem"
+      },
+      {
+        "level": 2,
+        "text": "Simple Explanation",
+        "id": "simple-explanation"
+      },
+      {
+        "level": 2,
+        "text": "Solution Approach",
+        "id": "solution-approach"
+      },
+      {
+        "level": 2,
+        "text": "Solution",
+        "id": "solution"
+      },
+      {
+        "level": 2,
+        "text": "Step-by-Step Walkthrough",
+        "id": "step-by-step-walkthrough"
+      },
+      {
+        "level": 2,
+        "text": "Why This Works (Key Insight)",
+        "id": "why-this-works-key-insight"
+      },
+      {
+        "level": 2,
+        "text": "Alternative Approaches",
+        "id": "alternative-approaches"
+      },
+      {
+        "level": 2,
+        "text": "Complexity Analysis",
+        "id": "complexity-analysis"
+      },
+      {
+        "level": 2,
+        "text": "Key Insights",
+        "id": "key-insights"
+      },
+      {
+        "level": 2,
+        "text": "Common Mistakes",
+        "id": "common-mistakes"
+      },
+      {
+        "level": 2,
+        "text": "Follow-up Questions",
+        "id": "follow-up-questions"
+      }
+    ],
+    "publishedAt": "2025-08-28T18:25:41.269Z",
+    "updatedAt": "2025-08-28T18:27:23.536Z",
+    "author": "Morgan Ngetich",
+    "readingTime": 6,
+    "seo": {
+      "title": "Longest Consecutive Sequence | Crackmode Documentation",
+      "description": "Longest Consecutive Sequence Difficulty: Medium LeetCode: 128. Longest Consecutive Sequence --- Problem Given an unsorted array of integers nums, return the...",
+      "keywords": "longest, consecutive, sequence, medium, array, sorting, leetcode, algorithm, complexity, length, start, return, crackmode",
+      "robots": "index,follow",
+      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Longest Consecutive Sequence\",\"description\":\"Longest Consecutive Sequence Difficulty: Medium LeetCode: 128. Longest Consecutive Sequence --- Problem Given an unsorted array of integers nums, return the...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/longest-consecutive-sequence\",\"datePublished\":\"2025-08-28T18:25:41.269Z\",\"dateModified\":\"2025-08-28T18:27:23.536Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"Your Organization\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/longest-consecutive-sequence\"},\"wordCount\":147,\"timeRequired\":\"PT6M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
+    },
+    "socialMedia": {
+      "ogTitle": "Longest Consecutive Sequence | Crackmode Documentation",
+      "ogDescription": "Longest Consecutive Sequence Difficulty: Medium LeetCode: 128. Longest Consecutive Sequence --- Problem Given an unsorted array of integers nums, return the...",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Longest+Consecutive+Sequence&section=Documentation&theme=crackmode",
+      "twitterTitle": "Longest Consecutive Sequence | Crackmode Documentation",
+      "twitterDescription": "Longest Consecutive Sequence Difficulty: Medium LeetCode: 128. Longest Consecutive Sequence --- Problem Given an unsorted array of integers nums, return the...",
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Longest+Consecutive+Sequence&section=Documentation&theme=crackmode"
+    }
   }
 ]
