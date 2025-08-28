@@ -7,7 +7,7 @@ import path from "path";
 
 export const parseMDXFiles = async (
   docsDirectory: string,
-  baseUrl: string = "https://frontend-production-a85f.up.railway.app/"
+  baseUrl: string = "https://frontend-production-a85f.up.railway.app"
 ): Promise<EnhancedSearchableDoc[]> => {
   const searchableData: EnhancedSearchableDoc[] = []
 
@@ -311,7 +311,7 @@ function inferSectionFromPath(slug: string): string {
     // Map common paths to friendly names
     const sectionMap: Record<string, string> = {
       'leetcode75': 'LeetCode 75',
-      'arraysStrings': 'Arrays & Strings', 
+      'arrays-strings': 'Arrays & Strings', 
       'twoPointers': 'Two Pointers',
       'slidingWindow': 'Sliding Window',
       'prefixSum': 'Prefix Sum',
@@ -390,13 +390,14 @@ function generateJSONLD(title: string, description: string, url: string, frontma
 
 // TODO use vercel OG to generate default OG images.
 function generateDefaultOGImage(title: string, section?: string): string {
+  const baseUrl = 'https://frontend-production-a85f.up.railway.app'
   const params = new URLSearchParams({
     title: title.substring(0, 60), // limit title length
     section: section || 'Documentation',
     theme: "crackmode"
   })
 
-  return `https://frontend-production-a85f.up.railway.app/.com/api/og?${params.toString()}`;
+ return `${baseUrl}/api/og?${params.toString()}`
 }
 
 

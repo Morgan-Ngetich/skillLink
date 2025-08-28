@@ -20,3 +20,9 @@ export interface DocSection {
   links: DocLink[]
   collapsed?: boolean
 }
+
+export interface BreadcrumbItem {
+  title: string;
+  url?: string;
+  position?: number
+}
