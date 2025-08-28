@@ -86,6 +86,6 @@ celery_app.conf.beat_schedule = {
 # # manual import = manual registration
 # import app.tasks.sync
 from app.tasks import llm_tasks
-from app.tasks import sync
+# from app.tasks import sync
 import app.core.llm.llm_executor
 celery_app.autodiscover_tasks(["app.tasks"], force=True)

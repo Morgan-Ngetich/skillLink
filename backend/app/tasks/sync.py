@@ -2,8 +2,9 @@ from app.core.celery import celery_app
 from app.utils.validation import with_session
 from uuid import UUID
 
-@celery_app.task(name="app.tasks.sync_user_from_supabase_task")
-@with_session
+# TODO uncomment this after creating celery service on railway
+# @celery_app.task(name="app.tasks.sync_user_from_supabase_task")
+# @with_session
 def sync_user_from_supabase_task(
   user_id: str,
   email: str, 
