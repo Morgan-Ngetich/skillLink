@@ -40,18 +40,6 @@ def get_me(current_user: CurrentUser) -> UserPublic:
     """
     return current_user.to_public()
 
-
-@router.get("/{user_id}", response_model=UserPublic)
-def read_user(session: SessionDep, user_id: int) -> UserPublic:
-    """
-    Retrieve a user by ID.
-    """
-    user = crud.get_user_by_id(session=session, user_id=user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user.to_public()
-
-
 @router.post("/sync", response_model=UserPublic)
 def sync_user_from_supabase_to_db(
    user_sync_in: UserSyncIn,
@@ -101,6 +89,17 @@ def sync_user_from_supabase_to_db(
     )
     
     return current_user.to_public()
+
+
+@router.get("/{user_id}", response_model=UserPublic)
+def read_user(session: SessionDep, user_id: int) -> UserPublic:
+    """
+    Retrieve a user by ID.
+    """
+    user = crud.get_user_by_id(session=session, user_id=user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user.to_public()
 
 
 @router.post("/", response_model=UserPublic, dependencies=[Depends(require_role(RoleName.SUPERUSER))])
