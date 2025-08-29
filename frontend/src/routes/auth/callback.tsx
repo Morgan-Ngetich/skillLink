@@ -5,7 +5,7 @@ import useToaster from '../../hooks/useToaster';
 import { Flex } from '@chakra-ui/react';
 import { useNavigate } from '@tanstack/react-router';
 import { queryClient } from '@/hooks/lib/queryClient';
-import { setApiToken, syncUserToBackend, useCleanRedirect } from '@/hooks/auth/authState';
+import { syncUserToBackend, useCleanRedirect } from '@/hooks/auth/authState';
 import { AuthCallbackLoader } from '@/components/common/AuthCallBackLoader';
 import { storage } from '@/utils/localstorage';
 import { type GoogleUserInfo, type Identity, type SupabaseUser } from '@/client';
@@ -39,7 +39,7 @@ function AuthCallbackPage() {
         }
 
         const user = data.session.user;
-        await setApiToken();
+        // await setApiToken();
         await syncUserToBackend(user);
         await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
 
