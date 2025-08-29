@@ -1095,7 +1095,7 @@
       }
     ],
     "publishedAt": "2025-08-28T18:25:41.269Z",
-    "updatedAt": "2025-08-28T18:27:23.536Z",
+    "updatedAt": "2025-08-28T18:36:51.885Z",
     "author": "Morgan Ngetich",
     "readingTime": 6,
     "seo": {
@@ -1103,7 +1103,7 @@
       "description": "Longest Consecutive Sequence Difficulty: Medium LeetCode: 128. Longest Consecutive Sequence --- Problem Given an unsorted array of integers nums, return the...",
       "keywords": "longest, consecutive, sequence, medium, array, sorting, leetcode, algorithm, complexity, length, start, return, crackmode",
       "robots": "index,follow",
-      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Longest Consecutive Sequence\",\"description\":\"Longest Consecutive Sequence Difficulty: Medium LeetCode: 128. Longest Consecutive Sequence --- Problem Given an unsorted array of integers nums, return the...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/longest-consecutive-sequence\",\"datePublished\":\"2025-08-28T18:25:41.269Z\",\"dateModified\":\"2025-08-28T18:27:23.536Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"Your Organization\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/longest-consecutive-sequence\"},\"wordCount\":147,\"timeRequired\":\"PT6M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
+      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Longest Consecutive Sequence\",\"description\":\"Longest Consecutive Sequence Difficulty: Medium LeetCode: 128. Longest Consecutive Sequence --- Problem Given an unsorted array of integers nums, return the...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/longest-consecutive-sequence\",\"datePublished\":\"2025-08-28T18:25:41.269Z\",\"dateModified\":\"2025-08-28T18:36:51.885Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"Your Organization\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/longest-consecutive-sequence\"},\"wordCount\":147,\"timeRequired\":\"PT6M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
     },
     "socialMedia": {
       "ogTitle": "Longest Consecutive Sequence | Crackmode Documentation",
