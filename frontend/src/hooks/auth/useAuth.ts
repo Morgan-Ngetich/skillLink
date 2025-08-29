@@ -2,8 +2,9 @@ import { useState } from "react"
 import { useAuthQuery } from './useAuthQuery';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../supabaseClient';
-import { OpenAPI } from '../../client';
 import { useNavigate } from '@tanstack/react-router';
+import { storage } from "@/utils/localstorage";
+import { invalidateTokenCache } from "@/client/core/OpenAPI";
 // import { setApiToken } from './authState';
 
 export function useAuth() {
@@ -11,7 +12,7 @@ export function useAuth() {
   const queryClient = useQueryClient();
   const { data: user, isLoading } = useAuthQuery();
 
-  // When a user signs up, i need to sunc them with the database.
+  // When a user signs up, i need to sync them with the database.
   const signUp = async (email: string, password: string, fullName: string) => {
     // TODO : Enable email redirect after signup
     // const redirectUrl = `${window.location.origin}/auth/callback?email=${encodeURIComponent(email)}`;
@@ -73,10 +74,10 @@ export function useAuth() {
       const { error } = await supabase.auth.signOut();
       if (error) return { error };
 
-      OpenAPI.TOKEN = '';
       await queryClient.removeQueries({ queryKey: ['auth', 'user'] });
 
-      // TODO storage.remove("googleUser") => When user optionally chooses to logout
+      invalidateTokenCache()
+      storage.remove("googleUser")
       // Redirect to home page after sign out
       navigate({ to: '/login' });
     } catch(error) {
