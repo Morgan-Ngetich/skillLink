@@ -34,22 +34,22 @@ def custom_openapi():
 app.openapi = custom_openapi
 
 # Allow CORS for all origins
-# if settings.ENVIRONMENT == "local":
-#     origins = [
-#         "http://localhost",
-#         "http://localhost:5173",
-#         "http://127.0.0.1:5174",
-#     ]
-# else:
-#     origins = [
-#         "https://frontend-production-a85f.up.railway.app",
-#         "https://backend-production-3e33.up.railway.app"
-#     ]
+if settings.ENVIRONMENT == "local":
+    origins = [
+        "http://localhost",
+        "http://localhost:5173",
+        "http://127.0.0.1:5174",
+    ]
+else:
+    origins = [
+        "https://frontend-production-a85f.up.railway.app",
+        "https://backend-production-3e33.up.railway.app"
+    ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
+    allow_origins=origins,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
