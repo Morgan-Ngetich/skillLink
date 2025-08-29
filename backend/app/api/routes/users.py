@@ -91,7 +91,8 @@ def sync_user_from_supabase_to_db(
     # Trigger a background task if new user
     # Don't pass sesions => not serailizeble
     # Pass UUID as str for Celery serialization
-    sync_user_from_supabase_task.delay(
+    # TODO add the `delay` once celery(railway) is up.
+    sync_user_from_supabase_task(
         # user_id is uuid from supabase
         user_id=str(user_sync_in.user_id),
         email=user_sync_in.email,
