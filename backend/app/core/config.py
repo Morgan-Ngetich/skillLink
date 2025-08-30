@@ -3,6 +3,7 @@ from functools import lru_cache
 from pydantic_settings import BaseSettings
 import secrets
 import base64
+import binascii  # For base64 error handling
 from typing import Optional
 
 class Settings(BaseSettings):
@@ -66,9 +67,22 @@ class Settings(BaseSettings):
 
     @property
     def SUPABASE_JWT_SECRET_DECODED(self) -> Optional[bytes]:
-        if self.SUPABASE_JWT_SECRET:
-            return base64.b64decode(self.SUPABASE_JWT_SECRET)
-        return None
+        if not self.SUPABASE_JWT_SECRET:
+            return None
+        
+        try:
+            # Ensure proper base64 padding
+            secret_b64 = self.SUPABASE_JWT_SECRET.replace(' ', '+')
+            # Add padding if needed
+            padding = len(secret_b64) % 4
+            if padding:
+                secret_b64 += '=' * (4 - padding)
+            
+            return base64.b64decode(secret_b64)
+        except (ValueError, binascii.Error) as e:
+            # Fallback: use as string if base64 decode fails
+            print(f"Base64 decode failed, using as string: {e}")
+            return self.SUPABASE_JWT_SECRET.encode('utf-8')
 
     @model_validator(mode="after")
     def check_required_fields(cls, values):
