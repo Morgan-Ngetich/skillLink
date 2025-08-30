@@ -18,6 +18,7 @@ def get_current_user(
     form_token: TokenDep = None,
     bearer_token: BearerDep = None,
 ) -> User:
+    print(f"Received Bearer Token: {bearer_token}")
     token = bearer_token.credentials if bearer_token else form_token
 
     if not token:
