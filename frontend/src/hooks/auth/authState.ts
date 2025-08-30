@@ -73,7 +73,7 @@ export const setApiToken = async () => {
 };
 
 
-export const syncUserToBackend = async (user: SupabaseUser) => {
+export const syncUserToBackend = async (user: SupabaseUser, maxRetries = 10) => {
   const { id: user_id, email, user_metadata } = user;
 
   if (!email) {
@@ -83,31 +83,47 @@ export const syncUserToBackend = async (user: SupabaseUser) => {
   const full_name = user_metadata?.full_name ?? email.split("@")[0];
   const avatar_url = user_metadata?.avatar_url ?? undefined;
 
-  await UserService.syncUserFromSupabase({
-    user_id,
-    email,
-    full_name,
-    avatar_url,
-  });
-};
-
-const LOCAL_STORAGE_KEY = 'googleUser';
-
-export function useGoogleUser(): GoogleUserInfo | null {
-  const [googleUser, setGoogleUser] = useState<GoogleUserInfo | null>(null);
-
-  useEffect(() => {
-    const stored = storage.get(LOCAL_STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as GoogleUserInfo;
-        setGoogleUser(parsed);
-      } catch {
-        storage.remove(LOCAL_STORAGE_KEY);
-        setGoogleUser(null);
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      await UserService.syncUserFromSupabase({
+        user_id,
+        email,
+        full_name,
+        avatar_url,
+      });
+      console.log(`Sync successful on attempt ${attempt}`);
+      return; // Success!
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      if (error.status === 401 && attempt < maxRetries) {
+        // Authentication not ready yet, wait and retry
+        const delay = 500 * attempt; // Exponential backoff
+        console.log(`Auth not ready, retrying in ${delay}ms (attempt ${attempt})`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        continue;
       }
+      throw error
     }
-  }, []);
-
-  return googleUser;
+  };
 }
+
+  const LOCAL_STORAGE_KEY = 'googleUser';
+
+  export function useGoogleUser(): GoogleUserInfo | null {
+    const [googleUser, setGoogleUser] = useState<GoogleUserInfo | null>(null);
+
+    useEffect(() => {
+      const stored = storage.get(LOCAL_STORAGE_KEY);
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored) as GoogleUserInfo;
+          setGoogleUser(parsed);
+        } catch {
+          storage.remove(LOCAL_STORAGE_KEY);
+          setGoogleUser(null);
+        }
+      }
+    }, []);
+
+    return googleUser;
+  }
