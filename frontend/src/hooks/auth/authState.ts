@@ -73,7 +73,7 @@ export const setApiToken = async () => {
 };
 
 
-export const syncUserToBackend = async (user: SupabaseUser, maxRetries = 10) => {
+export const syncUserToBackend = async (user: SupabaseUser, maxRetries = 3) => {
   const { id: user_id, email, user_metadata } = user;
 
   if (!email) {

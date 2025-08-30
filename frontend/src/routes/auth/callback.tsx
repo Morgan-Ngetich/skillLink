@@ -40,8 +40,16 @@ function AuthCallbackPage() {
 
         const user = data.session.user;
         // await setApiToken();
-        await syncUserToBackend(user);
-        await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
+
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        if (user) {
+          console.log("callback User:", user)
+          await syncUserToBackend(user);
+          await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
+        } else {
+          return new Error('No user found in session');
+        }
 
 
         // cache the session for faster susbsequent loads
