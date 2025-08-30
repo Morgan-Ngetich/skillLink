@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from app.api.main import api_router
@@ -59,3 +59,12 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 @app.get("/")
 def root():
     return {"status": "ok"}
+
+@app.get("/debug/headers")
+async def debug_headers(request: Request):
+    return {
+        "authorization": request.headers.get("authorization"),
+        "x-original-method": request.headers.get("x-original-method"),
+        "host": request.headers.get("host"),
+        "headers": dict(request.headers)
+    }
