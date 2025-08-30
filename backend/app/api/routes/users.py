@@ -41,7 +41,7 @@ def get_me(current_user: CurrentUser) -> UserPublic:
     return current_user.to_public()
 
 @router.api_route("/sync", methods=["GET", "POST"], response_model=UserPublic)
-def sync_user_from_supabase_to_db(
+async def sync_user_from_supabase_to_db(
     request = Request,
    user_sync_in: UserSyncIn = None,
    current_user: CurrentUser = None,
