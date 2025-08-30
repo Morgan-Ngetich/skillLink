@@ -32,7 +32,10 @@ def get_current_user(
         return user
 
     try:
+        print(f"🔐 Attempting to decode token: {token[:50]}...")
         payload = security.decode_token(token)
+        print(f"✅ Token decoded successfully: {payload}")
+        
         user_id = payload.get("sub")
         email = payload.get("email")
         avatar_url = payload.get("avatar_url", settings.DEFAULT_AVATAR_URL)
@@ -41,12 +44,13 @@ def get_current_user(
             or email.split("@")[0])
         if not user_id:
             raise HTTPException(status_code=403, detail="Token missing subject")
-    except Exception:
-        raise HTTPException(status_code=403, detail="Invalid credentials")
+    except Exception as e:
+        raise HTTPException(status_code=403, detail=f"Invalid credentials: {e}")
 
     user = crud.get_user_by_id(session, user_id)
 
     if not user and email:
+        print(f"➕ Creating new user: {email}")
         user = crud.create_user_from_supabase(session, user_id, email, full_name, avatar_url)
     elif not user:
         raise HTTPException(status_code=404, detail="User not found")

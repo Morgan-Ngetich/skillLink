@@ -62,11 +62,13 @@ def decode_supabase_token(token: str) -> dict[str, Any]:
 
 def decode_token(token: str) -> dict[str, Any]:
     try:
+        print("🔍 Attempting Supabase token decode...")
         return decode_supabase_token(token)
     except ValueError as e:
+        print(f"❌ Supabase decode failed: {e}, trying internal token...")
         try:
             return jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
         except ExpiredSignatureError:
             raise ValueError("Token expired")
         except JWTError as e:
-            raise ValueError("Invalid token")
+            raise ValueError(f"Invalid token: {e}")
