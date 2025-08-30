@@ -49,7 +49,7 @@ def decode_supabase_token(token: str) -> dict[str, Any]:
     try:
         payload = jwt.decode(
             token,
-            key=settings.SUPABASE_JWT_SECRET_DECODED,
+            key=settings.SUPABASE_JWT_SECRET,
             algorithms=[ALGORITHM],
             audience="authenticated",  # Optional: only if you enforce it
         )
@@ -57,7 +57,16 @@ def decode_supabase_token(token: str) -> dict[str, Any]:
     except ExpiredSignatureError:
         raise ValueError("Token expired")
     except JWTError as e:
-        raise ValueError(f"Invalid token: {e}")
+        try:
+            payload = jwt.decode(
+                token,
+                key=settings.SUPABASE_JWT_SECRET_DECODED,
+                algorithms=[ALGORITHM],
+                audience="authenticated",
+            )
+            return payload
+        except JWTError as e:
+            raise ValueError(f"Invalid token: {e}")
 
 
 def decode_token(token: str) -> dict[str, Any]:
