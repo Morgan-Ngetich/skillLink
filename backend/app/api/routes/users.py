@@ -40,18 +40,18 @@ def get_me(current_user: CurrentUser) -> UserPublic:
     """
     return current_user.to_public()
 
-@router.api_route("/sync", methods=["GET", "POST"], response_model=UserPublic)
+@router.post("/sync", response_model=UserPublic)
 async def sync_user_from_supabase_to_db(
-    request = Request,
-   user_sync_in: UserSyncIn = None,
-   current_user: CurrentUser = None,
-   session: SessionDep = None
+    # request = Request,
+    user_sync_in: UserSyncIn = None,
+    current_user: CurrentUser = None,
+    session: SessionDep = None
 ) -> UserPublic:
     """
     Trigger a background task to sync a user from Supabase.
     """
-    if request.method == "GET":
-        return {"error": "Use POST method for sync", "received_method": "GET"}
+    # if request.method == "GET":
+    #     return {"error": "Use POST method for sync", "received_method": "GET"}
     
     if current_user.uuid != user_sync_in.user_id:
         raise HTTPException(
