@@ -20,6 +20,17 @@ RUN npm run build
 # Stage 2: NGINX Server
 FROM nginx:1.25-alpine
 
+RUN apk add --no-cache openssl
+
+# Create SSL directory
+RUN mkdir -p /etc/nginx/ssl
+
+# Generate self-signed SSL certificate
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout /etc/nginx/ssl/nginx.key \
+    -out /etc/nginx/ssl/nginx.crt \
+    -subj "/C=US/ST=State/L=City/O=Organization/CN=localhost"
+    
 # Copy both configs
 COPY nginx.local.conf /etc/nginx/nginx.local.conf
 COPY nginx.prod.conf /etc/nginx/nginx.prod.conf
