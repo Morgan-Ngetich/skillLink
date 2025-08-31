@@ -36,5 +36,18 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
       solved: true,
       solvedAt: "2025-08-26T22:00:00Z"
     }
+  ],
+  "2025-08-28": [
+    {
+      "id": 1,
+      "title": "Missing Number",
+      "difficulty": "Easy",
+      "tags": ["Array", "Bit Manipulation", "Math"],
+      "url": "https://leetcode.com/problems/missing-number",
+      "docs": "/crackmode/docs/problems/missing-number",
+      "solved": true,
+      "solvedAt": "2025-08-28T23:00:00Z"
+    }
   ]
+
 }

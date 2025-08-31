@@ -1,0 +1,366 @@
+import { VStack, HStack, Text } from "@chakra-ui/react"
+
+# Missing Number
+
+**Difficulty:** <span style={{color: "#4ade80"}}>Easy</span>  
+**LeetCode:** [268. Missing Number](https://leetcode.com/problems/missing-number/)
+
+---
+
+## Problem
+
+Given an array `nums` containing `n` distinct numbers in the range `[0, n]`, return *the only number in the range that is missing from the array.*
+
+**Example 1:**
+```
+Input: nums = [3,0,1]
+Output: 2
+Explanation: n = 3 since there are 3 numbers, so all numbers are in the range [0,3]. 
+2 is the missing number in the range since it does not appear in nums.
+```
+
+**Example 2:**
+```
+Input: nums = [0,1]
+Output: 2
+Explanation: n = 2 since there are 2 numbers, so all numbers are in the range [0,2]. 
+2 is the missing number in the range since it does not appear in nums.
+```
+
+**Example 3:**
+```
+Input: nums = [9,6,4,2,3,5,7,0,1]
+Output: 8
+Explanation: n = 9 since there are 9 numbers, so all numbers are in the range [0,9]. 
+8 is the missing number in the range since it does not appear in nums.
+```
+
+**Constraints:**
+- `n == nums.length`
+- `1 <= n <= 10^4`
+- `0 <= nums[i] <= n`
+- All the numbers of `nums` are unique
+
+---
+
+## Simple Explanation
+
+Think of this like finding the **missing piece in a puzzle**:
+
+1. You have numbers from `0` to `n`, but one is missing
+2. There are multiple ways to find what's missing:
+   - **Math approach:** Calculate what the sum should be, subtract what you have
+   - **XOR approach:** Use bit manipulation properties
+   - **Set approach:** Check what number isn't in the set
+
+The most elegant solution uses **Gauss's formula** for sum of consecutive integers!
+
+---
+
+## Solution Approaches
+
+### Approach 1: Sum Formula (Most Intuitive)
+- Calculate expected sum: `n * (n + 1) / 2`
+- Calculate actual sum of array
+- Return the difference
+
+### Approach 2: XOR Bit Manipulation (Most Efficient)
+- XOR all numbers from `0` to `n`
+- XOR all numbers in the array
+- XOR these results (missing number will remain)
+
+### Approach 3: Set Lookup (Simple but uses extra space)
+- Put all array numbers in a set
+- Check which number from `0` to `n` is missing
+
+---
+
+## Solution
+
+<TabbedCode
+  files={[
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `// Approach 1: Sum Formula
+var missingNumber = function(nums) {
+    const n = nums.length;
+    const expectedSum = n * (n + 1) / 2;
+    const actualSum = nums.reduce((sum, num) => sum + num, 0);
+    return expectedSum - actualSum;
+};
+
+// Approach 2: XOR Bit Manipulation
+var missingNumberXOR = function(nums) {
+    const n = nums.length;
+    let xor = 0;
+    
+    // XOR all numbers from 0 to n
+    for (let i = 0; i <= n; i++) {
+        xor ^= i;
+    }
+    
+    // XOR all numbers in array
+    for (let num of nums) {
+        xor ^= num;
+    }
+    
+    return xor;
+};
+
+// Approach 3: Set Lookup
+var missingNumberSet = function(nums) {
+    const numSet = new Set(nums);
+    const n = nums.length;
+    
+    for (let i = 0; i <= n; i++) {
+        if (!numSet.has(i)) {
+            return i;
+        }
+    }
+};`
+    },
+    {
+      title: "Python",
+      language: "python",
+      code: `class Solution:
+    # Approach 1: Sum Formula
+    def missingNumber(self, nums: List[int]) -> int:
+        n = len(nums)
+        expected_sum = n * (n + 1) // 2
+        actual_sum = sum(nums)
+        return expected_sum - actual_sum
+    
+    # Approach 2: XOR Bit Manipulation
+    def missingNumberXOR(self, nums: List[int]) -> int:
+        n = len(nums)
+        xor = 0
+        
+        # XOR all numbers from 0 to n
+        for i in range(n + 1):
+            xor ^= i
+        
+        # XOR all numbers in array
+        for num in nums:
+            xor ^= num
+        
+        return xor
+    
+    # Approach 3: Set Lookup
+    def missingNumberSet(self, nums: List[int]) -> int:
+        num_set = set(nums)
+        n = len(nums)
+        
+        for i in range(n + 1):
+            if i not in num_set:
+                return i`
+    },
+    {
+      title: "C++",
+      language: "cpp",
+      code: `#include <vector>
+#include <unordered_set>
+#include <numeric>
+using namespace std;
+
+class Solution {
+public:
+    // Approach 1: Sum Formula
+    int missingNumber(vector<int>& nums) {
+        int n = nums.size();
+        int expectedSum = n * (n + 1) / 2;
+        int actualSum = accumulate(nums.begin(), nums.end(), 0);
+        return expectedSum - actualSum;
+    }
+    
+    // Approach 2: XOR Bit Manipulation
+    int missingNumberXOR(vector<int>& nums) {
+        int n = nums.size();
+        int xorResult = 0;
+        
+        // XOR all numbers from 0 to n
+        for (int i = 0; i <= n; i++) {
+            xorResult ^= i;
+        }
+        
+        // XOR all numbers in array
+        for (int num : nums) {
+            xorResult ^= num;
+        }
+        
+        return xorResult;
+    }
+    
+    // Approach 3: Set Lookup
+    int missingNumberSet(vector<int>& nums) {
+        unordered_set<int> numSet(nums.begin(), nums.end());
+        int n = nums.size();
+        
+        for (int i = 0; i <= n; i++) {
+            if (numSet.find(i) == numSet.end()) {
+                return i;
+            }
+        }
+        return -1; // Should never reach here
+    }
+};`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `import java.util.*;
+
+class Solution {
+    // Approach 1: Sum Formula
+    public int missingNumber(int[] nums) {
+        int n = nums.length;
+        int expectedSum = n * (n + 1) / 2;
+        int actualSum = Arrays.stream(nums).sum();
+        return expectedSum - actualSum;
+    }
+    
+    // Approach 2: XOR Bit Manipulation
+    public int missingNumberXOR(int[] nums) {
+        int n = nums.length;
+        int xor = 0;
+        
+        // XOR all numbers from 0 to n
+        for (int i = 0; i <= n; i++) {
+            xor ^= i;
+        }
+        
+        // XOR all numbers in array
+        for (int num : nums) {
+            xor ^= num;
+        }
+        
+        return xor;
+    }
+    
+    // Approach 3: Set Lookup
+    public int missingNumberSet(int[] nums) {
+        Set<Integer> numSet = new HashSet<>();
+        for (int num : nums) {
+            numSet.add(num);
+        }
+        
+        int n = nums.length;
+        for (int i = 0; i <= n; i++) {
+            if (!numSet.contains(i)) {
+                return i;
+            }
+        }
+        return -1; // Should never reach here
+    }
+}`
+    },
+  ]}
+/>
+
+---
+
+## Step-by-Step Walkthrough
+
+Let's trace through **Example 1** with `nums = [3,0,1]` using different approaches:
+
+### Sum Formula Approach:
+```
+n = 3 (array length)
+Expected sum = 3 * (3 + 1) / 2 = 3 * 4 / 2 = 6
+Actual sum = 3 + 0 + 1 = 4
+Missing number = 6 - 4 = 2
+```
+
+### XOR Approach:
+```
+XOR all numbers 0 to n: 0 ⊕ 1 ⊕ 2 ⊕ 3 = 0 (since 0⊕1⊕2⊕3 = 0)
+XOR all array numbers: 3 ⊕ 0 ⊕ 1 = 2
+Final XOR: 0 ⊕ 2 = 2
+```
+
+### Set Approach:
+```
+numSet = {3, 0, 1}
+Check 0: ✓ (in set)
+Check 1: ✓ (in set)  
+Check 2: ✗ (not in set) → Return 2
+```
+
+---
+
+## XOR Magic Explained
+
+The XOR approach works because of these properties:
+- `a ⊕ a = 0` (any number XOR with itself equals 0)
+- `a ⊕ 0 = a` (any number XOR with 0 equals itself)
+- XOR is commutative and associative
+
+When we XOR all numbers from `0` to `n` with all numbers in the array, every number except the missing one appears twice and cancels out!
+
+---
+
+## Complexity Analysis
+
+### Sum Formula:
+<Text color="green.400" fontWeight="bold">Time Complexity: O(n)</Text>
+<Text ml={4} as="li">Single pass to calculate sum</Text>
+
+<Text color="green.400" fontWeight="bold">Space Complexity: O(1)</Text>
+<Text ml={4} as="li">Only using a few variables</Text>
+
+### XOR Approach:
+<Text color="green.400" fontWeight="bold">Time Complexity: O(n)</Text>
+<Text ml={4} as="li">Two passes: one for range, one for array</Text>
+
+<Text color="green.400" fontWeight="bold">Space Complexity: O(1)</Text>
+<Text ml={4} as="li">Only using a single variable</Text>
+
+### Set Approach:
+<Text color="green.400" fontWeight="bold">Time Complexity: O(n)</Text>
+<Text ml={4} as="li">Create set + search for missing number</Text>
+
+<Text color="green.400" fontWeight="bold">Space Complexity: O(n)</Text>
+<Text ml={4} as="li">Set stores all array elements</Text>
+
+---
+
+## Key Insights
+
+<VStack align="start" gap={2}>
+  <HStack gap={2}>
+    <Text color="orange.400" fontWeight="extrabold">Gauss formula</Text>
+    <Text>- sum of 0 to n = n*(n+1)/2</Text>
+  </HStack>
+
+  <HStack gap={2}>
+    <Text color="orange.400" fontWeight="extrabold">XOR properties</Text>
+    <Text>- duplicate numbers cancel out, missing remains</Text>
+  </HStack>
+
+  <HStack gap={2}>
+    <Text color="orange.400" fontWeight="extrabold">Array constraints</Text>
+    <Text>- exactly one number missing guarantees unique solution</Text>
+  </HStack>
+
+  <HStack gap={2}>
+    <Text color="orange.400" fontWeight="extrabold">Trade-offs</Text>
+    <Text>- time vs space complexity considerations</Text>
+  </HStack>
+</VStack>
+
+---
+
+## Follow-up Questions
+
+1. **What if multiple numbers were missing?**
+   - Would need different approach, like sorting or more complex bit manipulation
+
+2. **What about integer overflow?**
+   - Sum approach could overflow with large n, XOR approach is safer
+
+3. **Which approach is most practical?**
+   - Sum formula is most intuitive and readable for interviews
+
+---
+
+This problem demonstrates how **mathematical properties** and **bit manipulation** can provide elegant solutions to seemingly complex problems!

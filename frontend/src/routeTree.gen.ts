@@ -23,6 +23,7 @@ import { Route as CrackmodeDocsIndexRouteImport } from './routes/crackmode/docs/
 import { Route as LayoutDashboardIndexRouteImport } from './routes/_layout/dashboard/index'
 import { Route as LayoutDashboardProfileRouteImport } from './routes/_layout/dashboard/profile'
 import { Route as CrackmodeDocsLeetcode75IndexRouteImport } from './routes/crackmode/docs/leetcode75/index'
+import { Route as CrackmodeDocsProblemsMissingNumberRouteImport } from './routes/crackmode/docs/problems/missing-number'
 import { Route as CrackmodeDocsProblemsLongestConsecutiveSequenceRouteImport } from './routes/crackmode/docs/problems/longest-consecutive-sequence'
 import { Route as CrackmodeDocsProblemsImplementStackUsingQueuesRouteImport } from './routes/crackmode/docs/problems/implement-stack-using-queues'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/index'
@@ -102,6 +103,12 @@ const CrackmodeDocsLeetcode75IndexRoute =
   CrackmodeDocsLeetcode75IndexRouteImport.update({
     id: '/leetcode75/',
     path: '/leetcode75/',
+    getParentRoute: () => CrackmodeDocsRoute,
+  } as any)
+const CrackmodeDocsProblemsMissingNumberRoute =
+  CrackmodeDocsProblemsMissingNumberRouteImport.update({
+    id: '/problems/missing-number',
+    path: '/problems/missing-number',
     getParentRoute: () => CrackmodeDocsRoute,
   } as any)
 const CrackmodeDocsProblemsLongestConsecutiveSequenceRoute =
@@ -188,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
   '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   '/crackmode/docs/problems/longest-consecutive-sequence': typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
+  '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
   '/crackmode/docs/leetcode75': typeof CrackmodeDocsLeetcode75IndexRoute
   '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
   '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence': typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
@@ -212,6 +220,7 @@ export interface FileRoutesByTo {
   '/crackmode/docs': typeof CrackmodeDocsIndexRoute
   '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   '/crackmode/docs/problems/longest-consecutive-sequence': typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
+  '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
   '/crackmode/docs/leetcode75': typeof CrackmodeDocsLeetcode75IndexRoute
   '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
   '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence': typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
@@ -239,6 +248,7 @@ export interface FileRoutesById {
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
   '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   '/crackmode/docs/problems/longest-consecutive-sequence': typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
+  '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
   '/crackmode/docs/leetcode75/': typeof CrackmodeDocsLeetcode75IndexRoute
   '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
   '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence': typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
@@ -266,6 +276,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/'
     | '/crackmode/docs/problems/implement-stack-using-queues'
     | '/crackmode/docs/problems/longest-consecutive-sequence'
+    | '/crackmode/docs/problems/missing-number'
     | '/crackmode/docs/leetcode75'
     | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
     | '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
@@ -290,6 +301,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs'
     | '/crackmode/docs/problems/implement-stack-using-queues'
     | '/crackmode/docs/problems/longest-consecutive-sequence'
+    | '/crackmode/docs/problems/missing-number'
     | '/crackmode/docs/leetcode75'
     | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
     | '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
@@ -316,6 +328,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/'
     | '/crackmode/docs/problems/implement-stack-using-queues'
     | '/crackmode/docs/problems/longest-consecutive-sequence'
+    | '/crackmode/docs/problems/missing-number'
     | '/crackmode/docs/leetcode75/'
     | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
     | '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
@@ -437,6 +450,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrackmodeDocsLeetcode75IndexRouteImport
       parentRoute: typeof CrackmodeDocsRoute
     }
+    '/crackmode/docs/problems/missing-number': {
+      id: '/crackmode/docs/problems/missing-number'
+      path: '/problems/missing-number'
+      fullPath: '/crackmode/docs/problems/missing-number'
+      preLoaderRoute: typeof CrackmodeDocsProblemsMissingNumberRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
     '/crackmode/docs/problems/longest-consecutive-sequence': {
       id: '/crackmode/docs/problems/longest-consecutive-sequence'
       path: '/problems/longest-consecutive-sequence'
@@ -533,6 +553,7 @@ interface CrackmodeDocsRouteChildren {
   CrackmodeDocsIndexRoute: typeof CrackmodeDocsIndexRoute
   CrackmodeDocsProblemsImplementStackUsingQueuesRoute: typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   CrackmodeDocsProblemsLongestConsecutiveSequenceRoute: typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
+  CrackmodeDocsProblemsMissingNumberRoute: typeof CrackmodeDocsProblemsMissingNumberRoute
   CrackmodeDocsLeetcode75IndexRoute: typeof CrackmodeDocsLeetcode75IndexRoute
   CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute: typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
   CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute: typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
@@ -550,6 +571,8 @@ const CrackmodeDocsRouteChildren: CrackmodeDocsRouteChildren = {
     CrackmodeDocsProblemsImplementStackUsingQueuesRoute,
   CrackmodeDocsProblemsLongestConsecutiveSequenceRoute:
     CrackmodeDocsProblemsLongestConsecutiveSequenceRoute,
+  CrackmodeDocsProblemsMissingNumberRoute:
+    CrackmodeDocsProblemsMissingNumberRoute,
   CrackmodeDocsLeetcode75IndexRoute: CrackmodeDocsLeetcode75IndexRoute,
   CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute:
     CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute,

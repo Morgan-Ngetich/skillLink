@@ -44,6 +44,7 @@ export const sidebarConfig: DocSection[] = [
     links: [
       { title: "Implement Stack using Queues", href: "/crackmode/docs/problems/implement-stack-using-queues" },
       { title: "Longest Consecutive Sequence", href: "/crackmode/docs/problems/longest-consecutive-sequence" },
+            { title: "Missing Number", href: "/crackmode/docs/problems/missing-number" },
     ]
   },
   {

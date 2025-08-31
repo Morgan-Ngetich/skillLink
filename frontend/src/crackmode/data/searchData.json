@@ -1113,5 +1113,138 @@
       "twitterDescription": "Longest Consecutive Sequence Difficulty: Medium LeetCode: 128. Longest Consecutive Sequence --- Problem Given an unsorted array of integers nums, return the...",
       "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Longest+Consecutive+Sequence&section=Documentation&theme=crackmode"
     }
+  },
+  {
+    "id": "problems/missing-number",
+    "title": "Missing Number",
+    "content": "Missing Number Difficulty: Easy LeetCode: 268. Missing Number --- Problem Given an array nums containing n distinct numbers in the range  0, n , return the only number in the range that is missing from the array. Example 1:    Input: nums    3,0,1  Output: 2 Explanation: n   3 since there are 3 numbers, so all numbers are in the range  0,3 . 2 is the missing number in the range since it does not appear in nums.   Example 2:   Input: nums    0,1  Output: 2 Explanation: n   2 since there are 2 numbers, so all numbers are in the range  0,2 . 2 is the missing number in the range since it does not appear in nums.   Example 3:   Input: nums    9,6,4,2,3,5,7,0,1  Output: 8 Explanation: n   9 since there are 9 numbers, so all numbers are in the range  0,9 . 8 is the missing number in the range since it does not appear in nums.   Constraints: - n    nums.length - 1 sum   num, 0 ; return expectedSum - actualSum; ;    Approach 2: XOR Bit Manipulation var missingNumberXOR   function nums  const n   nums.length; let xor   0;    XOR all numbers from 0 to n for  let i   0; i int: n   len nums  expected_sum   n  n   1     2 actual_sum   sum nums  return expected_sum - actual_sum   Approach 2: XOR Bit Manipulation def missingNumberXOR self, nums: List int   -  int: n   len nums  xor   0   XOR all numbers from 0 to n for i in range n   1 : xor    i   XOR all numbers in array for num in nums: xor    num return xor   Approach 3: Set Lookup def missingNumberSet self, nums: List int   -  int: num_set   set nums  n   len nums  for i in range n   1 : if i not in num_set: return i , title:  C   , language:  cpp , code:  include  include  include using namespace std; class Solution public:    Approach 1: Sum Formula int missingNumber vector  nums  int n   nums.size  ; int expectedSum   n  n   1    2; int actualSum   accumulate nums.begin  , nums.end  , 0 ; return expectedSum - actualSum;    Approach 2: XOR Bit Manipulation int missingNumberXOR vector  nums  int n   nums.size  ; int xorResult   0;    XOR all numbers from 0 to n for  int i   0; i   nums  unordered_set numSet nums.begin  , nums.end   ; int n   nums.size  ; for  int i   0; i numSet   new HashSet    ; for  int num : nums  numSet.add num ; int n   nums.length; for  int i   0; i --- Step-by-Step Walkthrough Let s trace through Example 1 with nums    3,0,1  using different approaches: Sum Formula Approach:    n   3  array length  Expected sum   3  3   1    2   3 4   2   6 Actual sum   3   0   1   4 Missing number   6 - 4   2   XOR Approach:   XOR all numbers 0 to n: 0   1   2   3   0  since 0 1 2 3   0  XOR all array numbers: 3   0   1   2 Final XOR: 0   2   2   Set Approach:   numSet   3, 0, 1 Check 0:    in set  Check 1:    in set  Check 2:    not in set    Return 2   --- XOR Magic Explained The XOR approach works because of these properties: - a   a   0  any number XOR with itself equals 0  - a   0   a  any number XOR with 0 equals itself  - XOR is commutative and associative When we XOR all numbers from 0 to n  with all numbers in the array, every number except the missing one appears twice and cancels out! --- Complexity Analysis Sum Formula: Text Text Text Text XOR Approach: Text Text Text Text Set Approach: Text Text Text Text --- Key Insights VStack --- Follow-up Questions 1. What if multiple numbers were missing? - Would need different approach, like sorting or more complex bit manipulation 2. What about integer overflow? - Sum approach could overflow with large n, XOR approach is safer 3. Which approach is most practical? - Sum formula is most intuitive and readable for interviews --- This problem demonstrates how mathematical properties and bit manipulation can provide elegant solutions to seemingly complex problems!",
+    "excerpt": "Missing Number Difficulty: Easy LeetCode: 268. Missing Number --- Problem Given an array nums containing n distinct numbers in the range 0, n , return the only...",
+    "url": "/crackmode/docs/problems/missing-number",
+    "canonicalUrl": "https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/missing-number",
+    "section": "Problems",
+    "tags": [
+      "easy",
+      "array",
+      "sorting",
+      "leetcode",
+      "complexity",
+      "interview"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "Missing Number",
+        "id": "missing-number"
+      },
+      {
+        "level": 2,
+        "text": "Problem",
+        "id": "problem"
+      },
+      {
+        "level": 2,
+        "text": "Simple Explanation",
+        "id": "simple-explanation"
+      },
+      {
+        "level": 2,
+        "text": "Solution Approaches",
+        "id": "solution-approaches"
+      },
+      {
+        "level": 3,
+        "text": "Approach 1: Sum Formula (Most Intuitive)",
+        "id": "approach-1-sum-formula-most-intuitive"
+      },
+      {
+        "level": 3,
+        "text": "Approach 2: XOR Bit Manipulation (Most Efficient)",
+        "id": "approach-2-xor-bit-manipulation-most-efficient"
+      },
+      {
+        "level": 3,
+        "text": "Approach 3: Set Lookup (Simple but uses extra space)",
+        "id": "approach-3-set-lookup-simple-but-uses-extra-space"
+      },
+      {
+        "level": 2,
+        "text": "Solution",
+        "id": "solution"
+      },
+      {
+        "level": 2,
+        "text": "Step-by-Step Walkthrough",
+        "id": "step-by-step-walkthrough"
+      },
+      {
+        "level": 3,
+        "text": "Sum Formula Approach:",
+        "id": "sum-formula-approach"
+      },
+      {
+        "level": 3,
+        "text": "XOR Approach:",
+        "id": "xor-approach"
+      },
+      {
+        "level": 3,
+        "text": "Set Approach:",
+        "id": "set-approach"
+      },
+      {
+        "level": 2,
+        "text": "XOR Magic Explained",
+        "id": "xor-magic-explained"
+      },
+      {
+        "level": 2,
+        "text": "Complexity Analysis",
+        "id": "complexity-analysis"
+      },
+      {
+        "level": 3,
+        "text": "Sum Formula:",
+        "id": "sum-formula"
+      },
+      {
+        "level": 3,
+        "text": "XOR Approach:",
+        "id": "xor-approach-1"
+      },
+      {
+        "level": 3,
+        "text": "Set Approach:",
+        "id": "set-approach-1"
+      },
+      {
+        "level": 2,
+        "text": "Key Insights",
+        "id": "key-insights"
+      },
+      {
+        "level": 2,
+        "text": "Follow-up Questions",
+        "id": "follow-up-questions"
+      }
+    ],
+    "publishedAt": "2025-08-31T15:09:56.116Z",
+    "updatedAt": "2025-08-31T15:11:03.468Z",
+    "author": "Morgan Ngetich",
+    "readingTime": 4,
+    "seo": {
+      "title": "Missing Number | Crackmode Documentation",
+      "description": "Missing Number Difficulty: Easy LeetCode: 268. Missing Number --- Problem Given an array nums containing n distinct numbers in the range 0, n , return the only...",
+      "keywords": "missing, number, easy, array, sorting, leetcode, complexity, interview, numbers, range, approach, crackmode, algorithm",
+      "robots": "index,follow",
+      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Missing Number\",\"description\":\"Missing Number Difficulty: Easy LeetCode: 268. Missing Number --- Problem Given an array nums containing n distinct numbers in the range 0, n , return the only...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/missing-number\",\"datePublished\":\"2025-08-31T15:09:56.116Z\",\"dateModified\":\"2025-08-31T15:11:03.468Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"Your Organization\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/missing-number\"},\"wordCount\":189,\"timeRequired\":\"PT4M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
+    },
+    "socialMedia": {
+      "ogTitle": "Missing Number | Crackmode Documentation",
+      "ogDescription": "Missing Number Difficulty: Easy LeetCode: 268. Missing Number --- Problem Given an array nums containing n distinct numbers in the range 0, n , return the only...",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Missing+Number&section=Documentation&theme=crackmode",
+      "twitterTitle": "Missing Number | Crackmode Documentation",
+      "twitterDescription": "Missing Number Difficulty: Easy LeetCode: 268. Missing Number --- Problem Given an array nums containing n distinct numbers in the range 0, n , return the only...",
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Missing+Number&section=Documentation&theme=crackmode"
+    }
   }
 ]
