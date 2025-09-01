@@ -51,5 +51,5 @@ COPY nginx.prod.conf /etc/nginx/nginx.conf
 COPY scripts/start-ssl.sh /scripts/start-ssl.sh
 RUN chmod +x /scripts/start-ssl.sh
 
-EXPOSE 80
+EXPOSE 80 433
 ENTRYPOINT ["/scripts/start-ssl.sh"]
