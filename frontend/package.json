@@ -11,7 +11,8 @@
     "search:watch": "chokidar 'src/crackmode/docs/**/*.mdx' -c 'npm run build:search'",
 
     "dev:client": "vite",
-    "dev": "npm run generate && npm run build:search && node scripts/server.js",
+    "dev:ssr": "npm run generate && npm run build:search && node scripts/server.js",
+    "dev": "npm run generate && npm run build:search && vite",
 
     "build:client": "vite build --outDir dist/client",
     "build:server": "vite build --ssr src/seo/entry-server.tsx --outDir dist/server",
