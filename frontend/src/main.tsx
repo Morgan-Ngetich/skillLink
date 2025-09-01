@@ -1,5 +1,5 @@
 import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 import {
   ChakraProvider,
   Spinner,
@@ -46,7 +46,7 @@ const App = () => {
   return <RouterProvider router={router} />;
 };
 
-createRoot(document.getElementById('root')!).render(
+const AppTree = () => (
   <StrictMode>
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
@@ -63,3 +63,15 @@ createRoot(document.getElementById('root')!).render(
     </HelmetProvider>
   </StrictMode>
 );
+
+
+// check if we are in SSR mode (hydration)
+const container = document.getElementById("root")!;
+if (container.innerHTML) {
+  // Hrdrate if there's existing content (from SSR)
+  hydrateRoot(container, <AppTree />)
+} else {
+  // Create root if no existing content (client-only)
+  createRoot(container).render(<AppTree />)
+}
+
