@@ -221,7 +221,7 @@ const CrackModeHeader: React.FC<HeaderProps> = ({ page }) => {
                     py={2}
                     minW="180px"
                   >
-                    // TODO uncomment once the profile section and onboarding is up and straight
+                    {/* // TODO uncomment once the profile section and onboarding is up and straight */}
                     {/* <Menu.Item
                       value="profile"
                       onSelect={() => navigate({ to: '/dashboard/profile' })}
