@@ -68,7 +68,7 @@ const components: MDXComponents = {
               </CodeBlock.Control>
             </CodeBlock.Header>
             )}
-            <CodeBlock.Content>
+            <CodeBlock.Content overflowX={'auto'}>
               <CodeBlock.Code>
                 <CodeBlock.CodeText />
               </CodeBlock.Code>
