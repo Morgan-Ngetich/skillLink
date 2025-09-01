@@ -17,10 +17,10 @@ ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL \
 COPY . .
 RUN npm run build
 
-# Stage 2: NGINX Server
+# Stage 2: Production with nginx + Node.js
 FROM nginx:1.25-alpine
 
-RUN apk add --no-cache openssl
+RUN apk add --no-cache openssl nodejs npm
 
 # Create SSL directory
 RUN mkdir -p /etc/nginx/ssl
@@ -30,25 +30,26 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -keyout /etc/nginx/ssl/nginx.key \
     -out /etc/nginx/ssl/nginx.crt \
     -subj "/C=US/ST=State/L=City/O=Organization/CN=localhost"
-    
-# Copy both configs
-COPY nginx.local.conf /etc/nginx/nginx.local.conf
-COPY nginx.prod.conf /etc/nginx/nginx.prod.conf
 
-# Cleanup default static files
-RUN rm -rf /usr/share/nginx/html/*
+# Create app directory for Node.js
+RUN mkdir -p /app
+WORKDIR /app
 
-# Copy built frontend
-COPY --from=build /app/dist /usr/share/nginx/html
+# Copy built files
+COPY --from=build /app/dist/client /usr/share/nginx/html
+COPY --from=build /app/dist/server /app/dist/server
+COPY --from=build /app/package*.json ./
+COPY --from=build /app/scripts/server.js ./scripts/
 
-# Copy nginx switch script
-COPY scripts/nginx.sh /scripts/nginx.sh
-RUN chmod +x /scripts/nginx.sh
+# Install production dependencies only
+RUN npm install --production
 
-# Use env variable passed at runtime
-ENV RAILWAY_ENVIRONMENT=''
+# Copy nginx config
+COPY nginx.prod.conf /etc/nginx/nginx.conf
 
-RUN echo "Current nginx.conf:" && cat /etc/nginx/nginx.conf
+# Copy startup script
+COPY scripts/start-ssl.sh /scripts/start-ssl.sh
+RUN chmod +x /scripts/start-ssl.sh
 
 EXPOSE 80
-ENTRYPOINT ["/scripts/nginx.sh"]
+ENTRYPOINT ["/scripts/start-ssl.sh"]
