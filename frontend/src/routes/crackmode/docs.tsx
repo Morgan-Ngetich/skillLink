@@ -8,7 +8,7 @@ import CrackModeHeader from "@/crackmode/components/CrackModeHeader"
 import { useColorModeValue } from "@/components/ui";
 // import { useDocumentFromPath } from "@/crackmode/hooks/useDocumentFromPath";
 // import { useBreadcrumbItems } from "@/crackmode/hooks/useBreadcrumbItems";
-import DocumentSEOHead from "@/crackmode/components/seo/DocumentSEOHead";
+import DocumentSEOHead from "@/seo/DocumentSEOHead";
 
 function DocsRouteComponent() {
   const headings = useHeadings();
