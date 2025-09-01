@@ -909,6 +909,134 @@
     }
   },
   {
+    "id": "problems/check-if-number-has-equal-digit-count-and-digit-value",
+    "title": "Check If Number Has Equal Digit Count And Digit Value",
+    "content": "Check if Number Has Equal Digit Count and Digit Value Difficulty: Easy LeetCode: 2283. Check if Number Has Equal Digit Count and Digit Value --- Problem You are given a 0-indexed string num of length n consisting of digits. Return true if for every index i in the range 0  ...num .filter d    parseInt d      i .length     parseInt digit   ; ; , title:  Python , language:  python , code: class Solution:   Approach 1: Brute Force  Given Solution  def digitCount self, num: str  -  bool: for i in range len num  : counter   0 for j in range len num  : if i    int num j  : counter    1 if counter !  int num i  : return False return True   Approach 2: Frequency Array def digitCountOptimized self, num: str  -  bool: count    0    10   Count frequency of each digit for char in num: count int char      1   Check if each position s requirement is met for i in range len num  : if count i  !  int num i  : return False return True   Approach 3: Using Counter from collections def digitCountCounter self, num: str  -  bool: from collections import Counter count   Counter num  for i in range len num  : digit_count   count.get str i , 0  if digit_count !  int num i  : return False return True , title:  C   , language:  cpp , code:  include  include using namespace std; class Solution public:    Approach 1: Brute Force bool digitCount string num  int n   num.length  ; for  int i   0; i count 10, 0 ;    Count frequency of each digit for  char c : num  count c -  0    ;    Check if each position s requirement is met for  int i   0; i --- Step-by-Step Walkthrough Let s trace through Example 1 with num    1210  using different approaches: Brute Force Approach:   Index 0: Count digit 0 in  1210    appears 1 time, num 0     1    Index 1: Count digit 1 in  1210    appears 2 times, num 1     2    Index 2: Count digit 2 in  1210    appears 1 time, num 2     1    Index 3: Count digit 3 in  1210    appears 0 times, num 3     0    All conditions satisfied   Return true   Frequency Array Approach:   Step 1: Count frequencies count 0    1  digit  0  appears once  count 1    2  digit  1  appears twice  count 2    1  digit  2  appears once  count 3    0  digit  3  never appears  Step 2: Verify conditions i 0: count 0  1, num 0   1    1  1   i 1: count 1  2, num 1   2    2  2   i 2: count 2  1, num 2   1    1  1   i 3: count 3  0, num 3   0    0  0   All conditions satisfied   Return true   Let s trace through Example 2 with num    030 :   Index 0: Count digit 0 in  030    appears 2 times, num 0     0    2 0   Return false immediately   --- Algorithm Intuition The problem is asking us to verify a self-describing property:    At position i, the digit tells us how many times digit i should appear in the entire string  This creates a constraint system where: - Position 0 contains the count of digit 0 - Position 1 contains the count of digit 1 - And so on... The constraint 1 9, possibly using a hash map instead of array 2. What if we wanted to find all valid self-describing numbers of length n? - This becomes a constraint satisfaction problem with backtracking 3. Is there a mathematical pattern for valid numbers? - Yes! Valid numbers have specific structural properties based on their length --- This problem beautifully demonstrates how constraint verification and frequency counting work together in a self-referential system!",
+    "excerpt": "Check if Number Has Equal Digit Count and Digit Value Difficulty: Easy LeetCode: 2283. Check if Number Has Equal Digit Count and Digit Value --- Problem You...",
+    "url": "/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value",
+    "canonicalUrl": "https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value",
+    "section": "Problems",
+    "tags": [
+      "easy",
+      "array",
+      "string",
+      "backtracking",
+      "leetcode",
+      "algorithm"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "Check if Number Has Equal Digit Count and Digit Value",
+        "id": "check-if-number-has-equal-digit-count-and-digit-value"
+      },
+      {
+        "level": 2,
+        "text": "Problem",
+        "id": "problem"
+      },
+      {
+        "level": 2,
+        "text": "Simple Explanation",
+        "id": "simple-explanation"
+      },
+      {
+        "level": 2,
+        "text": "Solution Approaches",
+        "id": "solution-approaches"
+      },
+      {
+        "level": 3,
+        "text": "Approach 1: Brute Force (Most Straightforward)",
+        "id": "approach-1-brute-force-most-straightforward"
+      },
+      {
+        "level": 3,
+        "text": "Approach 2: Frequency Array (Most Efficient)",
+        "id": "approach-2-frequency-array-most-efficient"
+      },
+      {
+        "level": 3,
+        "text": "Approach 3: Early Termination Optimization",
+        "id": "approach-3-early-termination-optimization"
+      },
+      {
+        "level": 2,
+        "text": "Solution",
+        "id": "solution"
+      },
+      {
+        "level": 2,
+        "text": "Step-by-Step Walkthrough",
+        "id": "step-by-step-walkthrough"
+      },
+      {
+        "level": 3,
+        "text": "Brute Force Approach:",
+        "id": "brute-force-approach"
+      },
+      {
+        "level": 3,
+        "text": "Frequency Array Approach:",
+        "id": "frequency-array-approach"
+      },
+      {
+        "level": 2,
+        "text": "Algorithm Intuition",
+        "id": "algorithm-intuition"
+      },
+      {
+        "level": 2,
+        "text": "Complexity Analysis",
+        "id": "complexity-analysis"
+      },
+      {
+        "level": 3,
+        "text": "Brute Force:",
+        "id": "brute-force"
+      },
+      {
+        "level": 3,
+        "text": "Frequency Array:",
+        "id": "frequency-array"
+      },
+      {
+        "level": 2,
+        "text": "Key Insights",
+        "id": "key-insights"
+      },
+      {
+        "level": 2,
+        "text": "Edge Cases to Consider",
+        "id": "edge-cases-to-consider"
+      },
+      {
+        "level": 2,
+        "text": "Follow-up Questions",
+        "id": "follow-up-questions"
+      }
+    ],
+    "publishedAt": "2025-09-01T21:02:01.061Z",
+    "updatedAt": "2025-09-01T21:02:07.873Z",
+    "author": "Morgan Ngetich",
+    "readingTime": 4,
+    "seo": {
+      "title": "Check If Number Has Equal Digit Count And Digit Value | Crackmode Documentation",
+      "description": "Check if Number Has Equal Digit Count and Digit Value Difficulty: Easy LeetCode: 2283. Check if Number Has Equal Digit Count and Digit Value --- Problem You...",
+      "keywords": "check, number, equal, digit, count, value, easy, array, string, backtracking, leetcode, algorithm, return, appears, index, crackmode",
+      "robots": "index,follow",
+      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Check If Number Has Equal Digit Count And Digit Value\",\"description\":\"Check if Number Has Equal Digit Count and Digit Value Difficulty: Easy LeetCode: 2283. Check if Number Has Equal Digit Count and Digit Value --- Problem You...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value\",\"datePublished\":\"2025-09-01T21:02:01.061Z\",\"dateModified\":\"2025-09-01T21:02:07.873Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"Your Organization\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value\"},\"wordCount\":189,\"timeRequired\":\"PT4M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
+    },
+    "socialMedia": {
+      "ogTitle": "Check If Number Has Equal Digit Count And Digit Value | Crackmode Documentation",
+      "ogDescription": "Check if Number Has Equal Digit Count and Digit Value Difficulty: Easy LeetCode: 2283. Check if Number Has Equal Digit Count and Digit Value --- Problem You...",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Check+If+Number+Has+Equal+Digit+Count+And+Digit+Value&section=Documentation&theme=crackmode",
+      "twitterTitle": "Check If Number Has Equal Digit Count And Digit Value | Crackmode Documentation",
+      "twitterDescription": "Check if Number Has Equal Digit Count and Digit Value Difficulty: Easy LeetCode: 2283. Check if Number Has Equal Digit Count and Digit Value --- Problem You...",
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Check+If+Number+Has+Equal+Digit+Count+And+Digit+Value&section=Documentation&theme=crackmode"
+    }
+  },
+  {
     "id": "problems/implement-stack-using-queues",
     "title": "Implement Stack Using Queues",
     "content": "Implement Stack using Queues Difficulty: Easy LeetCode: 225. Implement Stack using Queues --- Problem Implement a last-in-first-out  LIFO  stack using only two queues. The implemented stack should support all the functions of a normal stack  push, top, pop, and empty . Implement the MyStack class: - void push int x  - Pushes element x to the top of the stack. - int pop   - Removes the element on the top of the stack and returns it. - int top   - Returns the element on the top of the stack. - boolean empty   - Returns true if the stack is empty, false otherwise. Notes: - You must use only standard operations of a queue, which means that only push to back, peek pop from front, size and is empty operations are valid. Example 1:    Input   MyStack ,  push ,  push ,  top ,  pop ,  empty      ,  1 ,  2 ,   ,   ,     Output  null, null, null, 2, 2, false  Explanation MyStack myStack   new MyStack  ; myStack.push 1 ; myStack.push 2 ; myStack.top  ;    return 2 myStack.pop  ;    return 2 myStack.empty  ;    return False   --- Simple Explanation Think of this like reversing the order using two containers: 1. Queue   FIFO  First In, First Out  - like a line at a store 2. Stack   LIFO  Last In, First Out  - like a stack of plates The trick is to use the queue s rotation ability to simulate stack behavior: - When pushing: add to queue, then rotate all previous elements - When popping: just remove from the front  which is now the  top   --- Solution Approach There are two main approaches: Approach 1: Make Push Operation Heavy - Push: Add new element, then rotate all previous elements to maintain stack order - Pop: Simply remove from front Approach 2: Make Pop Operation Heavy - Push: Simply add to back of queue - Pop: Move all elements except the last one to another queue, then pop the last element Let s implement Approach 1  more efficient for multiple pops : --- Solution None: self.queue.append x    Rotate the queue to bring the new element to front for _ in range len self.queue  - 1 : self.queue.append self.queue.popleft    def pop self  -  int: return self.queue.popleft   def top self  -  int: return self.queue 0  def empty self  -  bool: return len self.queue     0 , title:  C   , language:  cpp , code:  include using namespace std; class MyStack private: queue q; public: MyStack   void push int x  q.push x ; int size   q.size  ;    Rotate the queue to bring the new element to front for  int i   0; i queue; public MyStack   queue   new LinkedList    ; public void push int x  queue.offer x ; int size   queue.size  ;    Rotate the queue to bring the new element to front for  int i   0; i --- Step-by-Step Walkthrough Let s trace through the operations: push 1 , push 2 , push 3 , top  , pop  :   Initial: queue      Step 1: push 1  queue    1  No rotation needed  size   1  Final: queue    1  Step 2: push 2  queue    1, 2  Rotate 1 time: move 1 to back queue    2, 1  Final: queue    2, 1  Step 3: push 3  queue    2, 1, 3  Rotate 2 times: move 2,1 to back After 1st rotation:  1, 3, 2  After 2nd rotation:  3, 2, 1  Final: queue    3, 2, 1  Step 4: top   Return queue 0    3 Step 5: pop   Remove and return queue 0    3 Final: queue    2, 1    --- Alternative Solution  Two Queues  1  this.q2.push this.q1.shift   ; let result   this.q1.shift  ;    Swap queues  this.q1, this.q2     this.q2, this.q1 ; return result; top      Move all elements except last to q2 while  this.q1.length   1  this.q2.push this.q1.shift   ; let result   this.q1 0 ; this.q2.push this.q1.shift   ;    Swap queues  this.q1, this.q2     this.q2, this.q1 ; return result; empty   return this.q1.length     0; , title:  Python , language:  python , code: from collections import deque class MyStack: def __init__ self : self.q1   deque   self.q2   deque   def push self, x: int  -  None: self.q1.append x  def pop self  -  int:   Move all elements except last to q2 while len self.q1    1: self.q2.append self.q1.popleft    result   self.q1.popleft     Swap queues self.q1, self.q2   self.q2, self.q1 return result def top self  -  int:   Move all elements except last to q2 while len self.q1    1: self.q2.append self.q1.popleft    result   self.q1 0  self.q2.append self.q1.popleft      Swap queues self.q1, self.q2   self.q2, self.q1 return result def empty self  -  bool: return len self.q1     0 , title:  Java , language:  java , code: import java.util. ; class MyStack private Queue q1; private Queue q2; public MyStack   q1   new LinkedList    ; q2   new LinkedList    ; public void push int x  q1.offer x ; public int pop      Move all elements except last to q2 while  q1.size     1  q2.offer q1.poll   ; int result   q1.poll  ;    Swap queues Queue temp   q1; q1   q2; q2   temp; return result; public int top      Move all elements except last to q2 while  q1.size     1  q2.offer q1.poll   ; int result   q1.peek  ; q2.offer q1.poll   ;    Swap queues Queue temp   q1; q1   q2; q2   temp; return result; public boolean empty   return q1.isEmpty  ; , title:  C   , language:  cpp , code:  include using namespace std; class MyStack private: queue q1; queue q2; public: MyStack   void push int x  q1.push x ; int pop      Move all elements except last to q2 while  q1.size     1  q2.push q1.front   ; q1.pop  ; int result   q1.front  ; q1.pop  ;    Swap queues swap q1, q2 ; return result; int top      Move all elements except last to q2 while  q1.size     1  q2.push q1.front   ; q1.pop  ; int result   q1.front  ; q2.push q1.front   ; q1.pop  ;    Swap queues swap q1, q2 ; return result; bool empty   return q1.empty  ; ; ,      --- Complexity Analysis Approach 1  One Queue - Heavy Push : Text Text Text Text Text Text Text Approach 2  Two Queues - Heavy Pop : Text Text Text Text --- Key Insights VStack --- Follow-up Questions 1. Which approach is better? - If you do more pops than pushes   Make push heavy  Approach 1  - If you do more pushes than pops   Make pop heavy  Approach 2  2. Can you implement it with just one queue? - Yes! That s our main solution above. 3. What about space optimization? - Single queue approach uses minimum space O n  --- This problem teaches us how to simulate one data structure using another by cleverly manipulating the order of operations!",

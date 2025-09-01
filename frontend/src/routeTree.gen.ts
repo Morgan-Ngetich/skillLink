@@ -26,6 +26,7 @@ import { Route as CrackmodeDocsLeetcode75IndexRouteImport } from './routes/crack
 import { Route as CrackmodeDocsProblemsMissingNumberRouteImport } from './routes/crackmode/docs/problems/missing-number'
 import { Route as CrackmodeDocsProblemsLongestConsecutiveSequenceRouteImport } from './routes/crackmode/docs/problems/longest-consecutive-sequence'
 import { Route as CrackmodeDocsProblemsImplementStackUsingQueuesRouteImport } from './routes/crackmode/docs/problems/implement-stack-using-queues'
+import { Route as CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRouteImport } from './routes/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/index'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsStringCompressionRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/string-compression'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self'
@@ -123,6 +124,14 @@ const CrackmodeDocsProblemsImplementStackUsingQueuesRoute =
     path: '/problems/implement-stack-using-queues',
     getParentRoute: () => CrackmodeDocsRoute,
   } as any)
+const CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute =
+  CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRouteImport.update(
+    {
+      id: '/problems/check-if-number-has-equal-digit-count-and-digit-value',
+      path: '/problems/check-if-number-has-equal-digit-count-and-digit-value',
+      getParentRoute: () => CrackmodeDocsRoute,
+    } as any,
+  )
 const CrackmodeDocsLeetcode75ArraysStringsIndexRoute =
   CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport.update({
     id: '/leetcode75/arrays-strings/',
@@ -193,6 +202,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/profile': typeof LayoutDashboardProfileRoute
   '/dashboard': typeof LayoutDashboardIndexRoute
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
+  '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
   '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   '/crackmode/docs/problems/longest-consecutive-sequence': typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
   '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
@@ -218,6 +228,7 @@ export interface FileRoutesByTo {
   '/dashboard/profile': typeof LayoutDashboardProfileRoute
   '/dashboard': typeof LayoutDashboardIndexRoute
   '/crackmode/docs': typeof CrackmodeDocsIndexRoute
+  '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
   '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   '/crackmode/docs/problems/longest-consecutive-sequence': typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
   '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
@@ -246,6 +257,7 @@ export interface FileRoutesById {
   '/_layout/dashboard/profile': typeof LayoutDashboardProfileRoute
   '/_layout/dashboard/': typeof LayoutDashboardIndexRoute
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
+  '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
   '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   '/crackmode/docs/problems/longest-consecutive-sequence': typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
   '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
@@ -274,6 +286,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard'
     | '/crackmode/docs/'
+    | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
     | '/crackmode/docs/problems/implement-stack-using-queues'
     | '/crackmode/docs/problems/longest-consecutive-sequence'
     | '/crackmode/docs/problems/missing-number'
@@ -299,6 +312,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard'
     | '/crackmode/docs'
+    | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
     | '/crackmode/docs/problems/implement-stack-using-queues'
     | '/crackmode/docs/problems/longest-consecutive-sequence'
     | '/crackmode/docs/problems/missing-number'
@@ -326,6 +340,7 @@ export interface FileRouteTypes {
     | '/_layout/dashboard/profile'
     | '/_layout/dashboard/'
     | '/crackmode/docs/'
+    | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
     | '/crackmode/docs/problems/implement-stack-using-queues'
     | '/crackmode/docs/problems/longest-consecutive-sequence'
     | '/crackmode/docs/problems/missing-number'
@@ -471,6 +486,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrackmodeDocsProblemsImplementStackUsingQueuesRouteImport
       parentRoute: typeof CrackmodeDocsRoute
     }
+    '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': {
+      id: '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
+      path: '/problems/check-if-number-has-equal-digit-count-and-digit-value'
+      fullPath: '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
+      preLoaderRoute: typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
     '/crackmode/docs/leetcode75/arrays-strings/': {
       id: '/crackmode/docs/leetcode75/arrays-strings/'
       path: '/leetcode75/arrays-strings'
@@ -551,6 +573,7 @@ const LayoutRouteWithChildren =
 
 interface CrackmodeDocsRouteChildren {
   CrackmodeDocsIndexRoute: typeof CrackmodeDocsIndexRoute
+  CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute: typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
   CrackmodeDocsProblemsImplementStackUsingQueuesRoute: typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   CrackmodeDocsProblemsLongestConsecutiveSequenceRoute: typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
   CrackmodeDocsProblemsMissingNumberRoute: typeof CrackmodeDocsProblemsMissingNumberRoute
@@ -567,6 +590,8 @@ interface CrackmodeDocsRouteChildren {
 
 const CrackmodeDocsRouteChildren: CrackmodeDocsRouteChildren = {
   CrackmodeDocsIndexRoute: CrackmodeDocsIndexRoute,
+  CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute:
+    CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute,
   CrackmodeDocsProblemsImplementStackUsingQueuesRoute:
     CrackmodeDocsProblemsImplementStackUsingQueuesRoute,
   CrackmodeDocsProblemsLongestConsecutiveSequenceRoute:

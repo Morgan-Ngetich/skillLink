@@ -48,6 +48,18 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
       "solved": true,
       "solvedAt": "2025-08-28T23:00:00Z"
     }
-  ]
+  ],
+  "2025-09-01": [
+    {
+      "id": 1,
+      "title": "Check if Number Has Equal Digit Count and Digit Value",
+      "difficulty": "Easy",
+      "tags": ["String", "Hash Table", "Counting"],
+      "url": "https://leetcode.com/problems/check-if-number-has-equal-digit-count-and-digit-value",
+      "docs": "/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value",
+      "solved": true,
+      "solvedAt": "2025-08-28T23:10:00Z"
+    }
 
+  ]
 }
