@@ -9,9 +9,16 @@
     "check": "tsc --build",
     "build:search": "tsx scripts/buildSearchData.ts",
     "search:watch": "chokidar 'src/crackmode/docs/**/*.mdx' -c 'npm run build:search'",
-    "dev": "npm run generate && npm run build:search && vite",
-    "build": "npm run generate && npm run build:search && npm run check && vite build",
-    "preview": "vite preview"
+
+    "dev:client": "vite",
+    "dev": "npm run generate && npm run build:search && node scripts/server.js",
+
+    "build:client": "vite build --outDir dist/client",
+    "build:server": "vite build --ssr src/seo/entry-server.tsx --outDir dist/server",
+    "build": "npm run generate && npm run build:search && npm run check && npm run build:client && npm run build:server",
+
+    "preview": "NODE_ENV=production node scripts/server.js",
+    "serve": "NODE_ENV=production node scripts/server.js"
   },
   "dependencies": {
     "@chakra-ui/form-control": "^2.2.0",
@@ -31,6 +38,7 @@
     "@tanstack/router-devtools": "^1.121.21",
     "axios": "^1.10.0",
     "date-fns": "^4.1.0",
+    "express": "^5.1.0",
     "framer-motion": "^12.18.1",
     "fuse.js": "^7.1.0",
     "gray-matter": "^4.0.3",
