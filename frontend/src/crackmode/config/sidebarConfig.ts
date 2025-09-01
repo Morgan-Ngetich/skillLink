@@ -45,7 +45,7 @@ export const sidebarConfig: DocSection[] = [
       { title: "Implement Stack using Queues", href: "/crackmode/docs/problems/implement-stack-using-queues" },
       { title: "Longest Consecutive Sequence", href: "/crackmode/docs/problems/longest-consecutive-sequence" },
       { title: "Missing Number", href: "/crackmode/docs/problems/missing-number" },
-      { title: "Check if Number Has Equal Digit Count and Digit Value", href: "/crackmode/docs/problems/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value" },
+      { title: "Check if Number Has Equal Digit Count and Digit Value", href: "/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value" },
       
     ]
   },
