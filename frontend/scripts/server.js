@@ -21,7 +21,7 @@ async function createServer() {
   // Handle all routes
   app.use(/(.*)/, async (req, res) => {
     try {
-      const url = req.url.split("?")[0]
+      const url = req.originalUrl.split("?")[0]
       
       // Production mode - use built files
       const template = fs.readFileSync('/usr/share/nginx/html/index.html', 'utf-8')
