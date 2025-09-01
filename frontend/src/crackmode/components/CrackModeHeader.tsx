@@ -221,14 +221,15 @@ const CrackModeHeader: React.FC<HeaderProps> = ({ page }) => {
                     py={2}
                     minW="180px"
                   >
-                    <Menu.Item
+                    // TODO uncomment once the profile section and onboarding is up and straight
+                    {/* <Menu.Item
                       value="profile"
                       onSelect={() => navigate({ to: '/dashboard/profile' })}
                       _hover={{ bg: { base: 'gray.100', _dark: 'gray.700' } }}
                       disabled={isLoggingOut}
                     >
                       Profile
-                    </Menu.Item>
+                    </Menu.Item> */}
 
                     <Menu.Separator />
 
