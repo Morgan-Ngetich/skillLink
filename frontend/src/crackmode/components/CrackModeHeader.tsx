@@ -229,9 +229,9 @@ const CrackModeHeader: React.FC<HeaderProps> = ({ page }) => {
                       disabled={isLoggingOut}
                     >
                       Profile
-                    </Menu.Item> */}
+                    </Menu.Item>
 
-                    <Menu.Separator />
+                    <Menu.Separator /> */}
 
                     <Menu.Item
                       value="logout"

@@ -53,7 +53,7 @@ const DocsLayout = ({ children, headings }: DocsLayoutProps) => {
               mb={{ base: 1, md: 6 }}
               position="sticky"
               top={0}
-              zIndex="999"
+              zIndex="5"
               bg={bgColor}
               pb={2}
               pt={{ base: 1, md: 2 }}
