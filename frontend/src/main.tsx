@@ -22,6 +22,7 @@ import { useSession } from './hooks/auth/useSession';
 import { MDXProvider } from '@mdx-js/react';
 import MDXComponents from '@/crackmode/components/MDXComponents';
 import { HelmetProvider } from 'react-helmet-async';
+import { ColorModeScript } from '@chakra-ui/system';
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,7 @@ const App = () => {
 
 const AppTree = () => (
   <StrictMode>
+    <ColorModeScript initialColorMode="dark" />
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <ChakraProvider value={themeSystem}>
