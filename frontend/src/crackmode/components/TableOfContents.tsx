@@ -18,26 +18,45 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ headings }) => {
   const activeLinkColor = useColorModeValue("teal.600", "teal.200")
 
   useEffect(() => {
-    if (headings.length === 0) return
+    if (headings.length === 0) return;
+
+    const visibleHeadings: IntersectionObserverEntry[] = [];
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          const index = visibleHeadings.findIndex((e) => e.target === entry.target);
+
           if (entry.isIntersecting) {
-            setActiveId(entry.target.id)
+            if (index === -1) visibleHeadings.push(entry);
+          } else {
+            if (index !== -1) visibleHeadings.splice(index, 1);
           }
-        })
+        });
+
+        // Sort by vertical position (top of bounding box)
+        visibleHeadings.sort((a, b) => {
+          return a.boundingClientRect.top - b.boundingClientRect.top;
+        });
+
+        if (visibleHeadings.length > 0) {
+          const topHeading = visibleHeadings[0];
+          setActiveId(topHeading.target.id);
+        }
       },
-      { rootMargin: "-100px 0% -80% 0%" }
-    )
+      {
+        rootMargin: "-100px 0px -80% 0px",
+        threshold: 0.1,
+      }
+    );
 
     headings.forEach((heading) => {
-      const element = document.getElementById(heading.id)
-      if (element) observer.observe(element)
-    })
+      const element = document.getElementById(heading.id);
+      if (element) observer.observe(element);
+    });
 
-    return () => observer.disconnect()
-  }, [headings])
+    return () => observer.disconnect();
+  }, [headings]);
 
   if (headings.length === 0) return null
 
@@ -70,8 +89,8 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ headings }) => {
               document
                 .getElementById(heading.id)
                 ?.scrollIntoView({ behavior: "smooth", block: "start" });
-                // update the URL hash
-                window.history.pushState(null, "", `#${heading.id}`);
+              // update the URL hash
+              window.history.pushState(null, "", `#${heading.id}`);
             }}
             _hover={{
               color: activeLinkColor,
