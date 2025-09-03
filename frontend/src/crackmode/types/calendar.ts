@@ -60,6 +60,17 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
       "solved": true,
       "solvedAt": "2025-08-28T23:10:00Z"
     }
-
+  ],
+  "2025-09-02": [
+    {
+      "id": 2,
+      "title": "Find the Difference of Two Arrays",
+      "difficulty": "Easy",
+      "tags": ["Array", "Hash Table", "Set"],
+      "url": "https://leetcode.com/problems/find-the-difference-of-two-arrays/",
+      "docs": "/crackmode/docs/problems/find-the-difference-of-two-arrays",
+      "solved": true,
+      "solvedAt": "2025-09-02T23:00:00Z"
+    }
   ]
 }

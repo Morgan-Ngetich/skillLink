@@ -46,7 +46,8 @@ export const sidebarConfig: DocSection[] = [
       { title: "Longest Consecutive Sequence", href: "/crackmode/docs/problems/longest-consecutive-sequence" },
       { title: "Missing Number", href: "/crackmode/docs/problems/missing-number" },
       { title: "Check if Number Has Equal Digit Count and Digit Value", href: "/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value" },
-      
+      { title: "Find the Difference of Two Arrays", href: "/crackmode/docs/problems/find-the-difference-of-two-arrays" },
+
     ]
   },
   {

@@ -1,0 +1,415 @@
+import { VStack, HStack, Text } from "@chakra-ui/react"
+
+# Find the Difference of Two Arrays
+
+**Difficulty:** <span style={{color: "#4ade80"}}>Easy</span>  
+**LeetCode:** [2215. Find the Difference of Two Arrays](https://leetcode.com/problems/find-the-difference-of-two-arrays/)
+
+---
+
+## Problem
+
+Given two **0-indexed** integer arrays `nums1` and `nums2`, return *a list* `answer` *of size* `2` *where:*
+
+- `answer[0]` *is a list of all **distinct** integers in* `nums1` *which are **not** present in* `nums2`*.*
+- `answer[1]` *is a list of all **distinct** integers in* `nums2` *which are **not** present in* `nums1`.
+
+**Note** that the integers in the lists may be returned in **any** order.
+
+**Example 1:**
+```
+Input: nums1 = [1,2,3], nums2 = [2,4,6]
+Output: [[1,3],[4,6]]
+Explanation:
+For nums1, nums1[1] = 2 is present at index 0 of nums2, whereas nums1[0] = 1 and nums1[2] = 3 are not present in nums2. Therefore, answer[0] = [1,3].
+For nums2, nums2[0] = 2 is present at index 1 of nums1, whereas nums2[1] = 4 and nums2[2] = 6 are not present in nums1. Therefore, answer[1] = [4,6].
+```
+
+**Example 2:**
+```
+Input: nums1 = [1,2,3,3], nums2 = [1,1,2,2]
+Output: [[3],[]]
+Explanation:
+For nums1, nums1[2] and nums1[3] are not present in nums2. Since nums1[2] == nums1[3], their value is only included once and answer[0] = [3].
+Every integer in nums2 is present in nums1. Therefore, answer[1] = [].
+```
+
+**Constraints:**
+- `1 <= nums1.length, nums2.length <= 1000`
+- `-1000 <= nums1[i], nums2[i] <= 1000`
+
+---
+
+## Simple Explanation
+
+Think of this like **finding unique elements in each array**:
+
+1. Find all distinct elements in `nums1` that don't exist in `nums2`
+2. Find all distinct elements in `nums2` that don't exist in `nums1`
+3. Return both lists as the answer
+4. There are multiple ways to solve this:
+   - **Set-based approach:** Convert arrays to sets and use set operations
+   - **Hash map approach:** Use maps to track existence and build result lists
+   - **Nested loop approach:** For each element, check if it exists in the other array
+
+The key insight is that we need to handle **duplicates** within each array while finding **differences** between arrays!
+
+---
+
+## Solution Approaches
+
+### Approach 1: Set Operations (Most Elegant)
+- Convert both arrays to sets to eliminate duplicates
+- Use set difference operations to find unique elements
+
+### Approach 2: Hash Set Lookup (Most Intuitive)
+- Create sets for fast lookup
+- Iterate through arrays and check membership
+
+### Approach 3: Nested Loops (Brute Force)
+- For each unique element in one array, check if it exists in the other
+
+---
+
+## Solution
+
+<TabbedCode
+  files={[
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `// Approach 1: Set Operations (Most Elegant)
+var findDifference = function(nums1, nums2) {
+    const set1 = new Set(nums1);
+    const set2 = new Set(nums2);
+    
+    const diff1 = [...set1].filter(x => !set2.has(x));
+    const diff2 = [...set2].filter(x => !set1.has(x));
+    
+    return [diff1, diff2];
+};
+
+// Approach 2: Hash Set Lookup
+var findDifferenceHashSet = function(nums1, nums2) {
+    const set1 = new Set(nums1);
+    const set2 = new Set(nums2);
+    const result = [[], []];
+    
+    // Find elements in nums1 not in nums2
+    for (let num of set1) {
+        if (!set2.has(num)) {
+            result[0].push(num);
+        }
+    }
+    
+    // Find elements in nums2 not in nums1
+    for (let num of set2) {
+        if (!set1.has(num)) {
+            result[1].push(num);
+        }
+    }
+    
+    return result;
+};
+
+// Approach 3: Using Set Difference (ES6 Style)
+var findDifferenceES6 = function(nums1, nums2) {
+    const set1 = new Set(nums1);
+    const set2 = new Set(nums2);
+    
+    return [
+        Array.from(set1).filter(x => !set2.has(x)),
+        Array.from(set2).filter(x => !set1.has(x))
+    ];
+};`
+    },
+    {
+      title: "Python",
+      language: "python",
+      code: `class Solution:
+    # Approach 1: Set Operations (Most Pythonic)
+    def findDifference(self, nums1: List[int], nums2: List[int]) -> List[List[int]]:
+        set1, set2 = set(nums1), set(nums2)
+        return [list(set1 - set2), list(set2 - set1)]
+    
+    # Approach 2: Set Comprehension
+    def findDifferenceComprehension(self, nums1: List[int], nums2: List[int]) -> List[List[int]]:
+        set1, set2 = set(nums1), set(nums2)
+        return [
+            [x for x in set1 if x not in set2],
+            [x for x in set2 if x not in set1]
+        ]
+    
+    # Approach 3: Hash Set Lookup
+    def findDifferenceHashSet(self, nums1: List[int], nums2: List[int]) -> List[List[int]]:
+        set1, set2 = set(nums1), set(nums2)
+        result = [[], []]
+        
+        # Find elements in nums1 not in nums2
+        for num in set1:
+            if num not in set2:
+                result[0].append(num)
+        
+        # Find elements in nums2 not in nums1
+        for num in set2:
+            if num not in set1:
+                result[1].append(num)
+        
+        return result
+    
+    # Approach 4: Using filter
+    def findDifferenceFilter(self, nums1: List[int], nums2: List[int]) -> List[List[int]]:
+        set1, set2 = set(nums1), set(nums2)
+        return [
+            list(filter(lambda x: x not in set2, set1)),
+            list(filter(lambda x: x not in set1, set2))
+        ]`
+    },
+    {
+      title: "C++",
+      language: "cpp",
+      code: `#include <vector>
+#include <unordered_set>
+#include <algorithm>
+using namespace std;
+
+class Solution {
+public:
+    // Approach 1: Unordered Set
+    vector<vector<int>> findDifference(vector<int>& nums1, vector<int>& nums2) {
+        unordered_set<int> set1(nums1.begin(), nums1.end());
+        unordered_set<int> set2(nums2.begin(), nums2.end());
+        
+        vector<vector<int>> result(2);
+        
+        // Find elements in set1 not in set2
+        for (int num : set1) {
+            if (set2.find(num) == set2.end()) {
+                result[0].push_back(num);
+            }
+        }
+        
+        // Find elements in set2 not in set1
+        for (int num : set2) {
+            if (set1.find(num) == set1.end()) {
+                result[1].push_back(num);
+            }
+        }
+        
+        return result;
+    }
+    
+    // Approach 2: Using set_difference (STL)
+    vector<vector<int>> findDifferenceSTL(vector<int>& nums1, vector<int>& nums2) {
+        set<int> set1(nums1.begin(), nums1.end());
+        set<int> set2(nums2.begin(), nums2.end());
+        
+        vector<int> diff1, diff2;
+        
+        set_difference(set1.begin(), set1.end(),
+                      set2.begin(), set2.end(),
+                      back_inserter(diff1));
+        
+        set_difference(set2.begin(), set2.end(),
+                      set1.begin(), set1.end(),
+                      back_inserter(diff2));
+        
+        return {diff1, diff2};
+    }
+};`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `import java.util.*;
+
+class Solution {
+    // Approach 1: HashSet
+    public List<List<Integer>> findDifference(int[] nums1, int[] nums2) {
+        Set<Integer> set1 = new HashSet<>();
+        Set<Integer> set2 = new HashSet<>();
+        
+        for (int num : nums1) set1.add(num);
+        for (int num : nums2) set2.add(num);
+        
+        List<List<Integer>> result = new ArrayList<>();
+        result.add(new ArrayList<>());
+        result.add(new ArrayList<>());
+        
+        // Find elements in set1 not in set2
+        for (int num : set1) {
+            if (!set2.contains(num)) {
+                result.get(0).add(num);
+            }
+        }
+        
+        // Find elements in set2 not in set1
+        for (int num : set2) {
+            if (!set1.contains(num)) {
+                result.get(1).add(num);
+            }
+        }
+        
+        return result;
+    }
+    
+    // Approach 2: Using Streams (Java 8+)
+    public List<List<Integer>> findDifferenceStreams(int[] nums1, int[] nums2) {
+        Set<Integer> set1 = Arrays.stream(nums1).boxed()
+                                  .collect(Collectors.toSet());
+        Set<Integer> set2 = Arrays.stream(nums2).boxed()
+                                  .collect(Collectors.toSet());
+        
+        List<Integer> diff1 = set1.stream()
+                                  .filter(x -> !set2.contains(x))
+                                  .collect(Collectors.toList());
+        
+        List<Integer> diff2 = set2.stream()
+                                  .filter(x -> !set1.contains(x))
+                                  .collect(Collectors.toList());
+        
+        return Arrays.asList(diff1, diff2);
+    }
+}`
+    },
+  ]}
+/>
+
+---
+
+## Step-by-Step Walkthrough
+
+Let's trace through **Example 1** with `nums1 = [1,2,3]` and `nums2 = [2,4,6]`:
+
+### Set Operations Approach:
+```
+Step 1: Create sets
+set1 = {1, 2, 3}
+set2 = {2, 4, 6}
+
+Step 2: Find set1 - set2 (elements in set1 but not in set2)
+set1 - set2 = {1, 3}
+
+Step 3: Find set2 - set1 (elements in set2 but not in set1)  
+set2 - set1 = {4, 6}
+
+Result: [[1, 3], [4, 6]]
+```
+
+Let's trace through **Example 2** with `nums1 = [1,2,3,3]` and `nums2 = [1,1,2,2]`:
+```
+Step 1: Create sets (duplicates automatically removed)
+set1 = {1, 2, 3}
+set2 = {1, 2}
+
+Step 2: Find differences
+set1 - set2 = {3}
+set2 - set1 = {} (empty set)
+
+Result: [[3], []]
+```
+
+---
+
+## Algorithm Intuition
+
+This problem is fundamentally about **set operations**:
+
+> "Find elements that are unique to each array"
+
+The key insights are:
+1. **Duplicates within arrays don't matter** - we only care about distinct values
+2. **We need symmetric difference** - elements in A but not B, and elements in B but not A
+3. **Order doesn't matter** - we can return results in any order
+
+The constraint `-1000 <= nums1[i], nums2[i] <= 1000` suggests that hash-based solutions will work efficiently.
+
+---
+
+## Complexity Analysis
+
+### Set Operations:
+<Text color="green.400" fontWeight="bold">Time Complexity: O(n + m)</Text>
+<Text ml={4} as="li">Creating sets takes O(n) + O(m), filtering takes O(n) + O(m)</Text>
+
+<Text color="green.400" fontWeight="bold">Space Complexity: O(n + m)</Text>
+<Text ml={4} as="li">Two sets store unique elements from both arrays</Text>
+
+### Hash Set Lookup:
+<Text color="green.400" fontWeight="bold">Time Complexity: O(n + m)</Text>
+<Text ml={4} as="li">Creating sets + iterating through unique elements</Text>
+
+<Text color="green.400" fontWeight="bold">Space Complexity: O(n + m)</Text>
+<Text ml={4} as="li">Sets and result arrays</Text>
+
+### Brute Force (Not shown):
+<Text color="green.400" fontWeight="bold">Time Complexity: O(n²m + nm²)</Text>
+<Text ml={4} as="li">For each element, search through other array</Text>
+
+---
+
+## Key Insights
+
+<VStack align="start" gap={2}>
+  <HStack gap={2}>
+    <Text color="orange.400" fontWeight="extrabold">Set operations</Text>
+    <Text>- perfect for finding differences and handling duplicates</Text>
+  </HStack>
+
+  <HStack gap={2}>
+    <Text color="orange.400" fontWeight="extrabold">Automatic deduplication</Text>
+    <Text>- sets naturally handle duplicate removal</Text>
+  </HStack>
+
+  <HStack gap={2}>
+    <Text color="orange.400" fontWeight="extrabold">Symmetric difference</Text>
+    <Text>- finding elements unique to each set</Text>
+  </HStack>
+
+  <HStack gap={2}>
+    <Text color="orange.400" fontWeight="extrabold">Hash lookup</Text>
+    <Text>- O(1) membership testing makes this efficient</Text>
+  </HStack>
+</VStack>
+
+---
+
+## Edge Cases to Consider
+
+1. **Empty arrays**: `nums1 = []`, `nums2 = [1,2]` → `[[], [1,2]]`
+
+2. **Identical arrays**: `nums1 = [1,2]`, `nums2 = [1,2]` → `[[], []]`
+
+3. **No common elements**: `nums1 = [1,2]`, `nums2 = [3,4]` → `[[1,2], [3,4]]`
+
+4. **One array subset of other**: `nums1 = [1,2,3]`, `nums2 = [1,2]` → `[[3], []]`
+
+5. **Many duplicates**: `nums1 = [1,1,1]`, `nums2 = [2,2,2]` → `[[1], [2]]`
+
+---
+
+## Follow-up Questions
+
+1. **What if we needed to preserve order of first occurrence?**
+   - Use ordered sets or track indices during iteration
+
+2. **What about finding intersection instead of difference?**
+   - Use `set1 & set2` (intersection operation)
+
+3. **How would this scale to k arrays?**
+   - Generalize to finding elements unique to each of k sets
+
+4. **What if memory was extremely limited?**
+   - Process one array at a time, use bit manipulation for small ranges
+
+---
+
+## Related Problems
+
+- **268. Missing Number** - Finding what's missing using set operations
+- **349. Intersection of Two Arrays** - Finding common elements
+- **287. Find the Duplicate Number** - Set-based duplicate detection
+
+---
+
+This problem beautifully demonstrates how **set theory** and **hash-based data structures** can elegantly solve array difference problems with optimal time complexity!
