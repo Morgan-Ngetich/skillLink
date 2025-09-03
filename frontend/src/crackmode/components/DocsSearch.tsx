@@ -10,7 +10,6 @@ import {
   IconButton,
   Flex,
   // useDisclosure,
-  Portal,
 } from "@chakra-ui/react"
 import {
   FaSearch,
@@ -262,7 +261,6 @@ export const DocsSearch = ({
 
       {/* Search Results Dropdown */}
       {isOpen && (
-        <Portal>
           <Box
             position="fixed"
             top={`${searchRef.current?.getBoundingClientRect().bottom || 0}px`}
@@ -350,68 +348,71 @@ export const DocsSearch = ({
                   }
 
                   return (
-                    <Box
-                      key={result.id}
-                      px={4}
-                      py={2}
-                      cursor="pointer"
-                      borderBottom={index < searchResults.length - 1 ? "1px solid" : "none"}
-                      borderColor={borderColor}
-                      _hover={{ bg: hoverBg }}
-                      onClick={() => handleResultClick(result)}
-                    >
-                      <VStack gap={2} align="stretch">
-                        <HStack justify="space-between" align="flex-start">
-                          <Box flex={1}>
-                            <Text
-                              fontSize="md"
-                              fontWeight="medium"
-                              lineHeight="short"
-                              dangerouslySetInnerHTML={{
-                                __html: result.highlightedTitle || result.title
-                              }}
-                            />
-                            {result.section && (
-                              <Text fontSize="xs" color="fg.muted" >
-                                {result.section}
-                              </Text>
-                            )}
-                          </Box>
-                          {/* {result.score && (
+                    // <Link
+                    //   to={result?.url}
+                    // >
+                      <Box
+                        key={result.id}
+                        px={4}
+                        py={2}
+                        cursor="pointer"
+                        borderBottom={index < searchResults.length - 1 ? "1px solid" : "none"}
+                        borderColor={borderColor}
+                        _hover={{ bg: hoverBg }}
+                        onClick={() => handleResultClick(result)}
+                      >
+                        <VStack gap={2} align="stretch">
+                          <HStack justify="space-between" align="flex-start">
+                            <Box flex={1}>
+                              <Text
+                                fontSize="md"
+                                fontWeight="medium"
+                                lineHeight="short"
+                                dangerouslySetInnerHTML={{
+                                  __html: result.highlightedTitle || result.title
+                                }}
+                              />
+                              {result.section && (
+                                <Text fontSize="xs" color="fg.muted" >
+                                  {result.section}
+                                </Text>
+                              )}
+                            </Box>
+                            {/* {result.score && (
                             <Badge  size="sm" colorPalette="gray">
                               {Math.round((1 - result.score) * 100)}%
                             </Badge >
                           )} */}
-                        </HStack>
-
-                        {result.highlightedExcerpt && (
-                          <Text
-                            fontSize="sm"
-                            color="fg.muted"
-                            lineHeight="short"
-                            dangerouslySetInnerHTML={{
-                              __html: result.highlightedExcerpt
-                            }}
-                          />
-                        )}
-
-                        {result.tags.length > 0 && (
-                          <HStack wrap="wrap" gap={1}>
-                            {result.tags.slice(0, 3).map(tag => (
-                              <Badge key={tag} size="sm" colorPalette="orange" variant={"surface"}>
-                                {tag}
-                              </Badge >
-                            ))}
                           </HStack>
-                        )}
-                      </VStack>
-                    </Box>
+
+                          {result.highlightedExcerpt && (
+                            <Text
+                              fontSize="sm"
+                              color="fg.muted"
+                              lineHeight="short"
+                              dangerouslySetInnerHTML={{
+                                __html: result.highlightedExcerpt
+                              }}
+                            />
+                          )}
+
+                          {result.tags.length > 0 && (
+                            <HStack wrap="wrap" gap={1}>
+                              {result.tags.slice(0, 3).map(tag => (
+                                <Badge key={tag} size="sm" colorPalette="orange" variant={"surface"}>
+                                  {tag}
+                                </Badge >
+                              ))}
+                            </HStack>
+                          )}
+                        </VStack>
+                      </Box>
+                    // </Link>
                   )
                 })}
               </VStack>
             )}
           </Box>
-        </Portal>
       )}
     </Box>
   )
