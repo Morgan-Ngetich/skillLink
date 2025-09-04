@@ -17,6 +17,14 @@
 
   </head>
   <body>
+    <script>
+      (function() {
+        try {
+          var mode = localStorage.getItem('chakra-ui-color-mode');
+          if (mode) document.documentElement.setAttribute('data-theme', mode);
+        } catch (e) {}
+      })();
+    </script>
     <div id="root"><!--app-html--></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
