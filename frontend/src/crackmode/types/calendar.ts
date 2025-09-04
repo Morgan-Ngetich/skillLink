@@ -63,7 +63,7 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
   ],
   "2025-09-02": [
     {
-      "id": 2,
+      "id": 1,
       "title": "Find the Difference of Two Arrays",
       "difficulty": "Easy",
       "tags": ["Array", "Hash Table", "Set"],
@@ -72,5 +72,17 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
       "solved": true,
       "solvedAt": "2025-09-02T23:00:00Z"
     }
-  ]
+  ],
+  "2025-09-03": [
+  {
+    "id": 1,
+    "title": "Unique Number of Occurrences",
+    "difficulty": "Easy",
+    "tags": ["Array", "Hash Table"],
+    "url": "https://leetcode.com/problems/unique-number-of-occurrences/",
+    "docs": "/crackmode/docs/problems/unique-number-of-occurrences",
+    "solved": true,
+    "solvedAt": "2025-09-03T00:45:00Z"
+  }
+]
 }

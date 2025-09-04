@@ -1,0 +1,285 @@
+import { VStack, HStack, Text } from "@chakra-ui/react"
+
+# Unique Number of Occurrences
+
+**Difficulty:** <span style={{color: "#4ade80"}}>Easy</span>  
+**LeetCode:** [1207. Unique Number of Occurrences](https://leetcode.com/problems/unique-number-of-occurrences/)
+
+---
+
+## Problem
+
+Given an array of integers `arr`, return `true` *if the number of occurrences of each value in the array is **unique** or* `false` *otherwise*.
+
+**Example 1:**
+```
+Input: arr = [1,2,2,1,1,3]
+Output: true
+Explanation: The value 1 has 3 occurrences, 2 has 2 and 3 has 1. No two values have the same number of occurrences.
+```
+
+**Example 2:**
+```
+Input: arr = [1,2]
+Output: false
+Explanation: The value 1 has 1 occurrence, 2 has 1 occurrence. Two values have the same number of occurrences.
+```
+
+**Example 3:**
+```
+Input: arr = [-3,0,1,-3,1,1,1,-3,10,0]
+Output: true
+Explanation: The value -3 has 3 occurrences, 0 has 2, 1 has 4, and 10 has 1. All occurrence counts are unique.
+```
+
+---
+
+## Simple Explanation
+
+Think of this like checking if everyone in a group has a **unique number of items**!
+
+Just like in real life:
+- If Alice has 3 apples, Bob has 2 apples, and Charlie has 1 apple → All unique ✓
+- If Alice has 2 apples and Bob has 2 apples → Not unique ✗
+
+**Key insight:** Count how many times each number appears, then check if all these counts are different!
+
+---
+
+## Solution
+
+<TabbedCode
+  files={[
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function uniqueOccurrences(arr) {
+  // Step 1: Count occurrences of each number
+  const countMap = new Map();
+  for (const num of arr) {
+    countMap.set(num, (countMap.get(num) || 0) + 1);
+  }
+  
+  // Step 2: Check if all occurrence counts are unique
+  const occurrences = Array.from(countMap.values());
+  const uniqueOccurrences = new Set(occurrences);
+  
+  // If sizes match, all counts are unique
+  return occurrences.length === uniqueOccurrences.size;
+}`
+    },
+    {
+      title: "Python",
+      language: "python",
+      code: `def unique_occurrences(arr):
+    # Step 1: Count occurrences of each number
+    from collections import Counter
+    count_map = Counter(arr)
+    
+    # Step 2: Check if all occurrence counts are unique
+    occurrences = list(count_map.values())
+    unique_occurrences = set(occurrences)
+    
+    # If sizes match, all counts are unique
+    return len(occurrences) == len(unique_occurrences)`
+    },
+    {
+      title: "C++",
+      language: "cpp",
+      code: `#include <vector>
+#include <unordered_map>
+#include <unordered_set>
+using namespace std;
+
+class Solution {
+public:
+    bool uniqueOccurrences(vector<int>& arr) {
+        // Step 1: Count occurrences of each number
+        unordered_map<int, int> countMap;
+        for (int num : arr) {
+            countMap[num]++;
+        }
+        
+        // Step 2: Check if all occurrence counts are unique
+        unordered_set<int> uniqueOccurrences;
+        for (auto& pair : countMap) {
+            if (uniqueOccurrences.count(pair.second)) {
+                return false;  // Duplicate count found
+            }
+            uniqueOccurrences.insert(pair.second);
+        }
+        
+        return true;
+    }
+};`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `import java.util.*;
+
+public class UniqueOccurrences {
+    public static boolean uniqueOccurrences(int[] arr) {
+        // Step 1: Count occurrences of each number
+        Map<Integer, Integer> countMap = new HashMap<>();
+        for (int num : arr) {
+            countMap.put(num, countMap.getOrDefault(num, 0) + 1);
+        }
+        
+        // Step 2: Check if all occurrence counts are unique
+        Set<Integer> uniqueOccurrences = new HashSet<>();
+        for (int count : countMap.values()) {
+            if (!uniqueOccurrences.add(count)) {
+                return false;  // Duplicate count found
+            }
+        }
+        
+        return true;
+    }
+}`
+    },
+  ]}
+/>
+
+---
+
+## Step-by-Step Walkthrough
+
+Let's trace through `arr = [1,2,2,1,1,3]`:
+
+```
+Step 1: Count occurrences
+        1 appears: [1, _, _, 1, 1, _] → 3 times
+        2 appears: [_, 2, 2, _, _, _] → 2 times  
+        3 appears: [_, _, _, _, _, 3] → 1 time
+        
+        countMap = {1: 3, 2: 2, 3: 1}
+
+Step 2: Extract occurrence counts
+        occurrences = [3, 2, 1]
+
+Step 3: Check uniqueness
+        uniqueOccurrences = {3, 2, 1}
+        
+        occurrences.length = 3
+        uniqueOccurrences.size = 3
+        
+        3 === 3 ✓ → return true
+
+Result: true (all occurrence counts are unique)
+```
+
+Let's trace through `arr = [1,2]`:
+
+```
+Step 1: Count occurrences
+        1 appears: [1, _] → 1 time
+        2 appears: [_, 2] → 1 time
+        
+        countMap = {1: 1, 2: 1}
+
+Step 2: Extract occurrence counts
+        occurrences = [1, 1]
+
+Step 3: Check uniqueness
+        uniqueOccurrences = {1}  // Set removes duplicates
+        
+        occurrences.length = 2
+        uniqueOccurrences.size = 1
+        
+        2 !== 1 ✗ → return false
+
+Result: false (both numbers have the same occurrence count)
+```
+
+---
+
+## Alternative Approaches
+
+### Approach 1: One-Pass with Set Check
+```javascript
+function uniqueOccurrences(arr) {
+  const countMap = new Map();
+  
+  // Count occurrences
+  for (const num of arr) {
+    countMap.set(num, (countMap.get(num) || 0) + 1);
+  }
+  
+  // Check uniqueness while iterating
+  const seen = new Set();
+  for (const count of countMap.values()) {
+    if (seen.has(count)) return false;
+    seen.add(count);
+  }
+  
+  return true;
+}
+```
+
+### Approach 2: Using Array Methods
+```javascript
+function uniqueOccurrences(arr) {
+  const counts = Object.values(
+    arr.reduce((acc, num) => {
+      acc[num] = (acc[num] || 0) + 1;
+      return acc;
+    }, {})
+  );
+  
+  return counts.length === new Set(counts).size;
+}
+```
+
+---
+
+## Complexity Analysis
+
+<Text color="green.400" fontWeight="bold">Time Complexity: O(n)</Text>
+<Text ml={4} as="li">First pass to count occurrences: O(n)</Text>
+<Text ml={4} as="li">Second pass to check uniqueness: O(k) where k ≤ n</Text>
+<Text ml={4} as="li">Overall: O(n)</Text>
+
+<Text color="green.400" fontWeight="bold" mt={4}>Space Complexity: O(n)</Text>
+<Text ml={4} as="li">HashMap for counting: O(k) where k is number of unique elements</Text>
+<Text ml={4} as="li">Set for uniqueness check: O(k)</Text>
+<Text ml={4} as="li">Overall: O(n) in worst case (all elements unique)</Text>
+
+---
+
+## Key Insights
+
+<VStack align="start" spacing={2}>
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">Two-step process</Text>
+    <Text>- First count, then check uniqueness of counts</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">Hash map pattern</Text>
+    <Text>- Perfect for frequency counting problems</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">Set for uniqueness</Text>
+    <Text>- Set size vs array length comparison trick</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="orange.400" fontWeight="extrabold">Early termination</Text>
+    <Text>- Can return false immediately when duplicate count found</Text>
+  </HStack>
+</VStack>
+
+---
+
+## Edge Cases
+
+- **Single element:** `[1]` → Always true (only one occurrence count)
+- **All same elements:** `[5,5,5]` → Always true (only one unique count)  
+- **All different elements:** `[1,2,3]` → Always true (all counts are 1)
+- **Empty array:** `[]` → True (no occurrences to check)
+
+---
+
+This problem demonstrates the power of frequency counting combined with set-based uniqueness checking!
