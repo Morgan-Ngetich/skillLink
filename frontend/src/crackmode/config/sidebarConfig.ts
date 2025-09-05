@@ -48,6 +48,7 @@ export const sidebarConfig: DocSection[] = [
       { title: "Check if Number Has Equal Digit Count and Digit Value", href: "/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value" },
       { title: "Find the Difference of Two Arrays", href: "/crackmode/docs/problems/find-the-difference-of-two-arrays" },
       { title: "Unique Number of Occurrences", href: "/crackmode/docs/problems/unique-number-of-occurrences" },
+      { title: "Find the Difference", href: "/crackmode/docs/problems/find-the-difference" },
     ]
   },
   {

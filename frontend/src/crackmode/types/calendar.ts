@@ -74,15 +74,27 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
     }
   ],
   "2025-09-03": [
-  {
-    "id": 1,
-    "title": "Unique Number of Occurrences",
-    "difficulty": "Easy",
-    "tags": ["Array", "Hash Table"],
-    "url": "https://leetcode.com/problems/unique-number-of-occurrences/",
-    "docs": "/crackmode/docs/problems/unique-number-of-occurrences",
-    "solved": true,
-    "solvedAt": "2025-09-03T00:45:00Z"
-  }
-]
+    {
+      "id": 1,
+      "title": "Unique Number of Occurrences",
+      "difficulty": "Easy",
+      "tags": ["Array", "Hash Table"],
+      "url": "https://leetcode.com/problems/unique-number-of-occurrences/",
+      "docs": "/crackmode/docs/problems/unique-number-of-occurrences",
+      "solved": true,
+      "solvedAt": "2025-09-03T00:45:00Z"
+    }
+  ],
+  "2025-09-04": [
+    {
+      "id": 1,
+      "title": "Find the Difference",
+      "difficulty": "Easy",
+      "tags": ["HashTable", "String", "Bit Manipulation", "Sorting"],
+      "url": "https://leetcode.com/problems/find-the-difference/",
+      "docs": "/crackmode/docs/problems/find-the-difference",
+      "solved": true,
+      "solvedAt": "2025-09-03T00:45:00Z"
+    },
+  ]
 }
