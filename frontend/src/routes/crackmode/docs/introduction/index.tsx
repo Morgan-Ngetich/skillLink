@@ -12,6 +12,6 @@ function DocsIndex() {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const Route: any = createFileRoute("/crackmode/docs/")({
+export const Route: any = createFileRoute("/crackmode/docs/introduction/")({
   component: DocsIndex,
 });

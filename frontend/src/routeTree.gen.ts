@@ -23,11 +23,13 @@ import { Route as CrackmodeDocsIndexRouteImport } from './routes/crackmode/docs/
 import { Route as LayoutDashboardIndexRouteImport } from './routes/_layout/dashboard/index'
 import { Route as LayoutDashboardProfileRouteImport } from './routes/_layout/dashboard/profile'
 import { Route as CrackmodeDocsLeetcode75IndexRouteImport } from './routes/crackmode/docs/leetcode75/index'
+import { Route as CrackmodeDocsIntroductionIndexRouteImport } from './routes/crackmode/docs/introduction/index'
 import { Route as CrackmodeDocsProblemsUniqueNumberOfOccurrencesRouteImport } from './routes/crackmode/docs/problems/unique-number-of-occurrences'
 import { Route as CrackmodeDocsProblemsMissingNumberRouteImport } from './routes/crackmode/docs/problems/missing-number'
 import { Route as CrackmodeDocsProblemsLongestConsecutiveSequenceRouteImport } from './routes/crackmode/docs/problems/longest-consecutive-sequence'
 import { Route as CrackmodeDocsProblemsImplementStackUsingQueuesRouteImport } from './routes/crackmode/docs/problems/implement-stack-using-queues'
 import { Route as CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRouteImport } from './routes/crackmode/docs/problems/find-the-difference-of-two-arrays'
+import { Route as CrackmodeDocsProblemsFindTheDifferenceRouteImport } from './routes/crackmode/docs/problems/find-the-difference'
 import { Route as CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRouteImport } from './routes/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/index'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsStringCompressionRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/string-compression'
@@ -108,6 +110,12 @@ const CrackmodeDocsLeetcode75IndexRoute =
     path: '/leetcode75/',
     getParentRoute: () => CrackmodeDocsRoute,
   } as any)
+const CrackmodeDocsIntroductionIndexRoute =
+  CrackmodeDocsIntroductionIndexRouteImport.update({
+    id: '/introduction/',
+    path: '/introduction/',
+    getParentRoute: () => CrackmodeDocsRoute,
+  } as any)
 const CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute =
   CrackmodeDocsProblemsUniqueNumberOfOccurrencesRouteImport.update({
     id: '/problems/unique-number-of-occurrences',
@@ -136,6 +144,12 @@ const CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute =
   CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRouteImport.update({
     id: '/problems/find-the-difference-of-two-arrays',
     path: '/problems/find-the-difference-of-two-arrays',
+    getParentRoute: () => CrackmodeDocsRoute,
+  } as any)
+const CrackmodeDocsProblemsFindTheDifferenceRoute =
+  CrackmodeDocsProblemsFindTheDifferenceRouteImport.update({
+    id: '/problems/find-the-difference',
+    path: '/problems/find-the-difference',
     getParentRoute: () => CrackmodeDocsRoute,
   } as any)
 const CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute =
@@ -217,11 +231,13 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof LayoutDashboardIndexRoute
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
+  '/crackmode/docs/problems/find-the-difference': typeof CrackmodeDocsProblemsFindTheDifferenceRoute
   '/crackmode/docs/problems/find-the-difference-of-two-arrays': typeof CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute
   '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   '/crackmode/docs/problems/longest-consecutive-sequence': typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
   '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
   '/crackmode/docs/problems/unique-number-of-occurrences': typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
+  '/crackmode/docs/introduction': typeof CrackmodeDocsIntroductionIndexRoute
   '/crackmode/docs/leetcode75': typeof CrackmodeDocsLeetcode75IndexRoute
   '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
   '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence': typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
@@ -245,11 +261,13 @@ export interface FileRoutesByTo {
   '/dashboard': typeof LayoutDashboardIndexRoute
   '/crackmode/docs': typeof CrackmodeDocsIndexRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
+  '/crackmode/docs/problems/find-the-difference': typeof CrackmodeDocsProblemsFindTheDifferenceRoute
   '/crackmode/docs/problems/find-the-difference-of-two-arrays': typeof CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute
   '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   '/crackmode/docs/problems/longest-consecutive-sequence': typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
   '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
   '/crackmode/docs/problems/unique-number-of-occurrences': typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
+  '/crackmode/docs/introduction': typeof CrackmodeDocsIntroductionIndexRoute
   '/crackmode/docs/leetcode75': typeof CrackmodeDocsLeetcode75IndexRoute
   '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
   '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence': typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
@@ -276,11 +294,13 @@ export interface FileRoutesById {
   '/_layout/dashboard/': typeof LayoutDashboardIndexRoute
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
+  '/crackmode/docs/problems/find-the-difference': typeof CrackmodeDocsProblemsFindTheDifferenceRoute
   '/crackmode/docs/problems/find-the-difference-of-two-arrays': typeof CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute
   '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   '/crackmode/docs/problems/longest-consecutive-sequence': typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
   '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
   '/crackmode/docs/problems/unique-number-of-occurrences': typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
+  '/crackmode/docs/introduction/': typeof CrackmodeDocsIntroductionIndexRoute
   '/crackmode/docs/leetcode75/': typeof CrackmodeDocsLeetcode75IndexRoute
   '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
   '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence': typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
@@ -307,11 +327,13 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/crackmode/docs/'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
+    | '/crackmode/docs/problems/find-the-difference'
     | '/crackmode/docs/problems/find-the-difference-of-two-arrays'
     | '/crackmode/docs/problems/implement-stack-using-queues'
     | '/crackmode/docs/problems/longest-consecutive-sequence'
     | '/crackmode/docs/problems/missing-number'
     | '/crackmode/docs/problems/unique-number-of-occurrences'
+    | '/crackmode/docs/introduction'
     | '/crackmode/docs/leetcode75'
     | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
     | '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
@@ -335,11 +357,13 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/crackmode/docs'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
+    | '/crackmode/docs/problems/find-the-difference'
     | '/crackmode/docs/problems/find-the-difference-of-two-arrays'
     | '/crackmode/docs/problems/implement-stack-using-queues'
     | '/crackmode/docs/problems/longest-consecutive-sequence'
     | '/crackmode/docs/problems/missing-number'
     | '/crackmode/docs/problems/unique-number-of-occurrences'
+    | '/crackmode/docs/introduction'
     | '/crackmode/docs/leetcode75'
     | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
     | '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
@@ -365,11 +389,13 @@ export interface FileRouteTypes {
     | '/_layout/dashboard/'
     | '/crackmode/docs/'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
+    | '/crackmode/docs/problems/find-the-difference'
     | '/crackmode/docs/problems/find-the-difference-of-two-arrays'
     | '/crackmode/docs/problems/implement-stack-using-queues'
     | '/crackmode/docs/problems/longest-consecutive-sequence'
     | '/crackmode/docs/problems/missing-number'
     | '/crackmode/docs/problems/unique-number-of-occurrences'
+    | '/crackmode/docs/introduction/'
     | '/crackmode/docs/leetcode75/'
     | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
     | '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
@@ -491,6 +517,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrackmodeDocsLeetcode75IndexRouteImport
       parentRoute: typeof CrackmodeDocsRoute
     }
+    '/crackmode/docs/introduction/': {
+      id: '/crackmode/docs/introduction/'
+      path: '/introduction'
+      fullPath: '/crackmode/docs/introduction'
+      preLoaderRoute: typeof CrackmodeDocsIntroductionIndexRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
     '/crackmode/docs/problems/unique-number-of-occurrences': {
       id: '/crackmode/docs/problems/unique-number-of-occurrences'
       path: '/problems/unique-number-of-occurrences'
@@ -524,6 +557,13 @@ declare module '@tanstack/react-router' {
       path: '/problems/find-the-difference-of-two-arrays'
       fullPath: '/crackmode/docs/problems/find-the-difference-of-two-arrays'
       preLoaderRoute: typeof CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
+    '/crackmode/docs/problems/find-the-difference': {
+      id: '/crackmode/docs/problems/find-the-difference'
+      path: '/problems/find-the-difference'
+      fullPath: '/crackmode/docs/problems/find-the-difference'
+      preLoaderRoute: typeof CrackmodeDocsProblemsFindTheDifferenceRouteImport
       parentRoute: typeof CrackmodeDocsRoute
     }
     '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': {
@@ -614,11 +654,13 @@ const LayoutRouteWithChildren =
 interface CrackmodeDocsRouteChildren {
   CrackmodeDocsIndexRoute: typeof CrackmodeDocsIndexRoute
   CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute: typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
+  CrackmodeDocsProblemsFindTheDifferenceRoute: typeof CrackmodeDocsProblemsFindTheDifferenceRoute
   CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute: typeof CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute
   CrackmodeDocsProblemsImplementStackUsingQueuesRoute: typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   CrackmodeDocsProblemsLongestConsecutiveSequenceRoute: typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
   CrackmodeDocsProblemsMissingNumberRoute: typeof CrackmodeDocsProblemsMissingNumberRoute
   CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute: typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
+  CrackmodeDocsIntroductionIndexRoute: typeof CrackmodeDocsIntroductionIndexRoute
   CrackmodeDocsLeetcode75IndexRoute: typeof CrackmodeDocsLeetcode75IndexRoute
   CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute: typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
   CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute: typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
@@ -634,6 +676,8 @@ const CrackmodeDocsRouteChildren: CrackmodeDocsRouteChildren = {
   CrackmodeDocsIndexRoute: CrackmodeDocsIndexRoute,
   CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute:
     CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute,
+  CrackmodeDocsProblemsFindTheDifferenceRoute:
+    CrackmodeDocsProblemsFindTheDifferenceRoute,
   CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute:
     CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute,
   CrackmodeDocsProblemsImplementStackUsingQueuesRoute:
@@ -644,6 +688,7 @@ const CrackmodeDocsRouteChildren: CrackmodeDocsRouteChildren = {
     CrackmodeDocsProblemsMissingNumberRoute,
   CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute:
     CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute,
+  CrackmodeDocsIntroductionIndexRoute: CrackmodeDocsIntroductionIndexRoute,
   CrackmodeDocsLeetcode75IndexRoute: CrackmodeDocsLeetcode75IndexRoute,
   CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute:
     CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute,
