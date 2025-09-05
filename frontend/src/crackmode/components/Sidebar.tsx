@@ -92,7 +92,7 @@ const Sidebar = () => {
                     <Flex
                       justify="space-between"
                       w="100%"
-                      py={2}
+                      py={1}
                       px={3}
                       borderRadius="md"
                       fontSize="sm"
@@ -130,7 +130,7 @@ const Sidebar = () => {
                             <Link
                               key={child.href}
                               href={child.href}
-                              py={1}
+                              py={"4px"}
                               px={3}
                               w="100%"
                               borderRadius="md"

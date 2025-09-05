@@ -9,7 +9,7 @@ import {
   Card,
   CloseButton,
 } from "@chakra-ui/react"
-import { useColorModeValue } from "@/components/ui"
+import { useColorModeValue, Tooltip } from "@/components/ui"
 import type { LeetcodeProblem } from "@/crackmode/types/calendar"
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa6";
 import { type FilterType } from "@/crackmode/types/calendar";
@@ -143,8 +143,50 @@ export const Calendar: React.FC<CalendarProps> = ({ problems, onDateClick }) => 
     }
   }
 
+  // Helper function to get filtered problems for any date and filter
+  const getFilteredProblems = (dateString: string, filterType: FilterType) => {
+    const allProblems = problems[dateString] || []
+
+    switch (filterType) {
+      case "Easy":
+      case "Medium":
+      case "Hard":
+        return allProblems.filter(problem => problem.difficulty === filterType)
+      case "solved":
+        return allProblems.filter(problem => problem.solved)
+      default:
+        return allProblems
+    }
+  }
+
   const handleLegendClick = (filterType: FilterType) => {
-    setFilter(filter === filterType ? "all" : filterType)
+    if (filter === filterType) {
+      setFilter("all")
+      return
+    }
+
+    setFilter(filterType)
+
+    // Find dates that have problems matching the filter
+    const matchingDates = Object.keys(problems)
+      .filter(dateString => {
+        const filteredProblems = getFilteredProblems(dateString, filterType)
+        return filteredProblems.length > 0
+      })
+      .map(dateString => new Date(dateString))
+
+    if (matchingDates.length > 0) {
+      // Find the closest date to current view
+      const currentMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
+
+      const closestDate = matchingDates.reduce((closest, date) => {
+        const currentDiff = Math.abs(date.getTime() - currentMonthStart.getTime())
+        const closestDiff = Math.abs(closest.getTime() - currentMonthStart.getTime())
+        return currentDiff < closestDiff ? date : closest
+      })
+
+      setCurrentDate(closestDate)
+    }
   }
 
   const renderCalendarDays = () => {
@@ -165,72 +207,78 @@ export const Calendar: React.FC<CalendarProps> = ({ problems, onDateClick }) => 
       const hasProblems = dayProblems.length > 0
 
       days.push(
-        <Card.Root
-          key={day}
-          bg={'cardbg'}
-          border="1px solid"
-          borderWidth={isToday ? "2px" : "1px"}
-          borderColor={isToday ? todayRingColor : borderColor}
-          cursor={hasProblems ? "pointer" : "default"}
-          transition="all 0.2s"
-          _hover={
-            hasProblems
-              ? {
-                bg: cardHoverBg,
-                transform: "scale(1.05)",
-                boxShadow: "md",
-              }
-              : {
-                bg: cardHoverBg
-              }
-          }
-          onClick={() => hasProblems && onDateClick(dateString)}
-          position={'relative'}
-          opacity={hasProblems ? 1 : 0.6}
+        <Tooltip
+          content={allDayProblems?.map(p => p.title).join(', ')}
+          positioning={{ placement: "top", offset: { mainAxis: 2, crossAxis: 2 } }}
+          disabled={!hasProblems}
         >
-          <Card.Body p={2} textAlign={'center'}>
-            <Flex direction="column" justify="space-between" h="full">
-              <Flex justify="space-between" align="flex-start">
-                <Text
-                  fontSize="sm"
-                  fontWeight={isToday ? "bold" : "medium"}
-                  color={isToday ? todayRingColor : textColor}
-                >
-                  {day}
-                </Text>
-                {hasSolvedProblems && filter !== "solved" && (
-                  <Box position={"absolute"} right={1} top={1} w={2} h={2} bg={todayRingColor} borderRadius="full" />
-                )}
-              </Flex>
-
-              {hasProblems && (
-                <Flex wrap="wrap" gap={1}>
-                  {dayProblems.slice(0, 2).map((problem, index) => (
-                    <Box
-                      key={index}
-                      w={2}
-                      h={2}
-                      bg={filter === "solved" ? todayRingColor : `${getDifficultyColor(problem.difficulty)}.500`}
-                      borderRadius="xs"
-                      opacity={1}
-                    />
-                  ))}
-                  {dayProblems.length > 2 && (
-                    <Box
-                      position={"absolute"}
-                      top={{ base: "35%", md: "45%" }}
-                      right={{ base: "2px", md: 1 }}
-                    >
-                      <Text fontSize="2xs">
-                        +{dayProblems.length - 2}
-                      </Text>
-                    </Box>
+          <Card.Root
+            key={day}
+            bg={'cardbg'}
+            border="1px solid"
+            borderWidth={isToday ? "2px" : "1px"}
+            borderColor={isToday ? todayRingColor : borderColor}
+            cursor={hasProblems ? "pointer" : "default"}
+            transition="all 0.2s"
+            _hover={
+              hasProblems
+                ? {
+                  bg: cardHoverBg,
+                  transform: "scale(1.05)",
+                  boxShadow: "md",
+                }
+                : {
+                  bg: cardHoverBg
+                }
+            }
+            onClick={() => hasProblems && onDateClick(dateString)}
+            position={'relative'}
+            opacity={hasProblems ? 1 : 0.6}
+          >
+            <Card.Body p={2} textAlign={'center'}>
+              <Flex direction="column" justify="space-between" h="full">
+                <Flex justify="space-between" align="flex-start">
+                  <Text
+                    fontSize="sm"
+                    fontWeight={isToday ? "bold" : "medium"}
+                    color={isToday ? todayRingColor : textColor}
+                  >
+                    {day}
+                  </Text>
+                  {hasSolvedProblems && filter !== "solved" && (
+                    <Box position={"absolute"} right={1} top={1} w={2} h={2} bg={todayRingColor} borderRadius="full" />
                   )}
                 </Flex>
-              )}
-            </Flex>
-          </Card.Body>
-        </Card.Root>
+
+                {hasProblems && (
+                  <Flex wrap="wrap" gap={1}>
+                    {dayProblems.slice(0, 2).map((problem, index) => (
+                      <Box
+                        key={index}
+                        w={2}
+                        h={2}
+                        bg={filter === "solved" ? todayRingColor : `${getDifficultyColor(problem.difficulty)}.500`}
+                        borderRadius="xs"
+                        opacity={1}
+                      />
+                    ))}
+                    {dayProblems.length > 2 && (
+                      <Box
+                        position={"absolute"}
+                        top={{ base: "35%", md: "45%" }}
+                        right={{ base: "2px", md: 1 }}
+                      >
+                        <Text fontSize="2xs">
+                          +{dayProblems.length - 2}
+                        </Text>
+                      </Box>
+                    )}
+                  </Flex>
+                )}
+              </Flex>
+            </Card.Body>
+          </Card.Root>
+        </Tooltip>
       )
     }
 
@@ -248,8 +296,8 @@ export const Calendar: React.FC<CalendarProps> = ({ problems, onDateClick }) => 
             size="sm"
             onClick={() => navigateMonth("prev")}
             borderRadius={"md"}
-            _hover={{border: "1px solid"}}
-            disabled={!canNavigatePrev}            
+            _hover={{ border: "1px solid" }}
+            disabled={!canNavigatePrev}
             cursor={canNavigatePrev ? "pointer" : "not-allowed"}
           >
             <FaAngleLeft />
@@ -262,8 +310,8 @@ export const Calendar: React.FC<CalendarProps> = ({ problems, onDateClick }) => 
             size="sm"
             onClick={() => navigateMonth("next")}
             borderRadius={"md"}
-            _hover={{border: "1px solid"}}
-            disabled={!canNavigateNext}          
+            _hover={{ border: "1px solid" }}
+            disabled={!canNavigateNext}
             cursor={canNavigateNext ? "pointer" : "not-allowed"}
           >
             <FaAngleRight />
