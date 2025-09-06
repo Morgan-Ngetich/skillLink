@@ -1,5 +1,4 @@
 import express from 'express'
-import { createServer as createViteServer } from 'vite'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -52,6 +51,8 @@ async function createServer() {
 
   let vite
   if (!isProduction) {
+    // Only import vite in development
+    const { createServer: createViteServer } = await import('vite')
     // Create Vite server in middleware mode
     vite = await createViteServer({
       server: { middlewareMode: true },
@@ -75,9 +76,21 @@ async function createServer() {
         template = await vite.transformIndexHtml(url, template)
         render = (await vite.ssrLoadModule('/src/seo/entry-server.tsx')).render
       } else {
-        // Production mode - use built files
-        template = fs.readFileSync(path.resolve('/usr/share/nginx/html/index.html'), 'utf-8')
-        render = (await import(path.resolve(__dirname, '../dist/server/entry-server.js'))).render
+        // Production mode
+        console.log('Loading production template and server...')
+
+        // Template from nginx html directory
+        template = fs.readFileSync('/usr/share/nginx/html/index.html', 'utf-8')
+
+        // Server entry - use the fixed relative path
+        const serverPath = path.resolve(__dirname, '../dist/server/entry-server.js')
+        console.log('Loading server from:', serverPath)
+
+        if (!fs.existsSync(serverPath)) {
+          throw new Error(`Server entry not found at: ${serverPath}`)
+        }
+
+        render = (await import(serverPath)).render
       }
 
       // Check if this is a bot/crawler
@@ -96,11 +109,11 @@ async function createServer() {
           res.status(200).set({ 'Content-Type': 'text/html' }).end(finalHtml)
         } catch (ssrError) {
           console.error('SSR Error:', ssrError)
-          
+
           // Enhanced fallback with route-specific content
           const fallback = getFallbackContent(url)
           const fallbackHtml = template
-            .replace(`<!--app-head-->`, 
+            .replace(`<!--app-head-->`,
               `<title>${fallback.title}</title>
                <meta name="description" content="${fallback.description}">`)
             .replace(`<!--app-html-->`, fallback.content)
