@@ -21,4 +21,9 @@ export const shikiAdapter = createShikiAdapter<Highlighter>({
       themes: ["github-dark", "github-light"],
     })
   },
+  // Support both light and dark themes
+  theme: {
+    light: "github-light",
+    dark: "github-dark"
+  }
 })
