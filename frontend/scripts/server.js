@@ -77,7 +77,7 @@ async function createServer() {
       } else {
         // Production mode - use built files
         template = fs.readFileSync(path.resolve('/usr/share/nginx/html/index.html'), 'utf-8')
-        render = (await import(path.resolve(__dirname, '/app/dist/server/entry-server.js'))).render
+        render = (await import(path.resolve(__dirname, '../dist/server/entry-server.js'))).render
       }
 
       // Check if this is a bot/crawler
