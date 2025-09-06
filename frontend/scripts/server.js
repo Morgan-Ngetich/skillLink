@@ -5,7 +5,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const isProduction = process.env.NODE_ENV === 'production'
+const isProduction = process.env.RAILWAY_ENVIRONMENT === 'production'
 const PORT = process.env.PORT || 8080
 
 console.log('Starting server from:', __dirname)
