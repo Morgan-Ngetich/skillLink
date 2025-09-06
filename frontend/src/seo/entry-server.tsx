@@ -67,9 +67,9 @@ export async function render(url: string): Promise<RenderResult> {
     </StrictMode>
   );
 
-  // 👇 Inject Chakra's color mode script manually
+  // Inject Chakra's color mode script manually
   const colorModeScript = renderToString(
-    <ColorModeScript initialColorMode="dark" />
+    <ColorModeScript initialColorMode="system" />
   );
 
   // Extract helmet data
