@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Start Node.js SSR server in background
-echo "Starting Node.js SSR server on port 3000..."
+echo "Starting Node.js SSR server on port 8080..."
 cd /app
 node scripts/server.js &
 
@@ -9,7 +9,7 @@ node scripts/server.js &
 sleep 3
 
 # Check if Node.js is running
-if curl -f http://localhost:3000/health >/dev/null 2>&1; then
+if curl -f http://localhost:8080/health >/dev/null 2>&1; then
     echo "Node.js SSR server is healthy"
 else
     echo "Warning: Node.js SSR server may not be responding"
