@@ -10,6 +10,7 @@ export default defineConfig((configEnv: ConfigEnv): UserConfig => {
   const ssrBuild = (configEnv as any).ssrBuild
 
   return {
+    base: "/",
     plugins: [
       mdx({
         providerImportSource: "@mdx-js/react", // makes MDX respect <MDXProvider />
