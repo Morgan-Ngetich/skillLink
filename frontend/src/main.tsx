@@ -1,28 +1,18 @@
 import { StrictMode } from 'react';
-import { createRoot, hydrateRoot } from 'react-dom/client';
-import {
-  ChakraProvider,
-  Spinner,
-  Flex
-} from '@chakra-ui/react';
-
+import { createRoot } from 'react-dom/client';
+import { ChakraProvider, Spinner, Flex } from '@chakra-ui/react';
+import { ColorModeScript } from '@chakra-ui/system';
+import { RouterProvider, createRouter, } from '@tanstack/react-router';
+import { QueryClient, QueryClientProvider, } from '@tanstack/react-query';
 import { routeTree } from './routeTree.gen';
-import {
-  RouterProvider,
-  createRouter
-} from '@tanstack/react-router';
-
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ColorModeProvider } from '@/components/ui/color-mode';
 import themeSystem from './theme';
 import { Toaster } from '@/components/ui/toaster';
 import { GlobalStyles } from './components/ui/GlobalStyles';
 import { useSession } from './hooks/auth/useSession';
-
 import { MDXProvider } from '@mdx-js/react';
 import MDXComponents from '@/crackmode/components/MDXComponents';
 import { HelmetProvider } from 'react-helmet-async';
-import { ColorModeScript } from '@chakra-ui/system';
 
 const queryClient = new QueryClient();
 
@@ -49,7 +39,7 @@ const App = () => {
 
 const AppTree = () => (
   <StrictMode>
-    <ColorModeScript initialColorMode="dark" />
+    <ColorModeScript initialColorMode="system" />
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <ChakraProvider value={themeSystem}>
@@ -66,14 +56,6 @@ const AppTree = () => (
   </StrictMode>
 );
 
-
-// check if we are in SSR mode (hydration)
 const container = document.getElementById("root")!;
-if (container.innerHTML) {
-  // Hrdrate if there's existing content (from SSR)
-  hydrateRoot(container, <AppTree />)
-} else {
-  // Create root if no existing content (client-only)
-  createRoot(container).render(<AppTree />)
-}
 
+createRoot(container).render(<AppTree />);
