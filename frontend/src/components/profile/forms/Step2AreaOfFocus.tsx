@@ -8,19 +8,17 @@ import {
   Flex,
 } from '@chakra-ui/react';
 import { FiCheck } from "react-icons/fi"
-import { useColorModeValue } from '@/components/ui';
 import { useFormContext, Controller } from 'react-hook-form';
 import { FormControl } from '@chakra-ui/form-control';
 
-// ✅ Import the new options
 import { goalsFocusOptions, type AreaOfFocus } from '@/constants/goalsFocusOptions'; // <-- adjust path
 
 export default function Step1AreaOfFocus() {
   const { control } = useFormContext();
 
-  const selectedBg = useColorModeValue('teal.200', 'teal.900');
-  const selectedIconColor = useColorModeValue('teal.800', 'teal.400');
-  const iconColor = useColorModeValue('gray.500', 'gray.400');
+  const selectedBg = { base: 'teal.200', _dark: 'teal.900' }
+  const selectedIconColor = { base: 'teal.800', _dark: 'teal.400' }
+  const iconColor = { base: 'gray.500', _dark: 'gray.400' }
 
   return (
     <VStack align="start" gap={5} mt={8}>

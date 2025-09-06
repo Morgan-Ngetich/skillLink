@@ -5,7 +5,6 @@ import {
   Link
 } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
-import { useColorModeValue } from "@/components/ui"
 import type { HeadingData } from "../types/docs"
 
 interface TableOfContentsProps {
@@ -14,8 +13,8 @@ interface TableOfContentsProps {
 
 const TableOfContents: React.FC<TableOfContentsProps> = ({ headings }) => {
   const [activeId, setActiveId] = useState<string>("")
-  const linkColor = useColorModeValue("gray.600", "gray.400")
-  const activeLinkColor = useColorModeValue("teal.600", "teal.200")
+  const linkColor = { base: 'gray.600', _dark: 'gray.400' }
+  const activeLinkColor = { base: 'teal.600', _dark: 'teal.200' }
 
   useEffect(() => {
     if (headings.length === 0) return;

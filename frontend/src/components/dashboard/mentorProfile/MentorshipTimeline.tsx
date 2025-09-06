@@ -14,7 +14,7 @@ import {
   VStack,
   IconButton,
 } from '@chakra-ui/react';
-import { Avatar, useColorModeValue, Tooltip } from '@/components/ui';
+import { Avatar, Tooltip, useColorModeValue } from '@/components/ui';
 import {
   LuCalendarClock,
   LuCheck,
@@ -162,8 +162,7 @@ const sessions: Session[] = [
 ];
 
 const MentorshipTimeline = () => {
-  const borderColor = useColorModeValue('gray.200', 'gray.600');
-  const bellColor = useColorModeValue('gray.700', 'gray.100');
+  const borderColor = { base: 'gray.200', _dark: 'gray.600' };
   const toast = useToaster();
 
   const [reminders, setReminders] = useState<Record<string, boolean>>({});
@@ -245,6 +244,9 @@ const MentorshipTimeline = () => {
     }
   };
 
+
+  const iconBell = useColorModeValue("gray.200", "gray.600")
+  
   return (
     <Box border={'1px solid'} borderRadius={'lg'} w='full'>
       <Box px={8} pt={4} position="sticky" top={0} zIndex={1}>
@@ -388,7 +390,7 @@ const MentorshipTimeline = () => {
                                     exit={{ scale: 0.6, opacity: 0 }}
                                     transition={{ duration: 0.3 }}
                                   >
-                                    <FaBellSlash color={bellColor} />
+                                    <FaBellSlash color={iconBell} />
                                   </MotionIcon>
                                 )}
                               </AnimatePresence>
@@ -456,7 +458,6 @@ const MentorshipTimeline = () => {
                                     border="1px solid"
                                     borderColor="gray.200"
                                     _hover={{
-                                      // bg: useColorModeValue('gray.50', 'gray.700'),
                                       textDecoration: 'none'
                                     }}
                                   >

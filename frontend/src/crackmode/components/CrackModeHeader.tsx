@@ -24,7 +24,7 @@ import { FaChevronDown, FaSearch, FaTimes } from 'react-icons/fa';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useSession } from '@/hooks/auth/useSession';
 import { useNavigate } from '@tanstack/react-router';
-import { ColorModeButton, useColorModeValue } from '@/components/ui';
+import { ColorModeButton } from '@/components/ui';
 import { useNavigateWithRedirect } from '@/hooks/auth/authState';
 import { DocsSearch } from './DocsSearch';
 import { FaCalendar } from 'react-icons/fa6';
@@ -43,9 +43,9 @@ const CrackModeHeader: React.FC<HeaderProps> = ({ page }) => {
   const navigateWithRedirect = useNavigateWithRedirect();
 
   // Color mode values
-  const crack = useColorModeValue("green.500", "green.400");
-  const bgColor = useColorModeValue("white", "gray.900");
-  const borderColor = useColorModeValue("gray.200", "gray.700");
+  const crack = { base: 'green.500', _dark: 'green.400' }
+  const bgColor = { base: 'white', _dark: 'gray.900' }
+  const borderColor = { base: 'gray.200', _dark: 'gray.700' }
 
   // Mobile drawer state
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -79,7 +79,7 @@ const CrackModeHeader: React.FC<HeaderProps> = ({ page }) => {
       <Box
         as="header"
         w="100%"
-        bg={bgColor}
+        bg={{ base: 'white', _dark: 'gray.900' }}
         borderBottom="1px solid"
         borderColor={borderColor}
         position="sticky"
@@ -363,7 +363,7 @@ const CrackModeHeader: React.FC<HeaderProps> = ({ page }) => {
                         Login
                       </Button>
                     )} */}
-                    <ColorModeButton variant={"surface"}/>
+                    <ColorModeButton variant={"surface"} />
                   </HStack>
                 </Drawer.Title>
                 <Drawer.CloseTrigger />

@@ -13,14 +13,13 @@ import {
   LuHeart,
   LuSmartphone,
 } from "react-icons/lu"
-import { useColorModeValue } from "@/components/ui"
 // import GoalsProjectsTracker from "../GoalsProjectsTracker/Index"
 import { ProjectCard } from "../GoalsProjectsTracker/ProjectCard";
 import { fakeProjects } from "@/client/services/ment";
 
 
 const GoalsAndInterestsTabs = () => {
-  const selectedBg = useColorModeValue("gray.200", "gray.700")
+  const selectedBg =   { base: 'gray.200', _dark: 'gray.700' }
   const userInterests = [
     {
       summary: "Inclusive Design and Accessibility",

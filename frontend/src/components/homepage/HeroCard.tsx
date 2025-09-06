@@ -10,12 +10,12 @@ import {
   Icon,
 } from '@chakra-ui/react';
 import { Tabs } from '@chakra-ui/react';
-import { AvatarGroup, Avatar, useColorModeValue } from '../ui';
+import { AvatarGroup, Avatar } from '../ui';
 import { LuUser, LuUsers, LuBookOpen } from 'react-icons/lu';
 import { FiYoutube, FiUserCheck, FiGlobe, FiBookOpen, } from 'react-icons/fi';
 
 const HeroCard = () => {
-  const avs = useColorModeValue('gray.100', 'gray.700');
+  const avs = { base: 'gray.100', _dark: 'gray.700' };
   return (
     <Flex
       direction={{ base: 'column', md: 'row' }}
@@ -101,7 +101,7 @@ const HeroCard = () => {
           </Box>
 
           <Box
-            bg={useColorModeValue("whiteAlpha.700", "blackAlpha.600")}
+            bg={{ base: 'whiteAlpha.700', _dark: 'blackAlpha.600' }}
             p={4}
             borderRadius="lg"
             backdropFilter="blur(4px)"

@@ -4,14 +4,13 @@ import {
   Wrap,
   WrapItem,
 } from "@chakra-ui/react"
-import { useColorModeValue } from "@/components/ui"
 
 interface SkillsSectionProps {
   skills: string[]
 }
 
 export default function SkillsSection({ skills }: SkillsSectionProps) {
-  const bg = useColorModeValue("gray.200", "gray.700")
+  const bg = { base: 'gray.200', _dark: 'gray.700' }      
 
   if (!skills?.length) return null
 

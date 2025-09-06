@@ -14,7 +14,7 @@ import {
   SegmentGroup,
 } from '@chakra-ui/react';
 import { Alert, Tag } from '@/components/ui';
-import { StyledInput, useColorModeValue } from '@/components/ui';
+import { StyledInput } from '@/components/ui';
 import { FormControl, FormLabel } from '@chakra-ui/form-control';
 import { useFormContext, Controller, useWatch } from 'react-hook-form';
 import { FiCheck, FiPlus, FiX } from 'react-icons/fi';
@@ -42,9 +42,9 @@ export default function Step3GoalsInterests() {
     )
   ).map(str => JSON.parse(str));
 
-  const selectedBg = useColorModeValue('teal.200', 'teal.900');
-  const selectedIconColor = useColorModeValue('teal.800', 'teal.400');
-  const iconColor = useColorModeValue('gray.500', 'gray.400');
+  const selectedBg = { base: 'teal.200', _dark: 'teal.900' }
+  const selectedIconColor = { base: 'teal.800', _dark: 'teal.400' }
+  const iconColor = { base: 'gray.500', _dark: 'gray.400' }
 
   return (
     <VStack align="start" gap={5}>

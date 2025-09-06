@@ -9,7 +9,6 @@ import {
   HStack
 } from "@chakra-ui/react";
 import { Link } from "@tanstack/react-router"
-import { useColorModeValue } from "@/components/ui/color-mode"
 import { BsFillPatchCheckFill } from "react-icons/bs";
 import { FaPlayCircle } from "react-icons/fa";
 import CrackModeHeader from "./components/CrackModeHeader";
@@ -24,9 +23,9 @@ import ViewCalendar from "./components/calendar/ViewCalendar";
 // ];
 
 const Home = () => {
-  const checkerbgColor = useColorModeValue("gray.200", "gray.700");
-  const gradientFrom = useColorModeValue("white", "bg")
-  const gradientTo = useColorModeValue("gray.150", "gray.800")
+  const checkerbgColor = { base: 'gray.200', _dark: 'gray.700' }
+  const gradientFrom = { base: 'white', _dark: 'bg' }
+  const gradientTo = { base: 'gray.150', _dark: 'gray.800' }
 
   return (
     <>
@@ -219,7 +218,7 @@ const Home = () => {
             </Box>
 
             {/* Right Section (Image) */}
-            <Box flex={1} display="flex" justifyContent="center" my={{base: 6, md: 0}}>
+            <Box flex={1} display="flex" justifyContent="center" my={{ base: 6, md: 0 }}>
               {/* <Image
                 src={LandingPageimage} // Update with CrackMode branded illustration
                 alt="CrackMode Community"

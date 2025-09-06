@@ -6,7 +6,7 @@ import {
 } from "@chakra-ui/react"
 import TableOfContents from "./TableOfContents"
 import type { HeadingData } from "../types/docs"
-import { useColorModeValue, BreadcrumbRoot, BreadcrumbLink, BreadcrumbCurrentLink } from "@/components/ui"
+import { BreadcrumbRoot, BreadcrumbLink, BreadcrumbCurrentLink } from "@/components/ui"
 import { useBreadcrumbItems } from "../hooks/useBreadcrumbItems"
 
 interface DocsLayoutProps {
@@ -19,7 +19,7 @@ const DocsLayout = ({ children, headings }: DocsLayoutProps) => {
   const scrollRef = useRef<HTMLDivElement>(null)
 
   // Get breadcrumbs with structured data
-  const { displayItems  } = useBreadcrumbItems()
+  const { displayItems } = useBreadcrumbItems()
 
   const handleScroll = () => {
     if (scrollRef.current) {
@@ -35,13 +35,8 @@ const DocsLayout = ({ children, headings }: DocsLayoutProps) => {
     }
   }, [])
 
-  const bgColor = useColorModeValue(
-    scrolled ? "white" : "transparent",
-    scrolled ? "gray.900" : "transparent"
-  )
+  const borderColor = { base: 'gray.200', _dark: 'gray.700' }
 
-
-  const borderColor = useColorModeValue("gray.200", "gray.700")
 
   return (
     <Flex h="100vh" overflow="hidden">
@@ -54,7 +49,7 @@ const DocsLayout = ({ children, headings }: DocsLayoutProps) => {
               position="sticky"
               top={0}
               zIndex="5"
-              bg={bgColor}
+              bg={scrolled ? { base: 'white', _dark: 'gray.900' } : 'transparent'}
               pb={2}
               pt={{ base: 1, md: 2 }}
               w="full"

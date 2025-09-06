@@ -11,7 +11,7 @@ import {
   Button,
   Collapsible,
 } from '@chakra-ui/react';
-import { useColorModeValue, Tag } from '@/components/ui';
+import { Tag } from '@/components/ui';
 import { FiEdit } from 'react-icons/fi';
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa6';
 import { useState } from 'react';
@@ -51,7 +51,7 @@ const user = {
 
 export default function MenteeProfileCard() {
   const [isExpanded, setIsExpanded] = useState(false);
-  const border = useColorModeValue('1px solid', '');
+  const border = { base: '1px solid', _dark: '' };
 
   const renderTags = () =>
     user.area_of_focus?.map((focus) => (

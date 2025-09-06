@@ -5,14 +5,14 @@ import DocsLayout from "@/crackmode/components/DocsLayout";
 import { useHeadings } from "@/crackmode/hooks/useHeading";
 import Sidebar from "@/crackmode/components/Sidebar";
 import CrackModeHeader from "@/crackmode/components/CrackModeHeader"
-import { useColorModeValue } from "@/components/ui";
 // import { useDocumentFromPath } from "@/crackmode/hooks/useDocumentFromPath";
 // import { useBreadcrumbItems } from "@/crackmode/hooks/useBreadcrumbItems";
 import DocumentSEOHead from "@/seo/DocumentSEOHead";
 
 function DocsRouteComponent() {
   const headings = useHeadings();
-  const borderColor = useColorModeValue("gray.200", "gray.700")
+  const borderColor =      { base: 'gray.200', _dark: 'gray.700' }
+
 
   return (
     <Box h="100vh" display="flex" flexDirection="column">

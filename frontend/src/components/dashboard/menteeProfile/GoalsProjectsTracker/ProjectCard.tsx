@@ -36,7 +36,6 @@ export function ProjectCard({
   todayFocus,
   mentors = []
 }: Project) {
-  // const bg = useColorModeValue('gray.50', 'gray.800');
   const highlight = todayFocus
     ? {
       border: '2px solid',

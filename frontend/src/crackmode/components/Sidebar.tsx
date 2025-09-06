@@ -7,10 +7,9 @@ import {
   Icon,
   Collapsible,
 } from "@chakra-ui/react"
-import { useColorModeValue } from "@/components/ui"
 import { useRouter } from "@tanstack/react-router"
 import { sidebarConfig } from "../config/sidebarConfig"
-import { FaChevronUp , FaChevronRight } from "react-icons/fa";
+import { FaChevronUp, FaChevronRight } from "react-icons/fa";
 import { useSidebarStore } from "../hooks/stores/sidebarStore"
 
 const Sidebar = () => {
@@ -39,9 +38,9 @@ const Sidebar = () => {
     }
   }, [router.basepath, expandedSections, setExpandedSections])
 
-  const linkHoverBg = useColorModeValue("gray.100", "gray.700")
-  const activeLinkBg = useColorModeValue("blue.50", "blue.900")
-  const activeLinkColor = useColorModeValue("blue.600", "blue.200")
+  const linkHoverBg = { base: 'gray.100', _dark: 'gray.700' }
+  const activeLinkBg = { base: 'blue.50', _dark: 'blue.900' }
+  const activeLinkColor = { base: 'blue.600', _dark: 'blue.200' }
 
   return (
     <VStack align="stretch" gap={1}>
@@ -71,7 +70,7 @@ const Sidebar = () => {
                 {section.title}
               </Text>
               <Icon
-                as={expandedSections[section.title] ? FaChevronUp  : FaChevronRight}
+                as={expandedSections[section.title] ? FaChevronUp : FaChevronRight}
                 w={4}
                 h={4}
                 color="gray.400"
@@ -113,7 +112,7 @@ const Sidebar = () => {
 
                       {link.children && (
                         <Icon
-                          as={isLinkExpanded ? FaChevronUp  : FaChevronRight}
+                          as={isLinkExpanded ? FaChevronUp : FaChevronRight}
                           w={4}
                           h={4}
                           color="gray.400"

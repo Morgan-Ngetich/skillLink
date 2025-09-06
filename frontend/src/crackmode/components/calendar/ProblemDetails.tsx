@@ -17,7 +17,6 @@ import {
   DialogHeader,
   DialogBody,
   DialogCloseTrigger,
-  useColorModeValue,
 } from "@/components/ui"
 import type { LeetcodeProblem } from "@/crackmode/types/calendar"
 import { LuExternalLink } from "react-icons/lu";
@@ -30,7 +29,7 @@ interface ProblemDetailsProps {
 }
 
 export function ProblemDetails({ isOpen, date, problems, onClose }: ProblemDetailsProps) {
-  const borderColor = useColorModeValue("gray.200", "gray.600")
+  const borderColor = { base: 'gray.200', _dark: 'gray.600' }
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -68,7 +67,7 @@ export function ProblemDetails({ isOpen, date, problems, onClose }: ProblemDetai
       <DialogContent maxW="2xl" border="1px solid">
         <DialogHeader>
           <VStack align="start" gap={1}>
-            <Text fontSize={{base: "lg", md: "xl"}}>Problems for {formatDate(date)}</Text>
+            <Text fontSize={{ base: "lg", md: "xl" }}>Problems for {formatDate(date)}</Text>
             <Text fontSize="sm" color={'fg.muted'}>
               {problems.length} problem{problems.length !== 1 ? "s" : ""} tracked
             </Text>
@@ -76,7 +75,7 @@ export function ProblemDetails({ isOpen, date, problems, onClose }: ProblemDetai
         </DialogHeader>
 
         <DialogCloseTrigger asChild >
-          <CloseButton onClick={onClose} variant={'surface'}/>
+          <CloseButton onClick={onClose} variant={'surface'} />
         </DialogCloseTrigger>
 
         <DialogBody maxH={"md"} overflowY={"auto"}>

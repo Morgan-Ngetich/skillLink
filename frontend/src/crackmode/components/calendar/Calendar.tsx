@@ -9,7 +9,7 @@ import {
   Card,
   CloseButton,
 } from "@chakra-ui/react"
-import { useColorModeValue, Tooltip } from "@/components/ui"
+import { Tooltip } from "@/components/ui"
 import type { LeetcodeProblem } from "@/crackmode/types/calendar"
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa6";
 import { type FilterType } from "@/crackmode/types/calendar";
@@ -40,12 +40,12 @@ export const Calendar: React.FC<CalendarProps> = ({ problems, onDateClick }) => 
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
   // Color mode values
-  const cardBg = useColorModeValue("white", "gray.800")
-  const cardHoverBg = useColorModeValue("gray.50", "gray.700")
-  const borderColor = useColorModeValue("gray.200", "gray.600")
-  const textColor = useColorModeValue("gray.800", "gray.100")
-  const mutedTextColor = useColorModeValue("gray.600", "gray.400")
-  const todayRingColor = useColorModeValue("blue.500", "blue.300")
+  const cardBg = { base: 'white', _dark: 'gray.800' }
+  const cardHoverBg = { base: 'gray.50', _dark: 'gray.700' }
+  const borderColor = { base: 'gray.200', _dark: 'gray.600' }
+  const textColor = { base: 'gray.800', _dark: 'gray.100' }
+  const mutedTextColor = { base: 'gray.600', _dark: 'gray.400' }
+  const todayRingColor = { base: 'blue.500', _dark: 'blue.300' }
 
   // Calculate date bounds based on problem data
   const { earliestDate, latestDate } = useMemo(() => {

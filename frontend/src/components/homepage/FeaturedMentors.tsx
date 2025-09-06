@@ -1,7 +1,6 @@
 import { MentorCard } from "@/components/dashboard/mentorProfile/MentorCard";
 import { Heading, SimpleGrid, Box, HStack, Button } from "@chakra-ui/react";
 import { FaAngleRight } from "react-icons/fa6";
-import { useColorModeValue } from "../ui";
 import { mentors } from "@/client/services/ment";
 
 
@@ -13,7 +12,7 @@ const FeaturedMentors = () => {
         position="sticky"
         top="0"
         zIndex="sticky"
-        bg={useColorModeValue("white", "gray.900")}
+        bg={{ base: 'white', _dark: 'gray.900' }}
         py={2}
       >
         <Heading fontSize="lg">Featured Mentors</Heading>
@@ -23,7 +22,7 @@ const FeaturedMentors = () => {
           borderRadius="full"
           variant="outline"
           border="1px solid"
-          _hover={{ bg: useColorModeValue("gray.200", "gray.700") }}
+          _hover={{ bg: { base: 'gray.200', _dark: 'gray.700' } }}
         >
           <FaAngleRight />
           See more

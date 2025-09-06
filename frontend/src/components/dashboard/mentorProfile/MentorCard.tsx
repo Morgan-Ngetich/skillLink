@@ -9,7 +9,7 @@ import {
   Icon,
   Image,
 } from '@chakra-ui/react';
-import { useColorModeValue, Avatar, Tooltip } from '@/components/ui';
+import { Avatar, Tooltip } from '@/components/ui';
 import { FaStar, FaMapMarkerAlt } from 'react-icons/fa';
 import type { Mentor } from '@/client/services/ment';
 
@@ -20,7 +20,8 @@ interface MentorCardProps {
 }
 
 export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
-  const badgeBg = useColorModeValue('gray.50', 'gray.100')
+  const badgeBg = { base: 'gray.50', _dark: 'gray.100' }
+  
   return (
     <Box
       // TODO Create a variant in the theme file, add this as the default styles for card.
@@ -28,7 +29,7 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
       boxShadow="xl"
       bg={"cardbg"}
       borderWidth="2px"
-      borderColor={useColorModeValue('gray.200', 'gray.700')}
+      borderColor={{ base: 'gray.200', _dark: 'gray.700' }}
     >
       {/* Cover Image and Avatar */}
       <Box position="relative" borderRadius="xl">

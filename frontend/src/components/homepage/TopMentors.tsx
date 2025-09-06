@@ -1,6 +1,5 @@
 import { Box, Flex, Text, Image, Badge, VStack, HStack } from "@chakra-ui/react";
 import { FaStar } from "react-icons/fa6";
-import { useColorModeValue } from "../ui";
 
 const mentors = [
   { name: "Sarah Mento", role: "AI Researcher", img: 4 },
@@ -12,7 +11,7 @@ const mentors = [
 ];
 
 const TopMentors = () => {
-  const border = useColorModeValue('gray.200', 'gray.700')
+  const border = { base: 'gray.200', _dark: 'gray.700' }
   return (
     <Box
       p="4"

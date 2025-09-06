@@ -6,7 +6,7 @@ import { LiaTimesSolid } from "react-icons/lia";
 import { mentors, type Mentor } from "@/client/services/ment";
 import { useDebounce } from "@/hooks/useDebounce"; // Adjust the import path as necessary
 import { useFuseSearch } from "@/hooks/useFuseSearch ";
-import { Avatar, useColorModeValue } from "../ui";
+import { Avatar } from "../ui";
 import type { FuseResult } from "fuse.js";
 
 const Search = () => {
@@ -96,7 +96,10 @@ const Search = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [ref]);
 
-  const highlightTextColor = useColorModeValue("teal.500", "teal.300");
+  const highlightTextColor = { base: 'teal.500', _dark: 'teal.300' }
+  const suggestionBg = { base: 'bg.subtle', _dark: 'bg.muted' }
+  const suggestionBgHover = { base: 'bg.muted', _dark: 'bg.subtle' }
+
   function highlightText(text: string, query: string) {
     if (!query) return text;
     const regex = new RegExp(`(${query})`, "gi");
@@ -114,8 +117,6 @@ const Search = () => {
   }
 
 
-  const suggestionBg = useColorModeValue("bg.subtle", "bg.muted")
-  const suggestionBgHover = useColorModeValue("bg.muted", "bg.subtle")
 
   return (
     <Box
