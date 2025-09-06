@@ -17,14 +17,13 @@ ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL \
 COPY . .
 RUN npm run build
 
-# After RUN npm run build, add:
 RUN echo "=== BUILD OUTPUT CHECK ===" && \
     ls -la dist/ && \
     echo "=== DIST/SERVER CHECK ===" && \
     ls -la dist/server/ && \
     echo "=== CHECKING ENTRY SERVER ===" && \
     cat dist/server/entry-server.js | head -20 || echo "No entry-server.js found"
-    
+
 # Stage 2: Production with nginx + Node.js
 FROM nginx:1.25-alpine
 
@@ -49,8 +48,7 @@ COPY --from=build /app/dist/server /app/dist/server
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/scripts/server.js ./scripts/
 
-# Install production dependencies only
-RUN npm install --production
+RUN npm install
 
 # Copy nginx config
 COPY nginx.prod.conf /etc/nginx/nginx.conf
