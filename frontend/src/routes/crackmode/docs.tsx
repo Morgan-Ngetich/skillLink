@@ -5,36 +5,60 @@ import DocsLayout from "@/crackmode/components/DocsLayout";
 import Sidebar from "@/crackmode/components/Sidebar";
 import CrackModeHeader from "@/crackmode/components/CrackModeHeader"
 import DocumentSEOHead from "@/seo/DocumentSEOHead";
-import { getDocumentFromPath, getBreadcrumbItems } from "@/crackmode/hooks/server-data";
+import { getDocumentFromPath, getBreadcrumbItems, getHeadings } from "@/crackmode/hooks/server-data";
+import { useDocumentFromPath } from "@/crackmode/hooks/useDocumentFromPath";
+import { useBreadcrumbItems } from "@/crackmode/hooks/useBreadcrumbItems";
+import { useHeadings } from "@/crackmode/hooks/useHeading";
 import { type EnhancedSearchableDoc } from "@/crackmode/types/search";
-import { type BreadcrumbItem } from "@/crackmode/types/docs";
+import { type BreadcrumbItem, type HeadingData } from "@/crackmode/types/docs";
 
 // Server-side data fetching function
-export async function getServerData(url: string): Promise<{
+export async function getServerData(pathname: string, origin: string): Promise<{
   doc: EnhancedSearchableDoc | undefined;
   breadcrumbs: BreadcrumbItem[];
   currentPath: string;
   baseUrl: string;
+  headings: HeadingData[];
 }> {
-  // Extract path from URL
-  const urlObj = new URL(url);
-  const currentPath = urlObj.pathname;
-
   // Use server-side functions instead of hooks
-  const doc = getDocumentFromPath(currentPath);
-  const { structuredDataItems: breadcrumbs } = getBreadcrumbItems(currentPath);
+  const doc = getDocumentFromPath(pathname);
+  const { structuredDataItems: breadcrumbs } = getBreadcrumbItems(pathname);
+  const headings = getHeadings(doc);
+
+  console.log("Server data - docs:", doc);
+  console.log("Server data - breadcrumbs:", breadcrumbs);
+  console.log("Server data - headings:", headings);
 
   return {
     doc,
     breadcrumbs,
-    currentPath,
-    baseUrl: urlObj.origin
+    headings,
+    currentPath: pathname,
+    baseUrl: origin
   };
 }
 
 function DocsRouteComponent() {
-  const borderColor = { base: 'gray.200', _dark: 'gray.700' }
-  const { doc, breadcrumbs, currentPath, baseUrl } = Route.useLoaderData();
+  const borderColor = { base: 'gray.200', _dark: 'gray.700' };
+  const loaderData = Route.useLoaderData();
+  const isClient = typeof window !== 'undefined';
+
+  // Client-side hooks
+  const clientDoc = useDocumentFromPath();
+  const clientBreadcrumbData = useBreadcrumbItems();
+  const clientHeadings = useHeadings();
+
+  // Server-side data
+  const serverDoc = loaderData?.doc;
+  const serverBreadcrumbs = loaderData?.breadcrumbs || [];
+  const serverHeadings = loaderData?.headings || [];
+
+  // Choose between server data (SSR) and client hooks (CSR)
+  const doc = isClient ? clientDoc : serverDoc;
+  const breadcrumbs = isClient ? clientBreadcrumbData.structuredDataItems : serverBreadcrumbs;
+  const headings = isClient ? clientHeadings : serverHeadings;
+  const currentPath = isClient ? window.location.pathname : loaderData?.currentPath;
+  const baseUrl = isClient ? window.location.origin : loaderData?.baseUrl;
 
   return (
     <Box h="100vh" display="flex" flexDirection="column">
@@ -66,7 +90,7 @@ function DocsRouteComponent() {
 
         <Suspense fallback={<Spinner />}>
           {/* Main Docs Content */}
-          <DocsLayout headings={[]}>
+          <DocsLayout headings={headings}>
             <Outlet />
           </DocsLayout>
         </Suspense>
@@ -77,8 +101,38 @@ function DocsRouteComponent() {
 
 export const Route = createFileRoute("/crackmode/docs")({
   component: DocsRouteComponent,
-  // Add loader for server-side data
-  loader: async ({location}) => {
-    return getServerData(location.href);
+  // loader for server-side data
+  loader: async ({ location, context }) => {
+    const isClient = typeof window !== 'undefined';
+
+    // On client, return minimal data - hooks will handle the rest
+    if (isClient) {
+      return {
+        doc: undefined,
+        breadcrumbs: [],
+        headings: [],
+        currentPath: location.pathname,
+        baseUrl: window.location.origin
+      };
+    }
+
+    // Server-side: fetch full data
+    const pathname = location.pathname;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const origin = (context as any)?.req?.headers?.origin || (context as any)?.req?.headers?.host || 'https://frontend-production-a85f.up.railway.app';
+
+    try {
+      return await getServerData(pathname, origin);
+    } catch (error) {
+      console.error('Failed to fetch server data:', error);
+      // Return fallback data
+      return {
+        doc: undefined,
+        breadcrumbs: [],
+        headings: [],
+        currentPath: pathname,
+        baseUrl: origin
+      };
+    }
   }
 });
