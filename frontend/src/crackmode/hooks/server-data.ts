@@ -1,7 +1,8 @@
 import { type EnhancedSearchableDoc } from '../types/search';
-import { type BreadcrumbItem } from '../types/docs';
+import type { BreadcrumbItem, HeadingData } from '../types/docs';
 import { sidebarConfig } from '../config/sidebarConfig';
 import SearchData from '@/crackmode/data/searchData.json';
+import slugify from 'slugify';
 
 // Server-side version of useDocumentFromPath
 export function getDocumentFromPath(pathname: string): EnhancedSearchableDoc | undefined {
@@ -106,4 +107,67 @@ export function getBreadcrumbItems(path: string): {
     displayItems,
     structuredDataItems
   };
+}
+
+
+
+
+// useHeadings:
+// Server-side version of useHeadings - Option 1: Pre-extracted headings
+function getHeadingsFromDoc(doc: EnhancedSearchableDoc | undefined): HeadingData[] {
+  if (!doc || !doc.headings) return [];
+  
+  // If your docs already have headings pre-extracted, use them
+  return doc.headings.map((heading, index) => ({
+    id: heading.id || `heading-${index}`,
+    text: heading.text,
+    level: heading.level || 2 // Default to h2 if not specified
+  }));
+}
+
+// Server-side version of useHeadings - Option 2: Parse HTML content (complex)
+function extractHeadingsFromHtml(htmlContent: string): HeadingData[] {
+  // This is a simplified server-side HTML parser
+  // Note: This is complex and may not be 100% accurate
+  const headingRegex = /<h([2-4])[^>]*>(.*?)<\/h\1>/gi;
+  const headings: HeadingData[] = [];
+  const idCountMap: Record<string, number> = {};
+  
+  let match;
+  while ((match = headingRegex.exec(htmlContent)) !== null) {
+    const level = parseInt(match[1], 10);
+    const text = match[2].replace(/<[^>]*>/g, '').trim(); // Remove HTML tags
+    let baseId = slugify(text, { lower: true, strict: true });
+    
+    // Ensure unique ID
+    if (idCountMap[baseId]) {
+      idCountMap[baseId] += 1;
+      baseId = `${baseId}-${idCountMap[baseId]}`;
+    } else {
+      idCountMap[baseId] = 1;
+    }
+    
+    headings.push({
+      id: baseId,
+      text,
+      level
+    });
+  }
+  
+  return headings;
+}
+
+// Combined function that tries both approaches
+export function getHeadings(doc: EnhancedSearchableDoc | undefined, htmlContent?: string): HeadingData[] {
+  // First try pre-extracted headings
+  if (doc?.headings?.length) {
+    return getHeadingsFromDoc(doc);
+  }
+  
+  // Fallback to HTML parsing if content is provided
+  if (htmlContent) {
+    return extractHeadingsFromHtml(htmlContent);
+  }
+  
+  return [];
 }
