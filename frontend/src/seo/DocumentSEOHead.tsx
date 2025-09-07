@@ -1,10 +1,7 @@
-// src/crackmode/components/seo/DocumentSEOHead.tsx - SSR Optimized
 import { Helmet } from 'react-helmet-async'
 import { type EnhancedSearchableDoc } from '@/crackmode/types/search'
 import { type BreadcrumbItem } from '@/crackmode/types/docs';
 import { useMemo } from 'react';
-import { useDocumentFromPath } from '@/crackmode/hooks/useDocumentFromPath';
-import { useBreadcrumbItems } from '@/crackmode/hooks/useBreadcrumbItems';
 
 interface DocumentSEOHeadProps {
   doc?: EnhancedSearchableDoc;
@@ -12,7 +9,10 @@ interface DocumentSEOHeadProps {
   description?: string;
   breadcrumbs?: BreadcrumbItem[]
   siteName?: string;
-  twitterHandle?: string
+  twitterHandle?: string;
+  // for SSR
+  currentPath?: string;
+  baseUrl?: string;
 }
 
 const DocumentSEOHead: React.FC<DocumentSEOHeadProps> = ({
@@ -21,33 +21,23 @@ const DocumentSEOHead: React.FC<DocumentSEOHeadProps> = ({
   description: descriptionProp,
   breadcrumbs: breadcrumbsProp,
   siteName = "Crackmode",
-  twitterHandle = "@crackmode"
+  twitterHandle = "@crackmode",
+  // SSR props
+  currentPath = typeof window !== 'undefined' ? window.location.pathname : '/',
+  baseUrl = typeof window !== 'undefined' ? window.location.origin : "https://frontend-production-a85f.up.railway.app"
 }) => {
   
-  // Only call hooks if we're in the browser (not SSR) and don't have props
-  const shouldUseFallbackHooks = typeof window !== 'undefined' && !docProp && !breadcrumbsProp
-  
-  const usedoumentfrompath = useDocumentFromPath()
-  const usebreadcrumbitems = useBreadcrumbItems()
-
-  const calldocs = shouldUseFallbackHooks ? usedoumentfrompath : null
-  const { structuredDataItems } = shouldUseFallbackHooks ? usebreadcrumbitems : { structuredDataItems: [] }
-  
-  // Memoize the doc and breadcrumbs to prevent unnecessary re-renders
-  const doc = useMemo(() => docProp ?? calldocs, [docProp, calldocs])
-  const breadcrumbs = useMemo(() => breadcrumbsProp ?? structuredDataItems, [breadcrumbsProp, structuredDataItems])
+  // Remove all hooks that depend on browser APIs
+  const doc = docProp;
+  const breadcrumbs = breadcrumbsProp || [];
 
   // Memoize all derived data including structured data
   const seoData = useMemo(() => {
-    const baseUrl = typeof window !== 'undefined' 
-      ? window.location.origin 
-      : "https://frontend-production-a85f.up.railway.app"
-
     // SEO values
     const title = doc?.seo?.title || titleProp || `${doc?.title || 'Documentation'} | CrackMode`
     const description = doc?.seo?.description || descriptionProp || doc?.excerpt || 'Master LeetCode & Algorithms with CrackMode community'
     const image = doc?.socialMedia?.ogImage || `${baseUrl}/api/v1/og?title=${encodeURIComponent(doc?.title || 'CrackMode')}&section=${encodeURIComponent(doc?.section || 'Documentation')}`
-    const url = doc?.canonicalUrl || `${baseUrl}${doc?.url || (typeof window !== 'undefined' ? window.location.pathname : '/')}`
+    const url = doc?.canonicalUrl || `${baseUrl}${currentPath}`
     const keywords = doc?.seo?.keywords || `${doc?.tags?.join(', ') || ''}, crackmode, leetcode, algorithms`
 
     // Generate article structured data
@@ -130,7 +120,7 @@ const DocumentSEOHead: React.FC<DocumentSEOHeadProps> = ({
       breadcrumbData,
       websiteData
     }
-  }, [doc, titleProp, descriptionProp, breadcrumbs, siteName])
+  }, [doc, titleProp, descriptionProp, breadcrumbs, siteName, baseUrl, currentPath])
 
   return (
     <Helmet prioritizeSeoTags>

@@ -1,4 +1,3 @@
-// This is the SSR server entry point.
 import { StrictMode } from 'react';
 import { renderToString } from 'react-dom/server';
 import { HelmetProvider } from 'react-helmet-async';
@@ -49,6 +48,7 @@ export async function render(url: string): Promise<RenderResult> {
     }
   });
 
+  // Preload all data for the route
   await router.load();
 
   const html = renderToString(
@@ -67,30 +67,28 @@ export async function render(url: string): Promise<RenderResult> {
     </StrictMode>
   );
 
-  // Inject Chakra's color mode script manually
   const colorModeScript = renderToString(
     <ColorModeScript initialColorMode="system" />
   );
 
   // Extract helmet data
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { helmet } = helmetContext as any;
 
   return {
     html,
     head: helmet
       ? {
-          title: helmet.title.toString(),
-          meta: helmet.meta.toString(),
-          link: helmet.link.toString(),
-          // Inject the color mode script at the end of helmet's script block
-          script: helmet.script.toString() + colorModeScript,
-        }
+        title: helmet.title.toString(),
+        meta: helmet.meta.toString(),
+        link: helmet.link.toString(),
+        script: helmet.script.toString() + colorModeScript,
+      }
       : {
-          title: '',
-          meta: '',
-          link: '',
-          script: colorModeScript, // fallback if no helmet
-        }
+        title: '',
+        meta: '',
+        link: '',
+        script: colorModeScript,
+      }
   };
 }

@@ -2,8 +2,8 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ChakraProvider, Spinner, Flex } from '@chakra-ui/react';
 import { ColorModeScript } from '@chakra-ui/system';
-import { RouterProvider, createRouter, } from '@tanstack/react-router';
-import { QueryClient, QueryClientProvider, } from '@tanstack/react-query';
+import { RouterProvider, createRouter } from '@tanstack/react-router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { routeTree } from './routeTree.gen';
 import { ColorModeProvider } from '@/components/ui/color-mode';
 import themeSystem from './theme';
@@ -56,6 +56,11 @@ const AppTree = () => (
   </StrictMode>
 );
 
-const container = document.getElementById("root")!;
+// Check if we're in a browser environment
+if (typeof window !== 'undefined') {
+  const container = document.getElementById("root")!;
 
-createRoot(container).render(<AppTree />);
+  // For no hydration, we just render the app without hydrating
+  // This means the client will start fresh without trying to reconcile with server HTML
+  createRoot(container).render(<AppTree />);
+}
