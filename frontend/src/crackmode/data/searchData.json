@@ -1033,9 +1033,272 @@
     }
   },
   {
+    "id": "problems/find-all-duplicates-in-an-array",
+    "title": "Find All Duplicates In An Array",
+    "content": "Find All Duplicates in an Array Difficulty: Medium LeetCode: 442. Find All Duplicates in an Array --- Problem Given an integer array nums of length n where all the integers of nums are in the range  1, n  and each integer appears at most twice, return an array of all the integers that appear twice. You must write an algorithm that runs in O n  time and uses only constant auxiliary space, excluding the space needed to store the output. Example 1:    Input: nums    4,3,2,7,8,2,3,1  Output:  2,3    Example 2:   Input: nums    1,1,2  Output:  1    Example 3:   Input: nums    1  Output:      Constraints: - n    nums.length - 1 0   mark:  4,3,2,-7,8,2,3,1  Process 3: index 2, nums 2  2   0   mark:  4,3,-2,-7,8,2,3,1  Process 2: index 1, nums 1  3   0   mark:  4,-3,-2,-7,8,2,3,1  Process 7: index 6, nums 6  3   0   mark:  4,-3,-2,-7,8,2,-3,1  Process 8: index 7, nums 7  1   0   mark:  4,-3,-2,-7,8,2,-3,-1  Process 2: index 1, nums 1  -3 0   mark:  -4,-3,-2,-7,8,2,-3,-1  Result:  2,3  , title:  Python - Counter  Easy  , language:  python , code: from collections import Counter def find_duplicates_counter nums :   Count frequency of each number count   Counter nums    Find numbers that appear exactly twice duplicates      for num, freq in count.items  : if freq    2: duplicates.append num  return duplicates One-liner version: def find_duplicates_oneliner nums : count   Counter nums  return  num for num, freq in count.items   if freq    2  Example: nums    4,3,2,7,8,2,3,1  count   4:1, 3:2, 2:2, 7:1, 8:1, 1:1 duplicates    3, 2   numbers with freq 2  , title:  Python - Set Tracking , language:  python , code: def find_duplicates_set nums : seen   set   duplicates   set     Use set to avoid duplicate results for num in nums: if num in seen: duplicates.add num  else: seen.add num  return list duplicates  Example walkthrough: nums    4,3,2,7,8,2,3,1  Process 4: not in seen   add to seen: 4 Process 3: not in seen   add to seen: 4,3 Process 2: not in seen   add to seen: 4,3,2 Process 7: not in seen   add to seen: 4,3,2,7 Process 8: not in seen   add to seen: 4,3,2,7,8 Process 2: in seen   add to duplicates: 2 Process 3: in seen   add to duplicates: 2,3 Process 1: not in seen   add to seen: 4,3,2,7,8,1 Result:  2,3  , title:  JavaScript , language:  javascript , code:    In-place marking approach  O 1  space  function findDuplicates nums  const duplicates     ; for  let i   0; i findDuplicates int   nums  List duplicates   new ArrayList    ; for  int i   0; i findDuplicatesSet int   nums  Set seen   new HashSet    ; Set duplicates   new HashSet    ; for  int num : nums  if  seen.contains num   duplicates.add num ; else seen.add num ; return new ArrayList   duplicates ;      --- Step-by-Step Walkthrough Let s trace through the in-place marking approach with nums    4,3,2,7,8,2,3,1 :   Initial:  4, 3, 2, 7, 8, 2, 3, 1  Process 4  index 3 : nums 3  7   0   mark negative After:  4, 3, 2, -7, 8, 2, 3, 1  Process 3  index 2 : nums 2  2   0   mark negative After:  4, 3, -2, -7, 8, 2, 3, 1  Process 2  index 1 : nums 1  3   0   mark negative After:  4, -3, -2, -7, 8, 2, 3, 1  Process 7  index 6 : nums 6  3   0   mark negative After:  4, -3, -2, -7, 8, 2, -3, 1  Process 8  index 7 : nums 7  1   0   mark negative After:  4, -3, -2, -7, 8, 2, -3, -1  Process 2  index 1 : nums 1  -3 0   mark negative After:  -4, -3, -2, -7, 8, 2, -3, -1  Final Result:  2, 3    --- Why The In-Place Approach Works Uses array as hash table - Each number points to its corresponding index Negative   visited - First visit: mark negative, Second visit: found duplicate! Perfect range match - Numbers  1,n  map perfectly to indices  0,n-1  Constant space - No extra arrays or sets needed, meets the constraint! --- Alternative Approaches Comparison Approach 1: In-Place Marking  Optimal  - Meets all constraints: O n  time, O 1  space - Tricky but efficient: Uses the array itself as a marker - Modifies input: Changes the original array Approach 2: Counter HashMap  Easy  - Time: O n , Space: O n  - doesn t meet space constraint - Very readable: Easy to understand and implement - Preserves input: Doesn t modify original array Approach 3: Set Tracking  Balanced  - Time: O n , Space: O n  - doesn t meet space constraint - Good balance: More intuitive than marking, cleaner than counter - Preserves input: Doesn t modify original array --- Common Mistakes to Avoid 1. Forgetting abs  : When checking nums index    0, the number itself might be negative from previous marking 2. Wrong index calculation: Remember index   num - 1 to convert from 1-based to 0-based 3. Using extra space: Counter and Set approaches don t meet the O 1  space requirement 4. Not handling edge cases: Empty array or single element should return empty list --- Complexity Analysis In-Place Marking  Optimal Solution : Time Complexity: O n  Single pass through the array Each operation is O 1  Space Complexity: O 1  Only uses a few variables Output space doesn t count toward space complexity Set Counter Approaches: Time Complexity: O n  Space Complexity: O n  Doesn t meet the constant space requirement --- Visual Example   Array:  4, 3, 2, 7, 8, 2, 3, 1  Index: 0 1 2 3 4 5 6 7 Mapping: Number   Index 1   0, 2   1, 3   2, 4   3, 5   4, 6   5, 7   6, 8   7 When we see number 2 first time: - Mark nums 1  as negative   When we see number 2 second time: - nums 1  is already negative   DUPLICATE!   Same logic applies to number 3: - First visit: mark nums 2  negative - Second visit: nums 2  already negative   DUPLICATE!     --- When to Use This Pattern This  in-place marking  pattern works when: - Numbers are in range  1, n  and array length is n - You need constant space complexity - Input array can be modified - Looking for duplicates, missing numbers, or first occurrence Similar problems: - Find All Numbers Disappeared in an Array - Find the Duplicate Number - First Missing Positive --- Test Cases to Try  python Test your solution with these: print find_duplicates  4,3,2,7,8,2,3,1      Should return  2,3  print find_duplicates  1,1,2      Should return  1  print find_duplicates  1      Should return    print find_duplicates  1,1      Should return  1  print find_duplicates  2,2,3,3,4,4      Should return  2,3,4     --- Key Takeaways - In-place marking is a powerful technique for constant space solutions - Use array indices as hash keys when numbers match the range  1,n  - Negative values as markers is a clever way to track state without extra space - Always consider space complexity requirements - they often guide the approach choice!",
+    "excerpt": "Find All Duplicates in an Array Difficulty: Medium LeetCode: 442. Find All Duplicates in an Array --- Problem Given an integer array nums of length n where all...",
+    "url": "/crackmode/docs/problems/find-all-duplicates-in-an-array",
+    "canonicalUrl": "https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/find-all-duplicates-in-an-array",
+    "section": "Problems",
+    "tags": [
+      "easy",
+      "medium",
+      "array",
+      "arrays",
+      "leetcode",
+      "algorithm"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "Find All Duplicates in an Array",
+        "id": "find-all-duplicates-in-an-array"
+      },
+      {
+        "level": 2,
+        "text": "Problem",
+        "id": "problem"
+      },
+      {
+        "level": 2,
+        "text": "Simple Explanation",
+        "id": "simple-explanation"
+      },
+      {
+        "level": 2,
+        "text": "Solution",
+        "id": "solution"
+      },
+      {
+        "level": 1,
+        "text": "Example walkthrough with [4,3,2,7,8,2,3,1]:",
+        "id": "example-walkthrough-with-43278231"
+      },
+      {
+        "level": 1,
+        "text": "Process 4: index=3, nums[3]=7 > 0 → mark: [4,3,2,-7,8,2,3,1]",
+        "id": "process-4-index3-nums37-0-mark-432-78231"
+      },
+      {
+        "level": 1,
+        "text": "Process 3: index=2, nums[2]=2 > 0 → mark: [4,3,-2,-7,8,2,3,1]",
+        "id": "process-3-index2-nums22-0-mark-43-2-78231"
+      },
+      {
+        "level": 1,
+        "text": "Process 2: index=1, nums[1]=3 > 0 → mark: [4,-3,-2,-7,8,2,3,1]",
+        "id": "process-2-index1-nums13-0-mark-4-3-2-78231"
+      },
+      {
+        "level": 1,
+        "text": "Process 7: index=6, nums[6]=3 > 0 → mark: [4,-3,-2,-7,8,2,-3,1]",
+        "id": "process-7-index6-nums63-0-mark-4-3-2-782-31"
+      },
+      {
+        "level": 1,
+        "text": "Process 8: index=7, nums[7]=1 > 0 → mark: [4,-3,-2,-7,8,2,-3,-1]",
+        "id": "process-8-index7-nums71-0-mark-4-3-2-782-3-1"
+      },
+      {
+        "level": 1,
+        "text": "Process 2: index=1, nums[1]=-3 < 0 → DUPLICATE! Add 2",
+        "id": "process-2-index1-nums1-3-0-duplicate-add-2"
+      },
+      {
+        "level": 1,
+        "text": "Process 3: index=2, nums[2]=-2 < 0 → DUPLICATE! Add 3",
+        "id": "process-3-index2-nums2-2-0-duplicate-add-3"
+      },
+      {
+        "level": 1,
+        "text": "Process 1: index=0, nums[0]=4 > 0 → mark: [-4,-3,-2,-7,8,2,-3,-1]",
+        "id": "process-1-index0-nums04-0-mark-4-3-2-782-3-1"
+      },
+      {
+        "level": 1,
+        "text": "Result: [2,3]`",
+        "id": "result-23"
+      },
+      {
+        "level": 1,
+        "text": "One-liner version:",
+        "id": "one-liner-version"
+      },
+      {
+        "level": 1,
+        "text": "Example:",
+        "id": "example"
+      },
+      {
+        "level": 1,
+        "text": "nums = [4,3,2,7,8,2,3,1]",
+        "id": "nums-43278231"
+      },
+      {
+        "level": 1,
+        "text": "count = {4:1, 3:2, 2:2, 7:1, 8:1, 1:1}",
+        "id": "count-41-32-22-71-81-11"
+      },
+      {
+        "level": 1,
+        "text": "duplicates = [3, 2] (numbers with freq=2)`",
+        "id": "duplicates-3-2-numbers-with-freq2"
+      },
+      {
+        "level": 1,
+        "text": "Example walkthrough:",
+        "id": "example-walkthrough"
+      },
+      {
+        "level": 1,
+        "text": "nums = [4,3,2,7,8,2,3,1]",
+        "id": "nums-43278231-1"
+      },
+      {
+        "level": 1,
+        "text": "Process 4: not in seen → add to seen: {4}",
+        "id": "process-4-not-in-seen-add-to-seen-4"
+      },
+      {
+        "level": 1,
+        "text": "Process 3: not in seen → add to seen: {4,3}",
+        "id": "process-3-not-in-seen-add-to-seen-43"
+      },
+      {
+        "level": 1,
+        "text": "Process 2: not in seen → add to seen: {4,3,2}",
+        "id": "process-2-not-in-seen-add-to-seen-432"
+      },
+      {
+        "level": 1,
+        "text": "Process 7: not in seen → add to seen: {4,3,2,7}",
+        "id": "process-7-not-in-seen-add-to-seen-4327"
+      },
+      {
+        "level": 1,
+        "text": "Process 8: not in seen → add to seen: {4,3,2,7,8}",
+        "id": "process-8-not-in-seen-add-to-seen-43278"
+      },
+      {
+        "level": 1,
+        "text": "Process 2: in seen → add to duplicates: {2}",
+        "id": "process-2-in-seen-add-to-duplicates-2"
+      },
+      {
+        "level": 1,
+        "text": "Process 3: in seen → add to duplicates: {2,3}",
+        "id": "process-3-in-seen-add-to-duplicates-23"
+      },
+      {
+        "level": 1,
+        "text": "Process 1: not in seen → add to seen: {4,3,2,7,8,1}",
+        "id": "process-1-not-in-seen-add-to-seen-432781"
+      },
+      {
+        "level": 1,
+        "text": "Result: [2,3]`",
+        "id": "result-23-1"
+      },
+      {
+        "level": 2,
+        "text": "Step-by-Step Walkthrough",
+        "id": "step-by-step-walkthrough"
+      },
+      {
+        "level": 2,
+        "text": "Why The In-Place Approach Works",
+        "id": "why-the-in-place-approach-works"
+      },
+      {
+        "level": 2,
+        "text": "Alternative Approaches Comparison",
+        "id": "alternative-approaches-comparison"
+      },
+      {
+        "level": 3,
+        "text": "**Approach 1: In-Place Marking (Optimal)**",
+        "id": "approach-1-in-place-marking-optimal"
+      },
+      {
+        "level": 3,
+        "text": "**Approach 2: Counter/HashMap (Easy)**",
+        "id": "approach-2-counterhashmap-easy"
+      },
+      {
+        "level": 3,
+        "text": "**Approach 3: Set Tracking (Balanced)**",
+        "id": "approach-3-set-tracking-balanced"
+      },
+      {
+        "level": 2,
+        "text": "Common Mistakes to Avoid",
+        "id": "common-mistakes-to-avoid"
+      },
+      {
+        "level": 2,
+        "text": "Complexity Analysis",
+        "id": "complexity-analysis"
+      },
+      {
+        "level": 3,
+        "text": "**In-Place Marking (Optimal Solution):**",
+        "id": "in-place-marking-optimal-solution"
+      },
+      {
+        "level": 3,
+        "text": "**Set/Counter Approaches:**",
+        "id": "setcounter-approaches"
+      },
+      {
+        "level": 2,
+        "text": "Visual Example",
+        "id": "visual-example"
+      },
+      {
+        "level": 2,
+        "text": "When to Use This Pattern",
+        "id": "when-to-use-this-pattern"
+      },
+      {
+        "level": 2,
+        "text": "Test Cases to Try",
+        "id": "test-cases-to-try"
+      },
+      {
+        "level": 1,
+        "text": "Test your solution with these:",
+        "id": "test-your-solution-with-these"
+      },
+      {
+        "level": 2,
+        "text": "Key Takeaways",
+        "id": "key-takeaways"
+      }
+    ],
+    "publishedAt": "2025-09-08T02:13:07.352Z",
+    "updatedAt": "2025-09-08T02:13:13.913Z",
+    "author": "Morgan Ngetich",
+    "readingTime": 6,
+    "seo": {
+      "title": "Find All Duplicates In An Array | Crackmode Documentation",
+      "description": "Find All Duplicates in an Array Difficulty: Medium LeetCode: 442. Find All Duplicates in an Array --- Problem Given an integer array nums of length n where all...",
+      "keywords": "find, duplicates, array, easy, medium, arrays, leetcode, algorithm, process, space, index, negative, crackmode",
+      "robots": "index,follow",
+      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Find All Duplicates In An Array\",\"description\":\"Find All Duplicates in an Array Difficulty: Medium LeetCode: 442. Find All Duplicates in an Array --- Problem Given an integer array nums of length n where all...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/find-all-duplicates-in-an-array\",\"datePublished\":\"2025-09-08T02:13:07.352Z\",\"dateModified\":\"2025-09-08T02:13:13.913Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"CrackMode\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/find-all-duplicates-in-an-array\"},\"wordCount\":196,\"timeRequired\":\"PT6M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
+    },
+    "socialMedia": {
+      "ogTitle": "Find All Duplicates In An Array | Crackmode Documentation",
+      "ogDescription": "Given an integer array nums of length n where all the integers of nums are in the range [1, n] and each integer appears at most twice, return an array of all the integers that...",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Find+All+Duplicates+In+An+Array&description=Given+an+integer+array+nums+of+length+n+where+all+the+integers+of+nums+are+in+the+range+%5B1%2C+n%5D+and+each+integer+appears...&section=Documentation&theme=crackmode",
+      "twitterTitle": "Find All Duplicates In An Array | Crackmode Documentation",
+      "twitterDescription": "Given an integer array nums of length n where all the integers of nums are in the range [1, n] and each integer appears at most twice, return an array of all the integers that...",
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Find+All+Duplicates+In+An+Array&description=Given+an+integer+array+nums+of+length+n+where+all+the+integers+of+nums+are+in+the+range+%5B1%2C+n%5D+and+each+integer+appears...&section=Documentation&theme=crackmode"
+    }
+  },
+  {
     "id": "problems/find-all-numbers-disappeared-in-an-array",
     "title": "Find All Numbers Disappeared In An Array",
-    "content": "Find All Numbers Disappeared in an Array Difficulty: Easy LeetCode: 448. Find All Numbers Disappeared in an Array --- Problem Given an array nums of n integers where nums i  is in the range  1, n , return an array of all the integers in the range  1, n  that do not appear in nums. Example 1:    Input: nums    4,3,2,7,8,2,3,1  Output:  5,6    Example 2:   Input: nums    1,1  Output:  2    --- Simple Explanation Think of this like roll call attendance! Just like in school: - You have a class list:  1, 2, 3, 4, 5, 6, 7, 8   expected students  - Students present:  4, 3, 2, 7, 8, 2, 3, 1   actual attendance  - Missing students:  5, 6    These are who didn t show up!   The Plan: Create a complete list of expected numbers  1 to n , then find which ones are missing from our input array! --- Solution i   1  .filter num    !numsSet.has num  ; , title:  Java , language:  java , code: import java.util. ; public class Solution public List findDisappearedNumbers int   nums     Convert array to HashSet for O 1  lookup Set numsSet   new HashSet    ; for  int num : nums  numsSet.add num ;    Find missing numbers List result   new ArrayList    ; for  int i   1; i findDisappearedNumbersSet int   nums  Set numsSet   new HashSet    ; Set expectedSet   new HashSet    ;    Add all numbers from nums for  int num : nums  numsSet.add num ;    Add expected numbers 1 to n for  int i   1; i  expectedSet ;      --- Step-by-Step Walkthrough Let s trace through nums    4,3,2,7,8,2,3,1 :    Step 1: Convert nums to set  removes duplicates  nums_set   1, 2, 3, 4, 7, 8 Step 2: Create expected set  1 to n  where n   8 expected_set   1, 2, 3, 4, 5, 6, 7, 8 Step 3: Find set difference  expected - nums  missing   1, 2, 3, 4, 5, 6, 7, 8 - 1, 2, 3, 4, 7, 8 missing   5, 6 Result:  5, 6  are the missing numbers!   Let s try the second example: nums    1,1 :   Step 1: Convert nums to set nums_set   1 Step 2: Create expected set  1 to 2  expected_set   1, 2 Step 3: Find set difference missing   1, 2 - 1   2 Result:  2  is the missing number!   --- Why This Approach Works Fast lookup - Sets give us O 1  checking if a number exists Handles duplicates - Converting to set automatically removes duplicates Clean logic - Set difference does the heavy lifting for us Easy to understand - Just like checking attendance in a classroom! --- Alternative Approaches Approach 1: Simple Loop  Slower but Clear   python def find_disappeared_numbers_simple nums : result        Check each number from 1 to n for i in range 1, len nums    1 : if i not in nums:   This is O n  operation! result.append i  return result   Approach 2: In-Place Marking  O 1  Space   python def find_disappeared_numbers_inplace nums :   Mark numbers as visited by making them negative for num in nums: index   abs num  - 1   Convert to 0-based index if nums index    0: nums index    -nums index    Find positive numbers  unvisited  result      for i in range len nums  : if nums i    0: result.append i   1  return result   --- Visual Example   Array:  4, 3, 2, 7, 8, 2, 3, 1  Index: 0 1 2 3 4 5 6 7 Expected numbers: 1, 2, 3, 4, 5, 6, 7, 8 Present numbers: 1, 2, 3, 4,  ,  , 7, 8     5 6   Missing! Result:  5, 6    --- Common Mistakes to Avoid 1. Using list instead of set: if i not in nums is O n , making total complexity O n   2. Forgetting duplicates: The input can have duplicate numbers, but we only care about unique ones 3. Wrong range: Remember the range is  1, n , not  0, n-1  4. Modifying original array: Unless specifically asked for in-place solution --- Complexity Analysis Time Complexity: O n  Creating the set from nums: O n  Creating expected set: O n  Set difference operation: O n  Converting back to list: O k  where k   n Space Complexity: O n  nums_set can store up to n elements expected_set stores exactly n elements Result list can store up to n elements --- When to Use This Pattern This  find missing elements  pattern is useful when: - You have a known expected range of values - You need to find what s missing from that range - You want fast lookup operations - Input may contain duplicates that you need to handle Similar problems: - Missing Number  single missing  - First Missing Positive - Find All Duplicates in Array --- Test Cases to Try  python Test your solution with these: print find_disappeared_numbers  4,3,2,7,8,2,3,1      Should return  5,6  print find_disappeared_numbers  1,1      Should return  2  print find_disappeared_numbers  1,2,3,4,5      Should return    print find_disappeared_numbers  2,2,2,2,2      Should return  1,3,4,5  print find_disappeared_numbers  1      Should return      --- Key Takeaways - Sets are powerful for membership testing and set operations - Set difference  A - B   finds elements in A but not in B - Converting to set automatically handles duplicates - Think in terms of expected vs actual - like attendance checking!",
+    "content": "Find All Numbers Disappeared in an Array Difficulty: Easy LeetCode: 448. Find All Numbers Disappeared in an Array --- Problem Given an array nums of n integers where nums i  is in the range  1, n , return an array of all the integers in the range  1, n  that do not appear in nums. Example 1:    Input: nums    4,3,2,7,8,2,3,1  Output:  5,6    Example 2:   Input: nums    1,1  Output:  2    --- Simple Explanation Think of this like roll call attendance! Just like in school: - You have a class list:  1, 2, 3, 4, 5, 6, 7, 8   expected students  - Students present:  4, 3, 2, 7, 8, 2, 3, 1   actual attendance  - Missing students:  5, 6    These are who didn t show up!   The Plan: Create a complete list of expected numbers  1 to n , then find which ones are missing from our input array! --- Solution findDisappearedNumbers int   nums     Convert array to HashSet for O 1  lookup Set numsSet   new HashSet    ; for  int num : nums  numsSet.add num ;    Find missing numbers List result   new ArrayList    ; for  int i   1; i findDisappearedNumbersSet int   nums  Set numsSet   new HashSet    ; Set expectedSet   new HashSet    ;    Add all numbers from nums for  int num : nums  numsSet.add num ;    Add expected numbers 1 to n for  int i   1; i  expectedSet ;      --- Step-by-Step Walkthrough Let s trace through nums    4,3,2,7,8,2,3,1 :    Step 1: Convert nums to set  removes duplicates  nums_set   1, 2, 3, 4, 7, 8 Step 2: Create expected set  1 to n  where n   8 expected_set   1, 2, 3, 4, 5, 6, 7, 8 Step 3: Find set difference  expected - nums  missing   1, 2, 3, 4, 5, 6, 7, 8 - 1, 2, 3, 4, 7, 8 missing   5, 6 Result:  5, 6  are the missing numbers!   Let s try the second example: nums    1,1 :   Step 1: Convert nums to set nums_set   1 Step 2: Create expected set  1 to 2  expected_set   1, 2 Step 3: Find set difference missing   1, 2 - 1   2 Result:  2  is the missing number!   --- Why This Approach Works Fast lookup - Sets give us O 1  checking if a number exists Handles duplicates - Converting to set automatically removes duplicates Clean logic - Set difference does the heavy lifting for us Easy to understand - Just like checking attendance in a classroom! --- Alternative Approaches Approach 1: Simple Loop  Slower but Clear  findDisappearedNumbersSimple int   nums  List result   new ArrayList    ;    Check each number from 1 to n using linear search for  int i   1; i Approach 2: In-Place Marking  O 1  Space  0: nums index    -nums index    Find positive numbers  unvisited  result      for i in range len nums  : if nums i    0: result.append i   1  return result Example: nums    4,3,2,7,8,2,3,1  After marking:  -4, -3, -2, -7, 8, 2, -3, -1  Missing:  5, 6  , title:  JavaScript , language:  javascript , code: function findDisappearedNumbersInplace nums     Mark visited indices as negative for  let i   0; i 0  nums index    -nums index ;    Find indices with positive values const result     ; for  let i   0; i 0  result.push i   1 ; return result;    Example:    nums    4,3,2,7,8,2,3,1     result    5,6  , title:  Java , language:  java , code: import java.util. ; public class Solution public List findDisappearedNumbersInplace int   nums     Mark visited numbers by negating the value at the corresponding index for  int i   0; i 0  nums index    -nums index ;    Find indices with positive values List result   new ArrayList    ; for  int i   0; i 0  result.add i   1 ; return result;    Example:    nums    4,3,2,7,8,2,3,1     Output:  5,6       --- Visual Example    Array:  4, 3, 2, 7, 8, 2, 3, 1  Index: 0 1 2 3 4 5 6 7 Expected numbers: 1, 2, 3, 4, 5, 6, 7, 8 Present numbers: 1, 2, 3, 4,  ,  , 7, 8     5 6   Missing! Result:  5, 6    --- Common Mistakes to Avoid 1. Using list instead of set: if i not in nums is O n , making total complexity O n   2. Forgetting duplicates: The input can have duplicate numbers, but we only care about unique ones 3. Wrong range: Remember the range is  1, n , not  0, n-1  4. Modifying original array: Unless specifically asked for in-place solution --- Complexity Analysis Time Complexity: O n  Creating the set from nums: O n  Creating expected set: O n  Set difference operation: O n  Converting back to list: O k  where k   n Space Complexity: O n  nums_set can store up to n elements expected_set stores exactly n elements Result list can store up to n elements --- When to Use This Pattern This  find missing elements  pattern is useful when: - You have a known expected range of values - You need to find what s missing from that range - You want fast lookup operations - Input may contain duplicates that you need to handle Similar problems: - Missing Number  single missing  - First Missing Positive - Find All Duplicates in Array --- Test Cases to Try  python Test your solution with these: print find_disappeared_numbers  4,3,2,7,8,2,3,1      Should return  5,6  print find_disappeared_numbers  1,1      Should return  2  print find_disappeared_numbers  1,2,3,4,5      Should return    print find_disappeared_numbers  2,2,2,2,2      Should return  1,3,4,5  print find_disappeared_numbers  1      Should return      --- Key Takeaways - Sets are powerful for membership testing and set operations - Set difference  A - B   finds elements in A but not in B - Converting to set automatically handles duplicates - Think in terms of expected vs actual - like attendance checking!",
     "excerpt": "Find All Numbers Disappeared in an Array Difficulty: Easy LeetCode: 448. Find All Numbers Disappeared in an Array --- Problem Given an array nums of n integers...",
     "url": "/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array",
     "canonicalUrl": "https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array",
@@ -1046,7 +1309,7 @@
       "leetcode",
       "complexity",
       "pattern",
-      "python"
+      "javascript"
     ],
     "headings": [
       {
@@ -1068,11 +1331,6 @@
         "level": 2,
         "text": "Solution",
         "id": "solution"
-      },
-      {
-        "level": 1,
-        "text": "Alternative cleaner approach:",
-        "id": "alternative-cleaner-approach"
       },
       {
         "level": 1,
@@ -1120,9 +1378,44 @@
         "id": "approach-1-simple-loop-slower-but-clear"
       },
       {
+        "level": 1,
+        "text": "Example:",
+        "id": "example"
+      },
+      {
+        "level": 1,
+        "text": "nums = [4,3,2,7,8,2,3,1]",
+        "id": "nums-43278231-1"
+      },
+      {
+        "level": 1,
+        "text": "missing = [5, 6]`",
+        "id": "missing-5-6"
+      },
+      {
         "level": 3,
         "text": "Approach 2: In-Place Marking (O(1) Space)",
         "id": "approach-2-in-place-marking-o1-space"
+      },
+      {
+        "level": 1,
+        "text": "Example:",
+        "id": "example-1"
+      },
+      {
+        "level": 1,
+        "text": "nums = [4,3,2,7,8,2,3,1]",
+        "id": "nums-43278231-2"
+      },
+      {
+        "level": 1,
+        "text": "After marking: [-4, -3, -2, -7, 8, 2, -3, -1]",
+        "id": "after-marking-4-3-2-7-8-2-3-1"
+      },
+      {
+        "level": 1,
+        "text": "Missing: [5, 6]`",
+        "id": "missing-5-6-1"
       },
       {
         "level": 2,
@@ -1161,15 +1454,15 @@
       }
     ],
     "publishedAt": "2025-09-08T01:35:33.034Z",
-    "updatedAt": "2025-09-08T01:35:46.595Z",
+    "updatedAt": "2025-09-08T01:54:49.044Z",
     "author": "Morgan Ngetich",
     "readingTime": 5,
     "seo": {
       "title": "Find All Numbers Disappeared In An Array | Crackmode Documentation",
       "description": "Find All Numbers Disappeared in an Array Difficulty: Easy LeetCode: 448. Find All Numbers Disappeared in an Array --- Problem Given an array nums of n integers...",
-      "keywords": "find, numbers, disappeared, array, easy, leetcode, complexity, pattern, python, missing, expected, return, range, crackmode, algorithm",
+      "keywords": "find, numbers, disappeared, array, easy, leetcode, complexity, pattern, javascript, missing, expected, return, result, crackmode, algorithm",
       "robots": "index,follow",
-      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Find All Numbers Disappeared In An Array\",\"description\":\"Find All Numbers Disappeared in an Array Difficulty: Easy LeetCode: 448. Find All Numbers Disappeared in an Array --- Problem Given an array nums of n integers...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array\",\"datePublished\":\"2025-09-08T01:35:33.034Z\",\"dateModified\":\"2025-09-08T01:35:46.595Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"CrackMode\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array\"},\"wordCount\":189,\"timeRequired\":\"PT5M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
+      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Find All Numbers Disappeared In An Array\",\"description\":\"Find All Numbers Disappeared in an Array Difficulty: Easy LeetCode: 448. Find All Numbers Disappeared in an Array --- Problem Given an array nums of n integers...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array\",\"datePublished\":\"2025-09-08T01:35:33.034Z\",\"dateModified\":\"2025-09-08T01:54:49.044Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"CrackMode\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array\"},\"wordCount\":189,\"timeRequired\":\"PT5M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
     },
     "socialMedia": {
       "ogTitle": "Find All Numbers Disappeared In An Array | Crackmode Documentation",

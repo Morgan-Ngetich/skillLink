@@ -50,6 +50,7 @@ export const sidebarConfig: DocSection[] = [
       { title: "Unique Number of Occurrences", href: "/crackmode/docs/problems/unique-number-of-occurrences" },
       { title: "Find the Difference", href: "/crackmode/docs/problems/find-the-difference" },
       { title: "Find All Numbers Disappeared in an Array", href: "/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array" },
+      { title: "Find All Duplicates in an Array", href: "/crackmode/docs/problems/find-all-duplicates-in-an-array" },
     ]
   },
   {

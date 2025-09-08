@@ -1,0 +1,305 @@
+import { VStack, HStack, Text } from "@chakra-ui/react"
+
+# Find All Duplicates in an Array
+
+**Difficulty:** <span style={{color: "#f59e0b"}}>Medium</span>  
+**LeetCode:** [442. Find All Duplicates in an Array](https://leetcode.com/problems/find-all-duplicates-in-an-array/)
+
+---
+
+## Problem
+
+Given an integer array `nums` of length `n` where all the integers of `nums` are in the range `[1, n]` and each integer appears **at most twice**, return an array of all the integers that appear **twice**.
+
+You must write an algorithm that runs in `O(n)` time and uses only constant auxiliary space, excluding the space needed to store the output.
+
+**Example 1:**
+```
+Input: nums = [4,3,2,7,8,2,3,1]
+Output: [2,3]
+```
+
+**Example 2:**
+```
+Input: nums = [1,1,2]
+Output: [1]
+```
+
+**Example 3:**
+```
+Input: nums = [1]
+Output: []
+```
+
+**Constraints:**
+- `n == nums.length`
+- `1 <= n <= 10^5`
+- `1 <= nums[i] <= n`
+- Each element appears **once** or **twice**
+
+---
+
+## Simple Explanation
+
+Think of this like **marking attendance with a twist**!
+
+Instead of just checking who's present, we want to find who showed up **twice**:
+- Array: [4,3,2,7,8,2,3,1] → Numbers 2 and 3 appear twice
+- We need to detect these duplicates efficiently without using extra space
+
+**The Clever Trick:** Since numbers are in range [1,n], we can use the array itself as a "visited marker" by making values negative when we see them!
+
+---
+
+## Solution
+
+<TabbedCode
+  files={[
+    {
+      title: "Python",
+      language: "python",
+      code: `def find_duplicates(nums):
+    duplicates = []
+    
+    # Use the array itself to mark visited numbers
+    for num in nums:
+        # Get the actual number (could be negative if already marked)
+        index = abs(num) - 1  # Convert to 0-based index
+        
+        # If the value at this index is already negative,
+        # it means we've seen this number before → duplicate!
+        if nums[index] < 0:
+            duplicates.append(abs(num))
+        else:
+            # Mark as visited by making it negative
+            nums[index] = -nums[index]
+    
+    return duplicates
+
+# Example walkthrough with [4,3,2,7,8,2,3,1]:
+# Process 4: index=3, nums[3]=7 > 0 → mark: [4,3,2,-7,8,2,3,1]
+# Process 3: index=2, nums[2]=2 > 0 → mark: [4,3,-2,-7,8,2,3,1]  
+# Process 2: index=1, nums[1]=3 > 0 → mark: [4,-3,-2,-7,8,2,3,1]
+# Process 7: index=6, nums[6]=3 > 0 → mark: [4,-3,-2,-7,8,2,-3,1]
+# Process 8: index=7, nums[7]=1 > 0 → mark: [4,-3,-2,-7,8,2,-3,-1]
+# Process 2: index=1, nums[1]=-3 < 0 → DUPLICATE! Add 2
+# Process 3: index=2, nums[2]=-2 < 0 → DUPLICATE! Add 3  
+# Process 1: index=0, nums[0]=4 > 0 → mark: [-4,-3,-2,-7,8,2,-3,-1]
+# Result: [2,3]`
+    },
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `// In-place marking approach (O(1) space)
+function findDuplicates(nums) {
+    const duplicates = [];
+    
+    for (let i = 0; i < nums.length; i++) {
+        const index = Math.abs(nums[i]) - 1;
+        
+        // If already negative, we found a duplicate
+        if (nums[index] < 0) {
+            duplicates.push(Math.abs(nums[i]));
+        } else {
+            // Mark as visited
+            nums[index] = -nums[index];
+        }
+    }
+    
+    return duplicates;
+}
+
+// Set approach (easier to understand)
+function findDuplicatesSet(nums) {
+    const seen = new Set();
+    const duplicates = new Set();
+    
+    for (const num of nums) {
+        if (seen.has(num)) {
+            duplicates.add(num);
+        } else {
+            seen.add(num);
+        }
+    }
+    
+    return Array.from(duplicates);
+}`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `import java.util.*;
+
+public class Solution {
+    // In-place marking approach (meets O(1) space requirement)
+    public List<Integer> findDuplicates(int[] nums) {
+        List<Integer> duplicates = new ArrayList<>();
+        
+        for (int i = 0; i < nums.length; i++) {
+            int index = Math.abs(nums[i]) - 1;
+            
+            // If already negative, it's a duplicate
+            if (nums[index] < 0) {
+                duplicates.add(Math.abs(nums[i]));
+            } else {
+                // Mark as visited by making negative
+                nums[index] = -nums[index];
+            }
+        }
+        
+        return duplicates;
+    }
+    
+    // Set approach (easier but uses O(n) extra space)
+    public List<Integer> findDuplicatesSet(int[] nums) {
+        Set<Integer> seen = new HashSet<>();
+        Set<Integer> duplicates = new HashSet<>();
+        
+        for (int num : nums) {
+            if (seen.contains(num)) {
+                duplicates.add(num);
+            } else {
+                seen.add(num);
+            }
+        }
+        
+        return new ArrayList<>(duplicates);
+    }
+}`
+    }
+  ]}
+/>
+
+---
+
+## Step-by-Step Walkthrough
+
+Let's trace through the **in-place marking** approach with `nums = [4,3,2,7,8,2,3,1]`:
+
+```
+Initial: [4, 3, 2, 7, 8, 2, 3, 1]
+         
+Process 4 (index 3): nums[3]=7 > 0 → mark negative
+After:   [4, 3, 2, -7, 8, 2, 3, 1]
+
+Process 3 (index 2): nums[2]=2 > 0 → mark negative  
+After:   [4, 3, -2, -7, 8, 2, 3, 1]
+
+Process 2 (index 1): nums[1]=3 > 0 → mark negative
+After:   [4, -3, -2, -7, 8, 2, 3, 1]
+
+Process 7 (index 6): nums[6]=3 > 0 → mark negative
+After:   [4, -3, -2, -7, 8, 2, -3, 1]
+
+Process 8 (index 7): nums[7]=1 > 0 → mark negative
+After:   [4, -3, -2, -7, 8, 2, -3, -1]
+
+Process 2 (index 1): nums[1]=-3 < 0 → DUPLICATE! Add 2 to result
+After:   [4, -3, -2, -7, 8, 2, -3, -1] (duplicates = [2])
+
+Process 3 (index 2): nums[2]=-2 < 0 → DUPLICATE! Add 3 to result  
+After:   [4, -3, -2, -7, 8, 2, -3, -1] (duplicates = [2,3])
+
+Process 1 (index 0): nums[0]=4 > 0 → mark negative
+After:   [-4, -3, -2, -7, 8, 2, -3, -1]
+
+Final Result: [2, 3]
+```
+
+---
+
+## Why The In-Place Approach Works
+
+<VStack align="start" spacing={2}>
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Uses array as hash table</Text>
+    <Text>- Each number points to its corresponding index</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Negative = visited</Text>
+    <Text>- First visit: mark negative, Second visit: found duplicate!</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Perfect range match</Text>
+    <Text>- Numbers [1,n] map perfectly to indices [0,n-1]</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Constant space</Text>
+    <Text>- No extra arrays or sets needed, meets the constraint!</Text>
+  </HStack>
+</VStack>
+
+---
+
+## The Approach
+
+### **In-Place Marking (Optimal)**
+- **Meets all constraints:** O(n) time, O(1) space
+- **Tricky but efficient:** Uses the array itself as a marker
+- **Modifies input:** Changes the original array
+
+---
+
+## Common Mistakes to Avoid
+
+1. **Forgetting abs():** When checking `nums[index] < 0`, the number itself might be negative from previous marking
+
+2. **Wrong index calculation:** Remember `index = num - 1` to convert from 1-based to 0-based
+
+3. **Using extra space:** Counter and Set approaches don't meet the O(1) space requirement
+
+4. **Not handling edge cases:** Empty array or single element should return empty list
+
+---
+
+## Complexity Analysis
+
+### **In-Place Marking (Optimal Solution):**
+<Text color="green.400" fontWeight="bold">Time Complexity: O(n)</Text>
+<Text ml={4} as="li">Single pass through the array</Text>
+<Text ml={4} as="li">Each operation is O(1)</Text>
+
+<Text color="green.400" fontWeight="bold" mt={4}>Space Complexity: O(1)</Text>
+<Text ml={4} as="li">Only uses a few variables</Text>
+<Text ml={4} as="li">Output space doesn't count toward space complexity</Text>
+
+---
+
+## When to Use This Pattern
+
+This "in-place marking" pattern works when:
+
+- Numbers are in range [1, n] and array length is n
+- You need constant space complexity
+- Input array can be modified
+- Looking for duplicates, missing numbers, or first occurrence
+
+Similar problems:
+- Find All Numbers Disappeared in an Array
+- Find the Duplicate Number  
+- First Missing Positive
+
+---
+
+## Test Cases to Try
+
+```python
+# Test your solution with these:
+print(find_duplicates([4,3,2,7,8,2,3,1]))    # Should return [2,3]
+print(find_duplicates([1,1,2]))               # Should return [1]  
+print(find_duplicates([1]))                   # Should return []
+print(find_duplicates([1,1]))                 # Should return [1]
+print(find_duplicates([2,2,3,3,4,4]))         # Should return [2,3,4]
+```
+
+---
+
+## Key Takeaways
+
+- **In-place marking** is a powerful technique for constant space solutions
+- **Use array indices as hash keys** when numbers match the range [1,n]
+- **Negative values as markers** is a clever way to track state without extra space
+- **Always consider space complexity requirements** - they often guide the approach choice!

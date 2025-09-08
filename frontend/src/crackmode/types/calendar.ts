@@ -82,7 +82,7 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
       "url": "https://leetcode.com/problems/unique-number-of-occurrences/",
       "docs": "/crackmode/docs/problems/unique-number-of-occurrences",
       "solved": true,
-      "solvedAt": "2025-09-03T00:45:00Z"
+      "solvedAt": "2025-09-07T20:00:00Z"
     }
   ],
   "2025-09-04": [
@@ -94,7 +94,7 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
       "url": "https://leetcode.com/problems/find-the-difference/",
       "docs": "/crackmode/docs/problems/find-the-difference",
       "solved": true,
-      "solvedAt": "2025-09-03T00:45:00Z"
+      "solvedAt": "2025-09-07T20:00:00Z"
     },
   ],
   "2025-09-05": [
@@ -106,7 +106,17 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
       "url": "https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/",
       "docs": "/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array",
       "solved": true,
-      "solvedAt": "2025-09-03T00:45:00Z"
+      "solvedAt": "2025-09-07T20:00:00Z"
+    },
+    {
+      "id": 1,
+      "title": "Find All Duplicates in an Array",
+      "difficulty": "Medium",
+      "tags": ["Array", "HashTable"],
+      "url": "https://leetcode.com/problems/find-all-duplicates-in-an-array/",
+      "docs": "/crackmode/docs/problems/find-all-duplicates-in-an-array",
+      "solved": true,
+      "solvedAt": "2025-09-07T20:00:00Z"
     }
   ]
 }
