@@ -1,0 +1,442 @@
+import { VStack, HStack, Text } from "@chakra-ui/react"
+
+# Find All Numbers Disappeared in an Array
+
+**Difficulty:** <span style={{color: "#4ade80"}}>Easy</span>  
+**LeetCode:** [448. Find All Numbers Disappeared in an Array](https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/)
+
+---
+
+## Problem
+
+Given an array `nums` of `n` integers where `nums[i]` is in the range `[1, n]`, return an array of all the integers in the range `[1, n]` that do not appear in `nums`.
+
+**Example 1:**
+```
+Input: nums = [4,3,2,7,8,2,3,1]
+Output: [5,6]
+```
+
+**Example 2:**
+```
+Input: nums = [1,1]
+Output: [2]
+```
+
+---
+
+## Simple Explanation
+
+Think of this like **roll call attendance**!
+
+Just like in school:
+- You have a class list: [1, 2, 3, 4, 5, 6, 7, 8] (expected students)
+- Students present: [4, 3, 2, 7, 8, 2, 3, 1] (actual attendance)
+- Missing students: [5, 6] → These are who didn't show up! ✓
+
+**The Plan:** Create a complete list of expected numbers (1 to n), then find which ones are missing from our input array!
+
+---
+
+## Solution
+
+<TabbedCode
+  files={[
+    {
+      title: "Python",
+      language: "python",
+      code: `def find_disappeared_numbers(nums):
+    # Convert nums to set for fast lookup
+    nums_set = set(nums)
+    
+    # Create set of all expected numbers [1, n]
+    expected_set = set()
+    for i in range(1, len(nums) + 1):
+        expected_set.add(i)
+    
+    # Find missing numbers using set difference
+    missing = expected_set - nums_set
+    return list(missing)
+
+# Example usage:
+# nums = [4,3,2,7,8,2,3,1]
+# nums_set = {1, 2, 3, 4, 7, 8}
+# expected = {1, 2, 3, 4, 5, 6, 7, 8}
+# missing = {5, 6} → return [5, 6]`
+    },
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function findDisappearedNumbers(nums) {
+    // Convert nums to Set for fast lookup
+    const numsSet = new Set(nums);
+    const missing = [];
+    
+    // Check each number from 1 to n
+    for (let i = 1; i <= nums.length; i++) {
+        if (!numsSet.has(i)) {
+            missing.push(i);
+        }
+    }
+    
+    return missing;
+}
+
+}`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `import java.util.*;
+
+public class Solution {
+    public List<Integer> findDisappearedNumbers(int[] nums) {
+        // Convert array to HashSet for O(1) lookup
+        Set<Integer> numsSet = new HashSet<>();
+        for (int num : nums) {
+            numsSet.add(num);
+        }
+        
+        // Find missing numbers
+        List<Integer> result = new ArrayList<>();
+        for (int i = 1; i <= nums.length; i++) {
+            if (!numsSet.contains(i)) {
+                result.add(i);
+            }
+        }
+        
+        return result;
+    }
+    
+    // Set difference approach
+    public List<Integer> findDisappearedNumbersSet(int[] nums) {
+        Set<Integer> numsSet = new HashSet<>();
+        Set<Integer> expectedSet = new HashSet<>();
+        
+        // Add all numbers from nums
+        for (int num : nums) {
+            numsSet.add(num);
+        }
+        
+        // Add expected numbers 1 to n
+        for (int i = 1; i <= nums.length; i++) {
+            expectedSet.add(i);
+        }
+        
+        // Find difference
+        expectedSet.removeAll(numsSet);
+        return new ArrayList<>(expectedSet);
+    }
+}`
+    }
+  ]}
+/>
+
+---
+
+## Step-by-Step Walkthrough
+
+Let's trace through `nums = [4,3,2,7,8,2,3,1]`:
+
+```
+Step 1: Convert nums to set (removes duplicates)
+        nums_set = {1, 2, 3, 4, 7, 8}
+
+Step 2: Create expected set [1 to n] where n = 8
+        expected_set = {1, 2, 3, 4, 5, 6, 7, 8}
+
+Step 3: Find set difference (expected - nums)
+        missing = {1, 2, 3, 4, 5, 6, 7, 8} - {1, 2, 3, 4, 7, 8}
+        missing = {5, 6}
+
+Result: [5, 6] are the missing numbers!
+```
+
+Let's try the second example: `nums = [1,1]`:
+
+```
+Step 1: Convert nums to set
+        nums_set = {1}
+
+Step 2: Create expected set [1 to 2]
+        expected_set = {1, 2}
+
+Step 3: Find set difference
+        missing = {1, 2} - {1} = {2}
+
+Result: [2] is the missing number!
+```
+
+---
+
+## Why This Approach Works
+
+<VStack align="start" spacing={2}>
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Fast lookup</Text>
+    <Text>- Sets give us O(1) checking if a number exists</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Handles duplicates</Text>
+    <Text>- Converting to set automatically removes duplicates</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Clean logic</Text>
+    <Text>- Set difference does the heavy lifting for us</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Easy to understand</Text>
+    <Text>- Just like checking attendance in a classroom!</Text>
+  </HStack>
+</VStack>
+
+---
+
+## Alternative Approaches
+
+### Approach 1: Simple Loop (Slower but Clear)
+<TabbedCode
+  files={[
+    {
+      title: "Python",
+      language: "python",
+      code: `def find_disappeared_numbers_simple(nums):
+    result = []
+    
+    # Check each number from 1 to n
+    for i in range(1, len(nums) + 1):
+        if i not in nums:  # This is O(n) for each i, total O(n^2)
+            result.append(i)
+    
+    return result
+
+# Example:
+# nums = [4,3,2,7,8,2,3,1]
+# missing = [5, 6]`
+    },
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function findDisappearedNumbersSimple(nums) {
+    const result = [];
+    
+    // Check each number from 1 to n
+    for (let i = 1; i <= nums.length; i++) {
+        if (!nums.includes(i)) { // O(n) for each lookup
+            result.push(i);
+        }
+    }
+    
+    return result;
+}
+
+// Example:
+// nums = [4,3,2,7,8,2,3,1]
+// result = [5, 6]`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `import java.util.*;
+
+public class Solution {
+    public List<Integer> findDisappearedNumbersSimple(int[] nums) {
+        List<Integer> result = new ArrayList<>();
+        
+        // Check each number from 1 to n using linear search
+        for (int i = 1; i <= nums.length; i++) {
+            boolean found = false;
+            for (int num : nums) {
+                if (num == i) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                result.add(i);
+            }
+        }
+        
+        return result;
+    }
+
+    // Example:
+    // nums = [4,3,2,7,8,2,3,1]
+    // Output: [5, 6]
+}`
+    }
+  ]}
+/>
+
+
+### Approach 2: In-Place Marking (O(1) Space)
+<TabbedCode
+  files={[
+    {
+      title: "Python",
+      language: "python",
+      code: `def find_disappeared_numbers_inplace(nums):
+    # Mark numbers as visited by making them negative
+    for num in nums:
+        index = abs(num) - 1  # Convert to 0-based index
+        if nums[index] > 0:
+            nums[index] = -nums[index]
+    
+    # Find positive numbers (unvisited)
+    result = []
+    for i in range(len(nums)):
+        if nums[i] > 0:
+            result.append(i + 1)
+    
+    return result
+
+# Example:
+# nums = [4,3,2,7,8,2,3,1]
+# After marking: [-4, -3, -2, -7, 8, 2, -3, -1]
+# Missing: [5, 6]`
+    },
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function findDisappearedNumbersInplace(nums) {
+    // Mark visited indices as negative
+    for (let i = 0; i < nums.length; i++) {
+        const index = Math.abs(nums[i]) - 1;
+        if (nums[index] > 0) {
+            nums[index] = -nums[index];
+        }
+    }
+
+    // Find indices with positive values
+    const result = [];
+    for (let i = 0; i < nums.length; i++) {
+        if (nums[i] > 0) {
+            result.push(i + 1);
+        }
+    }
+
+    return result;
+}
+
+// Example:
+// nums = [4,3,2,7,8,2,3,1]
+// result = [5,6]`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `import java.util.*;
+
+public class Solution {
+    public List<Integer> findDisappearedNumbersInplace(int[] nums) {
+        // Mark visited numbers by negating the value at the corresponding index
+        for (int i = 0; i < nums.length; i++) {
+            int index = Math.abs(nums[i]) - 1;
+            if (nums[index] > 0) {
+                nums[index] = -nums[index];
+            }
+        }
+
+        // Find indices with positive values
+        List<Integer> result = new ArrayList<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] > 0) {
+                result.add(i + 1);
+            }
+        }
+
+        return result;
+    }
+
+    // Example:
+    // nums = [4,3,2,7,8,2,3,1]
+    // Output: [5,6]
+}`
+    }
+  ]}
+/>
+
+
+---
+
+## Visual Example
+
+```
+Array: [4, 3, 2, 7, 8, 2, 3, 1]
+Index:  0  1  2  3  4  5  6  7
+
+Expected numbers: 1, 2, 3, 4, 5, 6, 7, 8
+Present numbers:  1, 2, 3, 4, ✗, ✗, 7, 8
+                              ↑   ↑
+                              5   6  ← Missing!
+
+Result: [5, 6]
+```
+
+---
+
+## Common Mistakes to Avoid
+
+1. **Using list instead of set:** `if i not in nums` is O(n), making total complexity O(n²)
+
+2. **Forgetting duplicates:** The input can have duplicate numbers, but we only care about unique ones
+
+3. **Wrong range:** Remember the range is `[1, n]`, not `[0, n-1]`
+
+4. **Modifying original array:** Unless specifically asked for in-place solution
+
+---
+
+## Complexity Analysis
+
+<Text color="green.400" fontWeight="bold">Time Complexity: O(n)</Text>
+<Text ml={4} as="li">Creating the set from nums: O(n)</Text>
+<Text ml={4} as="li">Creating expected set: O(n)</Text>
+<Text ml={4} as="li">Set difference operation: O(n)</Text>
+<Text ml={4} as="li">Converting back to list: O(k) where k ≤ n</Text>
+
+<Text color="green.400" fontWeight="bold" mt={4}>Space Complexity: O(n)</Text>
+<Text ml={4} as="li">nums_set can store up to n elements</Text>
+<Text ml={4} as="li">expected_set stores exactly n elements</Text>
+<Text ml={4} as="li">Result list can store up to n elements</Text>
+
+---
+
+## When to Use This Pattern
+
+This "find missing elements" pattern is useful when:
+
+- You have a known expected range of values
+- You need to find what's missing from that range  
+- You want fast lookup operations
+- Input may contain duplicates that you need to handle
+
+Similar problems:
+- Missing Number (single missing)
+- First Missing Positive
+- Find All Duplicates in Array
+
+---
+
+## Test Cases to Try
+
+```python
+# Test your solution with these:
+print(find_disappeared_numbers([4,3,2,7,8,2,3,1]))  # Should return [5,6]
+print(find_disappeared_numbers([1,1]))               # Should return [2]
+print(find_disappeared_numbers([1,2,3,4,5]))         # Should return []
+print(find_disappeared_numbers([2,2,2,2,2]))         # Should return [1,3,4,5]
+print(find_disappeared_numbers([1]))                 # Should return []
+```
+
+---
+
+## Key Takeaways
+
+- **Sets are powerful** for membership testing and set operations
+- **Set difference** (`A - B`) finds elements in A but not in B
+- **Converting to set** automatically handles duplicates
+- **Think in terms of expected vs actual** - like attendance checking!

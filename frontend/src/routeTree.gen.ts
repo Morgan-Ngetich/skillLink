@@ -30,6 +30,7 @@ import { Route as CrackmodeDocsProblemsLongestConsecutiveSequenceRouteImport } f
 import { Route as CrackmodeDocsProblemsImplementStackUsingQueuesRouteImport } from './routes/crackmode/docs/problems/implement-stack-using-queues'
 import { Route as CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRouteImport } from './routes/crackmode/docs/problems/find-the-difference-of-two-arrays'
 import { Route as CrackmodeDocsProblemsFindTheDifferenceRouteImport } from './routes/crackmode/docs/problems/find-the-difference'
+import { Route as CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRouteImport } from './routes/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
 import { Route as CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRouteImport } from './routes/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/index'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsStringCompressionRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/string-compression'
@@ -152,6 +153,12 @@ const CrackmodeDocsProblemsFindTheDifferenceRoute =
     path: '/problems/find-the-difference',
     getParentRoute: () => CrackmodeDocsRoute,
   } as any)
+const CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute =
+  CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRouteImport.update({
+    id: '/problems/find-all-numbers-disappeared-in-an-array',
+    path: '/problems/find-all-numbers-disappeared-in-an-array',
+    getParentRoute: () => CrackmodeDocsRoute,
+  } as any)
 const CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute =
   CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRouteImport.update(
     {
@@ -231,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof LayoutDashboardIndexRoute
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
+  '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array': typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute
   '/crackmode/docs/problems/find-the-difference': typeof CrackmodeDocsProblemsFindTheDifferenceRoute
   '/crackmode/docs/problems/find-the-difference-of-two-arrays': typeof CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute
   '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
@@ -261,6 +269,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof LayoutDashboardIndexRoute
   '/crackmode/docs': typeof CrackmodeDocsIndexRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
+  '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array': typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute
   '/crackmode/docs/problems/find-the-difference': typeof CrackmodeDocsProblemsFindTheDifferenceRoute
   '/crackmode/docs/problems/find-the-difference-of-two-arrays': typeof CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute
   '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
@@ -294,6 +303,7 @@ export interface FileRoutesById {
   '/_layout/dashboard/': typeof LayoutDashboardIndexRoute
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
+  '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array': typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute
   '/crackmode/docs/problems/find-the-difference': typeof CrackmodeDocsProblemsFindTheDifferenceRoute
   '/crackmode/docs/problems/find-the-difference-of-two-arrays': typeof CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute
   '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
@@ -327,6 +337,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/crackmode/docs/'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
+    | '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
     | '/crackmode/docs/problems/find-the-difference'
     | '/crackmode/docs/problems/find-the-difference-of-two-arrays'
     | '/crackmode/docs/problems/implement-stack-using-queues'
@@ -357,6 +368,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/crackmode/docs'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
+    | '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
     | '/crackmode/docs/problems/find-the-difference'
     | '/crackmode/docs/problems/find-the-difference-of-two-arrays'
     | '/crackmode/docs/problems/implement-stack-using-queues'
@@ -389,6 +401,7 @@ export interface FileRouteTypes {
     | '/_layout/dashboard/'
     | '/crackmode/docs/'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
+    | '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
     | '/crackmode/docs/problems/find-the-difference'
     | '/crackmode/docs/problems/find-the-difference-of-two-arrays'
     | '/crackmode/docs/problems/implement-stack-using-queues'
@@ -566,6 +579,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrackmodeDocsProblemsFindTheDifferenceRouteImport
       parentRoute: typeof CrackmodeDocsRoute
     }
+    '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array': {
+      id: '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
+      path: '/problems/find-all-numbers-disappeared-in-an-array'
+      fullPath: '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
+      preLoaderRoute: typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
     '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': {
       id: '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
       path: '/problems/check-if-number-has-equal-digit-count-and-digit-value'
@@ -654,6 +674,7 @@ const LayoutRouteWithChildren =
 interface CrackmodeDocsRouteChildren {
   CrackmodeDocsIndexRoute: typeof CrackmodeDocsIndexRoute
   CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute: typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
+  CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute: typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute
   CrackmodeDocsProblemsFindTheDifferenceRoute: typeof CrackmodeDocsProblemsFindTheDifferenceRoute
   CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute: typeof CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute
   CrackmodeDocsProblemsImplementStackUsingQueuesRoute: typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
@@ -676,6 +697,8 @@ const CrackmodeDocsRouteChildren: CrackmodeDocsRouteChildren = {
   CrackmodeDocsIndexRoute: CrackmodeDocsIndexRoute,
   CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute:
     CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute,
+  CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute:
+    CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute,
   CrackmodeDocsProblemsFindTheDifferenceRoute:
     CrackmodeDocsProblemsFindTheDifferenceRoute,
   CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute:

@@ -96,5 +96,17 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
       "solved": true,
       "solvedAt": "2025-09-03T00:45:00Z"
     },
+  ],
+  "2025-09-05": [
+    {
+      "id": 1,
+      "title": "Find All Numbers Disappeared in an Array",
+      "difficulty": "Easy",
+      "tags": ["Array", "HashTable"],
+      "url": "https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/",
+      "docs": "/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array",
+      "solved": true,
+      "solvedAt": "2025-09-03T00:45:00Z"
+    }
   ]
 }

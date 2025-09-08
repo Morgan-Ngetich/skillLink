@@ -1033,6 +1033,154 @@
     }
   },
   {
+    "id": "problems/find-all-numbers-disappeared-in-an-array",
+    "title": "Find All Numbers Disappeared In An Array",
+    "content": "Find All Numbers Disappeared in an Array Difficulty: Easy LeetCode: 448. Find All Numbers Disappeared in an Array --- Problem Given an array nums of n integers where nums i  is in the range  1, n , return an array of all the integers in the range  1, n  that do not appear in nums. Example 1:    Input: nums    4,3,2,7,8,2,3,1  Output:  5,6    Example 2:   Input: nums    1,1  Output:  2    --- Simple Explanation Think of this like roll call attendance! Just like in school: - You have a class list:  1, 2, 3, 4, 5, 6, 7, 8   expected students  - Students present:  4, 3, 2, 7, 8, 2, 3, 1   actual attendance  - Missing students:  5, 6    These are who didn t show up!   The Plan: Create a complete list of expected numbers  1 to n , then find which ones are missing from our input array! --- Solution i   1  .filter num    !numsSet.has num  ; , title:  Java , language:  java , code: import java.util. ; public class Solution public List findDisappearedNumbers int   nums     Convert array to HashSet for O 1  lookup Set numsSet   new HashSet    ; for  int num : nums  numsSet.add num ;    Find missing numbers List result   new ArrayList    ; for  int i   1; i findDisappearedNumbersSet int   nums  Set numsSet   new HashSet    ; Set expectedSet   new HashSet    ;    Add all numbers from nums for  int num : nums  numsSet.add num ;    Add expected numbers 1 to n for  int i   1; i  expectedSet ;      --- Step-by-Step Walkthrough Let s trace through nums    4,3,2,7,8,2,3,1 :    Step 1: Convert nums to set  removes duplicates  nums_set   1, 2, 3, 4, 7, 8 Step 2: Create expected set  1 to n  where n   8 expected_set   1, 2, 3, 4, 5, 6, 7, 8 Step 3: Find set difference  expected - nums  missing   1, 2, 3, 4, 5, 6, 7, 8 - 1, 2, 3, 4, 7, 8 missing   5, 6 Result:  5, 6  are the missing numbers!   Let s try the second example: nums    1,1 :   Step 1: Convert nums to set nums_set   1 Step 2: Create expected set  1 to 2  expected_set   1, 2 Step 3: Find set difference missing   1, 2 - 1   2 Result:  2  is the missing number!   --- Why This Approach Works Fast lookup - Sets give us O 1  checking if a number exists Handles duplicates - Converting to set automatically removes duplicates Clean logic - Set difference does the heavy lifting for us Easy to understand - Just like checking attendance in a classroom! --- Alternative Approaches Approach 1: Simple Loop  Slower but Clear   python def find_disappeared_numbers_simple nums : result        Check each number from 1 to n for i in range 1, len nums    1 : if i not in nums:   This is O n  operation! result.append i  return result   Approach 2: In-Place Marking  O 1  Space   python def find_disappeared_numbers_inplace nums :   Mark numbers as visited by making them negative for num in nums: index   abs num  - 1   Convert to 0-based index if nums index    0: nums index    -nums index    Find positive numbers  unvisited  result      for i in range len nums  : if nums i    0: result.append i   1  return result   --- Visual Example   Array:  4, 3, 2, 7, 8, 2, 3, 1  Index: 0 1 2 3 4 5 6 7 Expected numbers: 1, 2, 3, 4, 5, 6, 7, 8 Present numbers: 1, 2, 3, 4,  ,  , 7, 8     5 6   Missing! Result:  5, 6    --- Common Mistakes to Avoid 1. Using list instead of set: if i not in nums is O n , making total complexity O n   2. Forgetting duplicates: The input can have duplicate numbers, but we only care about unique ones 3. Wrong range: Remember the range is  1, n , not  0, n-1  4. Modifying original array: Unless specifically asked for in-place solution --- Complexity Analysis Time Complexity: O n  Creating the set from nums: O n  Creating expected set: O n  Set difference operation: O n  Converting back to list: O k  where k   n Space Complexity: O n  nums_set can store up to n elements expected_set stores exactly n elements Result list can store up to n elements --- When to Use This Pattern This  find missing elements  pattern is useful when: - You have a known expected range of values - You need to find what s missing from that range - You want fast lookup operations - Input may contain duplicates that you need to handle Similar problems: - Missing Number  single missing  - First Missing Positive - Find All Duplicates in Array --- Test Cases to Try  python Test your solution with these: print find_disappeared_numbers  4,3,2,7,8,2,3,1      Should return  5,6  print find_disappeared_numbers  1,1      Should return  2  print find_disappeared_numbers  1,2,3,4,5      Should return    print find_disappeared_numbers  2,2,2,2,2      Should return  1,3,4,5  print find_disappeared_numbers  1      Should return      --- Key Takeaways - Sets are powerful for membership testing and set operations - Set difference  A - B   finds elements in A but not in B - Converting to set automatically handles duplicates - Think in terms of expected vs actual - like attendance checking!",
+    "excerpt": "Find All Numbers Disappeared in an Array Difficulty: Easy LeetCode: 448. Find All Numbers Disappeared in an Array --- Problem Given an array nums of n integers...",
+    "url": "/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array",
+    "canonicalUrl": "https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array",
+    "section": "Problems",
+    "tags": [
+      "easy",
+      "array",
+      "leetcode",
+      "complexity",
+      "pattern",
+      "python"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "Find All Numbers Disappeared in an Array",
+        "id": "find-all-numbers-disappeared-in-an-array"
+      },
+      {
+        "level": 2,
+        "text": "Problem",
+        "id": "problem"
+      },
+      {
+        "level": 2,
+        "text": "Simple Explanation",
+        "id": "simple-explanation"
+      },
+      {
+        "level": 2,
+        "text": "Solution",
+        "id": "solution"
+      },
+      {
+        "level": 1,
+        "text": "Alternative cleaner approach:",
+        "id": "alternative-cleaner-approach"
+      },
+      {
+        "level": 1,
+        "text": "Example usage:",
+        "id": "example-usage"
+      },
+      {
+        "level": 1,
+        "text": "nums = [4,3,2,7,8,2,3,1]",
+        "id": "nums-43278231"
+      },
+      {
+        "level": 1,
+        "text": "nums_set = {1, 2, 3, 4, 7, 8}",
+        "id": "numsset-1-2-3-4-7-8"
+      },
+      {
+        "level": 1,
+        "text": "expected = {1, 2, 3, 4, 5, 6, 7, 8}",
+        "id": "expected-1-2-3-4-5-6-7-8"
+      },
+      {
+        "level": 1,
+        "text": "missing = {5, 6} → return [5, 6]`",
+        "id": "missing-5-6-return-5-6"
+      },
+      {
+        "level": 2,
+        "text": "Step-by-Step Walkthrough",
+        "id": "step-by-step-walkthrough"
+      },
+      {
+        "level": 2,
+        "text": "Why This Approach Works",
+        "id": "why-this-approach-works"
+      },
+      {
+        "level": 2,
+        "text": "Alternative Approaches",
+        "id": "alternative-approaches"
+      },
+      {
+        "level": 3,
+        "text": "Approach 1: Simple Loop (Slower but Clear)",
+        "id": "approach-1-simple-loop-slower-but-clear"
+      },
+      {
+        "level": 3,
+        "text": "Approach 2: In-Place Marking (O(1) Space)",
+        "id": "approach-2-in-place-marking-o1-space"
+      },
+      {
+        "level": 2,
+        "text": "Visual Example",
+        "id": "visual-example"
+      },
+      {
+        "level": 2,
+        "text": "Common Mistakes to Avoid",
+        "id": "common-mistakes-to-avoid"
+      },
+      {
+        "level": 2,
+        "text": "Complexity Analysis",
+        "id": "complexity-analysis"
+      },
+      {
+        "level": 2,
+        "text": "When to Use This Pattern",
+        "id": "when-to-use-this-pattern"
+      },
+      {
+        "level": 2,
+        "text": "Test Cases to Try",
+        "id": "test-cases-to-try"
+      },
+      {
+        "level": 1,
+        "text": "Test your solution with these:",
+        "id": "test-your-solution-with-these"
+      },
+      {
+        "level": 2,
+        "text": "Key Takeaways",
+        "id": "key-takeaways"
+      }
+    ],
+    "publishedAt": "2025-09-08T01:35:33.034Z",
+    "updatedAt": "2025-09-08T01:35:46.595Z",
+    "author": "Morgan Ngetich",
+    "readingTime": 5,
+    "seo": {
+      "title": "Find All Numbers Disappeared In An Array | Crackmode Documentation",
+      "description": "Find All Numbers Disappeared in an Array Difficulty: Easy LeetCode: 448. Find All Numbers Disappeared in an Array --- Problem Given an array nums of n integers...",
+      "keywords": "find, numbers, disappeared, array, easy, leetcode, complexity, pattern, python, missing, expected, return, range, crackmode, algorithm",
+      "robots": "index,follow",
+      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Find All Numbers Disappeared In An Array\",\"description\":\"Find All Numbers Disappeared in an Array Difficulty: Easy LeetCode: 448. Find All Numbers Disappeared in an Array --- Problem Given an array nums of n integers...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array\",\"datePublished\":\"2025-09-08T01:35:33.034Z\",\"dateModified\":\"2025-09-08T01:35:46.595Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"CrackMode\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array\"},\"wordCount\":189,\"timeRequired\":\"PT5M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
+    },
+    "socialMedia": {
+      "ogTitle": "Find All Numbers Disappeared In An Array | Crackmode Documentation",
+      "ogDescription": "Given an array nums of n integers where nums[i] is in the range [1, n], return an array of all the integers in the range [1, n] that do not appear in nums.",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Find+All+Numbers+Disappeared+In+An+Array&description=Given+an+array+nums+of+n+integers+where+nums%5Bi%5D+is+in+the+range+%5B1%2C+n%5D%2C+return+an+array+of+all+the+integers+in+the+range...&section=Documentation&theme=crackmode",
+      "twitterTitle": "Find All Numbers Disappeared In An Array | Crackmode Documentation",
+      "twitterDescription": "Given an array nums of n integers where nums[i] is in the range [1, n], return an array of all the integers in the range [1, n] that do not appear in nums.",
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Find+All+Numbers+Disappeared+In+An+Array&description=Given+an+array+nums+of+n+integers+where+nums%5Bi%5D+is+in+the+range+%5B1%2C+n%5D%2C+return+an+array+of+all+the+integers+in+the+range...&section=Documentation&theme=crackmode"
+    }
+  },
+  {
     "id": "problems/find-the-difference",
     "title": "Find The Difference",
     "content": "Find the Difference Difficulty: Easy LeetCode: 389. Find the Difference --- Problem You are given two strings s and t. String t is generated by random shuffling string s and then add one more letter at a random position. Return the letter that was added to t. Example 1:    Input: s    abcd , t    abcde  Output:  e  Explanation:  e  is the letter that was added.   Example 2:   Input: s     , t    y  Output:  y    Example 3:   Input: s    ae , t    aea  Output:  a  Explanation:  a  is the letter that was added.   --- Simple Explanation Think of this like counting items in two bags! Just like in real life: - Bag A has: 1 apple, 1 banana, 1 cherry - Bag B has: 1 apple, 1 banana, 1 cherry, 1 grape   grape is the extra item!   The Plan: Count how many times each letter appears in both strings. The letter that appears more in t is our answer! --- Solution sCount   new HashMap    ; for  char c : s.toCharArray    sCount.put c, sCount.getOrDefault c, 0    1 ;    Count letters in t Map tCount   new HashMap    ; for  char c : t.toCharArray    tCount.put c, tCount.getOrDefault c, 0    1 ;    Find the different letter for  char letter : tCount.keySet    int tFreq   tCount.get letter ; int sFreq   sCount.getOrDefault letter, 0 ; if  tFreq !  sFreq  return letter; return   0 ;      --- Step-by-Step Walkthrough Let s trace through s    abcd , t    abcde :    Step 1: Count letters in s    abcd  s_count    a : 1,  b : 1,  c : 1,  d : 1 Step 2: Count letters in t    abcde  t_count    a : 1,  b : 1,  c : 1,  d : 1,  e : 1 Step 3: Compare counts for each letter in t  a : t has 1, s has 1   Same    b : t has 1, s has 1   Same    c : t has 1, s has 1   Same    d : t has 1, s has 1   Same    e : t has 1, s has 0  doesn t exist    Different!   Result:  e  is the extra letter!   Let s try another example: s    ae , t    aea :   Step 1: Count letters in s    ae  s_count    a : 1,  e : 1 Step 2: Count letters in t    aea  t_count    a : 2,  e : 1 Step 3: Compare counts  a : t has 2, s has 1   Different!   Result:  a  is the extra letter!   --- Why This Approach Works Easy to understand - Just count and compare, like counting toys Handles all cases - Works whether the extra letter is new or repeated Built-in tools - Python s Counter does the hard work for us Clear logic - If counts don t match, we found our answer! --- Alternative Simple Approach If you want an even simpler approach  though less efficient , you can check each letter:  python def find_the_difference_simple s, t :   Try each letter in t for letter in t:   Count how many times it appears in both strings count_in_s   s.count letter  count_in_t   t.count letter    If counts are different, this is our answer if count_in_t   count_in_s: return letter return      This is slower but very easy to understand! --- Common Mistakes to Avoid 1. Forgetting edge cases: What if s is empty? The solution still works! 2. Assuming only new letters: The extra letter might be a duplicate, not a new one 3. Not handling missing keys: Always check if a letter exists in the dictionary 4. Overcomplicating: The counting approach is simple and works for all cases --- Complexity Analysis Time Complexity: O n  We go through each string once to count letters Then we check each letter in t  at most n 1 letters  Space Complexity: O 1  We store at most 26 different letters  a-z  This is constant space, not dependent on input size --- Test Cases to Try   python Test your solution with these: print find_the_difference  abcd ,  abcde      Should return  e  print find_the_difference   ,  y      Should return  y  print find_the_difference  ae ,  aea      Should return  a  print find_the_difference  a ,  aa      Should return  a  print find_the_difference  ymbgaraibkfmvocpizdydugvalagaivdbfhvbksexkfrzrfrukndvuaobvfvwmmpnqivjyihhhwjuwfjmcryrz",
