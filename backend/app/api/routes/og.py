@@ -167,7 +167,7 @@ def get_dynamic_sizing(title, description, theme_base):
     
     return config
 
-def smart_text_wrap(text, max_chars_per_line=50, max_lines=4):
+def smart_text_wrap(text, max_chars_per_line=50, max_lines=5):
     """Intelligently wrap text with better line breaks"""
     # First, try to break at natural points
     words = text.split()
