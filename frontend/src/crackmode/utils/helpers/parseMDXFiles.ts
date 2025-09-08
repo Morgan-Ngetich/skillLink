@@ -68,8 +68,11 @@ export const parseMDXFiles = async (
     const url = `/crackmode/docs/${slug}`
     const canonicalUrl = `${baseUrl}${url}`
 
-    // Create excerpt
-    const excerpt = frontmatter.description || frontmatter.excerpt || createExcerpt(plainTextContent)
+    // Extract problem section specifically for OG descriptions
+    const problemDescription = extractProblemSection(content);
+    
+    // Create excerpt (fallback if no problem section)
+    const generalExcerpt = frontmatter.description || frontmatter.excerpt || createExcerpt(plainTextContent)
 
     // Extract or use frontmatter tags
     const tags = frontmatter.tags || extractTagsFromContent(plainTextContent, slug, frontmatter.title);
@@ -80,23 +83,22 @@ export const parseMDXFiles = async (
     // Generate SEO metadata
     const title = frontmatter.title || formatSlugToTitle(slug);
 
-    // TODO confirm that the title does not affect the MENTspace
     const seoTitle = frontmatter.seoTitle || frontmatter.title || `${title} | Crackmode Documentation`
-    const seoDescription = frontmatter.seoDescription || frontmatter.description || excerpt;
+    const seoDescription = frontmatter.seoDescription || frontmatter.description || generalExcerpt;
 
     // Keyword generation
     const keywords = frontmatter.keywords || generateKeywords(title, plainTextContent, tags)
 
-    // Generate social media metadata
+    // Generate social media metadata with problem-focused OG description
     const ogTitle = frontmatter.ogTitle || seoTitle;
-    const ogDescription = frontmatter.ogDescription || seoDescription;
+    const ogDescription = frontmatter.ogDescription || problemDescription || seoDescription;
     const ogImage = generateDefaultOGImage(title, ogDescription, frontmatter.section);
 
     const searchableDoc: EnhancedSearchableDoc = {
       id: slug,
       title,
       content: plainTextContent,
-      excerpt,
+      excerpt: generalExcerpt,
       url,
       canonicalUrl,
       section: frontmatter.section || inferSectionFromPath(slug),
@@ -128,6 +130,123 @@ export const parseMDXFiles = async (
   return searchableData
 }
 
+// NEW: Extract problem section specifically for OG descriptions
+function extractProblemSection(content: string): string | null {
+  // Remove imports and JSX components first for cleaner parsing
+  const cleanContent = content
+    .replace(/^import\s+.*$/gm, '')
+    .replace(/^export\s+.*$/gm, '')
+    .replace(/<[A-Z][A-Za-z0-9]*[^>]*\/?>/g, '');
+
+  // Look for Problem section with various heading formats
+  const problemSectionRegex = /(?:^|\n)#{1,6}\s*Problem\s*\n([\s\S]*?)(?=\n#{1,6}\s*[A-Z]|\n---|\n\*\*|\n```|$)/i;
+  const match = problemSectionRegex.exec(cleanContent);
+  
+  if (match && match[1]) {
+    let problemText = match[1].trim();
+    
+    // Clean up the extracted problem text
+    problemText = problemText
+      // Remove markdown formatting
+      .replace(/\*\*([^*]+)\*\*/g, '$1') // Bold
+      .replace(/\*([^*]+)\*/g, '$1') // Italic
+      .replace(/`([^`]+)`/g, '$1') // Inline code
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Links
+      
+      // Remove example blocks (they're usually too long)
+      .replace(/\*\*Example\s+\d+:\*\*[\s\S]*?(?=\*\*Example|\*\*Constraints?|\*\*Note|$)/gi, '')
+      
+      // Remove constraints section
+      .replace(/\*\*Constraints?:\*\*[\s\S]*$/i, '')
+      
+      // Clean up whitespace
+      .replace(/\n\s*\n/g, '\n')
+      .replace(/\n/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    // If the problem description is reasonable length, use it
+    if (problemText.length > 20 && problemText.length < 300) {
+      return problemText;
+    }
+    
+    // If it's too long, create a smart excerpt from it
+    if (problemText.length >= 300) {
+      return createSmartProblemExcerpt(problemText);
+    }
+  }
+  
+  // Fallback: look for problem-like content patterns
+  return extractProblemLikeContent(cleanContent);
+}
+
+// Create a smart excerpt specifically from problem descriptions
+function createSmartProblemExcerpt(problemText: string, maxLength = 180): string {
+  // First sentence is usually the core problem statement
+  const sentences = problemText.split(/[.!?]+\s+/);
+  
+  if (sentences.length > 0 && sentences[0].length < maxLength) {
+    let excerpt = sentences[0].trim();
+    
+    // Add second sentence if there's room and it adds value
+    if (sentences.length > 1 && excerpt.length + sentences[1].length + 2 < maxLength) {
+      excerpt += '. ' + sentences[1].trim();
+    }
+    
+    // Ensure it ends with proper punctuation
+    if (!/[.!?]$/.test(excerpt)) {
+      excerpt += '.';
+    }
+    
+    return excerpt;
+  }
+  
+  // Fallback to character-based truncation at word boundary
+  if (problemText.length <= maxLength) {
+    return problemText;
+  }
+  
+  const truncated = problemText.substring(0, maxLength);
+  const lastSpace = truncated.lastIndexOf(' ');
+  
+  if (lastSpace > maxLength * 0.8) {
+    return truncated.substring(0, lastSpace).trim() + '...';
+  }
+  
+  return truncated.trim() + '...';
+}
+
+// Extract problem-like content when no explicit Problem section exists
+function extractProblemLikeContent(content: string): string | null {
+  // Look for common problem statement patterns
+  const patterns = [
+    // "Given X, return Y" pattern
+    /(?:Given|You are given|You have)\s+([^.!?]*[.!?])\s*([^.!?]*[.!?])?/i,
+    
+    // "Find/Return/Determine..." pattern  
+    /(?:Find|Return|Determine|Calculate|Check|Verify)\s+([^.!?]*[.!?])/i,
+    
+    // Problem description starting with "A/An/The..."
+    /(?:^|\n)\s*(?:A|An|The)\s+([^.!?]*[.!?]\s*[^.!?]*[.!?]?)/i
+  ];
+
+  for (const pattern of patterns) {
+    const match = pattern.exec(content);
+    if (match) {
+      const extracted = match[0].trim()
+        .replace(/\*\*([^*]+)\*\*/g, '$1')
+        .replace(/`([^`]+)`/g, '$1')
+        .replace(/\s+/g, ' ');
+      
+      if (extracted.length > 20 && extracted.length < 250) {
+        return extracted;
+      }
+    }
+  }
+  
+  return null;
+}
+
 // Strip MDX/JSX content to get searchable plain text
 function stripMDXContent(content: string): string {
   return content
@@ -136,7 +255,7 @@ function stripMDXContent(content: string): string {
     .replace(/^export\s+.*$/gm, '')
     
     // Handle React components more intelligently
-    .replace(/<([A-Z][A-Za-z0-9]*)[^>]*>([\s\S]*?)<\/\1>/g, (tag, innerContent) => {
+    .replace(/<([A-Z][A-Za-z0-9]*)[^>]*>([\s\S]*?)<\/\1>/g, (_, tag, innerContent) => {
       // Preserve content from common components
       if (['Card', 'Alert', 'Note', 'Callout'].includes(tag)) {
         return innerContent;
@@ -170,7 +289,6 @@ function stripMDXContent(content: string): string {
     .replace(/[^\w\s.,!?;:-]/g, ' ') // Remove special chars but keep punctuation
     .trim();
 }
-
 
 // Extract headings from MDX content (handles both markdown and JSX)
 function extractHeadingsFromMDX(content: string): SearchableDoc['headings'] {
@@ -258,7 +376,6 @@ function createExcerpt(content: string, maxLength = 160): string {
   
   return truncated.trim() + '...';
 }
-
 
 // Extract tags from content and metadata
 function extractTagsFromContent(content: string, slug: string, title?: string): string[] {
@@ -369,7 +486,7 @@ function generateJSONLD(title: string, description: string, url: string, frontma
     },
     "publisher": {
       "@type": "Organization",
-      "name": "Your Organization",
+      "name": "CrackMode",
       "logo": {
         "@type": "ImageObject",
         "url": "https://frontend-production-a85f.up.railway.app/group.png"
@@ -388,21 +505,24 @@ function generateJSONLD(title: string, description: string, url: string, frontma
   return JSON.stringify(jsonLD);
 }
 
-// TODO use vercel OG to generate default OG images.
+// Generate default OG image URL with improved description handling
 function generateDefaultOGImage(title: string, description?: string, section?: string): string {
   const baseUrl = 'https://frontend-production-a85f.up.railway.app';
   const params = new URLSearchParams();
 
   params.set("title", title.substring(0, 60));
   if (description) {
-    params.set("description", description);
+    // For OG images, keep descriptions shorter and more impactful
+    const shortDesc = description.length > 120 ? 
+      description.substring(0, 120).trim() + '...' : 
+      description;
+    params.set("description", shortDesc);
   }
   params.set("section", section || "Documentation");
   params.set("theme", "crackmode");
 
   return `${baseUrl}/api/v1/og?${params.toString()}`;
 }
-
 
 function generateKeywords(title: string, content: string, tags: string[]): string {
   const importantWords = extractImportantWords(content)
@@ -417,7 +537,6 @@ function generateKeywords(title: string, content: string, tags: string[]): strin
 
   return [...new Set(allKeywords)].join(', ');
 }
-
 
 function extractImportantWords(content: string): string[] {
   const commonWords = new Set([
