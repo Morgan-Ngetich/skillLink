@@ -50,10 +50,10 @@
     "socialMedia": {
       "ogTitle": "Introduction | Crackmode Documentation",
       "ogDescription": "Box Heading Text and Text. Join elite coders who don t just solve problems they Text them! VStack What Makes CrackMode Different?",
-      "ogImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Introduction&section=Documentation&theme=crackmode",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Introduction&description=Box+Heading+Text+and+Text.+Join+elite+coders+who+don+t+just+solve+problems+they+Text+them%21+VStack+What+Makes+CrackMode+Different%3F&section=Documentation&theme=crackmode",
       "twitterTitle": "Introduction | Crackmode Documentation",
       "twitterDescription": "Box Heading Text and Text. Join elite coders who don t just solve problems they Text them! VStack What Makes CrackMode Different?",
-      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Introduction&section=Documentation&theme=crackmode"
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Introduction&description=Box+Heading+Text+and+Text.+Join+elite+coders+who+don+t+just+solve+problems+they+Text+them%21+VStack+What+Makes+CrackMode+Different%3F&section=Documentation&theme=crackmode"
     }
   },
   {
@@ -208,10 +208,10 @@
     "socialMedia": {
       "ogTitle": "Arrays Strings | Crackmode Documentation",
       "ogDescription": "Arrays Strings Overview LeetCode 75 Welcome to the Arrays Strings section! This foundational module introduces you to the most essential data structures in...",
-      "ogImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Arrays+Strings&section=Documentation&theme=crackmode",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Arrays+Strings&description=Arrays+Strings+Overview+LeetCode+75+Welcome+to+the+Arrays+Strings+section%21+This+foundational+module+introduces+you+to+the+most+essential+data+structures+in...&section=Documentation&theme=crackmode",
       "twitterTitle": "Arrays Strings | Crackmode Documentation",
       "twitterDescription": "Arrays Strings Overview LeetCode 75 Welcome to the Arrays Strings section! This foundational module introduces you to the most essential data structures in...",
-      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Arrays+Strings&section=Documentation&theme=crackmode"
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Arrays+Strings&description=Arrays+Strings+Overview+LeetCode+75+Welcome+to+the+Arrays+Strings+section%21+This+foundational+module+introduces+you+to+the+most+essential+data+structures+in...&section=Documentation&theme=crackmode"
     }
   },
   {
@@ -286,10 +286,10 @@
     "socialMedia": {
       "ogTitle": "Gcd Of Strings | Crackmode Documentation",
       "ogDescription": "Greatest Common Divisor of Strings Difficulty: Easy LeetCode: 1071. Greatest Common Divisor of Strings --- Problem For two strings s and t, we say t divides s...",
-      "ogImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Gcd+Of+Strings&section=Documentation&theme=crackmode",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Gcd+Of+Strings&description=Greatest+Common+Divisor+of+Strings+Difficulty%3A+Easy+LeetCode%3A+1071.+Greatest+Common+Divisor+of+Strings+---+Problem+For+two+strings+s+and+t%2C+we+say+t+divides+s...&section=Documentation&theme=crackmode",
       "twitterTitle": "Gcd Of Strings | Crackmode Documentation",
       "twitterDescription": "Greatest Common Divisor of Strings Difficulty: Easy LeetCode: 1071. Greatest Common Divisor of Strings --- Problem For two strings s and t, we say t divides s...",
-      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Gcd+Of+Strings&section=Documentation&theme=crackmode"
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Gcd+Of+Strings&description=Greatest+Common+Divisor+of+Strings+Difficulty%3A+Easy+LeetCode%3A+1071.+Greatest+Common+Divisor+of+Strings+---+Problem+For+two+strings+s+and+t%2C+we+say+t+divides+s...&section=Documentation&theme=crackmode"
     }
   },
   {
@@ -389,10 +389,10 @@
     "socialMedia": {
       "ogTitle": "Increasing Triplet Subsequence | Crackmode Documentation",
       "ogDescription": "Increasing Triplet Subsequence Difficulty: Medium LeetCode: 334. Increasing Triplet Subsequence --- Problem Given an integer array nums, return true if there...",
-      "ogImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Increasing+Triplet+Subsequence&section=Documentation&theme=crackmode",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Increasing+Triplet+Subsequence&description=Increasing+Triplet+Subsequence+Difficulty%3A+Medium+LeetCode%3A+334.+Increasing+Triplet+Subsequence+---+Problem+Given+an+integer+array+nums%2C+return+true+if+there...&section=Documentation&theme=crackmode",
       "twitterTitle": "Increasing Triplet Subsequence | Crackmode Documentation",
       "twitterDescription": "Increasing Triplet Subsequence Difficulty: Medium LeetCode: 334. Increasing Triplet Subsequence --- Problem Given an integer array nums, return true if there...",
-      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Increasing+Triplet+Subsequence&section=Documentation&theme=crackmode"
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Increasing+Triplet+Subsequence&description=Increasing+Triplet+Subsequence+Difficulty%3A+Medium+LeetCode%3A+334.+Increasing+Triplet+Subsequence+---+Problem+Given+an+integer+array+nums%2C+return+true+if+there...&section=Documentation&theme=crackmode"
     }
   },
   {
@@ -457,10 +457,10 @@
     "socialMedia": {
       "ogTitle": "Intro | Crackmode Documentation",
       "ogDescription": "What are Arrays Strings? Before diving into problems, let s understand what we re working with. --- Array An array is a collection of items stored together and...",
-      "ogImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Intro&section=Documentation&theme=crackmode",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Intro&description=What+are+Arrays+Strings%3F+Before+diving+into+problems%2C+let+s+understand+what+we+re+working+with.+---+Array+An+array+is+a+collection+of+items+stored+together+and...&section=Documentation&theme=crackmode",
       "twitterTitle": "Intro | Crackmode Documentation",
       "twitterDescription": "What are Arrays Strings? Before diving into problems, let s understand what we re working with. --- Array An array is a collection of items stored together and...",
-      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Intro&section=Documentation&theme=crackmode"
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Intro&description=What+are+Arrays+Strings%3F+Before+diving+into+problems%2C+let+s+understand+what+we+re+working+with.+---+Array+An+array+is+a+collection+of+items+stored+together+and...&section=Documentation&theme=crackmode"
     }
   },
   {
@@ -535,10 +535,10 @@
     "socialMedia": {
       "ogTitle": "Kids With Greatest Candies | Crackmode Documentation",
       "ogDescription": "Kids With the Greatest Number of Candies Difficulty: Easy LeetCode: 1431. Kids With the Greatest Number of Candies --- Problem There are n kids with candies.",
-      "ogImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Kids+With+Greatest+Candies&section=Documentation&theme=crackmode",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Kids+With+Greatest+Candies&description=Kids+With+the+Greatest+Number+of+Candies+Difficulty%3A+Easy+LeetCode%3A+1431.+Kids+With+the+Greatest+Number+of+Candies+---+Problem+There+are+n+kids+with+candies.&section=Documentation&theme=crackmode",
       "twitterTitle": "Kids With Greatest Candies | Crackmode Documentation",
       "twitterDescription": "Kids With the Greatest Number of Candies Difficulty: Easy LeetCode: 1431. Kids With the Greatest Number of Candies --- Problem There are n kids with candies.",
-      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Kids+With+Greatest+Candies&section=Documentation&theme=crackmode"
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Kids+With+Greatest+Candies&description=Kids+With+the+Greatest+Number+of+Candies+Difficulty%3A+Easy+LeetCode%3A+1431.+Kids+With+the+Greatest+Number+of+Candies+---+Problem+There+are+n+kids+with+candies.&section=Documentation&theme=crackmode"
     }
   },
   {
@@ -653,10 +653,10 @@
     "socialMedia": {
       "ogTitle": "Leetcode75 | Crackmode Documentation",
       "ogDescription": "LeetCode 75: Your Fast-Track Coding Interview Guide LeetCode 75 is a curated list of 75 problems designed to help you master core coding patterns and ace tech...",
-      "ogImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Leetcode75&section=Documentation&theme=crackmode",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Leetcode75&description=LeetCode+75%3A+Your+Fast-Track+Coding+Interview+Guide+LeetCode+75+is+a+curated+list+of+75+problems+designed+to+help+you+master+core+coding+patterns+and+ace+tech...&section=Documentation&theme=crackmode",
       "twitterTitle": "Leetcode75 | Crackmode Documentation",
       "twitterDescription": "LeetCode 75: Your Fast-Track Coding Interview Guide LeetCode 75 is a curated list of 75 problems designed to help you master core coding patterns and ace tech...",
-      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Leetcode75&section=Documentation&theme=crackmode"
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Leetcode75&description=LeetCode+75%3A+Your+Fast-Track+Coding+Interview+Guide+LeetCode+75+is+a+curated+list+of+75+problems+designed+to+help+you+master+core+coding+patterns+and+ace+tech...&section=Documentation&theme=crackmode"
     }
   },
   {
@@ -731,10 +731,10 @@
     "socialMedia": {
       "ogTitle": "Merge Strings Alternately | Crackmode Documentation",
       "ogDescription": "Merge Strings Alternately Difficulty: Easy LeetCode: 1768. Merge Strings Alternately --- Problem You are given two strings word and word2.",
-      "ogImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Merge+Strings+Alternately&section=Documentation&theme=crackmode",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Merge+Strings+Alternately&description=Merge+Strings+Alternately+Difficulty%3A+Easy+LeetCode%3A+1768.+Merge+Strings+Alternately+---+Problem+You+are+given+two+strings+word+and+word2.&section=Documentation&theme=crackmode",
       "twitterTitle": "Merge Strings Alternately | Crackmode Documentation",
       "twitterDescription": "Merge Strings Alternately Difficulty: Easy LeetCode: 1768. Merge Strings Alternately --- Problem You are given two strings word and word2.",
-      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Merge+Strings+Alternately&section=Documentation&theme=crackmode"
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Merge+Strings+Alternately&description=Merge+Strings+Alternately+Difficulty%3A+Easy+LeetCode%3A+1768.+Merge+Strings+Alternately+---+Problem+You+are+given+two+strings+word+and+word2.&section=Documentation&theme=crackmode"
     }
   },
   {
@@ -814,10 +814,10 @@
     "socialMedia": {
       "ogTitle": "Product Of Array Except Self | Crackmode Documentation",
       "ogDescription": "Product of Array Except Self Difficulty: Medium LeetCode: 238. Product of Array Except Self --- Problem Given an integer array nums, return an array answer...",
-      "ogImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Product+Of+Array+Except+Self&section=Documentation&theme=crackmode",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Product+Of+Array+Except+Self&description=Product+of+Array+Except+Self+Difficulty%3A+Medium+LeetCode%3A+238.+Product+of+Array+Except+Self+---+Problem+Given+an+integer+array+nums%2C+return+an+array+answer...&section=Documentation&theme=crackmode",
       "twitterTitle": "Product Of Array Except Self | Crackmode Documentation",
       "twitterDescription": "Product of Array Except Self Difficulty: Medium LeetCode: 238. Product of Array Except Self --- Problem Given an integer array nums, return an array answer...",
-      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Product+Of+Array+Except+Self&section=Documentation&theme=crackmode"
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Product+Of+Array+Except+Self&description=Product+of+Array+Except+Self+Difficulty%3A+Medium+LeetCode%3A+238.+Product+of+Array+Except+Self+---+Problem+Given+an+integer+array+nums%2C+return+an+array+answer...&section=Documentation&theme=crackmode"
     }
   },
   {
@@ -902,10 +902,10 @@
     "socialMedia": {
       "ogTitle": "String Compression | Crackmode Documentation",
       "ogDescription": "String Compression Difficulty: Medium LeetCode: 443. String Compression --- Problem Given an array of characters chars, compress it using the following...",
-      "ogImage": "https://frontend-production-a85f.up.railway.app/api/og?title=String+Compression&section=Documentation&theme=crackmode",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=String+Compression&description=String+Compression+Difficulty%3A+Medium+LeetCode%3A+443.+String+Compression+---+Problem+Given+an+array+of+characters+chars%2C+compress+it+using+the+following...&section=Documentation&theme=crackmode",
       "twitterTitle": "String Compression | Crackmode Documentation",
       "twitterDescription": "String Compression Difficulty: Medium LeetCode: 443. String Compression --- Problem Given an array of characters chars, compress it using the following...",
-      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=String+Compression&section=Documentation&theme=crackmode"
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=String+Compression&description=String+Compression+Difficulty%3A+Medium+LeetCode%3A+443.+String+Compression+---+Problem+Given+an+array+of+characters+chars%2C+compress+it+using+the+following...&section=Documentation&theme=crackmode"
     }
   },
   {
@@ -1025,10 +1025,10 @@
     "socialMedia": {
       "ogTitle": "Check If Number Has Equal Digit Count And Digit Value | Crackmode Documentation",
       "ogDescription": "Check if Number Has Equal Digit Count and Digit Value Difficulty: Easy LeetCode: 2283. Check if Number Has Equal Digit Count and Digit Value --- Problem You...",
-      "ogImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Check+If+Number+Has+Equal+Digit+Count+And+Digit+Value&section=Documentation&theme=crackmode",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Check+If+Number+Has+Equal+Digit+Count+And+Digit+Value&description=Check+if+Number+Has+Equal+Digit+Count+and+Digit+Value+Difficulty%3A+Easy+LeetCode%3A+2283.+Check+if+Number+Has+Equal+Digit+Count+and+Digit+Value+---+Problem+You...&section=Documentation&theme=crackmode",
       "twitterTitle": "Check If Number Has Equal Digit Count And Digit Value | Crackmode Documentation",
       "twitterDescription": "Check if Number Has Equal Digit Count and Digit Value Difficulty: Easy LeetCode: 2283. Check if Number Has Equal Digit Count and Digit Value --- Problem You...",
-      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Check+If+Number+Has+Equal+Digit+Count+And+Digit+Value&section=Documentation&theme=crackmode"
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Check+If+Number+Has+Equal+Digit+Count+And+Digit+Value&description=Check+if+Number+Has+Equal+Digit+Count+and+Digit+Value+Difficulty%3A+Easy+LeetCode%3A+2283.+Check+if+Number+Has+Equal+Digit+Count+and+Digit+Value+---+Problem+You...&section=Documentation&theme=crackmode"
     }
   },
   {
@@ -1143,10 +1143,10 @@
     "socialMedia": {
       "ogTitle": "Find The Difference | Crackmode Documentation",
       "ogDescription": "Find the Difference Difficulty: Easy LeetCode: 389. Find the Difference --- Problem You are given two strings s and t.",
-      "ogImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Find+The+Difference&section=Documentation&theme=crackmode",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Find+The+Difference&description=Find+the+Difference+Difficulty%3A+Easy+LeetCode%3A+389.+Find+the+Difference+---+Problem+You+are+given+two+strings+s+and+t.&section=Documentation&theme=crackmode",
       "twitterTitle": "Find The Difference | Crackmode Documentation",
       "twitterDescription": "Find the Difference Difficulty: Easy LeetCode: 389. Find the Difference --- Problem You are given two strings s and t.",
-      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Find+The+Difference&section=Documentation&theme=crackmode"
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Find+The+Difference&description=Find+the+Difference+Difficulty%3A+Easy+LeetCode%3A+389.+Find+the+Difference+---+Problem+You+are+given+two+strings+s+and+t.&section=Documentation&theme=crackmode"
     }
   },
   {
@@ -1276,10 +1276,10 @@
     "socialMedia": {
       "ogTitle": "Find The Difference Of Two Arrays | Crackmode Documentation",
       "ogDescription": "Find the Difference of Two Arrays Difficulty: Easy LeetCode: 2215. Find the Difference of Two Arrays --- Problem Given two 0-indexed integer arrays nums1 and...",
-      "ogImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Find+The+Difference+Of+Two+Arrays&section=Documentation&theme=crackmode",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Find+The+Difference+Of+Two+Arrays&description=Find+the+Difference+of+Two+Arrays+Difficulty%3A+Easy+LeetCode%3A+2215.+Find+the+Difference+of+Two+Arrays+---+Problem+Given+two+0-indexed+integer+arrays+nums1+and...&section=Documentation&theme=crackmode",
       "twitterTitle": "Find The Difference Of Two Arrays | Crackmode Documentation",
       "twitterDescription": "Find the Difference of Two Arrays Difficulty: Easy LeetCode: 2215. Find the Difference of Two Arrays --- Problem Given two 0-indexed integer arrays nums1 and...",
-      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Find+The+Difference+Of+Two+Arrays&section=Documentation&theme=crackmode"
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Find+The+Difference+Of+Two+Arrays&description=Find+the+Difference+of+Two+Arrays+Difficulty%3A+Easy+LeetCode%3A+2215.+Find+the+Difference+of+Two+Arrays+---+Problem+Given+two+0-indexed+integer+arrays+nums1+and...&section=Documentation&theme=crackmode"
     }
   },
   {
@@ -1384,10 +1384,10 @@
     "socialMedia": {
       "ogTitle": "Implement Stack Using Queues | Crackmode Documentation",
       "ogDescription": "Implement Stack using Queues Difficulty: Easy LeetCode: 225. Implement Stack using Queues --- Problem Implement a last-in-first-out LIFO stack using only two...",
-      "ogImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Implement+Stack+Using+Queues&section=Documentation&theme=crackmode",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Implement+Stack+Using+Queues&description=Implement+Stack+using+Queues+Difficulty%3A+Easy+LeetCode%3A+225.+Implement+Stack+using+Queues+---+Problem+Implement+a+last-in-first-out+LIFO+stack+using+only+two...&section=Documentation&theme=crackmode",
       "twitterTitle": "Implement Stack Using Queues | Crackmode Documentation",
       "twitterDescription": "Implement Stack using Queues Difficulty: Easy LeetCode: 225. Implement Stack using Queues --- Problem Implement a last-in-first-out LIFO stack using only two...",
-      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Implement+Stack+Using+Queues&section=Documentation&theme=crackmode"
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Implement+Stack+Using+Queues&description=Implement+Stack+using+Queues+Difficulty%3A+Easy+LeetCode%3A+225.+Implement+Stack+using+Queues+---+Problem+Implement+a+last-in-first-out+LIFO+stack+using+only+two...&section=Documentation&theme=crackmode"
     }
   },
   {
@@ -1482,10 +1482,10 @@
     "socialMedia": {
       "ogTitle": "Longest Consecutive Sequence | Crackmode Documentation",
       "ogDescription": "Longest Consecutive Sequence Difficulty: Medium LeetCode: 128. Longest Consecutive Sequence --- Problem Given an unsorted array of integers nums, return the...",
-      "ogImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Longest+Consecutive+Sequence&section=Documentation&theme=crackmode",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Longest+Consecutive+Sequence&description=Longest+Consecutive+Sequence+Difficulty%3A+Medium+LeetCode%3A+128.+Longest+Consecutive+Sequence+---+Problem+Given+an+unsorted+array+of+integers+nums%2C+return+the...&section=Documentation&theme=crackmode",
       "twitterTitle": "Longest Consecutive Sequence | Crackmode Documentation",
       "twitterDescription": "Longest Consecutive Sequence Difficulty: Medium LeetCode: 128. Longest Consecutive Sequence --- Problem Given an unsorted array of integers nums, return the...",
-      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Longest+Consecutive+Sequence&section=Documentation&theme=crackmode"
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Longest+Consecutive+Sequence&description=Longest+Consecutive+Sequence+Difficulty%3A+Medium+LeetCode%3A+128.+Longest+Consecutive+Sequence+---+Problem+Given+an+unsorted+array+of+integers+nums%2C+return+the...&section=Documentation&theme=crackmode"
     }
   },
   {
@@ -1615,10 +1615,10 @@
     "socialMedia": {
       "ogTitle": "Missing Number | Crackmode Documentation",
       "ogDescription": "Missing Number Difficulty: Easy LeetCode: 268. Missing Number --- Problem Given an array nums containing n distinct numbers in the range 0, n , return the only...",
-      "ogImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Missing+Number&section=Documentation&theme=crackmode",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Missing+Number&description=Missing+Number+Difficulty%3A+Easy+LeetCode%3A+268.+Missing+Number+---+Problem+Given+an+array+nums+containing+n+distinct+numbers+in+the+range+0%2C+n+%2C+return+the+only...&section=Documentation&theme=crackmode",
       "twitterTitle": "Missing Number | Crackmode Documentation",
       "twitterDescription": "Missing Number Difficulty: Easy LeetCode: 268. Missing Number --- Problem Given an array nums containing n distinct numbers in the range 0, n , return the only...",
-      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Missing+Number&section=Documentation&theme=crackmode"
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Missing+Number&description=Missing+Number+Difficulty%3A+Easy+LeetCode%3A+268.+Missing+Number+---+Problem+Given+an+array+nums+containing+n+distinct+numbers+in+the+range+0%2C+n+%2C+return+the+only...&section=Documentation&theme=crackmode"
     }
   },
   {
@@ -1708,10 +1708,10 @@
     "socialMedia": {
       "ogTitle": "Unique Number Of Occurrences | Crackmode Documentation",
       "ogDescription": "Unique Number of Occurrences Difficulty: Easy LeetCode: 1207. Unique Number of Occurrences --- Problem Given an array of integers arr, return true if the...",
-      "ogImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Unique+Number+Of+Occurrences&section=Documentation&theme=crackmode",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Unique+Number+Of+Occurrences&description=Unique+Number+of+Occurrences+Difficulty%3A+Easy+LeetCode%3A+1207.+Unique+Number+of+Occurrences+---+Problem+Given+an+array+of+integers+arr%2C+return+true+if+the...&section=Documentation&theme=crackmode",
       "twitterTitle": "Unique Number Of Occurrences | Crackmode Documentation",
       "twitterDescription": "Unique Number of Occurrences Difficulty: Easy LeetCode: 1207. Unique Number of Occurrences --- Problem Given an array of integers arr, return true if the...",
-      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/og?title=Unique+Number+Of+Occurrences&section=Documentation&theme=crackmode"
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Unique+Number+Of+Occurrences&description=Unique+Number+of+Occurrences+Difficulty%3A+Easy+LeetCode%3A+1207.+Unique+Number+of+Occurrences+---+Problem+Given+an+array+of+integers+arr%2C+return+true+if+the...&section=Documentation&theme=crackmode"
     }
   }
 ]

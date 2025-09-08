@@ -90,7 +90,7 @@ export const parseMDXFiles = async (
     // Generate social media metadata
     const ogTitle = frontmatter.ogTitle || seoTitle;
     const ogDescription = frontmatter.ogDescription || seoDescription;
-    const ogImage = frontmatter.ogImage || frontmatter.image || generateDefaultOGImage(title, frontmatter.section);
+    const ogImage = generateDefaultOGImage(title, ogDescription, frontmatter.section);
 
     const searchableDoc: EnhancedSearchableDoc = {
       id: slug,
@@ -389,15 +389,18 @@ function generateJSONLD(title: string, description: string, url: string, frontma
 }
 
 // TODO use vercel OG to generate default OG images.
-function generateDefaultOGImage(title: string, section?: string): string {
-  const baseUrl = 'https://frontend-production-a85f.up.railway.app'
-  const params = new URLSearchParams({
-    title: title.substring(0, 60), // limit title length
-    section: section || 'Documentation',
-    theme: "crackmode"
-  })
+function generateDefaultOGImage(title: string, description?: string, section?: string): string {
+  const baseUrl = 'https://frontend-production-a85f.up.railway.app';
+  const params = new URLSearchParams();
 
- return `${baseUrl}/api/og?${params.toString()}`
+  params.set("title", title.substring(0, 60));
+  if (description) {
+    params.set("description", description);
+  }
+  params.set("section", section || "Documentation");
+  params.set("theme", "crackmode");
+
+  return `${baseUrl}/api/v1/og?${params.toString()}`;
 }
 
 
