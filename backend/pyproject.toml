@@ -31,6 +31,8 @@ openai = "^1.98.0"
 anthropic = "^0.60.0"
 replicate = "^1.0.7"
 groq = "^0.31.0"
+pillow = "^11.3.0"
+imgkit = "^1.2.3"
 
 [tool.poetry.dev-dependencies]
 black = "^25.1.0"
