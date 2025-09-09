@@ -7,7 +7,7 @@ import {
   HStack,
   VStack,
   Link,
-  Icon,
+  IconButton
 } from '@chakra-ui/react';
 import { Tabs } from '@chakra-ui/react';
 import { AvatarGroup, Avatar } from '../ui';
@@ -209,9 +209,9 @@ const HeroCard = () => {
 
               <Box bg="cardbg" p={4} rounded="lg" shadow="sm">
                 <HStack align="start">
-                  <Icon boxSize={5} mt={1} color="blue.500">
+                  <IconButton boxSize={5} mt={1} color="blue.500" variant="plain">
                     <FiBookOpen />
-                  </Icon>
+                  </IconButton>
                   <Box>
                     <Text fontWeight="medium">Designing Scalable Systems</Text>
                     <Text fontSize="sm" color="fg.muted">
@@ -226,9 +226,9 @@ const HeroCard = () => {
 
               <Box bg="cardbg" p={4} rounded="lg" shadow="sm">
                 <HStack align="start">
-                  <Icon boxSize={5} mt={1} color="red.500">
+                  <IconButton boxSize={5} mt={1} color="red.500" variant="plain">
                     <FiYoutube />
-                  </Icon>
+                  </IconButton>
                   <Box>
                     <Text fontWeight="medium">System Design Fundamentals (Video)</Text>
                     <Text fontSize="sm" color="fg.muted">
@@ -247,9 +247,9 @@ const HeroCard = () => {
 
               <Box bg="cardbg" p={4} rounded="lg" shadow="sm">
                 <HStack align="start">
-                  <Icon boxSize={5} mt={1} color="green.500">
+                  <IconButton boxSize={5} mt={1} color="green.500" variant="plain">
                     < FiGlobe />
-                  </Icon>
+                  </IconButton>
                   <Box>
                     <Text fontWeight="medium">Explore: Real System Case Studies</Text>
                     <Text fontSize="sm" color="fg.muted">
@@ -268,9 +268,9 @@ const HeroCard = () => {
 
               <Box bg="cardbg" p={4} rounded="lg" shadow="sm">
                 <HStack align="start">
-                  <Icon boxSize={5} mt={1} color="purple.500">
+                  <IconButton boxSize={5} mt={1} color="purple.500" variant="plain">
                     <FiUserCheck />
-                  </Icon>
+                  </IconButton>
                   <Box>
                     <Text fontWeight="medium">Bring Your Own System</Text>
                     <Text fontSize="sm" color="fg.muted">
