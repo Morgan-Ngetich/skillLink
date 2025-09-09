@@ -38,8 +38,7 @@ const CrackModeHeader: React.FC<HeaderProps> = ({ page }) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const { isLoggingOut, signOut } = useAuth();
-  const { user } = useSession()
-  const { isLoading } = useSession()
+  const { user, isLoading } = useSession()
   const navigate = useNavigate();
   const navigateWithRedirect = useNavigateWithRedirect();
 

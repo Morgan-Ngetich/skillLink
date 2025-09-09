@@ -21,8 +21,8 @@ import { useNavigateWithRedirect } from '@/hooks/auth/authState';
 import { useSession } from '@/hooks/auth/useSession';
 
 const Header = () => {
-  const { isLoading, isLoggingOut, signOut } = useAuth();
-  const { user } = useSession()
+  const { isLoggingOut, signOut } = useAuth();
+  const { user, isLoading } = useSession()
   const navigate = useNavigate();
 
   useEffect(() => {
