@@ -129,6 +129,17 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
       "docs": "/crackmode/docs/problems/number-of-good-pairs",
       "solved": true,
       "solvedAt": "2025-09-08T23:20:00Z"
+    },
+    {
+      "id": 2,
+      "title": "Distribute Candies",
+      "difficulty": "Easy",
+      "tags": ["Array", "HashTable", "Math", "Greedy"],
+      "url": "https://leetcode.com/problems/distribute-candies/",
+      "docs": "/crackmode/docs/problems/distribute-candies",
+      "solved": true,
+      "solvedAt": "2025-09-09T20:59:00Z"
     }
+
   ],
 }

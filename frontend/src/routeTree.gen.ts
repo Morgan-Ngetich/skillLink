@@ -33,6 +33,7 @@ import { Route as CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRouteImport }
 import { Route as CrackmodeDocsProblemsFindTheDifferenceRouteImport } from './routes/crackmode/docs/problems/find-the-difference'
 import { Route as CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRouteImport } from './routes/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
 import { Route as CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRouteImport } from './routes/crackmode/docs/problems/find-all-duplicates-in-an-array'
+import { Route as CrackmodeDocsProblemsDistributeCandiesRouteImport } from './routes/crackmode/docs/problems/distribute-candies'
 import { Route as CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRouteImport } from './routes/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/index'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsStringCompressionRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/string-compression'
@@ -173,6 +174,12 @@ const CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute =
     path: '/problems/find-all-duplicates-in-an-array',
     getParentRoute: () => CrackmodeDocsRoute,
   } as any)
+const CrackmodeDocsProblemsDistributeCandiesRoute =
+  CrackmodeDocsProblemsDistributeCandiesRouteImport.update({
+    id: '/problems/distribute-candies',
+    path: '/problems/distribute-candies',
+    getParentRoute: () => CrackmodeDocsRoute,
+  } as any)
 const CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute =
   CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRouteImport.update(
     {
@@ -252,6 +259,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof LayoutDashboardIndexRoute
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
+  '/crackmode/docs/problems/distribute-candies': typeof CrackmodeDocsProblemsDistributeCandiesRoute
   '/crackmode/docs/problems/find-all-duplicates-in-an-array': typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute
   '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array': typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute
   '/crackmode/docs/problems/find-the-difference': typeof CrackmodeDocsProblemsFindTheDifferenceRoute
@@ -285,6 +293,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof LayoutDashboardIndexRoute
   '/crackmode/docs': typeof CrackmodeDocsIndexRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
+  '/crackmode/docs/problems/distribute-candies': typeof CrackmodeDocsProblemsDistributeCandiesRoute
   '/crackmode/docs/problems/find-all-duplicates-in-an-array': typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute
   '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array': typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute
   '/crackmode/docs/problems/find-the-difference': typeof CrackmodeDocsProblemsFindTheDifferenceRoute
@@ -321,6 +330,7 @@ export interface FileRoutesById {
   '/_layout/dashboard/': typeof LayoutDashboardIndexRoute
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
+  '/crackmode/docs/problems/distribute-candies': typeof CrackmodeDocsProblemsDistributeCandiesRoute
   '/crackmode/docs/problems/find-all-duplicates-in-an-array': typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute
   '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array': typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute
   '/crackmode/docs/problems/find-the-difference': typeof CrackmodeDocsProblemsFindTheDifferenceRoute
@@ -357,6 +367,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/crackmode/docs/'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
+    | '/crackmode/docs/problems/distribute-candies'
     | '/crackmode/docs/problems/find-all-duplicates-in-an-array'
     | '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
     | '/crackmode/docs/problems/find-the-difference'
@@ -390,6 +401,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/crackmode/docs'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
+    | '/crackmode/docs/problems/distribute-candies'
     | '/crackmode/docs/problems/find-all-duplicates-in-an-array'
     | '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
     | '/crackmode/docs/problems/find-the-difference'
@@ -425,6 +437,7 @@ export interface FileRouteTypes {
     | '/_layout/dashboard/'
     | '/crackmode/docs/'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
+    | '/crackmode/docs/problems/distribute-candies'
     | '/crackmode/docs/problems/find-all-duplicates-in-an-array'
     | '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
     | '/crackmode/docs/problems/find-the-difference'
@@ -626,6 +639,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRouteImport
       parentRoute: typeof CrackmodeDocsRoute
     }
+    '/crackmode/docs/problems/distribute-candies': {
+      id: '/crackmode/docs/problems/distribute-candies'
+      path: '/problems/distribute-candies'
+      fullPath: '/crackmode/docs/problems/distribute-candies'
+      preLoaderRoute: typeof CrackmodeDocsProblemsDistributeCandiesRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
     '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': {
       id: '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
       path: '/problems/check-if-number-has-equal-digit-count-and-digit-value'
@@ -714,6 +734,7 @@ const LayoutRouteWithChildren =
 interface CrackmodeDocsRouteChildren {
   CrackmodeDocsIndexRoute: typeof CrackmodeDocsIndexRoute
   CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute: typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
+  CrackmodeDocsProblemsDistributeCandiesRoute: typeof CrackmodeDocsProblemsDistributeCandiesRoute
   CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute: typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute
   CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute: typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute
   CrackmodeDocsProblemsFindTheDifferenceRoute: typeof CrackmodeDocsProblemsFindTheDifferenceRoute
@@ -739,6 +760,8 @@ const CrackmodeDocsRouteChildren: CrackmodeDocsRouteChildren = {
   CrackmodeDocsIndexRoute: CrackmodeDocsIndexRoute,
   CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute:
     CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute,
+  CrackmodeDocsProblemsDistributeCandiesRoute:
+    CrackmodeDocsProblemsDistributeCandiesRoute,
   CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute:
     CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute,
   CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute:

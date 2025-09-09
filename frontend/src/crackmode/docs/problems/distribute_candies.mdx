@@ -1,0 +1,339 @@
+import { VStack, HStack, Text } from "@chakra-ui/react"
+
+# Distribute Candies
+
+**Difficulty:** <span style={{color: "#4ade80"}}>Easy</span>  
+**LeetCode:** [575. Distribute Candies](https://leetcode.com/problems/distribute-candies/)
+
+---
+
+## Problem
+
+Alice has `n` candies, where the `ith` candy is of type `candyType[i]`. Alice noticed that she started to gain weight, so she visited a doctor.
+
+The doctor advised Alice to only eat `n / 2` of the candies she has (`n` is always even). Alice likes her candies very much, and she wants to eat the maximum number of different types of candies while still following the doctor's advice.
+
+Given the integer array `candyType` of length `n`, return the **maximum** number of different types of candies she can eat if she only eats `n / 2` of them.
+
+**Example 1:**
+```
+Input: candyType = [1,1,2,2,3,3]
+Output: 3
+Explanation: Alice can only eat 6 / 2 = 3 candies. Since there are only 3 types, she can eat one of each type.
+```
+
+**Example 2:**
+```
+Input: candyType = [1,1,2,3]
+Output: 2
+Explanation: Alice can only eat 4 / 2 = 2 candies. Whether she eats types [1,2], [1,3], or [2,3], she still can only eat 2 different types.
+```
+
+**Example 3:**
+```
+Input: candyType = [6,6,6,6]
+Output: 1
+Explanation: Alice can only eat 4 / 2 = 2 candies. Even though she can eat 2 candies, she only has 1 type.
+```
+
+---
+
+## Simple Explanation
+
+Think of this like **choosing different flavors** at an ice cream shop with a limited budget!
+
+Just like in real life:
+- You have money for only 3 scoops (n/2 = 3)
+- The shop has flavors: [vanilla, vanilla, chocolate, chocolate, strawberry, strawberry]
+- You want maximum variety, so you pick: vanilla, chocolate, strawberry → 3 different types! ✓
+- Even though you could pick 3 vanilla scoops, that's not maximizing variety
+
+**The Key Insight:** Alice wants **maximum variety**! She should pick one candy of each type until she either:
+1. Runs out of allowed candies (n/2), OR
+2. Runs out of different types
+
+The answer is: **min(unique_types, n/2)**
+
+---
+
+## Solution
+
+<TabbedCode
+  files={[
+    {
+      title: "Python",
+      language: "python",
+      code: `def distributeCandies(candyType):
+    # Count unique candy types using set
+    unique_types = len(set(candyType))
+    
+    # Alice can eat at most n/2 candies
+    max_candies = len(candyType) // 2
+    
+    # She wants maximum variety, so pick the minimum
+    return min(unique_types, max_candies)
+
+# Example usage:
+# candyType = [1,1,2,2,3,3]
+# unique_types = len({1,2,3}) = 3
+# max_candies = 6 // 2 = 3  
+# result = min(3, 3) = 3`
+    },
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function distributeCandies(candyType) {
+    // Count unique candy types using Set
+    const uniqueTypes = new Set(candyType).size;
+    
+    // Alice can eat at most n/2 candies
+    const maxCandies = Math.floor(candyType.length / 2);
+    
+    // Return minimum for maximum variety
+    return Math.min(uniqueTypes, maxCandies);
+}`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `import java.util.*;
+
+public class Solution {
+    public int distributeCandies(int[] candyType) {
+        // Count unique candy types using HashSet
+        Set<Integer> uniqueTypes = new HashSet<>();
+        for (int candy : candyType) {
+            uniqueTypes.add(candy);
+        }
+        
+        // Alice can eat at most n/2 candies
+        int maxCandies = candyType.length / 2;
+        
+        // Return minimum for maximum variety
+        return Math.min(uniqueTypes.size(), maxCandies);
+    }
+}`
+    }
+  ]}
+/>
+
+---
+
+## Step-by-Step Walkthrough
+
+Let's trace through `candyType = [1,1,2,2,3,3]`:
+
+```
+Step 1: Count unique candy types
+        candyType = [1,1,2,2,3,3]
+        unique_types = {1, 2, 3}  →  3 different types
+
+Step 2: Calculate maximum candies Alice can eat
+        total_candies = 6
+        max_candies = 6 ÷ 2 = 3
+
+Step 3: Find the limiting factor
+        Alice wants maximum variety
+        She can eat 3 candies and there are 3 types available
+        result = min(3 types, 3 candies) = 3 ✓
+        
+Strategy: Pick one candy of each type: [1, 2, 3]
+```
+
+Let's try another example: `candyType = [1,1,2,3]`:
+
+```
+Step 1: Count unique types
+        candyType = [1,1,2,3]
+        unique_types = {1, 2, 3}  →  3 different types
+
+Step 2: Calculate max candies
+        total_candies = 4
+        max_candies = 4 ÷ 2 = 2
+
+Step 3: Find limiting factor  
+        Alice can only eat 2 candies but there are 3 types
+        result = min(3 types, 2 candies) = 2 ✓
+        
+Strategy: Pick any 2 types, e.g., [1, 2] or [1, 3] or [2, 3]
+```
+
+Final example: `candyType = [6,6,6,6]`:
+
+```
+Step 1: Count unique types
+        candyType = [6,6,6,6]
+        unique_types = {6}  →  1 different type
+
+Step 2: Calculate max candies
+        total_candies = 4  
+        max_candies = 4 ÷ 2 = 2
+
+Step 3: Find limiting factor
+        Alice can eat 2 candies but only 1 type exists
+        result = min(1 type, 2 candies) = 1 ✓
+        
+Strategy: Pick 2 candies of type 6, but only 1 unique type
+```
+
+---
+
+## Why This Approach Works
+
+<VStack align="start" spacing={2}>
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Greedy strategy</Text>
+    <Text>- Always pick one of each type for maximum variety</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Two constraints</Text>
+    <Text>- Limited by both candy count (n/2) and available types</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Simple math</Text>
+    <Text>- Take minimum of the two limiting factors</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Set for uniqueness</Text>
+    <Text>- Automatically handles counting distinct types</Text>
+  </HStack>
+</VStack>
+
+---
+
+## Visual Understanding
+
+Let's visualize the decision process:
+
+```
+Scenario 1: Many types, few candies allowed
+candyType = [1,2,3,4,5,6,7,8,9,10]  (10 candies, 10 types)
+max_candies = 10/2 = 5
+unique_types = 10
+result = min(10, 5) = 5  ← Limited by candy count
+
+Scenario 2: Few types, many candies allowed  
+candyType = [1,1,1,1,1,1]  (6 candies, 1 type)
+max_candies = 6/2 = 3
+unique_types = 1  
+result = min(1, 3) = 1  ← Limited by variety
+
+Scenario 3: Perfect balance
+candyType = [1,1,2,2,3,3]  (6 candies, 3 types)
+max_candies = 6/2 = 3
+unique_types = 3
+result = min(3, 3) = 3  ← Balanced
+```
+
+---
+
+## Alternative Counting Approach
+
+If you prefer explicit counting without sets:
+
+```python
+def distributeCandies_manual_count(candyType):
+    # Manually count unique types
+    seen = {}
+    for candy in candyType:
+        seen[candy] = True
+    
+    unique_types = len(seen)
+    max_candies = len(candyType) // 2
+    
+    return min(unique_types, max_candies)
+```
+
+This does the same thing but shows the counting process explicitly.
+
+---
+
+## Real-World Analogy
+
+Think of it like **planning a diverse meal** with portion control:
+
+- You're at a buffet with 10 different dishes
+- Your diet plan allows only 4 servings total
+- To maximize nutrition variety, you'd pick 4 different dishes
+- Even if there are 10 options, you're limited to 4 servings
+
+Same logic:
+- `unique_types` = dishes available
+- `max_candies` = servings allowed  
+- `result` = maximum variety you can achieve
+
+---
+
+## Common Mistakes to Avoid
+
+1. **Overcomplicating:** Don't try to track which specific candies to pick
+
+2. **Forgetting the constraint:** Alice can only eat n/2 candies, not all of them
+
+3. **Misunderstanding the goal:** She wants maximum **variety**, not maximum **quantity**
+
+4. **Integer division:** Use `//` in Python or proper integer division
+
+5. **Edge cases:** What if there are no candies? (Won't happen per constraints)
+
+---
+
+## Complexity Analysis
+
+<Text color="green.400" fontWeight="bold">Time Complexity: O(n)</Text>
+<Text ml={4} as="li">Single pass to create the set of unique types</Text>
+<Text ml={4} as="li">Set operations are O(1) average case</Text>
+
+<Text color="green.400" fontWeight="bold" mt={4}>Space Complexity: O(n)</Text>
+<Text ml={4} as="li">Set stores at most n unique candy types</Text>
+<Text ml={4} as="li">In worst case, all candies are different types</Text>
+
+---
+
+## Test Cases to Try
+
+```python
+# Test your solution with these:
+print(distributeCandies([1,1,2,2,3,3]))     # Should return 3
+print(distributeCandies([1,1,2,3]))         # Should return 2  
+print(distributeCandies([6,6,6,6]))         # Should return 1
+print(distributeCandies([1,1,1,1,2,2]))     # Should return 2
+print(distributeCandies([1,2,3,4,5,6]))     # Should return 3
+print(distributeCandies([100000,0,100000,0,100000,0,100000,0]))  # Should return 2
+```
+
+---
+
+## Pattern Recognition
+
+This problem teaches important patterns:
+
+**Greedy Choice:** Always pick maximum variety when given freedom
+
+**Constraint Optimization:** Find the limiting factor among multiple constraints
+
+**Set Usage:** Use sets to count unique elements efficiently
+
+**Min/Max Logic:** `min(available_options, allowed_choices)` pattern appears frequently
+
+You'll see similar patterns in:
+- Resource allocation problems
+- Optimization with multiple constraints  
+- Diversity maximization problems
+- Subset selection with limits
+
+---
+
+## Key Takeaway
+
+The beauty of this problem is its simplicity once you realize:
+> Alice should be **greedy for variety** - always pick different types until she hits a limit!
+
+The limit is either:
+- She runs out of candies she's allowed to eat (n/2), OR  
+- She runs out of different types to try
+
+Whichever comes first determines the answer: `min(unique_types, n/2)`
