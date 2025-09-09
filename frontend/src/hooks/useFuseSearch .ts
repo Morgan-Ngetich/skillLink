@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo } from "react";
 import Fuse, { type IFuseOptions, type FuseOptionKey, type FuseResult } from "fuse.js";
 import type { Mentor } from "@/client/services/ment";
 
@@ -17,29 +17,28 @@ export function useFuseSearch<T>(
   data: T[],
   searchQuery: string,
   options?: Omit<IFuseOptions<T>, "keys">
-): FuseResult<T>[] { // key change
-  const [results, setResults] = useState<FuseResult<T>[]>([]);
-  const keys = searchableKeys.slice() as FuseOptionKey<T>[];
-
-  const fuseOptions = useMemo(() => {
-    return {
+): FuseResult<T>[] {
+  // Memoize the fuse instance with stable dependencies
+  const fuse = useMemo(() => {
+    const keys = searchableKeys.slice() as FuseOptionKey<T>[];
+    const fuseOptions = {
       keys,
       threshold: 0.3,
-      includeMatches: true, // Required for accessing matched fields
+      includeMatches: true,
       ...options,
     };
-  }, [keys, options]);
+    return new Fuse(data, fuseOptions);
+  }, [data, options]);
 
-  const fuse = useMemo(() => new Fuse(data, fuseOptions), [data, fuseOptions]);
-
-  useEffect(() => {
+  // Memoize the results to avoid unnecessary re-renders
+  const results = useMemo(() => {
     if (!searchQuery.trim()) {
       // fallback: no search term, return raw data wrapped as FuseResults
-      setResults(data.map((item, refIndex) => ({ item, refIndex })));
+      return data.map((item, refIndex) => ({ item, refIndex }));
     } else {
-      setResults(fuse.search(searchQuery));
+      return fuse.search(searchQuery);
     }
   }, [searchQuery, fuse, data]);
 
-  return results; // Keep full FuseResult<T>[]
+  return results;
 }
