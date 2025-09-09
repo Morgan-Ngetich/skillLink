@@ -1035,18 +1035,18 @@
   {
     "id": "problems/find-all-duplicates-in-an-array",
     "title": "Find All Duplicates In An Array",
-    "content": "Find All Duplicates in an Array Difficulty: Medium LeetCode: 442. Find All Duplicates in an Array --- Problem Given an integer array nums of length n where all the integers of nums are in the range  1, n  and each integer appears at most twice, return an array of all the integers that appear twice. You must write an algorithm that runs in O n  time and uses only constant auxiliary space, excluding the space needed to store the output. Example 1:    Input: nums    4,3,2,7,8,2,3,1  Output:  2,3    Example 2:   Input: nums    1,1,2  Output:  1    Example 3:   Input: nums    1  Output:      Constraints: - n    nums.length - 1 0   mark:  4,3,2,-7,8,2,3,1  Process 3: index 2, nums 2  2   0   mark:  4,3,-2,-7,8,2,3,1  Process 2: index 1, nums 1  3   0   mark:  4,-3,-2,-7,8,2,3,1  Process 7: index 6, nums 6  3   0   mark:  4,-3,-2,-7,8,2,-3,1  Process 8: index 7, nums 7  1   0   mark:  4,-3,-2,-7,8,2,-3,-1  Process 2: index 1, nums 1  -3 0   mark:  -4,-3,-2,-7,8,2,-3,-1  Result:  2,3  , title:  Python - Counter  Easy  , language:  python , code: from collections import Counter def find_duplicates_counter nums :   Count frequency of each number count   Counter nums    Find numbers that appear exactly twice duplicates      for num, freq in count.items  : if freq    2: duplicates.append num  return duplicates One-liner version: def find_duplicates_oneliner nums : count   Counter nums  return  num for num, freq in count.items   if freq    2  Example: nums    4,3,2,7,8,2,3,1  count   4:1, 3:2, 2:2, 7:1, 8:1, 1:1 duplicates    3, 2   numbers with freq 2  , title:  Python - Set Tracking , language:  python , code: def find_duplicates_set nums : seen   set   duplicates   set     Use set to avoid duplicate results for num in nums: if num in seen: duplicates.add num  else: seen.add num  return list duplicates  Example walkthrough: nums    4,3,2,7,8,2,3,1  Process 4: not in seen   add to seen: 4 Process 3: not in seen   add to seen: 4,3 Process 2: not in seen   add to seen: 4,3,2 Process 7: not in seen   add to seen: 4,3,2,7 Process 8: not in seen   add to seen: 4,3,2,7,8 Process 2: in seen   add to duplicates: 2 Process 3: in seen   add to duplicates: 2,3 Process 1: not in seen   add to seen: 4,3,2,7,8,1 Result:  2,3  , title:  JavaScript , language:  javascript , code:    In-place marking approach  O 1  space  function findDuplicates nums  const duplicates     ; for  let i   0; i findDuplicates int   nums  List duplicates   new ArrayList    ; for  int i   0; i findDuplicatesSet int   nums  Set seen   new HashSet    ; Set duplicates   new HashSet    ; for  int num : nums  if  seen.contains num   duplicates.add num ; else seen.add num ; return new ArrayList   duplicates ;      --- Step-by-Step Walkthrough Let s trace through the in-place marking approach with nums    4,3,2,7,8,2,3,1 :   Initial:  4, 3, 2, 7, 8, 2, 3, 1  Process 4  index 3 : nums 3  7   0   mark negative After:  4, 3, 2, -7, 8, 2, 3, 1  Process 3  index 2 : nums 2  2   0   mark negative After:  4, 3, -2, -7, 8, 2, 3, 1  Process 2  index 1 : nums 1  3   0   mark negative After:  4, -3, -2, -7, 8, 2, 3, 1  Process 7  index 6 : nums 6  3   0   mark negative After:  4, -3, -2, -7, 8, 2, -3, 1  Process 8  index 7 : nums 7  1   0   mark negative After:  4, -3, -2, -7, 8, 2, -3, -1  Process 2  index 1 : nums 1  -3 0   mark negative After:  -4, -3, -2, -7, 8, 2, -3, -1  Final Result:  2, 3    --- Why The In-Place Approach Works Uses array as hash table - Each number points to its corresponding index Negative   visited - First visit: mark negative, Second visit: found duplicate! Perfect range match - Numbers  1,n  map perfectly to indices  0,n-1  Constant space - No extra arrays or sets needed, meets the constraint! --- Alternative Approaches Comparison Approach 1: In-Place Marking  Optimal  - Meets all constraints: O n  time, O 1  space - Tricky but efficient: Uses the array itself as a marker - Modifies input: Changes the original array Approach 2: Counter HashMap  Easy  - Time: O n , Space: O n  - doesn t meet space constraint - Very readable: Easy to understand and implement - Preserves input: Doesn t modify original array Approach 3: Set Tracking  Balanced  - Time: O n , Space: O n  - doesn t meet space constraint - Good balance: More intuitive than marking, cleaner than counter - Preserves input: Doesn t modify original array --- Common Mistakes to Avoid 1. Forgetting abs  : When checking nums index    0, the number itself might be negative from previous marking 2. Wrong index calculation: Remember index   num - 1 to convert from 1-based to 0-based 3. Using extra space: Counter and Set approaches don t meet the O 1  space requirement 4. Not handling edge cases: Empty array or single element should return empty list --- Complexity Analysis In-Place Marking  Optimal Solution : Time Complexity: O n  Single pass through the array Each operation is O 1  Space Complexity: O 1  Only uses a few variables Output space doesn t count toward space complexity Set Counter Approaches: Time Complexity: O n  Space Complexity: O n  Doesn t meet the constant space requirement --- Visual Example   Array:  4, 3, 2, 7, 8, 2, 3, 1  Index: 0 1 2 3 4 5 6 7 Mapping: Number   Index 1   0, 2   1, 3   2, 4   3, 5   4, 6   5, 7   6, 8   7 When we see number 2 first time: - Mark nums 1  as negative   When we see number 2 second time: - nums 1  is already negative   DUPLICATE!   Same logic applies to number 3: - First visit: mark nums 2  negative - Second visit: nums 2  already negative   DUPLICATE!     --- When to Use This Pattern This  in-place marking  pattern works when: - Numbers are in range  1, n  and array length is n - You need constant space complexity - Input array can be modified - Looking for duplicates, missing numbers, or first occurrence Similar problems: - Find All Numbers Disappeared in an Array - Find the Duplicate Number - First Missing Positive --- Test Cases to Try  python Test your solution with these: print find_duplicates  4,3,2,7,8,2,3,1      Should return  2,3  print find_duplicates  1,1,2      Should return  1  print find_duplicates  1      Should return    print find_duplicates  1,1      Should return  1  print find_duplicates  2,2,3,3,4,4      Should return  2,3,4     --- Key Takeaways - In-place marking is a powerful technique for constant space solutions - Use array indices as hash keys when numbers match the range  1,n  - Negative values as markers is a clever way to track state without extra space - Always consider space complexity requirements - they often guide the approach choice!",
+    "content": "Find All Duplicates in an Array Difficulty: Medium LeetCode: 442. Find All Duplicates in an Array --- Problem Given an integer array nums of length n where all the integers of nums are in the range  1, n  and each integer appears at most twice, return an array of all the integers that appear twice. You must write an algorithm that runs in O n  time and uses only constant auxiliary space, excluding the space needed to store the output. Example 1:    Input: nums    4,3,2,7,8,2,3,1  Output:  2,3    Example 2:   Input: nums    1,1,2  Output:  1    Example 3:   Input: nums    1  Output:      Constraints: - n    nums.length - 1 0   mark:  4,3,2,-7,8,2,3,1  Process 3: index 2, nums 2  2   0   mark:  4,3,-2,-7,8,2,3,1  Process 2: index 1, nums 1  3   0   mark:  4,-3,-2,-7,8,2,3,1  Process 7: index 6, nums 6  3   0   mark:  4,-3,-2,-7,8,2,-3,1  Process 8: index 7, nums 7  1   0   mark:  4,-3,-2,-7,8,2,-3,-1  Process 2: index 1, nums 1  -3 0   mark:  -4,-3,-2,-7,8,2,-3,-1  Result:  2,3  , title:  JavaScript , language:  javascript , code:    In-place marking approach  O 1  space  function findDuplicates nums  const duplicates     ; for  let i   0; i findDuplicates int   nums  List duplicates   new ArrayList    ; for  int i   0; i findDuplicatesSet int   nums  Set seen   new HashSet    ; Set duplicates   new HashSet    ; for  int num : nums  if  seen.contains num   duplicates.add num ; else seen.add num ; return new ArrayList   duplicates ;      --- Step-by-Step Walkthrough Let s trace through the in-place marking approach with nums    4,3,2,7,8,2,3,1 :   Initial:  4, 3, 2, 7, 8, 2, 3, 1  Process 4  index 3 : nums 3  7   0   mark negative After:  4, 3, 2, -7, 8, 2, 3, 1  Process 3  index 2 : nums 2  2   0   mark negative After:  4, 3, -2, -7, 8, 2, 3, 1  Process 2  index 1 : nums 1  3   0   mark negative After:  4, -3, -2, -7, 8, 2, 3, 1  Process 7  index 6 : nums 6  3   0   mark negative After:  4, -3, -2, -7, 8, 2, -3, 1  Process 8  index 7 : nums 7  1   0   mark negative After:  4, -3, -2, -7, 8, 2, -3, -1  Process 2  index 1 : nums 1  -3 0   mark negative After:  -4, -3, -2, -7, 8, 2, -3, -1  Final Result:  2, 3    --- Why The In-Place Approach Works Uses array as hash table - Each number points to its corresponding index Negative   visited - First visit: mark negative, Second visit: found duplicate! Perfect range match - Numbers  1,n  map perfectly to indices  0,n-1  Constant space - No extra arrays or sets needed, meets the constraint! --- The Approach In-Place Marking  Optimal  - Meets all constraints: O n  time, O 1  space - Tricky but efficient: Uses the array itself as a marker - Modifies input: Changes the original array --- Common Mistakes to Avoid 1. Forgetting abs  : When checking nums index    0, the number itself might be negative from previous marking 2. Wrong index calculation: Remember index   num - 1 to convert from 1-based to 0-based 3. Using extra space: Counter and Set approaches don t meet the O 1  space requirement 4. Not handling edge cases: Empty array or single element should return empty list --- Complexity Analysis In-Place Marking  Optimal Solution : Time Complexity: O n  Single pass through the array Each operation is O 1  Space Complexity: O 1  Only uses a few variables Output space doesn t count toward space complexity --- When to Use This Pattern This  in-place marking  pattern works when: - Numbers are in range  1, n  and array length is n - You need constant space complexity - Input array can be modified - Looking for duplicates, missing numbers, or first occurrence Similar problems: - Find All Numbers Disappeared in an Array - Find the Duplicate Number - First Missing Positive --- Test Cases to Try  python Test your solution with these: print find_duplicates  4,3,2,7,8,2,3,1      Should return  2,3  print find_duplicates  1,1,2      Should return  1  print find_duplicates  1      Should return    print find_duplicates  1,1      Should return  1  print find_duplicates  2,2,3,3,4,4      Should return  2,3,4     --- Key Takeaways - In-place marking is a powerful technique for constant space solutions - Use array indices as hash keys when numbers match the range  1,n  - Negative values as markers is a clever way to track state without extra space - Always consider space complexity requirements - they often guide the approach choice!",
     "excerpt": "Find All Duplicates in an Array Difficulty: Medium LeetCode: 442. Find All Duplicates in an Array --- Problem Given an integer array nums of length n where all...",
     "url": "/crackmode/docs/problems/find-all-duplicates-in-an-array",
     "canonicalUrl": "https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/find-all-duplicates-in-an-array",
     "section": "Problems",
     "tags": [
-      "easy",
       "medium",
       "array",
       "arrays",
       "leetcode",
-      "algorithm"
+      "algorithm",
+      "complexity"
     ],
     "headings": [
       {
@@ -1120,86 +1120,6 @@
         "id": "result-23"
       },
       {
-        "level": 1,
-        "text": "One-liner version:",
-        "id": "one-liner-version"
-      },
-      {
-        "level": 1,
-        "text": "Example:",
-        "id": "example"
-      },
-      {
-        "level": 1,
-        "text": "nums = [4,3,2,7,8,2,3,1]",
-        "id": "nums-43278231"
-      },
-      {
-        "level": 1,
-        "text": "count = {4:1, 3:2, 2:2, 7:1, 8:1, 1:1}",
-        "id": "count-41-32-22-71-81-11"
-      },
-      {
-        "level": 1,
-        "text": "duplicates = [3, 2] (numbers with freq=2)`",
-        "id": "duplicates-3-2-numbers-with-freq2"
-      },
-      {
-        "level": 1,
-        "text": "Example walkthrough:",
-        "id": "example-walkthrough"
-      },
-      {
-        "level": 1,
-        "text": "nums = [4,3,2,7,8,2,3,1]",
-        "id": "nums-43278231-1"
-      },
-      {
-        "level": 1,
-        "text": "Process 4: not in seen → add to seen: {4}",
-        "id": "process-4-not-in-seen-add-to-seen-4"
-      },
-      {
-        "level": 1,
-        "text": "Process 3: not in seen → add to seen: {4,3}",
-        "id": "process-3-not-in-seen-add-to-seen-43"
-      },
-      {
-        "level": 1,
-        "text": "Process 2: not in seen → add to seen: {4,3,2}",
-        "id": "process-2-not-in-seen-add-to-seen-432"
-      },
-      {
-        "level": 1,
-        "text": "Process 7: not in seen → add to seen: {4,3,2,7}",
-        "id": "process-7-not-in-seen-add-to-seen-4327"
-      },
-      {
-        "level": 1,
-        "text": "Process 8: not in seen → add to seen: {4,3,2,7,8}",
-        "id": "process-8-not-in-seen-add-to-seen-43278"
-      },
-      {
-        "level": 1,
-        "text": "Process 2: in seen → add to duplicates: {2}",
-        "id": "process-2-in-seen-add-to-duplicates-2"
-      },
-      {
-        "level": 1,
-        "text": "Process 3: in seen → add to duplicates: {2,3}",
-        "id": "process-3-in-seen-add-to-duplicates-23"
-      },
-      {
-        "level": 1,
-        "text": "Process 1: not in seen → add to seen: {4,3,2,7,8,1}",
-        "id": "process-1-not-in-seen-add-to-seen-432781"
-      },
-      {
-        "level": 1,
-        "text": "Result: [2,3]`",
-        "id": "result-23-1"
-      },
-      {
         "level": 2,
         "text": "Step-by-Step Walkthrough",
         "id": "step-by-step-walkthrough"
@@ -1211,23 +1131,13 @@
       },
       {
         "level": 2,
-        "text": "Alternative Approaches Comparison",
-        "id": "alternative-approaches-comparison"
+        "text": "The Approach",
+        "id": "the-approach"
       },
       {
         "level": 3,
-        "text": "**Approach 1: In-Place Marking (Optimal)**",
-        "id": "approach-1-in-place-marking-optimal"
-      },
-      {
-        "level": 3,
-        "text": "**Approach 2: Counter/HashMap (Easy)**",
-        "id": "approach-2-counterhashmap-easy"
-      },
-      {
-        "level": 3,
-        "text": "**Approach 3: Set Tracking (Balanced)**",
-        "id": "approach-3-set-tracking-balanced"
+        "text": "**In-Place Marking (Optimal)**",
+        "id": "in-place-marking-optimal"
       },
       {
         "level": 2,
@@ -1243,16 +1153,6 @@
         "level": 3,
         "text": "**In-Place Marking (Optimal Solution):**",
         "id": "in-place-marking-optimal-solution"
-      },
-      {
-        "level": 3,
-        "text": "**Set/Counter Approaches:**",
-        "id": "setcounter-approaches"
-      },
-      {
-        "level": 2,
-        "text": "Visual Example",
-        "id": "visual-example"
       },
       {
         "level": 2,
@@ -1276,15 +1176,15 @@
       }
     ],
     "publishedAt": "2025-09-08T02:13:07.352Z",
-    "updatedAt": "2025-09-08T02:13:13.913Z",
+    "updatedAt": "2025-09-08T02:23:56.678Z",
     "author": "Morgan Ngetich",
-    "readingTime": 6,
+    "readingTime": 4,
     "seo": {
       "title": "Find All Duplicates In An Array | Crackmode Documentation",
       "description": "Find All Duplicates in an Array Difficulty: Medium LeetCode: 442. Find All Duplicates in an Array --- Problem Given an integer array nums of length n where all...",
-      "keywords": "find, duplicates, array, easy, medium, arrays, leetcode, algorithm, process, space, index, negative, crackmode",
+      "keywords": "find, duplicates, array, medium, arrays, leetcode, algorithm, complexity, index, space, process, negative, crackmode",
       "robots": "index,follow",
-      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Find All Duplicates In An Array\",\"description\":\"Find All Duplicates in an Array Difficulty: Medium LeetCode: 442. Find All Duplicates in an Array --- Problem Given an integer array nums of length n where all...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/find-all-duplicates-in-an-array\",\"datePublished\":\"2025-09-08T02:13:07.352Z\",\"dateModified\":\"2025-09-08T02:13:13.913Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"CrackMode\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/find-all-duplicates-in-an-array\"},\"wordCount\":196,\"timeRequired\":\"PT6M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
+      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Find All Duplicates In An Array\",\"description\":\"Find All Duplicates in an Array Difficulty: Medium LeetCode: 442. Find All Duplicates in an Array --- Problem Given an integer array nums of length n where all...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/find-all-duplicates-in-an-array\",\"datePublished\":\"2025-09-08T02:13:07.352Z\",\"dateModified\":\"2025-09-08T02:23:56.678Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"CrackMode\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/find-all-duplicates-in-an-array\"},\"wordCount\":196,\"timeRequired\":\"PT4M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
     },
     "socialMedia": {
       "ogTitle": "Find All Duplicates In An Array | Crackmode Documentation",
