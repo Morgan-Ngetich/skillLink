@@ -5,6 +5,7 @@ import { supabase } from '../supabaseClient';
 import { useNavigate } from '@tanstack/react-router';
 import { storage } from "@/utils/localstorage";
 import { invalidateTokenCache } from "@/client/core/OpenAPI";
+import { clearAuthSession, setAuthSession } from "@/utils/cookies/sessionCookies";
 // import { setApiToken } from './authState';
 
 export function useAuth() {
@@ -34,6 +35,17 @@ export function useAuth() {
       return { error: new Error("User is null after sign up") };
     }
 
+    // SET COOKIE FOR SSR
+    if (data?.session) {
+      setAuthSession(data.session);
+
+      // Also cache in localStorage for client-side
+      const cacheData = {
+        session: data.session,
+        timestamp: Date.now()
+      };
+      storage.set("supabase_session_cache", JSON.stringify(cacheData));
+    }
 
     // Fetch backend user again
     await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
@@ -61,6 +73,17 @@ export function useAuth() {
       return { error: new Error("User is null after sign in") };
     }
 
+    if (data.session) {
+      setAuthSession(data.session);
+
+      // Also cache in localStorage for client-side
+      const cacheData = {
+        session: data.session,
+        timestamp: Date.now()
+      };
+      storage.set("supabase_session_cache", JSON.stringify(cacheData));
+    }
+
     await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
 
     return { data };
@@ -74,13 +97,15 @@ export function useAuth() {
       const { error } = await supabase.auth.signOut();
       if (error) return { error };
 
-      await queryClient.removeQueries({ queryKey: ['auth', 'user'] });
+      // Clear Cookies
+      clearAuthSession()
 
+      await queryClient.removeQueries({ queryKey: ['auth', 'user'] });
       invalidateTokenCache()
-      storage.remove("googleUser")
+
       // Redirect to home page after sign out
       navigate({ to: '/login' });
-    } catch(error) {
+    } catch (error) {
       // TODO { toast }
       console.error(error);
     } finally {
@@ -114,7 +139,7 @@ export function useAuth() {
     user,
     isLoading,
     isLoggingOut,
-    
+
     signUp,
     signIn,
     signOut,

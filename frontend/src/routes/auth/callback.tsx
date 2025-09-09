@@ -10,15 +10,9 @@ import { AuthCallbackLoader } from '@/components/common/AuthCallBackLoader';
 import { storage } from '@/utils/localstorage';
 import { type GoogleUserInfo, type Identity, type SupabaseUser } from '@/client';
 import { getApiErrorMessage } from '@/utils/errorUtils';
-import type { Session } from '@supabase/supabase-js';
+import { setAuthSession, clearAuthSession } from "@/utils/cookies/sessionCookies"
 
 const LOCAL_STORAGE_KEY = 'googleUser';
-const SESSION_CACHE_KEY = "supabase_session_cache";
-
-interface CachedSession {
-  session: Session;
-  timestamp: number;
-}
 
 function isUserFromGoogle(user: SupabaseUser): boolean {
   return user?.identities?.some((i: Identity) => i.provider === 'google') ?? false;
@@ -53,15 +47,7 @@ function AuthCallbackPage() {
 
 
         // cache the session for faster susbsequent loads
-        try {
-          const cacheData: CachedSession = {
-            session: data.session,
-            timestamp: Date.now()
-          }
-          storage.set(SESSION_CACHE_KEY, JSON.stringify(cacheData))
-        } catch (error) {
-          console.warn('Failed to cache session:', error);
-        }
+        setAuthSession(data.session)
 
         // Save Google user info to localStorage
         const isGoogle = isUserFromGoogle(user);
@@ -84,8 +70,7 @@ function AuthCallbackPage() {
         console.error('Error during auth callback:', err);
 
         // clear caches on error
-        storage.remove(SESSION_CACHE_KEY)
-        storage.remove(LOCAL_STORAGE_KEY)
+        clearAuthSession()
 
         toast({
           id: 'auth-error',
