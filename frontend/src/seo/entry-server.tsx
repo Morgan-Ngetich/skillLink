@@ -25,7 +25,12 @@ interface RenderResult {
   };
 }
 
-export async function render(url: string): Promise<RenderResult> {
+interface RenderOptions {
+  url: string;
+  cookies?: string;
+}
+
+export async function render({ url, cookies }: RenderOptions): Promise<RenderResult> {
   const helmetContext = {};
 
   const queryClient = new QueryClient({
@@ -40,11 +45,31 @@ export async function render(url: string): Promise<RenderResult> {
 
   const memoryHistory = createMemoryHistory({ initialEntries: [url] });
 
+  // Parse cookies for auth context
+  let initialAuthState = null
+  if (cookies) {
+    const sessionCookie = parseCookies(cookies)["sb_session"];
+    if (sessionCookie) {
+      try {
+        initialAuthState = JSON.parse(decodeURIComponent(sessionCookie));
+      } catch (error) {
+        console.warn("Failed to parse auth cookie during SSR:", error);
+      }
+    }
+  }
+
   const router = createRouter({
     routeTree,
     history: memoryHistory,
     context: {
-      queryClient
+      queryClient,
+      auth: initialAuthState,
+      req: {
+        url,
+        headers: {
+          cookie: cookies
+        }
+      }
     }
   });
 
@@ -91,4 +116,16 @@ export async function render(url: string): Promise<RenderResult> {
         script: colorModeScript,
       }
   };
+}
+
+
+// Helper function to parse cookies
+function parseCookies(cookieHeader: string): Record<string, string> {
+  return cookieHeader.split(';').reduce((cookies, cookie) => {
+    const [name, value] = cookie.split('=').map(c => c.trim());
+    if (name) {
+      cookies[name] = decodeURIComponent(value || '');
+    }
+    return cookies;
+  }, {} as Record<string, string>);
 }

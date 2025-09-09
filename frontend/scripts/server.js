@@ -1,5 +1,4 @@
 import express from 'express'
-// Remove vite import - only import conditionally
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -71,9 +70,9 @@ async function createServer() {
     try {
       const url = req.originalUrl.split("?")[0]
       console.log("SSR request for:", url)
-      
+
       let template, render
-      
+
       if (!isProduction) {
         // Dev mode
         template = fs.readFileSync(path.resolve('index.html'), 'utf-8')
@@ -82,30 +81,35 @@ async function createServer() {
       } else {
         // Production mode
         console.log('Loading production template and server...')
-        
+
         // Template from nginx html directory
         template = fs.readFileSync('/usr/share/nginx/html/index.html', 'utf-8')
-        
+
         // Server entry - use the fixed relative path
         const serverPath = path.resolve(__dirname, '../dist/server/entry-server.js')
         console.log('Loading server from:', serverPath)
-        
+
         if (!fs.existsSync(serverPath)) {
           throw new Error(`Server entry not found at: ${serverPath}`)
         }
-        
+
         render = (await import(serverPath)).render
       }
 
       // Check if this is a bot/crawler
       const userAgent = req.get('User-Agent') || ''
-      const isBot = /bot|crawler|spider|crawling/i.test(userAgent) || 
-                    /facebookexternalhit|twitterbot|linkedinbot|slackbot|telegrambot|whatsapp|discordbot/i.test(userAgent)
+      const isBot = /bot|crawler|spider|crawling/i.test(userAgent) ||
+        /facebookexternalhit|twitterbot|linkedinbot|slackbot|telegrambot|whatsapp|discordbot/i.test(userAgent)
 
       // Always do SSR in this setup since nginx routes bots to us
       try {
         console.log('Attempting SSR...')
-        const { html, head } = await render(url)
+        // pass cookies to SSR render
+        const cookies = req.headers.cookie || ""
+        const { html, head } = await render({
+          url,
+          cookies
+        })
 
         const finalHtml = template
           .replace(`<!--app-head-->`, head.title + head.meta + head.link + head.script)
@@ -115,11 +119,11 @@ async function createServer() {
         console.log('SSR successful for:', url)
       } catch (ssrError) {
         console.error('SSR Error:', ssrError)
-        
+
         // Fallback with route-specific content
         const fallback = getFallbackContent(url)
         const fallbackHtml = template
-          .replace(`<!--app-head-->`, 
+          .replace(`<!--app-head-->`,
             `<title>${fallback.title}</title>
              <meta name="description" content="${fallback.description}">`)
           .replace(`<!--app-html-->`, fallback.content)
@@ -130,7 +134,7 @@ async function createServer() {
 
     } catch (e) {
       console.error('Route handler error:', e)
-      
+
       // Ultimate fallback
       const fallback = getFallbackContent(req.originalUrl.split("?")[0])
       const errorHtml = `
@@ -148,7 +152,7 @@ async function createServer() {
         </body>
         </html>
       `
-      
+
       res.status(500).set({ 'Content-Type': 'text/html' }).end(errorHtml)
     }
   })
