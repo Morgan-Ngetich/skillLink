@@ -26,12 +26,18 @@ const router = createRouter({
 const App = () => {
   const { isLoading } = useSession();
 
-  if (isLoading) {
-    return (
-      <Flex justify="center" align="center" height="100vh">
-        <Spinner color="teal.500" size="xl" />
-      </Flex>
-    );
+  // Only show spinner if we're on client AND loading AND no cached session
+  if (typeof window !== 'undefined' && isLoading) {
+    // Check if we have a session cookie to avoid unnecessary spinner
+    const hasSessionCookie = document.cookie.includes('sb-session');
+    
+    if (!hasSessionCookie) {
+      return (
+        <Flex justify="center" align="center" height="100vh">
+          <Spinner color="teal.500" size="xl" />
+        </Flex>
+      );
+    }
   }
 
   return <RouterProvider router={router} />;
