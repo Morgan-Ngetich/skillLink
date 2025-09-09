@@ -1,0 +1,285 @@
+import { VStack, HStack, Text } from "@chakra-ui/react"
+
+# Number of Good Pairs
+
+**Difficulty:** <span style={{color: "#4ade80"}}>Easy</span>  
+**LeetCode:** [1512. Number of Good Pairs](https://leetcode.com/problems/number-of-good-pairs/)
+
+---
+
+## Problem
+
+Given an array of integers `nums`, return the number of **good pairs**.
+
+A pair `(i, j)` is called *good* if `nums[i] == nums[j]` and `i < j`.
+
+**Example 1:**
+```
+Input: nums = [1,2,3,1,1,3]
+Output: 4
+Explanation: There are 4 good pairs (0,3), (0,4), (3,4), (2,5) 0-indexed.
+```
+
+**Example 2:**
+```
+Input: nums = [1,1,1,1]
+Output: 6
+Explanation: Each pair in the array are good.
+```
+
+**Example 3:**
+```
+Input: nums = [1,2,3]
+Output: 0
+```
+
+---
+
+## Simple Explanation
+
+Think of this like **finding matching socks** in a pile!
+
+Just like in real life:
+- You have socks: [red, blue, green, red, red, green]
+- You want to count how many matching pairs you can make
+- Red sock at position 0 can pair with red socks at positions 3 and 4 → 2 pairs
+- Green sock at position 2 can pair with green sock at position 5 → 1 pair
+- Total: 3 matching pairs! ✓
+
+**The Key:** For each number, count how many times it appears. If a number appears `n` times, it can form `n × (n-1) / 2` pairs!
+
+---
+
+## Solution
+
+<TabbedCode
+  files={[
+    {
+      title: "Python",
+      language: "python",
+      code: `from collections import Counter
+
+def numIdenticalPairs(nums):
+    # Count frequency of each number
+    count = Counter(nums)
+    
+    pairs = 0
+    # For each unique number
+    for freq in count.values():
+        # If a number appears n times, it forms n*(n-1)/2 pairs
+        pairs += freq * (freq - 1) // 2
+    
+    return pairs
+
+# Example usage:
+# nums = [1,2,3,1,1,3]
+# count = {1: 3, 2: 1, 3: 2}
+# pairs from 1: 3*(3-1)/2 = 3
+# pairs from 2: 1*(1-1)/2 = 0  
+# pairs from 3: 2*(2-1)/2 = 1
+# Total: 3 + 0 + 1 = 4`
+    },
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function numIdenticalPairs(nums) {
+    // Count frequency of each number
+    const count = {};
+    for (const num of nums) {
+        count[num] = (count[num] || 0) + 1;
+    }
+    
+    let pairs = 0;
+    // Calculate pairs for each unique number
+    for (const freq of Object.values(count)) {
+        pairs += Math.floor(freq * (freq - 1) / 2);
+    }
+    
+    return pairs;
+}`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `import java.util.*;
+
+public class Solution {
+    public int numIdenticalPairs(int[] nums) {
+        // Count frequency of each number
+        Map<Integer, Integer> count = new HashMap<>();
+        for (int num : nums) {
+            count.put(num, count.getOrDefault(num, 0) + 1);
+        }
+        
+        int pairs = 0;
+        // Calculate pairs for each unique number
+        for (int freq : count.values()) {
+            pairs += freq * (freq - 1) / 2;
+        }
+        
+        return pairs;
+    }
+}`
+    }
+  ]}
+/>
+
+---
+
+## Step-by-Step Walkthrough
+
+Let's trace through `nums = [1,2,3,1,1,3]`:
+
+```
+Step 1: Count frequency of each number
+        count = {1: 3, 2: 1, 3: 2}
+
+Step 2: Calculate pairs for each number
+        Number 1 appears 3 times:
+        - Pairs: 3 × (3-1) ÷ 2 = 3 × 2 ÷ 2 = 3
+        - These are: (0,3), (0,4), (3,4)
+        
+        Number 2 appears 1 time:
+        - Pairs: 1 × (1-1) ÷ 2 = 1 × 0 ÷ 2 = 0
+        - No pairs possible with just one occurrence
+        
+        Number 3 appears 2 times:
+        - Pairs: 2 × (2-1) ÷ 2 = 2 × 1 ÷ 2 = 1
+        - This is: (2,5)
+
+Step 3: Sum all pairs
+        Total pairs = 3 + 0 + 1 = 4 ✓
+```
+
+Let's try another example: `nums = [1,1,1,1]`:
+
+```
+Step 1: Count frequency
+        count = {1: 4}
+
+Step 2: Calculate pairs
+        Number 1 appears 4 times:
+        - Pairs: 4 × (4-1) ÷ 2 = 4 × 3 ÷ 2 = 6
+        - These are: (0,1), (0,2), (0,3), (1,2), (1,3), (2,3)
+
+Step 3: Total pairs = 6 ✓
+```
+
+---
+
+## Why This Approach Works
+
+<VStack align="start" spacing={2}>
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Mathematical insight</Text>
+    <Text>- Uses combination formula: C(n,2) = n×(n-1)/2</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Efficient counting</Text>
+    <Text>- Single pass to count, then calculate pairs</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">No nested loops</Text>
+    <Text>- Avoids checking every possible pair individually</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Clear logic</Text>
+    <Text>- Count first, then use math to find pairs</Text>
+  </HStack>
+</VStack>
+
+---
+
+## Alternative Brute Force Approach
+
+If you want a more straightforward approach (though less efficient):
+
+```python
+def numIdenticalPairs_brute_force(nums):
+    count = 0
+    n = len(nums)
+    
+    # Check every possible pair
+    for i in range(n):
+        for j in range(i + 1, n):  # j must be greater than i
+            if nums[i] == nums[j]:
+                count += 1
+    
+    return count
+```
+
+This is O(n²) but very easy to understand!
+
+---
+
+## Mathematical Explanation
+
+**Why n × (n-1) ÷ 2?**
+
+When you have `n` identical items, you want to choose 2 of them to form a pair. This is the combination formula:
+
+```
+C(n, 2) = n! / (2! × (n-2)!)
+        = n × (n-1) × (n-2)! / (2 × 1 × (n-2)!)  
+        = n × (n-1) / 2
+```
+
+**Visual example with 4 identical numbers:**
+- Position indices: 0, 1, 2, 3
+- Possible pairs: (0,1), (0,2), (0,3), (1,2), (1,3), (2,3)
+- Count: 6 pairs = 4 × 3 ÷ 2 ✓
+
+---
+
+## Common Mistakes to Avoid
+
+1. **Forgetting the order constraint:** Remember `i < j` is required
+
+2. **Double counting:** Don't count (i,j) and (j,i) as different pairs
+
+3. **Wrong formula:** Make sure to use `n×(n-1)/2`, not `n×n/2`
+
+4. **Integer division:** Use `//` in Python or proper integer division
+
+---
+
+## Complexity Analysis
+
+<Text color="green.400" fontWeight="bold">Time Complexity: O(n)</Text>
+<Text ml={4} as="li">Single pass to count frequencies</Text>
+<Text ml={4} as="li">Single pass to calculate pairs from frequencies</Text>
+
+<Text color="green.400" fontWeight="bold" mt={4}>Space Complexity: O(n)</Text>
+<Text ml={4} as="li">HashMap to store frequency of each unique number</Text>
+<Text ml={4} as="li">In worst case, all numbers are unique</Text>
+
+---
+
+## Test Cases to Try
+
+```python
+# Test your solution with these:
+print(numIdenticalPairs([1,2,3,1,1,3]))    # Should return 4
+print(numIdenticalPairs([1,1,1,1]))        # Should return 6
+print(numIdenticalPairs([1,2,3]))          # Should return 0
+print(numIdenticalPairs([1,1,2,2,2]))      # Should return 1+3 = 4
+print(numIdenticalPairs([1]))              # Should return 0
+print(numIdenticalPairs([]))               # Should return 0
+```
+
+---
+
+## Pattern Recognition
+
+This problem teaches an important pattern:
+- **Counting + Combinatorics**: When you need to find pairs/combinations within groups
+- **Frequency mapping**: Count occurrences first, then apply mathematical formulas
+- **Optimization**: Turn O(n²) brute force into O(n) with smart counting
+
+You'll see this pattern in problems like:
+- Counting pairs with specific differences
+- Finding anagram groups
+- Counting subsequences

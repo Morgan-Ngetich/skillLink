@@ -51,6 +51,7 @@ export const sidebarConfig: DocSection[] = [
       { title: "Find the Difference", href: "/crackmode/docs/problems/find-the-difference" },
       { title: "Find All Numbers Disappeared in an Array", href: "/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array" },
       { title: "Find All Duplicates in an Array", href: "/crackmode/docs/problems/find-all-duplicates-in-an-array" },
+      { title: "Number if Good Pairs", href: "/crackmode/docs/problems/number-of-good-pairs" },
     ]
   },
   {

@@ -118,5 +118,17 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
       "solved": true,
       "solvedAt": "2025-09-07T20:00:00Z"
     }
-  ]
+  ],
+  "2025-09-08": [
+    {
+      "id": 1,
+      "title": "Number of Good Pairs",
+      "difficulty": "Easy",
+      "tags": ["Array", "HashTable", "Math", "Counting"],
+      "url": "https://leetcode.com/problems/number-of-good-pairs/",
+      "docs": "/crackmode/docs/problems/number-of-good-pairs",
+      "solved": true,
+      "solvedAt": "2025-09-08T23:20:00Z"
+    }
+  ],
 }
