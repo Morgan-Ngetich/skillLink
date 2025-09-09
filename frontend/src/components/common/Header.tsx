@@ -18,14 +18,16 @@ import { useAuth } from '@/hooks/auth/useAuth';
 import { useNavigate } from '@tanstack/react-router';
 import { ColorModeButton } from '@/components/ui/color-mode';
 import { useNavigateWithRedirect } from '@/hooks/auth/authState';
+import { useSession } from '@/hooks/auth/useSession';
 
 const Header = () => {
-  const { user, isLoading, isLoggingOut, signOut } = useAuth();
+  const { isLoading, isLoggingOut, signOut } = useAuth();
+  const { user } = useSession()
   const navigate = useNavigate();
 
   useEffect(() => {
     console.log('UserME:', user);
-    console.log('UserAvatar_url:', user?.avatar_url);
+    console.log('UserAvatar_url:', user?.user_metadata?.avatar_url);
   }, [user]);
 
   const navigateWithRedirect = useNavigateWithRedirect();
@@ -78,9 +80,9 @@ const Header = () => {
                     </HStack>
                   ) : (
                     <HStack gap={2}>
-                      <Avatar size="sm" name={user.full_name} src={user.avatar_url} />
+                      <Avatar size="sm" name={user.user_metadata?.full_name} src={user.user_metadata?.avatar_url} />
                       <Text display={{ base: 'none', md: 'inline' }} fontWeight="medium">
-                        {user.full_name}
+                        {user.user_metadata?.full_name}
                       </Text>
                       <FaChevronDown size={10} />
                     </HStack>

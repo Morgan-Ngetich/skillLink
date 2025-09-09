@@ -37,7 +37,8 @@ interface HeaderProps {
 const CrackModeHeader: React.FC<HeaderProps> = ({ page }) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
-  const { user, isLoggingOut, signOut } = useAuth();
+  const { isLoggingOut, signOut } = useAuth();
+  const { user } = useSession()
   const { isLoading } = useSession()
   const navigate = useNavigate();
   const navigateWithRedirect = useNavigateWithRedirect();
@@ -59,7 +60,7 @@ const CrackModeHeader: React.FC<HeaderProps> = ({ page }) => {
 
   useEffect(() => {
     console.log('UserME:', user);
-    console.log('UserAvatar_url:', user?.avatar_url);
+    console.log('UserAvatar_url:', user?.user_metadata?.avatar_url);
   }, [user]);
 
   const handleNavigation = (url: string) => {
@@ -201,9 +202,9 @@ const CrackModeHeader: React.FC<HeaderProps> = ({ page }) => {
                       </HStack>
                     ) : (
                       <HStack gap={2}>
-                        <Avatar size="sm" name={user.full_name} src={user.avatar_url} />
+                        <Avatar size="sm" name={user.user_metadata?.full_name} src={user.user_metadata?.avatar_url} />
                         <Text display={{ base: 'none', lg: 'inline' }} fontWeight="medium">
-                          {user.full_name}
+                          {user.user_metadata?.full_name}
                         </Text>
                         <FaChevronDown size={10} />
                       </HStack>
