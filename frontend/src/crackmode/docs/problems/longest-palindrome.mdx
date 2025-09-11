@@ -1,0 +1,333 @@
+import { VStack, HStack, Text } from "@chakra-ui/react"
+
+# Longest Palindrome
+
+**Difficulty:** <span style={{color: "#4ade80"}}>Easy</span>  
+**LeetCode:** [409. Longest Palindrome](https://leetcode.com/problems/longest-palindrome/)
+
+---
+
+## Problem
+
+Given a string s which consists of lowercase or uppercase letters, return the length of the longest palindrome that can be built with those letters. Letters are case sensitive, for example, "Aa" is not considered a palindrome.
+
+**Example 1:**
+```
+Input: s = "abccccdd"
+Output: 7
+Explanation: One longest palindrome that can be built is "dccaccd", whose length is 7.
+```
+
+**Example 2:**
+```
+Input: s = "a"
+Output: 1
+Explanation: The longest palindrome that can be built is "a", whose length is 1.
+```
+
+**Example 3:**
+```
+Input: s = "Aab"
+Output: 1
+Explanation: The longest palindrome that can be built is "A", "a" or "b", whose length is 1.
+```
+
+---
+
+## Simple Explanation
+
+Think of this like **building a palindrome with letter tiles**!
+
+Imagine you have letter tiles scattered on a table:
+- You have tiles: a, b, c, c, c, c, d, d
+- You want to build the longest possible palindrome (reads same forwards/backwards)
+- Like building: **d-c-c-a-c-c-d** ✓
+
+**Key Insights:**
+1. **Pairs are perfect** → Every pair of identical letters can go on both sides
+2. **Odd letters** → If you have leftover single letters, pick ONE to go in the middle
+3. **Count pairs, then add one odd if available**
+
+**The Strategy:** Count how many pairs you can make, multiply by 2, then add 1 if there are any leftover single letters!
+
+---
+
+## Solution
+
+<TabbedCode
+  files={[
+    {
+      title: "Python",
+      language: "python",
+      code: `def longestPalindrome(s):
+    hash_map = {}
+    counter = 0 
+    
+    for i in range(len(s)):
+        if s[i] in hash_map:
+            # Found a pair! Remove from map and add 2 to length
+            del hash_map[s[i]]
+            counter += 2
+        else:
+            # First time seeing this letter
+            hash_map[s[i]] = 1
+            
+    # If there are leftover single letters, add one to the middle
+    if hash_map.items():
+        counter += 1
+        
+    return counter`
+    },
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function longestPalindrome(s) {
+    const hashMap = {};
+    let counter = 0;
+
+    for (let i = 0; i < s.length; i++) {
+        if (hashMap[s[i]]) {
+            // Found a pair! Remove from map and add 2 to length
+            delete hashMap[s[i]];
+            counter += 2;
+        } else {
+            // First time seeing this letter
+            hashMap[s[i]] = 1;
+        }
+    }
+
+    // If there are leftover single letters, add one to the middle
+    if (Object.keys(hashMap).length > 0) {
+        counter += 1;
+    }
+
+    return counter;
+}`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `import java.util.*;
+
+public class Solution {
+    public int longestPalindrome(String s) {
+        Map<Character, Integer> hashMap = new HashMap<>();
+        int counter = 0;
+
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (hashMap.containsKey(c)) {
+                // Found a pair! Remove from map and add 2 to length
+                hashMap.remove(c);
+                counter += 2;
+            } else {
+                // First time seeing this letter
+                hashMap.put(c, 1);
+            }
+        }
+
+        // If there are leftover single letters, add one to the middle
+        if (!hashMap.isEmpty()) {
+            counter += 1;
+        }
+
+        return counter;
+    }
+}`
+    }
+  ]}
+/>
+
+---
+
+## Step-by-Step Walkthrough
+
+Let's trace through `s = "abccccdd"`:
+
+```
+s = "abccccdd"
+hash_map = {}
+counter = 0
+
+Process each character:
+a: not in map → hash_map = {'a': 1}
+b: not in map → hash_map = {'a': 1, 'b': 1}  
+c: not in map → hash_map = {'a': 1, 'b': 1, 'c': 1}
+c: found 'c' in map! → delete 'c', counter += 2 → counter = 2
+c: not in map → hash_map = {'a': 1, 'b': 1, 'c': 1}
+c: found 'c' in map! → delete 'c', counter += 2 → counter = 4
+d: not in map → hash_map = {'a': 1, 'b': 1, 'd': 1}
+d: found 'd' in map! → delete 'd', counter += 2 → counter = 6
+
+Final: hash_map = {'a': 1, 'b': 1} (not empty)
+So counter += 1 → counter = 7 ✓
+```
+
+---
+
+## Visual Understanding
+
+Let's see how both approaches handle the same example:
+
+**Given Solution (Real-time pairing):**
+```
+"abccccdd" → Process as we go
+a: waiting     → hash_map = {'a': 1}
+b: waiting     → hash_map = {'a': 1, 'b': 1}  
+c: waiting     → hash_map = {'a': 1, 'b': 1, 'c': 1}
+c: PAIR! +2    → hash_map = {'a': 1, 'b': 1}, counter = 2
+c: waiting     → hash_map = {'a': 1, 'b': 1, 'c': 1}
+c: PAIR! +2    → hash_map = {'a': 1, 'b': 1}, counter = 4
+d: waiting     → hash_map = {'a': 1, 'b': 1, 'd': 1}
+d: PAIR! +2    → hash_map = {'a': 1, 'b': 1}, counter = 6
++1 for leftover → counter = 7
+```
+
+Both get the same answer, but the given solution is more memory efficient!
+
+---
+
+
+## Common Mistakes to Avoid
+
+1. **Case sensitivity:** 'A' and 'a' are different letters in this problem
+
+2. **Overcounting odds:** Only add 1 total for middle, not 1 per odd letter
+
+3. **Wrong pair calculation:** Use integer division (`//`) not regular division
+
+---
+
+## Complexity Analysis
+
+<Text color="green.400" fontWeight="bold">Time Complexity: O(n)</Text>
+<Text ml={4} as="li">Single pass to count letters or process pairs</Text>
+<Text ml={4} as="li">Dictionary operations are O(1) average case</Text>
+
+<Text color="green.400" fontWeight="bold" mt={4}>Space Complexity: O(1)</Text>
+<Text ml={4} as="li">At most 52 different letters (a-z, A-Z)</Text>
+<Text ml={4} as="li">Constant space regardless of input size</Text>
+
+---
+
+## Alternative Approaches (Count Then Calculate)
+
+<TabbedCode
+  files={[
+    {
+      title: "Python",
+      language: "python",
+      code: `def longestPalindrome(s):
+    from collections import Counter
+    counts = Counter(s)
+    
+    pairs = 0
+    has_odd = False
+    
+    for count in counts.values():
+        pairs += count // 2      # How many pairs can we make?
+        if count % 2 == 1:       # Is there a leftover single letter?
+            has_odd = True
+    
+    # Total length = pairs*2 + (1 if we have a middle letter)
+    return pairs * 2 + (1 if has_odd else 0)`
+    },
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function longestPalindrome(s) {
+    // Count each letter
+    const counts = {};
+    for (const char of s) {
+        counts[char] = (counts[char] || 0) + 1;
+    }
+    
+    let pairs = 0;
+    let hasOdd = false;
+    
+    for (const count of Object.values(counts)) {
+        pairs += Math.floor(count / 2);
+        if (count % 2 === 1) {
+            hasOdd = true;
+        }
+    }
+    
+    return pairs * 2 + (hasOdd ? 1 : 0);
+}`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `import java.util.*;
+
+public class Solution {
+    public int longestPalindrome(String s) {
+        // Count each letter
+        Map<Character, Integer> counts = new HashMap<>();
+        for (char c : s.toCharArray()) {
+            counts.put(c, counts.getOrDefault(c, 0) + 1);
+        }
+        
+        int pairs = 0;
+        boolean hasOdd = false;
+        
+        for (int count : counts.values()) {
+            pairs += count / 2;
+            if (count % 2 == 1) {
+                hasOdd = true;
+            }
+        }
+        
+        return pairs * 2 + (hasOdd ? 1 : 0);
+    }
+}`
+    }
+  ]}
+/>
+
+## Test Cases to Try
+
+```python
+# Test your solution with these:
+print(longestPalindrome("abccccdd"))    # Should return 7
+print(longestPalindrome("a"))           # Should return 1  
+print(longestPalindrome("Aab"))         # Should return 1
+print(longestPalindrome("aabbcc"))      # Should return 6
+print(longestPalindrome("aab"))         # Should return 3
+print(longestPalindrome("ccc"))         # Should return 3
+print(longestPalindrome("abcdef"))      # Should return 1
+print(longestPalindrome("aabbccdd"))    # Should return 8
+```
+
+---
+
+## Pattern Recognition
+
+This problem teaches important patterns:
+
+**Pairing & Symmetry:** Palindromes rely on letter pairs, with at most one unpaired letter in the middle.
+
+**Greedy Strategy:** Take all possible pairs, then add one extra if available  
+
+**HashMap for Counting:** Track frequencies to make pairing decisions
+
+**Odd/Even Analysis:** Understanding when remainders matter
+
+You'll see similar patterns in:
+- Anagram problems  
+- Frequency-based problems
+- Symmetric structure building
+- Optimization with constraints
+
+---
+
+## Key Takeaway
+
+The beauty of palindromes is their **symmetry**:
+- Every letter (except maybe one in the middle) needs a **partner** 
+- Count pairs, multiply by 2, add 1 if you have any singles left
+- Two approaches: count-then-calculate vs. process-pairs-immediately
+
+Both solve the same problem: **"How many letters can I arrange symmetrically?"**
+
+The answer: **All paired letters + at most one single letter in the middle**

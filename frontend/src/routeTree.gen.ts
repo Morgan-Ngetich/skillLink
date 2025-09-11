@@ -27,6 +27,7 @@ import { Route as CrackmodeDocsIntroductionIndexRouteImport } from './routes/cra
 import { Route as CrackmodeDocsProblemsUniqueNumberOfOccurrencesRouteImport } from './routes/crackmode/docs/problems/unique-number-of-occurrences'
 import { Route as CrackmodeDocsProblemsNumberOfGoodPairsRouteImport } from './routes/crackmode/docs/problems/number-of-good-pairs'
 import { Route as CrackmodeDocsProblemsMissingNumberRouteImport } from './routes/crackmode/docs/problems/missing-number'
+import { Route as CrackmodeDocsProblemsLongestPalindromeRouteImport } from './routes/crackmode/docs/problems/longest-palindrome'
 import { Route as CrackmodeDocsProblemsLongestConsecutiveSequenceRouteImport } from './routes/crackmode/docs/problems/longest-consecutive-sequence'
 import { Route as CrackmodeDocsProblemsImplementStackUsingQueuesRouteImport } from './routes/crackmode/docs/problems/implement-stack-using-queues'
 import { Route as CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRouteImport } from './routes/crackmode/docs/problems/find-the-difference-of-two-arrays'
@@ -136,6 +137,12 @@ const CrackmodeDocsProblemsMissingNumberRoute =
   CrackmodeDocsProblemsMissingNumberRouteImport.update({
     id: '/problems/missing-number',
     path: '/problems/missing-number',
+    getParentRoute: () => CrackmodeDocsRoute,
+  } as any)
+const CrackmodeDocsProblemsLongestPalindromeRoute =
+  CrackmodeDocsProblemsLongestPalindromeRouteImport.update({
+    id: '/problems/longest-palindrome',
+    path: '/problems/longest-palindrome',
     getParentRoute: () => CrackmodeDocsRoute,
   } as any)
 const CrackmodeDocsProblemsLongestConsecutiveSequenceRoute =
@@ -266,6 +273,7 @@ export interface FileRoutesByFullPath {
   '/crackmode/docs/problems/find-the-difference-of-two-arrays': typeof CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute
   '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   '/crackmode/docs/problems/longest-consecutive-sequence': typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
+  '/crackmode/docs/problems/longest-palindrome': typeof CrackmodeDocsProblemsLongestPalindromeRoute
   '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
   '/crackmode/docs/problems/number-of-good-pairs': typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
   '/crackmode/docs/problems/unique-number-of-occurrences': typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
@@ -300,6 +308,7 @@ export interface FileRoutesByTo {
   '/crackmode/docs/problems/find-the-difference-of-two-arrays': typeof CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute
   '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   '/crackmode/docs/problems/longest-consecutive-sequence': typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
+  '/crackmode/docs/problems/longest-palindrome': typeof CrackmodeDocsProblemsLongestPalindromeRoute
   '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
   '/crackmode/docs/problems/number-of-good-pairs': typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
   '/crackmode/docs/problems/unique-number-of-occurrences': typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
@@ -337,6 +346,7 @@ export interface FileRoutesById {
   '/crackmode/docs/problems/find-the-difference-of-two-arrays': typeof CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute
   '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   '/crackmode/docs/problems/longest-consecutive-sequence': typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
+  '/crackmode/docs/problems/longest-palindrome': typeof CrackmodeDocsProblemsLongestPalindromeRoute
   '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
   '/crackmode/docs/problems/number-of-good-pairs': typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
   '/crackmode/docs/problems/unique-number-of-occurrences': typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
@@ -374,6 +384,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/problems/find-the-difference-of-two-arrays'
     | '/crackmode/docs/problems/implement-stack-using-queues'
     | '/crackmode/docs/problems/longest-consecutive-sequence'
+    | '/crackmode/docs/problems/longest-palindrome'
     | '/crackmode/docs/problems/missing-number'
     | '/crackmode/docs/problems/number-of-good-pairs'
     | '/crackmode/docs/problems/unique-number-of-occurrences'
@@ -408,6 +419,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/problems/find-the-difference-of-two-arrays'
     | '/crackmode/docs/problems/implement-stack-using-queues'
     | '/crackmode/docs/problems/longest-consecutive-sequence'
+    | '/crackmode/docs/problems/longest-palindrome'
     | '/crackmode/docs/problems/missing-number'
     | '/crackmode/docs/problems/number-of-good-pairs'
     | '/crackmode/docs/problems/unique-number-of-occurrences'
@@ -444,6 +456,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/problems/find-the-difference-of-two-arrays'
     | '/crackmode/docs/problems/implement-stack-using-queues'
     | '/crackmode/docs/problems/longest-consecutive-sequence'
+    | '/crackmode/docs/problems/longest-palindrome'
     | '/crackmode/docs/problems/missing-number'
     | '/crackmode/docs/problems/number-of-good-pairs'
     | '/crackmode/docs/problems/unique-number-of-occurrences'
@@ -597,6 +610,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrackmodeDocsProblemsMissingNumberRouteImport
       parentRoute: typeof CrackmodeDocsRoute
     }
+    '/crackmode/docs/problems/longest-palindrome': {
+      id: '/crackmode/docs/problems/longest-palindrome'
+      path: '/problems/longest-palindrome'
+      fullPath: '/crackmode/docs/problems/longest-palindrome'
+      preLoaderRoute: typeof CrackmodeDocsProblemsLongestPalindromeRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
     '/crackmode/docs/problems/longest-consecutive-sequence': {
       id: '/crackmode/docs/problems/longest-consecutive-sequence'
       path: '/problems/longest-consecutive-sequence'
@@ -741,6 +761,7 @@ interface CrackmodeDocsRouteChildren {
   CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute: typeof CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute
   CrackmodeDocsProblemsImplementStackUsingQueuesRoute: typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   CrackmodeDocsProblemsLongestConsecutiveSequenceRoute: typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
+  CrackmodeDocsProblemsLongestPalindromeRoute: typeof CrackmodeDocsProblemsLongestPalindromeRoute
   CrackmodeDocsProblemsMissingNumberRoute: typeof CrackmodeDocsProblemsMissingNumberRoute
   CrackmodeDocsProblemsNumberOfGoodPairsRoute: typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
   CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute: typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
@@ -774,6 +795,8 @@ const CrackmodeDocsRouteChildren: CrackmodeDocsRouteChildren = {
     CrackmodeDocsProblemsImplementStackUsingQueuesRoute,
   CrackmodeDocsProblemsLongestConsecutiveSequenceRoute:
     CrackmodeDocsProblemsLongestConsecutiveSequenceRoute,
+  CrackmodeDocsProblemsLongestPalindromeRoute:
+    CrackmodeDocsProblemsLongestPalindromeRoute,
   CrackmodeDocsProblemsMissingNumberRoute:
     CrackmodeDocsProblemsMissingNumberRoute,
   CrackmodeDocsProblemsNumberOfGoodPairsRoute:

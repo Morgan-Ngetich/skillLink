@@ -274,7 +274,7 @@
       }
     ],
     "publishedAt": "2025-08-23T12:02:09.435Z",
-    "updatedAt": "2025-08-23T12:16:17.073Z",
+    "updatedAt": "2025-09-11T02:06:52.977Z",
     "author": "Morgan Ngetich",
     "readingTime": 4,
     "seo": {
@@ -282,7 +282,7 @@
       "description": "Greatest Common Divisor of Strings Difficulty: Easy LeetCode: 1071. Greatest Common Divisor of Strings --- Problem For two strings s and t, we say t divides s...",
       "keywords": "strings, easy, array, arrays, string, leetcode, return, common, concatenation, pattern, crackmode, algorithm",
       "robots": "index,follow",
-      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Gcd Of Strings\",\"description\":\"Greatest Common Divisor of Strings Difficulty: Easy LeetCode: 1071. Greatest Common Divisor of Strings --- Problem For two strings s and t, we say t divides s...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings\",\"datePublished\":\"2025-08-23T12:02:09.435Z\",\"dateModified\":\"2025-08-23T12:16:17.073Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"CrackMode\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings\"},\"wordCount\":189,\"timeRequired\":\"PT4M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
+      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Gcd Of Strings\",\"description\":\"Greatest Common Divisor of Strings Difficulty: Easy LeetCode: 1071. Greatest Common Divisor of Strings --- Problem For two strings s and t, we say t divides s...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings\",\"datePublished\":\"2025-08-23T12:02:09.435Z\",\"dateModified\":\"2025-09-11T02:06:52.977Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"CrackMode\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings\"},\"wordCount\":189,\"timeRequired\":\"PT4M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
     },
     "socialMedia": {
       "ogTitle": "Gcd Of Strings | Crackmode Documentation",
@@ -1966,6 +1966,129 @@
       "twitterTitle": "Longest Consecutive Sequence | Crackmode Documentation",
       "twitterDescription": "Given an unsorted array of integers nums, return the length of the longest consecutive elements sequence. You must write an algorithm that runs in O(n) time.",
       "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Longest+Consecutive+Sequence&description=Given+an+unsorted+array+of+integers+nums%2C+return+the+length+of+the+longest+consecutive+elements+sequence.+You+must+write...&section=Documentation&theme=crackmode"
+    }
+  },
+  {
+    "id": "problems/longest-palindrome",
+    "title": "Longest Palindrome",
+    "content": "Longest Palindrome Difficulty: Easy LeetCode: 409. Longest Palindrome --- Problem Given a string s which consists of lowercase or uppercase letters, return the length of the longest palindrome that can be built with those letters. Letters are case sensitive, for example,  Aa  is not considered a palindrome. Example 1:    Input: s    abccccdd  Output: 7 Explanation: One longest palindrome that can be built is  dccaccd , whose length is 7.   Example 2:   Input: s    a  Output: 1 Explanation: The longest palindrome that can be built is  a , whose length is 1.   Example 3:   Input: s    Aab  Output: 1 Explanation: The longest palindrome that can be built is  A ,  a  or  b , whose length is 1.   --- Simple Explanation Think of this like building a palindrome with letter tiles! Imagine you have letter tiles scattered on a table: - You have tiles: a, b, c, c, c, c, d, d - You want to build the longest possible palindrome  reads same forwards backwards  - Like building: d-c-c-a-c-c-d   Key Insights: 1. Pairs are perfect   Every pair of identical letters can go on both sides 2. Odd letters   If you have leftover single letters, pick ONE to go in the middle 3. Count pairs, then add one odd if available The Strategy: Count how many pairs you can make, multiply by 2, then add 1 if there are any leftover single letters! --- Solution counts   new HashMap    ; for  char c : s.toCharArray    counts.put c, counts.getOrDefault c, 0    1 ; int pairs   0; boolean hasOdd   false; for  int count : counts.values    pairs    count   2; if  count   2    1  hasOdd   true; return pairs 2    hasOdd ? 1 : 0 ;      --- Step-by-Step Walkthrough Let s trace through s    abccccdd :    Step 1: Count each letter a: 1 time b: 1 time c: 4 times d: 2 times Step 2: Calculate pairs from each letter  a : 1   2   0 pairs  1 leftover   b : 1   2   0 pairs  1 leftover   c : 4   2   2 pairs  0 leftover   d : 2   2   1 pair  0 leftover  Total pairs   0   0   2   1   3 pairs Step 3: Check for leftover single letters Letters with odd counts:  a  and  b  has_odd   True  we can use one in the middle  Step 4: Calculate final length pairs 2   has_odd   3 2   1   7   Possible palindrome:  dccaccd  or  dccbccd    Let s trace the given solution approach with same example:   s    abccccdd  hash_map   counter   0 Process each character: a: not in map   hash_map    a : 1 b: not in map   hash_map    a : 1,  b : 1 c: not in map   hash_map    a : 1,  b : 1,  c : 1 c: found  c  in map!   delete  c , counter    2   counter   2 c: not in map   hash_map    a : 1,  b : 1,  c : 1 c: found  c  in map!   delete  c , counter    2   counter   4 d: not in map   hash_map    a : 1,  b : 1,  d : 1 d: found  d  in map!   delete  d , counter    2   counter   6 Final: hash_map    a : 1,  b : 1  not empty  So counter    1   counter   7     --- Why Both Approaches Work Clean approach - Count first, then calculate pairs and check for odds Given approach - Process pairs immediately, keep track of singles Same logic - Both count pairs   2  and add one odd if available Palindrome rule - Pairs go on both sides, one odd can go in middle --- Visual Understanding Let s visualize building a palindrome:   Letters: a, b, c, c, c, c, d, d Step 1: Group letters Single letters:  a, b  Pairs:  c,c ,  c,c ,  d,d  Step 2: Build palindrome structure Left side: d c c Middle: a  pick any single letter  Right side: c c d Result: d c c a c c d  length   7    Another example with s    Aab :   Letters: A, a, b  all different, all single  Pairs: 0 Singles: A, a, b  pick any ONE for middle  Result: Can build  A ,  a , or  b   length   1    --- Understanding The Given Solution The given solution is clever because it processes pairs immediately:  python When we see a letter for the first time hash_map letter    1    I m looking for a partner  When we see it again del hash_map letter     Found my partner!  counter    2    Add this pair to the palindrome    Why this works: - Each pair contributes exactly 2 to the palindrome length - We detect pairs as soon as we see the second occurrence - Leftover singles in the map can contribute 1  middle letter  --- Common Mistakes to Avoid 1. Forgetting the middle letter: You can use ONE odd-count letter in the center 2. Case sensitivity:  A  and  a  are different letters in this problem 3. Overcounting odds: Only add 1 total for middle, not 1 per odd letter 4. Wrong pair calculation: Use integer division      not regular division --- Alternative Simple Approach Here s an even more beginner-friendly version:  python def longestPalindrome_simple s :   Count each letter letter_count   for letter in s: letter_count letter    letter_count.get letter, 0    1   Count pairs and check for odd letters total_pairs   0 found_odd   False for count in letter_count.values  : total_pairs    count    2   How many pairs? if count   2    1:   Any leftover single? found_odd   True   Build palindrome: pairs go on both sides   maybe one in middle result   total_pairs 2 if found_odd: result    1 return result   --- Complexity Analysis Time Complexity: O n  Single pass to count letters or process pairs Dictionary operations are O 1  average case Space Complexity: O 1  At most 52 different letters  a-z, A-Z  Constant space regardless of input size --- Test Cases to Try  python Test your solution with these: print longestPalindrome  abccccdd      Should return 7 print longestPalindrome  a      Should return 1 print longestPalindrome  Aab      Should return 1 print longestPalindrome  aabbcc      Should return 6 print longestPalindrome  aab      Should return 3 print longestPalindrome  ccc      Should return 3 print longestPalindrome  abcdef      Should return 1 print longestPalindrome  aabbccdd      Should return 8    --- Pattern Recognition This problem teaches important patterns: Pairing Strategy: When building symmetric structures, think in pairs Greedy Approach: Take all possible pairs, then add one extra if available HashMap for Counting: Track frequencies to make pairing decisions Odd Even Analysis: Understanding when remainders matter You ll see similar patterns in: - Anagram problems - Frequency-based problems - Symmetric structure building - Optimization with constraints --- Key Takeaway The beauty of palindromes is their symmetry: - Every letter  except maybe one in the middle  needs a partner - Count pairs, multiply by 2, add 1 if you have any singles left - Two approaches: count-then-calculate vs. process-pairs-immediately Both solve the same problem:  How many letters can I arrange symmetrically?  The answer: All paired letters   at most one single letter in the middle",
+    "excerpt": "Longest Palindrome Difficulty: Easy LeetCode: 409. Longest Palindrome --- Problem Given a string s which consists of lowercase or uppercase letters, return the...",
+    "url": "/crackmode/docs/problems/longest-palindrome",
+    "canonicalUrl": "https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/longest-palindrome",
+    "section": "Problems",
+    "tags": [
+      "easy",
+      "beginner",
+      "array",
+      "string",
+      "greedy",
+      "leetcode"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "Longest Palindrome",
+        "id": "longest-palindrome"
+      },
+      {
+        "level": 2,
+        "text": "Problem",
+        "id": "problem"
+      },
+      {
+        "level": 2,
+        "text": "Simple Explanation",
+        "id": "simple-explanation"
+      },
+      {
+        "level": 2,
+        "text": "Solution",
+        "id": "solution"
+      },
+      {
+        "level": 2,
+        "text": "Step-by-Step Walkthrough",
+        "id": "step-by-step-walkthrough"
+      },
+      {
+        "level": 2,
+        "text": "Why Both Approaches Work",
+        "id": "why-both-approaches-work"
+      },
+      {
+        "level": 2,
+        "text": "Visual Understanding",
+        "id": "visual-understanding"
+      },
+      {
+        "level": 2,
+        "text": "Understanding The Given Solution",
+        "id": "understanding-the-given-solution"
+      },
+      {
+        "level": 1,
+        "text": "When we see a letter for the first time",
+        "id": "when-we-see-a-letter-for-the-first-time"
+      },
+      {
+        "level": 1,
+        "text": "When we see it again",
+        "id": "when-we-see-it-again"
+      },
+      {
+        "level": 2,
+        "text": "Common Mistakes to Avoid",
+        "id": "common-mistakes-to-avoid"
+      },
+      {
+        "level": 2,
+        "text": "Alternative Simple Approach",
+        "id": "alternative-simple-approach"
+      },
+      {
+        "level": 2,
+        "text": "Complexity Analysis",
+        "id": "complexity-analysis"
+      },
+      {
+        "level": 2,
+        "text": "Test Cases to Try",
+        "id": "test-cases-to-try"
+      },
+      {
+        "level": 1,
+        "text": "Test your solution with these:",
+        "id": "test-your-solution-with-these"
+      },
+      {
+        "level": 2,
+        "text": "Pattern Recognition",
+        "id": "pattern-recognition"
+      },
+      {
+        "level": 2,
+        "text": "Key Takeaway",
+        "id": "key-takeaway"
+      }
+    ],
+    "publishedAt": "2025-09-11T02:05:19.769Z",
+    "updatedAt": "2025-09-11T02:06:36.751Z",
+    "author": "Morgan Ngetich",
+    "readingTime": 6,
+    "seo": {
+      "title": "Longest Palindrome | Crackmode Documentation",
+      "description": "Longest Palindrome Difficulty: Easy LeetCode: 409. Longest Palindrome --- Problem Given a string s which consists of lowercase or uppercase letters, return the...",
+      "keywords": "longest, palindrome, easy, beginner, array, string, greedy, leetcode, pairs, letter, count, letters, crackmode, algorithm",
+      "robots": "index,follow",
+      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Longest Palindrome\",\"description\":\"Longest Palindrome Difficulty: Easy LeetCode: 409. Longest Palindrome --- Problem Given a string s which consists of lowercase or uppercase letters, return the...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/longest-palindrome\",\"datePublished\":\"2025-09-11T02:05:19.769Z\",\"dateModified\":\"2025-09-11T02:06:36.751Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"CrackMode\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/longest-palindrome\"},\"wordCount\":161,\"timeRequired\":\"PT6M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
+    },
+    "socialMedia": {
+      "ogTitle": "Longest Palindrome | Crackmode Documentation",
+      "ogDescription": "Given a string s which consists of lowercase or uppercase letters, return the length of the longest palindrome that can be built with those letters. Letters are case sensitive, for example, \"Aa\" is not considered a palindrome.",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Longest+Palindrome&description=Given+a+string+s+which+consists+of+lowercase+or+uppercase+letters%2C+return+the+length+of+the+longest+palindrome+that+can...&section=Documentation&theme=crackmode",
+      "twitterTitle": "Longest Palindrome | Crackmode Documentation",
+      "twitterDescription": "Given a string s which consists of lowercase or uppercase letters, return the length of the longest palindrome that can be built with those letters. Letters are case sensitive, for example, \"Aa\" is not considered a palindrome.",
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Longest+Palindrome&description=Given+a+string+s+which+consists+of+lowercase+or+uppercase+letters%2C+return+the+length+of+the+longest+palindrome+that+can...&section=Documentation&theme=crackmode"
     }
   },
   {

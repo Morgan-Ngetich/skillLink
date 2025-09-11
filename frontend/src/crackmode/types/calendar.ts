@@ -140,6 +140,17 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
       "solved": true,
       "solvedAt": "2025-09-09T20:59:00Z"
     }
-
   ],
+  "2025-09-09": [
+    {
+      "id": 1,
+      "title": "Longest Palindrome",
+      "difficulty": "Easy",
+      "tags": ["HashTable", "Greedy", "String"],
+      "url": "https://leetcode.com/problems/longest-palindrome/",
+      "docs": "/crackmode/docs/problems/longest-palindrome",
+      "solved": true,
+      "solvedAt": "2025-09-09T20:20:00Z"
+    }
+  ]
 }
