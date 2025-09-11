@@ -70,7 +70,7 @@ export const parseMDXFiles = async (
 
     // Extract problem section specifically for OG descriptions
     const problemDescription = extractProblemSection(content);
-    
+
     // Create excerpt (fallback if no problem section)
     const generalExcerpt = frontmatter.description || frontmatter.excerpt || createExcerpt(plainTextContent)
 
@@ -141,10 +141,10 @@ function extractProblemSection(content: string): string | null {
   // Look for Problem section with various heading formats
   const problemSectionRegex = /(?:^|\n)#{1,6}\s*Problem\s*\n([\s\S]*?)(?=\n#{1,6}\s*[A-Z]|\n---|\n\*\*|\n```|$)/i;
   const match = problemSectionRegex.exec(cleanContent);
-  
+
   if (match && match[1]) {
     let problemText = match[1].trim();
-    
+
     // Clean up the extracted problem text
     problemText = problemText
       // Remove markdown formatting
@@ -152,13 +152,13 @@ function extractProblemSection(content: string): string | null {
       .replace(/\*([^*]+)\*/g, '$1') // Italic
       .replace(/`([^`]+)`/g, '$1') // Inline code
       .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Links
-      
+
       // Remove example blocks (they're usually too long)
       .replace(/\*\*Example\s+\d+:\*\*[\s\S]*?(?=\*\*Example|\*\*Constraints?|\*\*Note|$)/gi, '')
-      
+
       // Remove constraints section
       .replace(/\*\*Constraints?:\*\*[\s\S]*$/i, '')
-      
+
       // Clean up whitespace
       .replace(/\n\s*\n/g, '\n')
       .replace(/\n/g, ' ')
@@ -169,13 +169,13 @@ function extractProblemSection(content: string): string | null {
     if (problemText.length > 20 && problemText.length < 300) {
       return problemText;
     }
-    
+
     // If it's too long, create a smart excerpt from it
     if (problemText.length >= 300) {
       return createSmartProblemExcerpt(problemText);
     }
   }
-  
+
   // Fallback: look for problem-like content patterns
   return extractProblemLikeContent(cleanContent);
 }
@@ -184,35 +184,35 @@ function extractProblemSection(content: string): string | null {
 function createSmartProblemExcerpt(problemText: string, maxLength = 180): string {
   // First sentence is usually the core problem statement
   const sentences = problemText.split(/[.!?]+\s+/);
-  
+
   if (sentences.length > 0 && sentences[0].length < maxLength) {
     let excerpt = sentences[0].trim();
-    
+
     // Add second sentence if there's room and it adds value
     if (sentences.length > 1 && excerpt.length + sentences[1].length + 2 < maxLength) {
       excerpt += '. ' + sentences[1].trim();
     }
-    
+
     // Ensure it ends with proper punctuation
     if (!/[.!?]$/.test(excerpt)) {
       excerpt += '.';
     }
-    
+
     return excerpt;
   }
-  
+
   // Fallback to character-based truncation at word boundary
   if (problemText.length <= maxLength) {
     return problemText;
   }
-  
+
   const truncated = problemText.substring(0, maxLength);
   const lastSpace = truncated.lastIndexOf(' ');
-  
+
   if (lastSpace > maxLength * 0.8) {
     return truncated.substring(0, lastSpace).trim() + '...';
   }
-  
+
   return truncated.trim() + '...';
 }
 
@@ -222,10 +222,10 @@ function extractProblemLikeContent(content: string): string | null {
   const patterns = [
     // "Given X, return Y" pattern
     /(?:Given|You are given|You have)\s+([^.!?]*[.!?])\s*([^.!?]*[.!?])?/i,
-    
+
     // "Find/Return/Determine..." pattern  
     /(?:Find|Return|Determine|Calculate|Check|Verify)\s+([^.!?]*[.!?])/i,
-    
+
     // Problem description starting with "A/An/The..."
     /(?:^|\n)\s*(?:A|An|The)\s+([^.!?]*[.!?]\s*[^.!?]*[.!?]?)/i
   ];
@@ -237,13 +237,13 @@ function extractProblemLikeContent(content: string): string | null {
         .replace(/\*\*([^*]+)\*\*/g, '$1')
         .replace(/`([^`]+)`/g, '$1')
         .replace(/\s+/g, ' ');
-      
+
       if (extracted.length > 20 && extracted.length < 250) {
         return extracted;
       }
     }
   }
-  
+
   return null;
 }
 
@@ -253,7 +253,7 @@ function stripMDXContent(content: string): string {
     // Remove import/export statements completely
     .replace(/^import\s+.*$/gm, '')
     .replace(/^export\s+.*$/gm, '')
-    
+
     // Handle React components more intelligently
     .replace(/<([A-Z][A-Za-z0-9]*)[^>]*>([\s\S]*?)<\/\1>/g, (_, tag, innerContent) => {
       // Preserve content from common components
@@ -262,16 +262,16 @@ function stripMDXContent(content: string): string {
       }
       return innerContent || '';
     })
-    
+
     // Remove self-closing JSX components but preserve alt text
     .replace(/<[A-Z][A-Za-z0-9]*[^>]*alt=['"]([^'"]*)['"][^>]*\/>/g, '$1')
     .replace(/<[A-Z][A-Za-z0-9]*[^>]*\/>/g, '')
-    
+
     // Better HTML tag handling - preserve important content
     .replace(/<(strong|b|em|i)[^>]*>([\s\S]*?)<\/\1>/g, '$2')
     .replace(/<[a-z]+[^>]*>([\s\S]*?)<\/[a-z]+>/g, '$1')
     .replace(/<[^>]+>/g, '')
-    
+
     // Improve markdown processing
     .replace(/^#{1,6}\s+/gm, '') // Headers
     .replace(/\*\*([^*]+)\*\*/g, '$1') // Bold
@@ -280,7 +280,7 @@ function stripMDXContent(content: string): string {
     .replace(/```[\s\S]*?```/g, '') // Code blocks - remove completely
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Links - keep text
     .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1') // Images - keep alt text
-    
+
     // Clean up special characters and whitespace
     .replace(/[{}]/g, '') // Remove curly braces
     .replace(/\n\s*\n/g, '\n') // Multiple newlines to single
@@ -344,7 +344,7 @@ function createHeadingId(text: string, seenIds: Set<string>): string {
 // Create excerpt from content
 function createExcerpt(content: string, maxLength = 160): string {
   const cleaned = content.replace(/\s+/g, ' ').trim();
-  
+
   // If content is short enough, return as-is
   if (cleaned.length <= maxLength) {
     return cleaned;
@@ -352,28 +352,28 @@ function createExcerpt(content: string, maxLength = 160): string {
 
   // Try to find a good breaking point
   const truncated = cleaned.substring(0, maxLength);
-  
+
   // Look for sentence endings
   const sentenceEndings = ['. ', '! ', '? '];
   let bestBreak = -1;
-  
+
   for (const ending of sentenceEndings) {
     const lastIndex = truncated.lastIndexOf(ending);
     if (lastIndex > maxLength * 0.6 && lastIndex > bestBreak) {
       bestBreak = lastIndex + ending.length - 1;
     }
   }
-  
+
   if (bestBreak > 0) {
     return truncated.substring(0, bestBreak).trim();
   }
-  
+
   // Fall back to word boundary
   const lastSpace = truncated.lastIndexOf(' ');
   if (lastSpace > maxLength * 0.8) {
     return truncated.substring(0, lastSpace).trim() + '...';
   }
-  
+
   return truncated.trim() + '...';
 }
 
@@ -421,14 +421,14 @@ function extractTagsFromContent(content: string, slug: string, title?: string): 
 // Infer section from file path
 function inferSectionFromPath(slug: string): string {
   const parts = slug.split('/');
-  
+
   if (parts.length > 1) {
     const section = parts[0];
-    
+
     // Map common paths to friendly names
     const sectionMap: Record<string, string> = {
       'leetcode75': 'LeetCode 75',
-      'arrays-strings': 'Arrays & Strings', 
+      'arrays-strings': 'Arrays & Strings',
       'twoPointers': 'Two Pointers',
       'slidingWindow': 'Sliding Window',
       'prefixSum': 'Prefix Sum',
@@ -447,10 +447,10 @@ function inferSectionFromPath(slug: string): string {
       'trie': 'Trie',
       'bit': 'Bit Manipulation'
     };
-    
+
     return sectionMap[section] || formatSlugToTitle(section);
   }
-  
+
   return 'Documentation';
 }
 
@@ -513,8 +513,8 @@ function generateDefaultOGImage(title: string, description?: string, section?: s
   params.set("title", title.substring(0, 60));
   if (description) {
     // For OG images, keep descriptions shorter and more impactful
-    const shortDesc = description.length > 120 ? 
-      description.substring(0, 120).trim() + '...' : 
+    const shortDesc = description.length > 120 ?
+      description.substring(0, 120).trim() + '...' :
       description;
     params.set("description", shortDesc);
   }
