@@ -1,0 +1,387 @@
+import { VStack, HStack, Text } from "@chakra-ui/react"
+
+# Most Common Word
+
+**Difficulty:** <span style={{color: "#4ade80"}}>Easy</span>  
+**LeetCode:** [819. Most Common Word](https://leetcode.com/problems/most-common-word/)
+
+---
+
+## Problem
+
+Given a string `paragraph` and a string array of the banned words `banned`, return the most frequent word that is not banned. It is **guaranteed** there is **at least one word** that is not banned, and that the answer is **unique**.
+
+The words in `paragraph` are **case-insensitive** and the answer should be returned in **lowercase**.
+
+**Note:** Words cannot contain punctuation symbols.
+
+**Example 1:**
+```
+Input: paragraph = "Bob hit a ball, the hit BALL flew far after it was hit.", banned = ["hit"]
+Output: "ball"
+Explanation: 
+"hit" occurs 3 times, but it is a banned word.
+"ball" occurs twice (and no other word does), so it is the most frequent non-banned word.
+```
+
+**Example 2:**
+```
+Input: paragraph = "a.", banned = []
+Output: "a"
+```
+
+**Constraints:**
+- `1 <= paragraph.length <= 1000`
+- `paragraph` consists of English letters, space `' '`, or punctuation: `"!?',;."`
+- `0 <= banned.length <= 100`
+- `banned[i]` consists of only lowercase English letters
+
+---
+
+## Simple Explanation
+
+Think of this like **cleaning up a messy paragraph and finding the most popular allowed word**!
+
+Imagine you have a paragraph full of punctuation and mixed cases:
+- "Bob hit a ball, the hit BALL flew far after it was hit."
+- You need to find the most common word that's NOT banned
+
+**The Process:**
+1. **Clean the mess** → Remove all punctuation marks
+2. **Make everything lowercase** → "bob hit a ball the hit ball flew far after it was hit"
+3. **Split into words** → ["bob", "hit", "a", "ball", "the", "hit", "ball", "flew", "far", "after", "it", "was", "hit"]
+4. **Count each word** → hit: 3, ball: 2, bob: 1, a: 1, etc.
+5. **Find the most frequent non-banned word** → "ball" (since "hit" is banned)
+
+**Key Insights:**
+- Punctuation must be removed completely
+- Case doesn't matter - convert everything to lowercase
+- Count frequencies and pick the highest non-banned word
+
+---
+
+## Solution
+
+<TabbedCode
+  files={[
+    {
+      title: "Python (Session Approach)",
+      language: "python",
+      code: `from collections import Counter
+from typing import List
+
+class Solution:
+    def mostCommonWord(self, paragraph: str, banned: List[str]) -> str:
+        # Step 1: Remove all punctuation marks
+        for c in "!?',;.": 
+            paragraph = paragraph.replace(c, " ")
+        
+        # Step 2: Convert to lowercase
+        paragraph = paragraph.lower()
+        
+        # Step 3: Split into words
+        p_list = paragraph.split(" ")
+        
+        # Step 4: Remove empty strings (caused by multiple spaces)
+        while "" in p_list:
+            p_list.remove("")
+                     
+        # Step 5: Count word frequencies
+        words_map = Counter(p_list)
+        
+        # Step 6: Sort by frequency (highest first)
+        sorted_words_map = dict(sorted(words_map.items(), key=lambda item: item[1], reverse=True))
+       
+        # Step 7: Return first non-banned word
+        for key, _ in sorted_words_map.items():
+            if key not in banned:
+                return key`
+    },
+    {
+      title: "Python (Cleaner Version)",
+      language: "python",
+      code: `from collections import Counter
+import re
+
+class Solution:
+    def mostCommonWord(self, paragraph: str, banned: List[str]) -> str:
+        # Clean and normalize: remove punctuation, lowercase, split
+        words = re.findall(r'\\w+', paragraph.lower())
+        
+        # Count word frequencies
+        word_count = Counter(words)
+        
+        # Convert banned list to set for O(1) lookup
+        banned_set = set(banned)
+        
+        # Find most common non-banned word
+        for word, count in word_count.most_common():
+            if word not in banned_set:
+                return word`
+    },
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function mostCommonWord(paragraph, banned) {
+    // Step 1: Clean punctuation and convert to lowercase
+    const cleaned = paragraph.toLowerCase().replace(/[!?',;.]/g, ' ');
+    
+    // Step 2: Split into words and filter empty strings
+    const words = cleaned.split(' ').filter(word => word.length > 0);
+    
+    // Step 3: Count word frequencies
+    const wordCount = {};
+    for (const word of words) {
+        wordCount[word] = (wordCount[word] || 0) + 1;
+    }
+    
+    // Step 4: Convert banned array to set for faster lookup
+    const bannedSet = new Set(banned);
+    
+    // Step 5: Find most frequent non-banned word
+    let maxCount = 0;
+    let result = '';
+    
+    for (const [word, count] of Object.entries(wordCount)) {
+        if (!bannedSet.has(word) && count > maxCount) {
+            maxCount = count;
+            result = word;
+        }
+    }
+    
+    return result;
+}`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `import java.util.*;
+
+class Solution {
+    public String mostCommonWord(String paragraph, String[] banned) {
+        // Step 1: Clean punctuation, convert to lowercase, split
+        String[] words = paragraph.toLowerCase().replaceAll("[!?',;.]", " ").split("\\\\s+");
+        
+        // Step 2: Count word frequencies
+        Map<String, Integer> wordCount = new HashMap<>();
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
+            }
+        }
+        
+        // Step 3: Convert banned array to set
+        Set<String> bannedSet = new HashSet<>(Arrays.asList(banned));
+        
+        // Step 4: Find most frequent non-banned word
+        String result = "";
+        int maxCount = 0;
+        
+        for (Map.Entry<String, Integer> entry : wordCount.entrySet()) {
+            String word = entry.getKey();
+            int count = entry.getValue();
+            
+            if (!bannedSet.contains(word) && count > maxCount) {
+                maxCount = count;
+                result = word;
+            }
+        }
+        
+        return result;
+    }
+}`
+    }
+  ]}
+/>
+
+---
+
+## Step-by-Step Walkthrough
+
+Let's trace through the session approach with `paragraph = "Bob hit a ball, the hit BALL flew far after it was hit."` and `banned = ["hit"]`:
+
+```
+Original: "Bob hit a ball, the hit BALL flew far after it was hit."
+
+Step 1: Remove punctuation
+for c in "!?',;.":
+    paragraph = paragraph.replace(c, " ")
+Result: "Bob hit a ball  the hit BALL flew far after it was hit "
+
+Step 2: Convert to lowercase
+paragraph = paragraph.lower()
+Result: "bob hit a ball  the hit ball flew far after it was hit "
+
+Step 3: Split into words
+p_list = paragraph.split(" ")
+Result: ["bob", "hit", "a", "ball", "", "the", "hit", "ball", "flew", "far", "after", "it", "was", "hit", ""]
+
+Step 4: Remove empty strings
+while "" in p_list:
+    p_list.remove("")
+Result: ["bob", "hit", "a", "ball", "the", "hit", "ball", "flew", "far", "after", "it", "was", "hit"]
+
+Step 5: Count frequencies
+words_map = Counter(p_list)
+Result: {'hit': 3, 'ball': 2, 'bob': 1, 'a': 1, 'the': 1, 'flew': 1, 'far': 1, 'after': 1, 'it': 1, 'was': 1}
+
+Step 6: Sort by frequency (descending)
+sorted_words_map = {'hit': 3, 'ball': 2, 'bob': 1, 'a': 1, ...}
+
+Step 7: Find first non-banned word
+'hit' is banned → skip
+'ball' is not banned → return 'ball' ✓
+```
+
+---
+
+## Visual Understanding
+
+**Text Cleaning Process:**
+```
+"Bob hit a ball, the hit BALL flew far after it was hit."
+        ↓ Remove punctuation
+"Bob hit a ball  the hit BALL flew far after it was hit "
+        ↓ Convert to lowercase  
+"bob hit a ball  the hit ball flew far after it was hit "
+        ↓ Split and clean
+["bob", "hit", "a", "ball", "the", "hit", "ball", "flew", "far", "after", "it", "was", "hit"]
+```
+
+**Word Frequency Analysis:**
+```
+Word Counts:
+hit  → |||     (3 times) ← BANNED!
+ball → ||      (2 times) ← Winner!
+bob  → |       (1 time)
+a    → |       (1 time)
+the  → |       (1 time)
+...
+```
+
+---
+
+## Common Mistakes to Avoid
+
+1. **Forgetting to handle empty strings:** After splitting, you might get empty strings from consecutive spaces or punctuation
+
+2. **Case sensitivity:** Don't forget to convert everything to lowercase before processing
+
+3. **Inefficient banned word lookup:** Convert the banned list to a set for O(1) lookup time
+
+4. **Not handling all punctuation:** Make sure you remove all specified punctuation marks: `"!?',;."`
+
+5. **Regex pitfalls:** If using regex, remember that `\w+` matches word characters (letters, digits, underscore)
+
+---
+
+## Complexity Analysis
+
+<Text color="green.400" fontWeight="bold">Time Complexity: O(n + m)</Text>
+<Text ml={4} as="li">n = length of paragraph, m = number of words</Text>
+<Text ml={4} as="li">String operations: O(n)</Text>
+<Text ml={4} as="li">Counting and sorting: O(m log m)</Text>
+<Text ml={4} as="li">Overall: O(n + m log m)</Text>
+
+<Text color="green.400" fontWeight="bold" mt={4}>Space Complexity: O(m)</Text>
+<Text ml={4} as="li">HashMap to store word counts</Text>
+<Text ml={4} as="li">Set for banned words lookup</Text>
+<Text ml={4} as="li">List to store processed words</Text>
+
+---
+
+## Alternative Approaches
+
+<TabbedCode
+  files={[
+    {
+      title: "One-Pass Solution",
+      language: "python",
+      code: `import re
+from collections import defaultdict
+
+def mostCommonWord(paragraph, banned):
+    # Clean and split in one step using regex
+    words = re.findall(r'\\w+', paragraph.lower())
+    
+    # Convert banned to set for O(1) lookup
+    banned_set = set(banned)
+    
+    # Count only non-banned words
+    word_count = defaultdict(int)
+    for word in words:
+        if word not in banned_set:
+            word_count[word] += 1
+    
+    # Return the word with maximum count
+    return max(word_count.items(), key=lambda x: x[1])[0]`
+    }
+  ]}
+/>
+
+## Test Cases to Try
+
+```python
+# Test your solution with these:
+print(mostCommonWord("Bob hit a ball, the hit BALL flew far after it was hit.", ["hit"]))
+# Should return "ball"
+
+print(mostCommonWord("a.", []))
+# Should return "a"
+
+print(mostCommonWord("a, a, a, a, b,b,b,c, c", ["a"]))
+# Should return "b"
+
+print(mostCommonWord("Bob. hIt, baLl", ["bob", "hit"]))
+# Should return "ball"
+
+print(mostCommonWord("a.", ["a"]))
+# Should return whatever is the most frequent non-banned word
+
+print(mostCommonWord("...", []))
+# Edge case - what happens with only punctuation?
+```
+
+---
+
+## Pattern Recognition
+
+This problem teaches several important patterns:
+
+**Text Processing Pipeline:**
+1. **Normalize** → Clean punctuation, handle case
+2. **Tokenize** → Split into meaningful units (words)
+3. **Filter** → Remove unwanted elements
+4. **Analyze** → Count frequencies, find patterns
+
+**Data Structure Choice:**
+- **HashMap** for frequency counting
+- **Set** for fast banned word lookup
+- **Sorting** vs **Max tracking** trade-offs
+
+**Edge Case Handling:**
+- Empty strings from splitting
+- Case insensitivity requirements
+- Punctuation removal strategies
+
+You'll see similar patterns in:
+- Text analysis and NLP problems
+- Log processing and analytics
+- Data cleaning and preprocessing
+- Frequency-based algorithms
+
+---
+
+## Key Takeaway
+
+Text processing problems like this are all about the **pipeline**:
+
+1. **Clean** your data first (remove noise, normalize format)
+2. **Extract** meaningful tokens (words, not punctuation)
+3. **Count** frequencies efficiently
+4. **Filter** based on constraints (banned words)
+5. **Select** the best candidate
+
+The beauty is in handling edge cases gracefully and choosing the right data structures for efficient lookups. Remember: clean data leads to clean solutions!
+
+**Pro tip:** When dealing with text, always think about normalization first - it saves you from many bugs later!

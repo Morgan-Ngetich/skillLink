@@ -152,5 +152,18 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
       "solved": true,
       "solvedAt": "2025-09-09T20:20:00Z"
     }
-  ]
+  ],
+  "2025-09-10": [
+  {
+    "id": 3,
+    "title": "Most Common Word",
+    "difficulty": "Easy",
+    "tags": ["HashTable", "String", "Counting"],
+    "url": "https://leetcode.com/problems/most-common-word/",
+    "docs": "/crackmode/docs/problems/most-common-word",
+    "solved": true,
+    "solvedAt": "2025-09-11T20:15:00Z"
+  }
+]
+
 }
