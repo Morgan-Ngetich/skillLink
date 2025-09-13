@@ -26,6 +26,11 @@ export function useCleanRedirect(paramKey = 'redirectTo') {
     const search = routerState.location.search;
     const redirectTo = search[paramKey] as string | undefined;
 
+    const fallbackUrl = document.referrer.includes('https://frontend-production-a85f.up.railway.app/')
+      ? '/'
+      : '/crackmode';
+
+
     if (redirectTo) {
       // Remove the redirectTo param from search
       const { [paramKey]: _discard, ...rest } = search;
@@ -38,7 +43,7 @@ export function useCleanRedirect(paramKey = 'redirectTo') {
       });
     } else {
       // No redirect param, just go to root
-      navigate({ to: '/', replace: true });
+      navigate({ to: fallbackUrl, replace: true });
     }
   };
 }
@@ -93,7 +98,7 @@ export const syncUserToBackend = async (user: SupabaseUser, maxRetries = 3) => {
       });
       console.log(`Sync successful on attempt ${attempt}`);
       return; // Success!
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error.status === 401 && attempt < maxRetries) {
         // Authentication not ready yet, wait and retry
@@ -107,23 +112,23 @@ export const syncUserToBackend = async (user: SupabaseUser, maxRetries = 3) => {
   };
 }
 
-  const LOCAL_STORAGE_KEY = 'googleUser';
+const LOCAL_STORAGE_KEY = 'googleUser';
 
-  export function useGoogleUser(): GoogleUserInfo | null {
-    const [googleUser, setGoogleUser] = useState<GoogleUserInfo | null>(null);
+export function useGoogleUser(): GoogleUserInfo | null {
+  const [googleUser, setGoogleUser] = useState<GoogleUserInfo | null>(null);
 
-    useEffect(() => {
-      const stored = storage.get(LOCAL_STORAGE_KEY);
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored) as GoogleUserInfo;
-          setGoogleUser(parsed);
-        } catch {
-          storage.remove(LOCAL_STORAGE_KEY);
-          setGoogleUser(null);
-        }
+  useEffect(() => {
+    const stored = storage.get(LOCAL_STORAGE_KEY);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored) as GoogleUserInfo;
+        setGoogleUser(parsed);
+      } catch {
+        storage.remove(LOCAL_STORAGE_KEY);
+        setGoogleUser(null);
       }
-    }, []);
+    }
+  }, []);
 
-    return googleUser;
-  }
+  return googleUser;
+}
