@@ -28,6 +28,7 @@ import { Route as CrackmodeDocsProblemsUniqueNumberOfOccurrencesRouteImport } fr
 import { Route as CrackmodeDocsProblemsNumberOfGoodPairsRouteImport } from './routes/crackmode/docs/problems/number-of-good-pairs'
 import { Route as CrackmodeDocsProblemsMostCommonWordRouteImport } from './routes/crackmode/docs/problems/most-common-word'
 import { Route as CrackmodeDocsProblemsMissingNumberRouteImport } from './routes/crackmode/docs/problems/missing-number'
+import { Route as CrackmodeDocsProblemsMergeSortedArrayRouteImport } from './routes/crackmode/docs/problems/merge-sorted-array'
 import { Route as CrackmodeDocsProblemsLongestPalindromeRouteImport } from './routes/crackmode/docs/problems/longest-palindrome'
 import { Route as CrackmodeDocsProblemsLongestConsecutiveSequenceRouteImport } from './routes/crackmode/docs/problems/longest-consecutive-sequence'
 import { Route as CrackmodeDocsProblemsImplementStackUsingQueuesRouteImport } from './routes/crackmode/docs/problems/implement-stack-using-queues'
@@ -144,6 +145,12 @@ const CrackmodeDocsProblemsMissingNumberRoute =
   CrackmodeDocsProblemsMissingNumberRouteImport.update({
     id: '/problems/missing-number',
     path: '/problems/missing-number',
+    getParentRoute: () => CrackmodeDocsRoute,
+  } as any)
+const CrackmodeDocsProblemsMergeSortedArrayRoute =
+  CrackmodeDocsProblemsMergeSortedArrayRouteImport.update({
+    id: '/problems/merge-sorted-array',
+    path: '/problems/merge-sorted-array',
     getParentRoute: () => CrackmodeDocsRoute,
   } as any)
 const CrackmodeDocsProblemsLongestPalindromeRoute =
@@ -281,6 +288,7 @@ export interface FileRoutesByFullPath {
   '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   '/crackmode/docs/problems/longest-consecutive-sequence': typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
   '/crackmode/docs/problems/longest-palindrome': typeof CrackmodeDocsProblemsLongestPalindromeRoute
+  '/crackmode/docs/problems/merge-sorted-array': typeof CrackmodeDocsProblemsMergeSortedArrayRoute
   '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
   '/crackmode/docs/problems/most-common-word': typeof CrackmodeDocsProblemsMostCommonWordRoute
   '/crackmode/docs/problems/number-of-good-pairs': typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
@@ -317,6 +325,7 @@ export interface FileRoutesByTo {
   '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   '/crackmode/docs/problems/longest-consecutive-sequence': typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
   '/crackmode/docs/problems/longest-palindrome': typeof CrackmodeDocsProblemsLongestPalindromeRoute
+  '/crackmode/docs/problems/merge-sorted-array': typeof CrackmodeDocsProblemsMergeSortedArrayRoute
   '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
   '/crackmode/docs/problems/most-common-word': typeof CrackmodeDocsProblemsMostCommonWordRoute
   '/crackmode/docs/problems/number-of-good-pairs': typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
@@ -356,6 +365,7 @@ export interface FileRoutesById {
   '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   '/crackmode/docs/problems/longest-consecutive-sequence': typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
   '/crackmode/docs/problems/longest-palindrome': typeof CrackmodeDocsProblemsLongestPalindromeRoute
+  '/crackmode/docs/problems/merge-sorted-array': typeof CrackmodeDocsProblemsMergeSortedArrayRoute
   '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
   '/crackmode/docs/problems/most-common-word': typeof CrackmodeDocsProblemsMostCommonWordRoute
   '/crackmode/docs/problems/number-of-good-pairs': typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
@@ -395,6 +405,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/problems/implement-stack-using-queues'
     | '/crackmode/docs/problems/longest-consecutive-sequence'
     | '/crackmode/docs/problems/longest-palindrome'
+    | '/crackmode/docs/problems/merge-sorted-array'
     | '/crackmode/docs/problems/missing-number'
     | '/crackmode/docs/problems/most-common-word'
     | '/crackmode/docs/problems/number-of-good-pairs'
@@ -431,6 +442,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/problems/implement-stack-using-queues'
     | '/crackmode/docs/problems/longest-consecutive-sequence'
     | '/crackmode/docs/problems/longest-palindrome'
+    | '/crackmode/docs/problems/merge-sorted-array'
     | '/crackmode/docs/problems/missing-number'
     | '/crackmode/docs/problems/most-common-word'
     | '/crackmode/docs/problems/number-of-good-pairs'
@@ -469,6 +481,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/problems/implement-stack-using-queues'
     | '/crackmode/docs/problems/longest-consecutive-sequence'
     | '/crackmode/docs/problems/longest-palindrome'
+    | '/crackmode/docs/problems/merge-sorted-array'
     | '/crackmode/docs/problems/missing-number'
     | '/crackmode/docs/problems/most-common-word'
     | '/crackmode/docs/problems/number-of-good-pairs'
@@ -630,6 +643,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrackmodeDocsProblemsMissingNumberRouteImport
       parentRoute: typeof CrackmodeDocsRoute
     }
+    '/crackmode/docs/problems/merge-sorted-array': {
+      id: '/crackmode/docs/problems/merge-sorted-array'
+      path: '/problems/merge-sorted-array'
+      fullPath: '/crackmode/docs/problems/merge-sorted-array'
+      preLoaderRoute: typeof CrackmodeDocsProblemsMergeSortedArrayRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
     '/crackmode/docs/problems/longest-palindrome': {
       id: '/crackmode/docs/problems/longest-palindrome'
       path: '/problems/longest-palindrome'
@@ -782,6 +802,7 @@ interface CrackmodeDocsRouteChildren {
   CrackmodeDocsProblemsImplementStackUsingQueuesRoute: typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
   CrackmodeDocsProblemsLongestConsecutiveSequenceRoute: typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
   CrackmodeDocsProblemsLongestPalindromeRoute: typeof CrackmodeDocsProblemsLongestPalindromeRoute
+  CrackmodeDocsProblemsMergeSortedArrayRoute: typeof CrackmodeDocsProblemsMergeSortedArrayRoute
   CrackmodeDocsProblemsMissingNumberRoute: typeof CrackmodeDocsProblemsMissingNumberRoute
   CrackmodeDocsProblemsMostCommonWordRoute: typeof CrackmodeDocsProblemsMostCommonWordRoute
   CrackmodeDocsProblemsNumberOfGoodPairsRoute: typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
@@ -818,6 +839,8 @@ const CrackmodeDocsRouteChildren: CrackmodeDocsRouteChildren = {
     CrackmodeDocsProblemsLongestConsecutiveSequenceRoute,
   CrackmodeDocsProblemsLongestPalindromeRoute:
     CrackmodeDocsProblemsLongestPalindromeRoute,
+  CrackmodeDocsProblemsMergeSortedArrayRoute:
+    CrackmodeDocsProblemsMergeSortedArrayRoute,
   CrackmodeDocsProblemsMissingNumberRoute:
     CrackmodeDocsProblemsMissingNumberRoute,
   CrackmodeDocsProblemsMostCommonWordRoute:

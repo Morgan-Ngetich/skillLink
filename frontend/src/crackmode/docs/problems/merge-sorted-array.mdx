@@ -1,0 +1,369 @@
+import { VStack, HStack, Text } from "@chakra-ui/react"
+
+# Merge Sorted Array
+
+**Difficulty:** <span style={{color: "#4ade80"}}>Easy</span>  
+**LeetCode:** [88. Merge Sorted Array](https://leetcode.com/problems/merge-sorted-array/)
+
+---
+
+## Problem
+
+You are given two integer arrays `nums1` and `nums2`, sorted in **non-decreasing order**, and two integers `m` and `n`, representing the number of elements in `nums1` and `nums2` respectively.
+
+**Merge** `nums1` and `nums2` into a single array sorted in **non-decreasing order**.
+
+The final sorted array should not be returned by the function, but instead be *stored inside the array* `nums1`. To accommodate this, `nums1` has a length of `m + n`, where the first `m` elements denote the elements that should be merged, and the last `n` elements are set to `0` and should be ignored. `nums2` has a length of `n`.
+
+**Example 1:**
+```
+Input: nums1 = [1,2,3,0,0,0], m = 3, nums2 = [2,5,6], n = 3
+Output: [1,2,2,3,5,6]
+Explanation: The arrays we are merging are [1,2,3] and [2,5,6].
+The result of the merge is [1,2,2,3,5,6] with the underlined elements coming from nums1.
+```
+
+**Example 2:**
+```
+Input: nums1 = [1], m = 1, nums2 = [], n = 0
+Output: [1]
+Explanation: The arrays we are merging are [1] and [].
+The result of the merge is [1].
+```
+
+**Example 3:**
+```
+Input: nums1 = [0], m = 0, nums2 = [1], n = 1
+Output: [1]
+Explanation: The arrays we are merging are [] and [1].
+The result of the merge is [1].
+Note that because m = 0, there are no elements in nums1. The 0 is only there to ensure the merge result can fit in nums1.
+```
+
+---
+
+## Simple Explanation
+
+Think of this like **merging two sorted piles of cards**!
+
+Just like in real life:
+- You have two sorted piles: [1,2,3] and [2,5,6]
+- You want to merge them into one sorted pile
+- But here's the twist: you must use the first pile's space (which has extra room)
+- The smart way: **start from the back!** Compare the largest elements first
+
+**The Key:** Work backwards! Since `nums1` has extra space at the end, fill it from right to left by comparing the largest unused elements from both arrays.
+
+---
+
+## Optimal Solution (Two Pointers from Back)
+
+<TabbedCode
+  files={[
+    {
+      title: "Python",
+      language: "python",
+      code: `def merge(nums1, m, nums2, n):
+    # Three pointers: end of nums1's data, end of nums2, end of merged result
+    i = m - 1  # Last element in nums1's actual data
+    j = n - 1  # Last element in nums2
+    k = m + n - 1  # Last position in nums1 (where we'll place elements)
+    
+    # Work backwards, placing the larger element at the end
+    while i >= 0 and j >= 0:
+        if nums1[i] > nums2[j]:
+            nums1[k] = nums1[i]
+            i -= 1
+        else:
+            nums1[k] = nums2[j]
+            j -= 1
+        k -= 1
+    
+    # If nums2 still has elements, copy them
+    while j >= 0:
+        nums1[k] = nums2[j]
+        j -= 1
+        k -= 1
+    
+    # No need to handle remaining nums1 elements - they're already in place!
+
+# Example usage:
+# nums1 = [1,2,3,0,0,0], m = 3, nums2 = [2,5,6], n = 3
+# After merge: nums1 = [1,2,2,3,5,6]`
+    },
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function merge(nums1, m, nums2, n) {
+    let i = m - 1;     // Last element in nums1's actual data
+    let j = n - 1;     // Last element in nums2
+    let k = m + n - 1; // Last position in nums1
+    
+    // Work backwards, placing the larger element at the end
+    while (i >= 0 && j >= 0) {
+        if (nums1[i] > nums2[j]) {
+            nums1[k] = nums1[i];
+            i--;
+        } else {
+            nums1[k] = nums2[j];
+            j--;
+        }
+        k--;
+    }
+    
+    // Copy remaining elements from nums2 if any
+    while (j >= 0) {
+        nums1[k] = nums2[j];
+        j--;
+        k--;
+    }
+}`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `public class Solution {
+    public void merge(int[] nums1, int m, int[] nums2, int n) {
+        int i = m - 1;     // Last element in nums1's actual data
+        int j = n - 1;     // Last element in nums2
+        int k = m + n - 1; // Last position in nums1
+        
+        // Work backwards, placing the larger element at the end
+        while (i >= 0 && j >= 0) {
+            if (nums1[i] > nums2[j]) {
+                nums1[k] = nums1[i];
+                i--;
+            } else {
+                nums1[k] = nums2[j];
+                j--;
+            }
+            k--;
+        }
+        
+        // Copy remaining elements from nums2 if any
+        while (j >= 0) {
+            nums1[k] = nums2[j];
+            j--;
+            k--;
+        }
+    }
+}`
+    }
+  ]}
+/>
+
+## Complexity Analysis
+
+<Text color="green.400" fontWeight="bold">Time Complexity: O(m + n)</Text>
+<Text ml={4} as="li">Each element from both arrays is processed exactly once</Text>
+<Text ml={4} as="li">Single pass through both arrays</Text>
+
+<Text color="green.400" fontWeight="bold" mt={4}>Space Complexity: O(1)</Text>
+<Text ml={4} as="li">Only using a constant amount of extra space for pointers</Text>
+<Text ml={4} as="li">In-place modification of nums1</Text>
+
+---
+
+## Yesterday's Session Solution
+
+Here's the approach we used in yesterday's session using binary search and insertion:
+
+<TabbedCode
+  files={[
+    {
+      title: "Python",
+      language: "python",
+      code: `from bisect import bisect_right
+from typing import List
+
+class Solution:
+    def merge(self, nums1: List[int], m: int, nums2: List[int], n: int) -> None:
+        if n == 0:
+            return
+        
+        # Remove trailing zeros from nums1
+        counter = 0
+        while nums1 and nums1[-1] == 0 and counter < len(nums2):
+            nums1.pop()
+            counter += 1
+        
+        # Insert each element from nums2 at the correct position
+        for num in nums2:
+            index = bisect_right(nums1, num)
+            nums1.insert(index, num)`
+    },
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function bisectRight(arr, target) {
+    let left = 0, right = arr.length;
+    while (left < right) {
+        let mid = Math.floor((left + right) / 2);
+        if (arr[mid] <= target) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+    return left;
+}
+
+function merge(nums1, m, nums2, n) {
+    if (n === 0) return;
+
+    // Remove trailing zeros
+    let counter = 0;
+    while (nums1.length && nums1[nums1.length - 1] === 0 && counter < nums2.length) {
+        nums1.pop();
+        counter++;
+    }
+
+    // Insert elements from nums2
+    for (const num of nums2) {
+        const index = bisectRight(nums1, num);
+        nums1.splice(index, 0, num);
+    }
+}`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `import java.util.*;
+
+public class Solution {
+    public void merge(List<Integer> nums1, int m, List<Integer> nums2, int n) {
+        if (n == 0) return;
+
+        // Remove trailing zeros
+        int counter = 0;
+        while (!nums1.isEmpty() && nums1.get(nums1.size() - 1) == 0 && counter < nums2.size()) {
+            nums1.remove(nums1.size() - 1);
+            counter++;
+        }
+
+        // Insert elements from nums2
+        for (int num : nums2) {
+            int index = Collections.binarySearch(nums1, num);
+            if (index < 0) index = -index - 1;
+            nums1.add(index, num);
+        }
+    }
+}`
+    }
+  ]}
+/>
+
+
+**Analysis of Yesterday's Solution:**
+- **Time Complexity:** O(n × m) - For each element in nums2, we do binary search O(log m) + insertion O(m)
+- **Space Complexity:** O(1) - In-place modification
+- **Pros:** Uses binary search for finding insertion point, intuitive approach
+- **Cons:** Multiple insertions are expensive, not the most efficient for this problem
+
+**Why the optimal solution is better:**
+- **Time Complexity:** O(m + n) - Single pass through both arrays
+- **Space Complexity:** O(1) - In-place, no extra operations
+- **No expensive insertions:** Just direct assignment to positions
+
+---
+
+## Step-by-Step Walkthrough
+
+Let's trace through `nums1 = [1,2,3,0,0,0], m = 3, nums2 = [2,5,6], n = 3`:
+
+```
+Initial: nums1 = [1,2,3,0,0,0], nums2 = [2,5,6]
+Pointers: i=2 (at 3), j=2 (at 6), k=5 (last position)
+
+Step 1: Compare nums1[2]=3 vs nums2[2]=6
+        6 > 3, so place 6 at position 5
+        nums1 = [1,2,3,0,0,6], j=1, k=4
+
+Step 2: Compare nums1[2]=3 vs nums2[1]=5  
+        5 > 3, so place 5 at position 4
+        nums1 = [1,2,3,0,5,6], j=0, k=3
+
+Step 3: Compare nums1[2]=3 vs nums2[0]=2
+        3 > 2, so place 3 at position 3
+        nums1 = [1,2,2,3,5,6], i=1, k=2
+
+Step 4: Compare nums1[1]=2 vs nums2[0]=2
+        Equal, but we place nums2[0]=2 at position 2
+        nums1 = [1,2,2,3,5,6], j=-1, k=1
+
+Step 5: j < 0, so we're done!
+        Final result: [1,2,2,3,5,6] ✓
+```
+
+---
+
+## Why This Approach Works
+
+<VStack align="start" spacing={2}>
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">No overwrites</Text>
+    <Text>- Working backwards ensures we never overwrite unprocessed elements</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Optimal space usage</Text>
+    <Text>- Uses the extra space in nums1 efficiently</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Single pass</Text>
+    <Text>- Each element is touched exactly once</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Natural merge</Text>
+    <Text>- Follows the same logic as merging in merge sort</Text>
+  </HStack>
+</VStack>
+
+---
+
+## Pattern Recognition
+
+This problem teaches important patterns:
+- **Two Pointers**: Working from both ends towards the middle
+- **In-place Array Manipulation**: Using available space efficiently  
+- **Merge Process**: Core component of merge sort algorithm
+- **Backwards Iteration**: Sometimes working backwards avoids complex shifting
+
+You'll see this pattern in:
+- Merge Sort implementation
+- Merging multiple sorted arrays
+- In-place array transformations
+- Two-pointer technique problems
+
+---
+
+## Follow-up Challenge
+
+**Can you handle merging k sorted arrays?**
+
+```python
+def merge_k_sorted_arrays(arrays):
+    # Use a min-heap to efficiently merge k sorted arrays
+    import heapq
+    
+    heap = []
+    result = []
+    
+    # Initialize heap with first element from each array
+    for i, arr in enumerate(arrays):
+        if arr:  # Only add non-empty arrays
+            heapq.heappush(heap, (arr[0], i, 0))
+    
+    while heap:
+        val, array_idx, element_idx = heapq.heappop(heap)
+        result.append(val)
+        
+        # Add next element from same array if exists
+        if element_idx + 1 < len(arrays[array_idx]):
+            next_val = arrays[array_idx][element_idx + 1]
+            heapq.heappush(heap, (next_val, array_idx, element_idx + 1))
+    
+    return result
+```

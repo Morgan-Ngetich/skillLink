@@ -154,16 +154,27 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
     }
   ],
   "2025-09-10": [
-  {
-    "id": 3,
-    "title": "Most Common Word",
-    "difficulty": "Easy",
-    "tags": ["HashTable", "String", "Counting"],
-    "url": "https://leetcode.com/problems/most-common-word/",
-    "docs": "/crackmode/docs/problems/most-common-word",
-    "solved": true,
-    "solvedAt": "2025-09-11T20:15:00Z"
-  }
-]
-
+    {
+      "id": 1,
+      "title": "Most Common Word",
+      "difficulty": "Easy",
+      "tags": ["HashTable", "String", "Counting"],
+      "url": "https://leetcode.com/problems/most-common-word/",
+      "docs": "/crackmode/docs/problems/most-common-word",
+      "solved": true,
+      "solvedAt": "2025-09-11T20:15:00Z"
+    }
+  ],
+  "2025-09-15": [
+    {
+      "id": 1,
+      "title": "Merge Sorted Array",
+      "difficulty": "Easy",
+      "tags": ["Array", "Two Pointers", "Sorting"],
+      "url": "https://leetcode.com/problems/merge-sorted-array/",
+      "docs": "/crackmode/docs/problems/merge-sorted-array",
+      "solved": true,
+      "solvedAt": "2025-09-15T20:24:00Z"
+    }
+  ],
 }
