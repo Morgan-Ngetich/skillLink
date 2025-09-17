@@ -38,6 +38,7 @@ import { Route as CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRouteIm
 import { Route as CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRouteImport } from './routes/crackmode/docs/problems/find-all-duplicates-in-an-array'
 import { Route as CrackmodeDocsProblemsDistributeCandiesRouteImport } from './routes/crackmode/docs/problems/distribute-candies'
 import { Route as CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRouteImport } from './routes/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
+import { Route as CrackmodeDocsProblemsBestTimeToBuyAndSellStockRouteImport } from './routes/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/index'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsStringCompressionRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/string-compression'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self'
@@ -209,6 +210,12 @@ const CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute =
       getParentRoute: () => CrackmodeDocsRoute,
     } as any,
   )
+const CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute =
+  CrackmodeDocsProblemsBestTimeToBuyAndSellStockRouteImport.update({
+    id: '/problems/best-time-to-buy-and-sell-stock',
+    path: '/problems/best-time-to-buy-and-sell-stock',
+    getParentRoute: () => CrackmodeDocsRoute,
+  } as any)
 const CrackmodeDocsLeetcode75ArraysStringsIndexRoute =
   CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport.update({
     id: '/leetcode75/arrays-strings/',
@@ -279,6 +286,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/profile': typeof LayoutDashboardProfileRoute
   '/dashboard': typeof LayoutDashboardIndexRoute
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
+  '/crackmode/docs/problems/best-time-to-buy-and-sell-stock': typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
   '/crackmode/docs/problems/distribute-candies': typeof CrackmodeDocsProblemsDistributeCandiesRoute
   '/crackmode/docs/problems/find-all-duplicates-in-an-array': typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute
@@ -316,6 +324,7 @@ export interface FileRoutesByTo {
   '/dashboard/profile': typeof LayoutDashboardProfileRoute
   '/dashboard': typeof LayoutDashboardIndexRoute
   '/crackmode/docs': typeof CrackmodeDocsIndexRoute
+  '/crackmode/docs/problems/best-time-to-buy-and-sell-stock': typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
   '/crackmode/docs/problems/distribute-candies': typeof CrackmodeDocsProblemsDistributeCandiesRoute
   '/crackmode/docs/problems/find-all-duplicates-in-an-array': typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute
@@ -356,6 +365,7 @@ export interface FileRoutesById {
   '/_layout/dashboard/profile': typeof LayoutDashboardProfileRoute
   '/_layout/dashboard/': typeof LayoutDashboardIndexRoute
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
+  '/crackmode/docs/problems/best-time-to-buy-and-sell-stock': typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
   '/crackmode/docs/problems/distribute-candies': typeof CrackmodeDocsProblemsDistributeCandiesRoute
   '/crackmode/docs/problems/find-all-duplicates-in-an-array': typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute
@@ -396,6 +406,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard'
     | '/crackmode/docs/'
+    | '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
     | '/crackmode/docs/problems/distribute-candies'
     | '/crackmode/docs/problems/find-all-duplicates-in-an-array'
@@ -433,6 +444,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard'
     | '/crackmode/docs'
+    | '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
     | '/crackmode/docs/problems/distribute-candies'
     | '/crackmode/docs/problems/find-all-duplicates-in-an-array'
@@ -472,6 +484,7 @@ export interface FileRouteTypes {
     | '/_layout/dashboard/profile'
     | '/_layout/dashboard/'
     | '/crackmode/docs/'
+    | '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
     | '/crackmode/docs/problems/distribute-candies'
     | '/crackmode/docs/problems/find-all-duplicates-in-an-array'
@@ -713,6 +726,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRouteImport
       parentRoute: typeof CrackmodeDocsRoute
     }
+    '/crackmode/docs/problems/best-time-to-buy-and-sell-stock': {
+      id: '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
+      path: '/problems/best-time-to-buy-and-sell-stock'
+      fullPath: '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
+      preLoaderRoute: typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
     '/crackmode/docs/leetcode75/arrays-strings/': {
       id: '/crackmode/docs/leetcode75/arrays-strings/'
       path: '/leetcode75/arrays-strings'
@@ -793,6 +813,7 @@ const LayoutRouteWithChildren =
 
 interface CrackmodeDocsRouteChildren {
   CrackmodeDocsIndexRoute: typeof CrackmodeDocsIndexRoute
+  CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute: typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
   CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute: typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
   CrackmodeDocsProblemsDistributeCandiesRoute: typeof CrackmodeDocsProblemsDistributeCandiesRoute
   CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute: typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute
@@ -821,6 +842,8 @@ interface CrackmodeDocsRouteChildren {
 
 const CrackmodeDocsRouteChildren: CrackmodeDocsRouteChildren = {
   CrackmodeDocsIndexRoute: CrackmodeDocsIndexRoute,
+  CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute:
+    CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute,
   CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute:
     CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute,
   CrackmodeDocsProblemsDistributeCandiesRoute:

@@ -1,0 +1,322 @@
+import { VStack, HStack, Text } from "@chakra-ui/react"
+
+# Best Time to Buy and Sell Stock
+
+**Difficulty:** <span style={{color: "#4ade80"}}>Easy</span>  
+**LeetCode:** [121. Best Time to Buy and Sell Stock](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/)
+
+---
+
+## Problem
+
+You are given an array `prices` where `prices[i]` is the price of a given stock on the `ith` day.
+
+You want to maximize your profit by choosing a **single day** to buy one stock and choosing a **different day in the future** to sell that stock.
+
+Return *the maximum profit you can achieve from this transaction*. If you cannot achieve any profit, return `0`.
+
+**Example 1:**
+```
+Input: prices = [7,1,5,3,6,4]
+Output: 5
+Explanation: Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6-1 = 5.
+Note that buying on day 2 and selling on day 1 is not allowed because you must buy before you sell.
+```
+
+**Example 2:**
+```
+Input: prices = [7,6,4,3,1]
+Output: 0
+Explanation: In this case, no transactions are done and the max profit = 0.
+```
+
+**Constraints:**
+- `1 <= prices.length <= 10^5`
+- `0 <= prices[i] <= 10^4`
+
+---
+
+## Simple Explanation
+
+Think of this like **buying low, selling high** in the stock market!
+
+The key insight:
+- You want to find the **lowest price** to buy at
+- Then find the **highest price after that** to sell at
+- Keep track of the **maximum profit** you've seen so far
+
+**The Strategy:** As you go through each day, remember the lowest price you've seen so far. For each current price, calculate what profit you'd get if you sold today, and keep track of the best profit.
+
+---
+
+## Optimal Solution
+
+<TabbedCode
+  files={[
+    {
+      title: "Python",
+      language: "python",
+      code: `def maxProfit(prices):
+    if not prices or len(prices) < 2:
+        return 0
+    
+    min_price = prices[0]  # Lowest price seen so far
+    max_profit = 0         # Maximum profit seen so far
+    
+    for price in prices[1:]:
+        # If we sell today, what would our profit be?
+        current_profit = price - min_price
+        
+        # Update maximum profit if current profit is better
+        max_profit = max(max_profit, current_profit)
+        
+        # Update minimum price for future calculations
+        min_price = min(min_price, price)
+    
+    return max_profit
+`
+    },
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function maxProfit(prices) {
+    if (prices.length < 2) return 0;
+    
+    let minPrice = prices[0];
+    let maxProfit = 0;
+    
+    for (let i = 1; i < prices.length; i++) {
+        const currentPrice = prices[i];
+        
+        // Calculate profit if we sell today
+        const currentProfit = currentPrice - minPrice;
+        
+        // Update maximum profit
+        maxProfit = Math.max(maxProfit, currentProfit);
+        
+        // Update minimum price
+        minPrice = Math.min(minPrice, currentPrice);
+    }
+    
+    return maxProfit;
+}`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `public class Solution {
+    public int maxProfit(int[] prices) {
+        if (prices.length < 2) return 0;
+        
+        int minPrice = prices[0];
+        int maxProfit = 0;
+        
+        for (int i = 1; i < prices.length; i++) {
+            int currentPrice = prices[i];
+            
+            // Calculate profit if we sell today
+            int currentProfit = currentPrice - minPrice;
+            
+            // Update maximum profit
+            maxProfit = Math.max(maxProfit, currentProfit);
+            
+            // Update minimum price
+            minPrice = Math.min(minPrice, currentPrice);
+        }
+        
+        return maxProfit;
+    }
+}`
+    },
+    {
+      title: "C++",
+      language: "cpp",
+      code: `#include <vector>
+#include <algorithm>
+using namespace std;
+
+int maxProfit(vector<int>& prices) {
+    if (prices.size() < 2) return 0;
+
+    int minPrice = prices[0];
+    int maxProfit = 0;
+
+    for (size_t i = 1; i < prices.size(); ++i) {
+        int currentProfit = prices[i] - minPrice;
+        maxProfit = max(maxProfit, currentProfit);
+        minPrice = min(minPrice, prices[i]);
+    }
+
+    return maxProfit;
+}`
+    }
+  ]}
+/>
+
+
+---
+
+## Step-by-Step Walkthrough
+
+Let's trace through `prices = [7,1,5,3,6,4]`:
+
+```
+Day 0: price = 7
+       min_price = 7, max_profit = 0
+
+Day 1: price = 1
+       current_profit = 1 - 7 = -6 (can't have negative profit)
+       max_profit = max(0, -6) = 0
+       min_price = min(7, 1) = 1
+
+Day 2: price = 5
+       current_profit = 5 - 1 = 4
+       max_profit = max(0, 4) = 4
+       min_price = min(1, 5) = 1
+
+Day 3: price = 3
+       current_profit = 3 - 1 = 2
+       max_profit = max(4, 2) = 4
+       min_price = min(1, 3) = 1
+
+Day 4: price = 6
+       current_profit = 6 - 1 = 5
+       max_profit = max(4, 5) = 5 ✓
+       min_price = min(1, 6) = 1
+
+Day 5: price = 4
+       current_profit = 4 - 1 = 3
+       max_profit = max(5, 3) = 5
+       min_price = min(1, 4) = 1
+
+Final Result: max_profit = 5
+```
+
+---
+
+## Why This Approach Works
+
+<VStack align="start" spacing={2}>
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Single pass</Text>
+    <Text>- Only need to go through the array once</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Greedy strategy</Text>
+    <Text>- Always keep track of the lowest price seen so far</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Forward-looking</Text>
+    <Text>- For each price, calculate best profit if selling today</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Optimal substructure</Text>
+    <Text>- Maximum profit at day i depends on minimum price before day i</Text>
+  </HStack>
+</VStack>
+
+---
+
+## Visual Example
+
+For `prices = [7,1,5,3,6,4]`:
+
+```
+Price Chart:
+7 |●
+6 |    ○
+5 |  ●   ○
+4 |      ●
+3 |    ●
+2 |
+1 | ●
+0 |________________
+  0 1 2 3 4 5  Days
+
+● = Actual prices
+○ = Optimal buy/sell points
+
+Buy at day 1 (price = 1)
+Sell at day 4 (price = 6)
+Profit = 6 - 1 = 5
+```
+
+---
+
+## Common Mistakes to Avoid
+
+1. **Allowing negative profits:** Always ensure profit ≥ 0
+
+2. **Selling before buying:** Make sure you track minimum price before current day
+
+3. **Using nested loops:** The O(n²) solution will time out on large inputs
+
+4. **Not handling edge cases:** Empty arrays, single elements, decreasing prices
+
+5. **Forgetting to update min_price:** Always update minimum price after calculating profit
+
+---
+
+## Complexity Analysis
+
+<Text color="green.400" fontWeight="bold">Time Complexity: O(n)</Text>
+<Text ml={4} as="li">Single pass through the prices array</Text>
+<Text ml={4} as="li">Constant time operations for each element</Text>
+
+<Text color="green.400" fontWeight="bold" mt={4}>Space Complexity: O(1)</Text>
+<Text ml={4} as="li">Only using two variables: min_price and max_profit</Text>
+<Text ml={4} as="li">No additional data structures needed</Text>
+
+---
+
+## Pattern Recognition
+
+This problem demonstrates key patterns:
+- **Greedy Algorithm**: Make locally optimal choice (track minimum price)
+- **Single Pass Optimization**: Transform O(n²) brute force to O(n)
+- **Running Maximum/Minimum**: Keep track of best values seen so far
+- **Profit Maximization**: Core concept in many financial algorithms
+
+You'll see similar patterns in:
+- Maximum subarray sum (Kadane's algorithm)
+- Best time to buy/sell stock with multiple transactions
+- Trapping rainwater
+- Finding maximum difference in array
+
+---
+
+## Follow-up Variations
+
+### 1. Multiple Transactions Allowed (LeetCode 122)
+```python
+def maxProfit_multiple_transactions(prices):
+    profit = 0
+    for i in range(1, len(prices)):
+        # Buy yesterday, sell today if profitable
+        profit += max(0, prices[i] - prices[i-1])
+    return profit
+```
+
+### 2. At Most K Transactions (LeetCode 188)
+```python
+def maxProfit_k_transactions(k, prices):
+    if k >= len(prices) // 2:
+        # If k is large enough, it's same as unlimited transactions
+        return maxProfit_multiple_transactions(prices)
+    
+    # Use DP with states: [transaction][holding_stock]
+    buy = [-prices[0]] * (k + 1)
+    sell = [0] * (k + 1)
+    
+    for price in prices[1:]:
+        for j in range(k, 0, -1):
+            sell[j] = max(sell[j], buy[j] + price)
+            buy[j] = max(buy[j], sell[j-1] - price)
+    
+    return sell[k]
+```
+
+---

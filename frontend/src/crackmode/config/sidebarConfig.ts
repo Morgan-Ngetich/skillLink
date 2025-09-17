@@ -56,6 +56,7 @@ export const sidebarConfig: DocSection[] = [
       { title: "Longest Palindrome", href: "/crackmode/docs/problems/longest-palindrome" },
       { title: "Most Common Word", href: "/crackmode/docs/problems/most-common-word" },
       { title: "Merge Sorted Array", href: "/crackmode/docs/problems/merge-sorted-array" },
+        { title: "Best Time to Buy and Sell Stock", href: "/crackmode/docs/problems/best-time-to-buy-and-sell-stock" },
     ]
   },
   {

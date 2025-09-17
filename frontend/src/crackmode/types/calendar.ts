@@ -177,4 +177,28 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
       "solvedAt": "2025-09-15T20:24:00Z"
     }
   ],
+  "2025-09-16": [
+    {
+      "id": 1,
+      "title": "Best Time to Buy and Sell Stock",
+      "difficulty": "Easy",
+      "tags": ["Array", "Dynamic Programming"],
+      "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/",
+      "docs": "/crackmode/docs/problems/best-time-to-buy-and-sell-stock",
+      "solved": true,
+      "solvedAt": "2025-09-16T19:56:00Z"
+    },
+    {
+      "id": 2,
+      "title": "Number of 1 Bits",
+      "difficulty": "Easy",
+      "tags": ["Bit Manipulation"],
+      "url": "https://leetcode.com/problems/number-of-1-bits/",
+      "docs": "/crackmode/docs/problems/number-of-1-bits",
+      "solved": true,
+      "solvedAt": "2025-09-16T20:04:00Z"
+    }
+  ]
+
+
 }

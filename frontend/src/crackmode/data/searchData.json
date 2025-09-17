@@ -910,6 +910,204 @@
     }
   },
   {
+    "id": "problems/best-time-to-buy-and-sell-stock",
+    "title": "Best Time To Buy And Sell Stock",
+    "content": "Best Time to Buy and Sell Stock Difficulty: Easy LeetCode: 121. Best Time to Buy and Sell Stock --- Problem You are given an array prices where prices i  is the price of a given stock on the ith day. You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock. Return the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0. Example 1:    Input: prices    7,1,5,3,6,4  Output: 5 Explanation: Buy on day 2  price   1  and sell on day 5  price   6 , profit   6-1   5. Note that buying on day 2 and selling on day 1 is not allowed because you must buy before you sell.   Example 2:   Input: prices    7,6,4,3,1  Output: 0 Explanation: In this case, no transactions are done and the max profit   0.   Constraints: - 1 Single pass - Only need to go through the array once Greedy strategy - Always keep track of the lowest price seen so far Forward-looking - For each price, calculate best profit if selling today Optimal substructure - Maximum profit at day i depends on minimum price before day i --- Alternative Approaches 1. Brute Force  Inefficient - O n      python def maxProfit_brute_force prices : max_profit   0 for i in range len prices  : for j in range i   1, len prices  : profit   prices j  - prices i  max_profit   max max_profit, profit  return max_profit   2. Dynamic Programming Perspective  python def maxProfit_dp prices :   dp i    maximum profit we can achieve up to day i if not prices: return 0 min_price   prices 0  max_profit   0 for i in range 1, len prices  :   Two choices: sell today or don t sell max_profit   max max_profit, prices i  - min_price  min_price   min min_price, prices i   return max_profit   --- Edge Cases to Handle  python Test your solution with these cases: Case 1: Empty array prices      Expected: 0 Case 2: Single day prices    5  Expected: 0 Case 3: Prices only decrease prices    7,6,4,3,1  Expected: 0 Case 4: Prices only increase prices    1,2,3,4,5  Expected: 4  buy at 1, sell at 5  Case 5: Same prices prices    3,3,3,3  Expected: 0 Case 6: Buy and sell on consecutive days prices    1,5,3,6,4  Expected: 5  buy at 1, sell at 6    --- Visual Example For prices    7,1,5,3,6,4 :   Price Chart: 7    6     5       4     3     2   1     0  ________________ 0 1 2 3 4 5 Days     Actual prices     Optimal buy sell points Buy at day 1  price   1  Sell at day 4  price   6  Profit   6 - 1   5   --- Common Mistakes to Avoid 1. Allowing negative profits: Always ensure profit   0 2. Selling before buying: Make sure you track minimum price before current day 3. Using nested loops: The O n   solution will time out on large inputs 4. Not handling edge cases: Empty arrays, single elements, decreasing prices 5. Forgetting to update min_price: Always update minimum price after calculating profit --- Complexity Analysis Time Complexity: O n  Single pass through the prices array Constant time operations for each element Space Complexity: O 1  Only using two variables: min_price and max_profit No additional data structures needed --- Pattern Recognition This problem demonstrates key patterns: - Greedy Algorithm: Make locally optimal choice  track minimum price  - Single Pass Optimization: Transform O n   brute force to O n  - Running Maximum Minimum: Keep track of best values seen so far - Profit Maximization: Core concept in many financial algorithms You ll see similar patterns in: - Maximum subarray sum  Kadane s algorithm  - Best time to buy sell stock with multiple transactions - Trapping rainwater - Finding maximum difference in array --- Follow-up Variations 1. Multiple Transactions Allowed  LeetCode 122   python def maxProfit_multiple_transactions prices : profit   0 for i in range 1, len prices  :   Buy yesterday, sell today if profitable profit    max 0, prices i  - prices i-1   return profit   2. At Most K Transactions  LeetCode 188   python def maxProfit_k_transactions k, prices : if k    len prices     2:   If k is large enough, it s same as unlimited transactions return maxProfit_multiple_transactions prices    Use DP with states:  transaction  holding_stock  buy    -prices 0    k   1  sell    0   k   1  for price in prices 1: : for j in range k, 0, -1 : sell j    max sell j , buy j    price  buy j    max buy j , sell j-1  - price  return sell k     --- Real-World Applications This algorithm has practical applications in: - Financial Trading: Finding optimal buy sell points - Resource Allocation: When to acquire release resources - Scheduling: Optimal timing for tasks - Data Analysis: Finding maximum differences in time series data",
+    "excerpt": "Best Time to Buy and Sell Stock Difficulty: Easy LeetCode: 121. Best Time to Buy and Sell Stock --- Problem You are given an array prices where prices i is the...",
+    "url": "/crackmode/docs/problems/best-time-to-buy-and-sell-stock",
+    "canonicalUrl": "https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/best-time-to-buy-and-sell-stock",
+    "section": "Problems",
+    "tags": [
+      "easy",
+      "array",
+      "arrays",
+      "greedy",
+      "leetcode",
+      "algorithm"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "Best Time to Buy and Sell Stock",
+        "id": "best-time-to-buy-and-sell-stock"
+      },
+      {
+        "level": 2,
+        "text": "Problem",
+        "id": "problem"
+      },
+      {
+        "level": 2,
+        "text": "Simple Explanation",
+        "id": "simple-explanation"
+      },
+      {
+        "level": 2,
+        "text": "Optimal Solution",
+        "id": "optimal-solution"
+      },
+      {
+        "level": 1,
+        "text": "Alternative one-pass version:",
+        "id": "alternative-one-pass-version"
+      },
+      {
+        "level": 2,
+        "text": "Step-by-Step Walkthrough",
+        "id": "step-by-step-walkthrough"
+      },
+      {
+        "level": 2,
+        "text": "Why This Approach Works",
+        "id": "why-this-approach-works"
+      },
+      {
+        "level": 2,
+        "text": "Alternative Approaches",
+        "id": "alternative-approaches"
+      },
+      {
+        "level": 3,
+        "text": "1. Brute Force (Inefficient - O(n²))",
+        "id": "1-brute-force-inefficient-on"
+      },
+      {
+        "level": 3,
+        "text": "2. Dynamic Programming Perspective",
+        "id": "2-dynamic-programming-perspective"
+      },
+      {
+        "level": 2,
+        "text": "Edge Cases to Handle",
+        "id": "edge-cases-to-handle"
+      },
+      {
+        "level": 1,
+        "text": "Test your solution with these cases:",
+        "id": "test-your-solution-with-these-cases"
+      },
+      {
+        "level": 1,
+        "text": "Case 1: Empty array",
+        "id": "case-1-empty-array"
+      },
+      {
+        "level": 1,
+        "text": "Expected: 0",
+        "id": "expected-0"
+      },
+      {
+        "level": 1,
+        "text": "Case 2: Single day",
+        "id": "case-2-single-day"
+      },
+      {
+        "level": 1,
+        "text": "Expected: 0",
+        "id": "expected-0-1"
+      },
+      {
+        "level": 1,
+        "text": "Case 3: Prices only decrease",
+        "id": "case-3-prices-only-decrease"
+      },
+      {
+        "level": 1,
+        "text": "Expected: 0",
+        "id": "expected-0-2"
+      },
+      {
+        "level": 1,
+        "text": "Case 4: Prices only increase",
+        "id": "case-4-prices-only-increase"
+      },
+      {
+        "level": 1,
+        "text": "Expected: 4 (buy at 1, sell at 5)",
+        "id": "expected-4-buy-at-1-sell-at-5"
+      },
+      {
+        "level": 1,
+        "text": "Case 5: Same prices",
+        "id": "case-5-same-prices"
+      },
+      {
+        "level": 1,
+        "text": "Expected: 0",
+        "id": "expected-0-3"
+      },
+      {
+        "level": 1,
+        "text": "Case 6: Buy and sell on consecutive days",
+        "id": "case-6-buy-and-sell-on-consecutive-days"
+      },
+      {
+        "level": 1,
+        "text": "Expected: 5 (buy at 1, sell at 6)",
+        "id": "expected-5-buy-at-1-sell-at-6"
+      },
+      {
+        "level": 2,
+        "text": "Visual Example",
+        "id": "visual-example"
+      },
+      {
+        "level": 2,
+        "text": "Common Mistakes to Avoid",
+        "id": "common-mistakes-to-avoid"
+      },
+      {
+        "level": 2,
+        "text": "Complexity Analysis",
+        "id": "complexity-analysis"
+      },
+      {
+        "level": 2,
+        "text": "Pattern Recognition",
+        "id": "pattern-recognition"
+      },
+      {
+        "level": 2,
+        "text": "Follow-up Variations",
+        "id": "follow-up-variations"
+      },
+      {
+        "level": 3,
+        "text": "1. Multiple Transactions Allowed (LeetCode 122)",
+        "id": "1-multiple-transactions-allowed-leetcode-122"
+      },
+      {
+        "level": 3,
+        "text": "2. At Most K Transactions (LeetCode 188)",
+        "id": "2-at-most-k-transactions-leetcode-188"
+      },
+      {
+        "level": 2,
+        "text": "Real-World Applications",
+        "id": "real-world-applications"
+      }
+    ],
+    "publishedAt": "2025-09-17T07:06:45.779Z",
+    "updatedAt": "2025-09-17T07:06:52.737Z",
+    "author": "Morgan Ngetich",
+    "readingTime": 4,
+    "seo": {
+      "title": "Best Time To Buy And Sell Stock | Crackmode Documentation",
+      "description": "Best Time to Buy and Sell Stock Difficulty: Easy LeetCode: 121. Best Time to Buy and Sell Stock --- Problem You are given an array prices where prices i is the...",
+      "keywords": "best, time, sell, stock, easy, array, arrays, greedy, leetcode, algorithm, prices, profit, price, return, maximum, crackmode",
+      "robots": "index,follow",
+      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Best Time To Buy And Sell Stock\",\"description\":\"Best Time to Buy and Sell Stock Difficulty: Easy LeetCode: 121. Best Time to Buy and Sell Stock --- Problem You are given an array prices where prices i is the...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/best-time-to-buy-and-sell-stock\",\"datePublished\":\"2025-09-17T07:06:45.779Z\",\"dateModified\":\"2025-09-17T07:06:52.737Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"CrackMode\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/best-time-to-buy-and-sell-stock\"},\"wordCount\":217,\"timeRequired\":\"PT4M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
+    },
+    "socialMedia": {
+      "ogTitle": "Best Time To Buy And Sell Stock | Crackmode Documentation",
+      "ogDescription": "You are given an array prices where prices[i] is the price of a given stock on the ith day.",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Best+Time+To+Buy+And+Sell+Stock&description=You+are+given+an+array+prices+where+prices%5Bi%5D+is+the+price+of+a+given+stock+on+the+ith+day.&section=Documentation&theme=crackmode",
+      "twitterTitle": "Best Time To Buy And Sell Stock | Crackmode Documentation",
+      "twitterDescription": "You are given an array prices where prices[i] is the price of a given stock on the ith day.",
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Best+Time+To+Buy+And+Sell+Stock&description=You+are+given+an+array+prices+where+prices%5Bi%5D+is+the+price+of+a+given+stock+on+the+ith+day.&section=Documentation&theme=crackmode"
+    }
+  },
+  {
     "id": "problems/check-if-number-has-equal-digit-count-and-digit-value",
     "title": "Check If Number Has Equal Digit Count And Digit Value",
     "content": "Check if Number Has Equal Digit Count and Digit Value Difficulty: Easy LeetCode: 2283. Check if Number Has Equal Digit Count and Digit Value --- Problem You are given a 0-indexed string num of length n consisting of digits. Return true if for every index i in the range 0 bool: for i in range len num  : counter   0 for j in range len num  : if i    int num j  : counter    1 if counter !  int num i  : return False return True   Approach 2: Frequency Array def digitCountOptimized self, num: str  -  bool: count    0    10   Count frequency of each digit for char in num: count int char      1   Check if each position s requirement is met for i in range len num  : if count i  !  int num i  : return False return True   Approach 3: Using Counter from collections def digitCountCounter self, num: str  -  bool: from collections import Counter count   Counter num  for i in range len num  : digit_count   count.get str i , 0  if digit_count !  int num i  : return False return True , title:  C   , language:  cpp , code:  include  include using namespace std; class Solution public:    Approach 1: Brute Force bool digitCount string num  int n   num.length  ; for  int i   0; i count 10, 0 ;    Count frequency of each digit for  char c : num  count c -  0    ;    Check if each position s requirement is met for  int i   0; i --- Step-by-Step Walkthrough Let s trace through Example 1 with num    1210  using different approaches: Brute Force Approach:   Index 0: Count digit 0 in  1210    appears 1 time, num 0     1    Index 1: Count digit 1 in  1210    appears 2 times, num 1     2    Index 2: Count digit 2 in  1210    appears 1 time, num 2     1    Index 3: Count digit 3 in  1210    appears 0 times, num 3     0    All conditions satisfied   Return true   Frequency Array Approach:   Step 1: Count frequencies count 0    1  digit  0  appears once  count 1    2  digit  1  appears twice  count 2    1  digit  2  appears once  count 3    0  digit  3  never appears  Step 2: Verify conditions i 0: count 0  1, num 0   1    1  1   i 1: count 1  2, num 1   2    2  2   i 2: count 2  1, num 2   1    1  1   i 3: count 3  0, num 3   0    0  0   All conditions satisfied   Return true   Let s trace through Example 2 with num    030 :   Index 0: Count digit 0 in  030    appears 2 times, num 0     0    2 0   Return false immediately   --- Algorithm Intuition The problem is asking us to verify a self-describing property:    At position i, the digit tells us how many times digit i should appear in the entire string  This creates a constraint system where: - Position 0 contains the count of digit 0 - Position 1 contains the count of digit 1 - And so on... The constraint 1 Self-reference - each position describes the count of its own index Constraint bounds - length   10 makes frequency array practical Early termination - return false as soon as any condition fails Trade-offs - O n   simplicity vs O n  efficiency --- Edge Cases to Consider 1. Single digit:  1    digit 0 should appear 1 time, but it appears 0 times   false 2. All zeros:  00    both positions expect 0 occurrences of digits 0 and 1, but digit 0 appears twice   false 3. Valid single:  10    digit 0 appears 1 time    , digit 1 appears 0 times       true --- Follow-up Questions 1. What if the string could be longer than 10? - We d need to handle digits   9, possibly using a hash map instead of array 2. What if we wanted to find all valid self-describing numbers of length n? - This becomes a constraint satisfaction problem with backtracking 3. Is there a mathematical pattern for valid numbers? - Yes! Valid numbers have specific structural properties based on their length --- This problem beautifully demonstrates how constraint verification and frequency counting work together in a self-referential system!",
@@ -2074,7 +2272,7 @@
   {
     "id": "problems/merge-sorted-array",
     "title": "Merge Sorted Array",
-    "content": "Merge Sorted Array Difficulty: Easy LeetCode: 88. Merge Sorted Array --- Problem You are given two integer arrays nums1 and nums2, sorted in non-decreasing order, and two integers m and n, representing the number of elements in nums1 and nums2 respectively. Merge nums1 and nums2 into a single array sorted in non-decreasing order. The final sorted array should not be returned by the function, but instead be stored inside the array nums1. To accommodate this, nums1 has a length of m   n, where the first m elements denote the elements that should be merged, and the last n elements are set to 0 and should be ignored. nums2 has a length of n. Example 1:    Input: nums1    1,2,3,0,0,0 , m   3, nums2    2,5,6 , n   3 Output:  1,2,2,3,5,6  Explanation: The arrays we are merging are  1,2,3  and  2,5,6 . The result of the merge is  1,2,2,3,5,6  with the underlined elements coming from nums1.   Example 2:   Input: nums1    1 , m   1, nums2     , n   0 Output:  1  Explanation: The arrays we are merging are  1  and   . The result of the merge is  1 .   Example 3:   Input: nums1    0 , m   0, nums2    1 , n   1 Output:  1  Explanation: The arrays we are merging are    and  1 . The result of the merge is  1 . Note that because m   0, there are no elements in nums1. The 0 is only there to ensure the merge result can fit in nums1.   --- Simple Explanation Think of this like merging two sorted piles of cards! Just like in real life: - You have two sorted piles:  1,2,3  and  2,5,6  - You want to merge them into one sorted pile - But here s the twist: you must use the first pile s space  which has extra room  - The smart way: start from the back! Compare the largest elements first The Key: Work backwards! Since nums1 has extra space at the end, fill it from right to left by comparing the largest unused elements from both arrays. --- Optimal Solution  Two Pointers from Back    0 and j    0: if nums1 i    nums2 j : nums1 k    nums1 i  i -  1 else: nums1 k    nums2 j  j -  1 k -  1   If nums2 still has elements, copy them while j    0: nums1 k    nums2 j  j -  1 k -  1   No need to handle remaining nums1 elements - they re already in place! Example usage: nums1    1,2,3,0,0,0 , m   3, nums2    2,5,6 , n   3 After merge: nums1    1,2,2,3,5,6  , title:  JavaScript , language:  javascript , code: function merge nums1, m, nums2, n  let i   m - 1;    Last element in nums1 s actual data let j   n - 1;    Last element in nums2 let k   m   n - 1;    Last position in nums1    Work backwards, placing the larger element at the end while  i    0    j    0  if  nums1 i    nums2 j   nums1 k    nums1 i ; i--; else nums1 k    nums2 j ; j--; k--;    Copy remaining elements from nums2 if any while  j    0  nums1 k    nums2 j ; j--; k--; , title:  Java , language:  java , code: public class Solution public void merge int   nums1, int m, int   nums2, int n  int i   m - 1;    Last element in nums1 s actual data int j   n - 1;    Last element in nums2 int k   m   n - 1;    Last position in nums1    Work backwards, placing the larger element at the end while  i    0    j    0  if  nums1 i    nums2 j   nums1 k    nums1 i ; i--; else nums1 k    nums2 j ; j--; k--;    Copy remaining elements from nums2 if any while  j    0  nums1 k    nums2 j ; j--; k--;      --- Yesterday s Session Solution Here s the approach we used in yesterday s session using binary search and insertion:   python from bisect import bisect_right class Solution: def merge self, nums1: List int , m: int, nums2: List int , n: int  -  None: if n    0: return   Remove trailing zeros from nums1 counter   0 while nums1 and nums1 -1     0 and counter 3, so place 6 at position 5 nums1    1,2,3,0,0,6 , j 1, k 4 Step 2: Compare nums1 2  3 vs nums2 1  5 5   3, so place 5 at position 4 nums1    1,2,3,0,5,6 , j 0, k 3 Step 3: Compare nums1 2  3 vs nums2 0  2 3   2, so place 3 at position 3 nums1    1,2,2,3,5,6 , i 1, k 2 Step 4: Compare nums1 1  2 vs nums2 0  2 Equal, but we place nums2 0  2 at position 2 nums1    1,2,2,3,5,6 , j -1, k 1 Step 5: j No overwrites - Working backwards ensures we never overwrite unprocessed elements Optimal space usage - Uses the extra space in nums1 efficiently Single pass - Each element is touched exactly once Natural merge - Follows the same logic as merging in merge sort --- Alternative Approaches 1. Extra Space Approach  Not Allowed   python def merge_extra_space nums1, m, nums2, n :   Create a new array - not allowed by problem constraints merged      i   j   0 while i   0, j    0  5. Wrong initial positions: Start pointers at m-1, n-1, and m n-1 --- Complexity Analysis Time Complexity: O m   n  Each element from both arrays is processed exactly once Single pass through both arrays Space Complexity: O 1  Only using a constant amount of extra space for pointers In-place modification of nums1 --- Pattern Recognition This problem teaches important patterns: - Two Pointers: Working from both ends towards the middle - In-place Array Manipulation: Using available space efficiently - Merge Process: Core component of merge sort algorithm - Backwards Iteration: Sometimes working backwards avoids complex shifting You ll see this pattern in: - Merge Sort implementation - Merging multiple sorted arrays - In-place array transformations - Two-pointer technique problems --- Follow-up Challenge Can you handle merging k sorted arrays?  python def merge_k_sorted_arrays arrays :   Use a min-heap to efficiently merge k sorted arrays import heapq heap      result        Initialize heap with first element from each array for i, arr in enumerate arrays : if arr:   Only add non-empty arrays heapq.heappush heap,  arr 0 , i, 0   while heap: val, array_idx, element_idx   heapq.heappop heap  result.append val    Add next element from same array if exists if element_idx   1   len arrays array_idx  : next_val   arrays array_idx  element_idx   1  heapq.heappush heap,  next_val, array_idx, element_idx   1   return result",
+    "content": "Merge Sorted Array Difficulty: Easy LeetCode: 88. Merge Sorted Array --- Problem You are given two integer arrays nums1 and nums2, sorted in non-decreasing order, and two integers m and n, representing the number of elements in nums1 and nums2 respectively. Merge nums1 and nums2 into a single array sorted in non-decreasing order. The final sorted array should not be returned by the function, but instead be stored inside the array nums1. To accommodate this, nums1 has a length of m   n, where the first m elements denote the elements that should be merged, and the last n elements are set to 0 and should be ignored. nums2 has a length of n. Example 1:    Input: nums1    1,2,3,0,0,0 , m   3, nums2    2,5,6 , n   3 Output:  1,2,2,3,5,6  Explanation: The arrays we are merging are  1,2,3  and  2,5,6 . The result of the merge is  1,2,2,3,5,6  with the underlined elements coming from nums1.   Example 2:   Input: nums1    1 , m   1, nums2     , n   0 Output:  1  Explanation: The arrays we are merging are  1  and   . The result of the merge is  1 .   Example 3:   Input: nums1    0 , m   0, nums2    1 , n   1 Output:  1  Explanation: The arrays we are merging are    and  1 . The result of the merge is  1 . Note that because m   0, there are no elements in nums1. The 0 is only there to ensure the merge result can fit in nums1.   --- Simple Explanation Think of this like merging two sorted piles of cards! Just like in real life: - You have two sorted piles:  1,2,3  and  2,5,6  - You want to merge them into one sorted pile - But here s the twist: you must use the first pile s space  which has extra room  - The smart way: start from the back! Compare the largest elements first The Key: Work backwards! Since nums1 has extra space at the end, fill it from right to left by comparing the largest unused elements from both arrays. --- Optimal Solution  Two Pointers from Back    0 and j    0: if nums1 i    nums2 j : nums1 k    nums1 i  i -  1 else: nums1 k    nums2 j  j -  1 k -  1   If nums2 still has elements, copy them while j    0: nums1 k    nums2 j  j -  1 k -  1   No need to handle remaining nums1 elements - they re already in place! Example usage: nums1    1,2,3,0,0,0 , m   3, nums2    2,5,6 , n   3 After merge: nums1    1,2,2,3,5,6  , title:  JavaScript , language:  javascript , code: function merge nums1, m, nums2, n  let i   m - 1;    Last element in nums1 s actual data let j   n - 1;    Last element in nums2 let k   m   n - 1;    Last position in nums1    Work backwards, placing the larger element at the end while  i    0    j    0  if  nums1 i    nums2 j   nums1 k    nums1 i ; i--; else nums1 k    nums2 j ; j--; k--;    Copy remaining elements from nums2 if any while  j    0  nums1 k    nums2 j ; j--; k--; , title:  Java , language:  java , code: public class Solution public void merge int   nums1, int m, int   nums2, int n  int i   m - 1;    Last element in nums1 s actual data int j   n - 1;    Last element in nums2 int k   m   n - 1;    Last position in nums1    Work backwards, placing the larger element at the end while  i    0    j    0  if  nums1 i    nums2 j   nums1 k    nums1 i ; i--; else nums1 k    nums2 j ; j--; k--;    Copy remaining elements from nums2 if any while  j    0  nums1 k    nums2 j ; j--; k--;      Complexity Analysis Time Complexity: O m   n  Each element from both arrays is processed exactly once Single pass through both arrays Space Complexity: O 1  Only using a constant amount of extra space for pointers In-place modification of nums1 --- Yesterday s Session Solution Here s the approach we used in yesterday s session using binary search and insertion: None: if n    0: return   Remove trailing zeros from nums1 counter   0 while nums1 and nums1 -1     0 and counter nums1, int m, List nums2, int n  if  n    0  return;    Remove trailing zeros int counter   0; while  !nums1.isEmpty      nums1.get nums1.size   - 1     0    counter Analysis of Yesterday s Solution: - Time Complexity: O n   m  - For each element in nums2, we do binary search O log m    insertion O m  - Space Complexity: O 1  - In-place modification - Pros: Uses binary search for finding insertion point, intuitive approach - Cons: Multiple insertions are expensive, not the most efficient for this problem Why the optimal solution is better: - Time Complexity: O m   n  - Single pass through both arrays - Space Complexity: O 1  - In-place, no extra operations - No expensive insertions: Just direct assignment to positions --- Step-by-Step Walkthrough Let s trace through nums1    1,2,3,0,0,0 , m   3, nums2    2,5,6 , n   3:    Initial: nums1    1,2,3,0,0,0 , nums2    2,5,6  Pointers: i 2  at 3 , j 2  at 6 , k 5  last position  Step 1: Compare nums1 2  3 vs nums2 2  6 6   3, so place 6 at position 5 nums1    1,2,3,0,0,6 , j 1, k 4 Step 2: Compare nums1 2  3 vs nums2 1  5 5   3, so place 5 at position 4 nums1    1,2,3,0,5,6 , j 0, k 3 Step 3: Compare nums1 2  3 vs nums2 0  2 3   2, so place 3 at position 3 nums1    1,2,2,3,5,6 , i 1, k 2 Step 4: Compare nums1 1  2 vs nums2 0  2 Equal, but we place nums2 0  2 at position 2 nums1    1,2,2,3,5,6 , j -1, k 1 Step 5: j No overwrites - Working backwards ensures we never overwrite unprocessed elements Optimal space usage - Uses the extra space in nums1 efficiently Single pass - Each element is touched exactly once Natural merge - Follows the same logic as merging in merge sort --- Pattern Recognition This problem teaches important patterns: - Two Pointers: Working from both ends towards the middle - In-place Array Manipulation: Using available space efficiently - Merge Process: Core component of merge sort algorithm - Backwards Iteration: Sometimes working backwards avoids complex shifting You ll see this pattern in: - Merge Sort implementation - Merging multiple sorted arrays - In-place array transformations - Two-pointer technique problems --- Follow-up Challenge Can you handle merging k sorted arrays?  python def merge_k_sorted_arrays arrays :   Use a min-heap to efficiently merge k sorted arrays import heapq heap      result        Initialize heap with first element from each array for i, arr in enumerate arrays : if arr:   Only add non-empty arrays heapq.heappush heap,  arr 0 , i, 0   while heap: val, array_idx, element_idx   heapq.heappop heap  result.append val    Add next element from same array if exists if element_idx   1   len arrays array_idx  : next_val   arrays array_idx  element_idx   1  heapq.heappush heap,  next_val, array_idx, element_idx   1   return result",
     "excerpt": "Merge Sorted Array Difficulty: Easy LeetCode: 88. Merge Sorted Array --- Problem You are given two integer arrays nums1 and nums2, sorted in non-decreasing...",
     "url": "/crackmode/docs/problems/merge-sorted-array",
     "canonicalUrl": "https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/merge-sorted-array",
@@ -2125,6 +2323,11 @@
       },
       {
         "level": 2,
+        "text": "Complexity Analysis",
+        "id": "complexity-analysis"
+      },
+      {
+        "level": 2,
         "text": "Yesterday's Session Solution",
         "id": "yesterdays-session-solution"
       },
@@ -2140,91 +2343,6 @@
       },
       {
         "level": 2,
-        "text": "Alternative Approaches",
-        "id": "alternative-approaches"
-      },
-      {
-        "level": 3,
-        "text": "1. Extra Space Approach (Not Allowed)",
-        "id": "1-extra-space-approach-not-allowed"
-      },
-      {
-        "level": 3,
-        "text": "2. Forward Merge with Shifting (Inefficient)",
-        "id": "2-forward-merge-with-shifting-inefficient"
-      },
-      {
-        "level": 2,
-        "text": "Edge Cases to Handle",
-        "id": "edge-cases-to-handle"
-      },
-      {
-        "level": 1,
-        "text": "Test your solution with these cases:",
-        "id": "test-your-solution-with-these-cases"
-      },
-      {
-        "level": 1,
-        "text": "Case 1: nums2 is empty",
-        "id": "case-1-nums2-is-empty"
-      },
-      {
-        "level": 1,
-        "text": "Expected: [1]",
-        "id": "expected-1"
-      },
-      {
-        "level": 1,
-        "text": "Case 2: nums1 has no actual elements",
-        "id": "case-2-nums1-has-no-actual-elements"
-      },
-      {
-        "level": 1,
-        "text": "Expected: [1]",
-        "id": "expected-1-1"
-      },
-      {
-        "level": 1,
-        "text": "Case 3: All elements from nums1 are smaller",
-        "id": "case-3-all-elements-from-nums1-are-smaller"
-      },
-      {
-        "level": 1,
-        "text": "Expected: [1,2,3,4,5,6]",
-        "id": "expected-123456"
-      },
-      {
-        "level": 1,
-        "text": "Case 4: All elements from nums2 are smaller",
-        "id": "case-4-all-elements-from-nums2-are-smaller"
-      },
-      {
-        "level": 1,
-        "text": "Expected: [1,2,3,4,5,6]",
-        "id": "expected-123456-1"
-      },
-      {
-        "level": 1,
-        "text": "Case 5: Interleaved elements",
-        "id": "case-5-interleaved-elements"
-      },
-      {
-        "level": 1,
-        "text": "Expected: [1,2,3,4,5,6]",
-        "id": "expected-123456-2"
-      },
-      {
-        "level": 2,
-        "text": "Common Mistakes to Avoid",
-        "id": "common-mistakes-to-avoid"
-      },
-      {
-        "level": 2,
-        "text": "Complexity Analysis",
-        "id": "complexity-analysis"
-      },
-      {
-        "level": 2,
         "text": "Pattern Recognition",
         "id": "pattern-recognition"
       },
@@ -2235,15 +2353,15 @@
       }
     ],
     "publishedAt": "2025-09-16T08:11:13.694Z",
-    "updatedAt": "2025-09-16T08:14:18.770Z",
+    "updatedAt": "2025-09-16T08:22:51.064Z",
     "author": "Morgan Ngetich",
     "readingTime": 6,
     "seo": {
       "title": "Merge Sorted Array | Crackmode Documentation",
       "description": "Merge Sorted Array Difficulty: Easy LeetCode: 88. Merge Sorted Array --- Problem You are given two integer arrays nums1 and nums2, sorted in non-decreasing...",
-      "keywords": "merge, sorted, array, easy, arrays, leetcode, algorithm, complexity, elements, crackmode",
+      "keywords": "merge, sorted, array, easy, arrays, leetcode, algorithm, complexity, elements, element, crackmode",
       "robots": "index,follow",
-      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Merge Sorted Array\",\"description\":\"Merge Sorted Array Difficulty: Easy LeetCode: 88. Merge Sorted Array --- Problem You are given two integer arrays nums1 and nums2, sorted in non-decreasing...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/merge-sorted-array\",\"datePublished\":\"2025-09-16T08:11:13.694Z\",\"dateModified\":\"2025-09-16T08:14:18.770Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"CrackMode\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/merge-sorted-array\"},\"wordCount\":168,\"timeRequired\":\"PT6M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
+      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Merge Sorted Array\",\"description\":\"Merge Sorted Array Difficulty: Easy LeetCode: 88. Merge Sorted Array --- Problem You are given two integer arrays nums1 and nums2, sorted in non-decreasing...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/merge-sorted-array\",\"datePublished\":\"2025-09-16T08:11:13.694Z\",\"dateModified\":\"2025-09-16T08:22:51.064Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"CrackMode\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/merge-sorted-array\"},\"wordCount\":168,\"timeRequired\":\"PT6M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
     },
     "socialMedia": {
       "ogTitle": "Merge Sorted Array | Crackmode Documentation",
