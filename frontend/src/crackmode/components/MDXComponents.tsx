@@ -58,7 +58,7 @@ const components: MDXComponents = {
     if (isBlock) {      
       return (
         <CodeBlock.AdapterProvider value={shikiAdapter}>
-          <CodeBlock.Root code={String(children).trim()} language={language}>
+          <CodeBlock.Root code={String(children).trim()} language={language} pr={3}>
             {language && (
             <CodeBlock.Header>
               <CodeBlock.Title>{language}</CodeBlock.Title>

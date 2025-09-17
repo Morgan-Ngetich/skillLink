@@ -39,7 +39,7 @@ export const TabbedCode = ({ files }: TabbedCodeProps) => {
       {files.map((file, idx) => (
         <Tabs.Content key={idx} value={file.title}>
           <CodeBlock.AdapterProvider value={shikiAdapter}>
-            <CodeBlock.Root code={file.code.trim()} language={file.language}>
+            <CodeBlock.Root code={file.code.trim()} language={file.language} pr={3}>
               <CodeBlock.Header>
                 <CodeBlock.Title>{file.language}</CodeBlock.Title>
                 <CodeBlock.Control>
