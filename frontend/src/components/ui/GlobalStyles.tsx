@@ -7,7 +7,22 @@ export function GlobalStyles() {
   return (
     <Global
       styles={css`
-        scroll-behavior: smooth;
+        * {
+          scroll-behavior: smooth !important;
+        }
+
+        /* Ensure no conflicting styles */
+        body, html {
+          scroll-behavior: smooth !important;
+        }
+                  
+        html {
+          scroll-padding-top: 50px; /* Instead of scroll-margin-top on headings */
+        }
+
+        h2, h3, h4, h5, h6 {
+          scroll-margin-top: 50px;
+        }
 
         .search-highlight {
           background-color: #fef08a;
