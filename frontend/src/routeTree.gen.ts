@@ -26,6 +26,7 @@ import { Route as CrackmodeDocsLeetcode75IndexRouteImport } from './routes/crack
 import { Route as CrackmodeDocsIntroductionIndexRouteImport } from './routes/crackmode/docs/introduction/index'
 import { Route as CrackmodeDocsProblemsUniqueNumberOfOccurrencesRouteImport } from './routes/crackmode/docs/problems/unique-number-of-occurrences'
 import { Route as CrackmodeDocsProblemsNumberOfGoodPairsRouteImport } from './routes/crackmode/docs/problems/number-of-good-pairs'
+import { Route as CrackmodeDocsProblemsNumberOf1BitsRouteImport } from './routes/crackmode/docs/problems/number-of-1-bits'
 import { Route as CrackmodeDocsProblemsMostCommonWordRouteImport } from './routes/crackmode/docs/problems/most-common-word'
 import { Route as CrackmodeDocsProblemsMissingNumberRouteImport } from './routes/crackmode/docs/problems/missing-number'
 import { Route as CrackmodeDocsProblemsMergeSortedArrayRouteImport } from './routes/crackmode/docs/problems/merge-sorted-array'
@@ -134,6 +135,12 @@ const CrackmodeDocsProblemsNumberOfGoodPairsRoute =
   CrackmodeDocsProblemsNumberOfGoodPairsRouteImport.update({
     id: '/problems/number-of-good-pairs',
     path: '/problems/number-of-good-pairs',
+    getParentRoute: () => CrackmodeDocsRoute,
+  } as any)
+const CrackmodeDocsProblemsNumberOf1BitsRoute =
+  CrackmodeDocsProblemsNumberOf1BitsRouteImport.update({
+    id: '/problems/number-of-1-bits',
+    path: '/problems/number-of-1-bits',
     getParentRoute: () => CrackmodeDocsRoute,
   } as any)
 const CrackmodeDocsProblemsMostCommonWordRoute =
@@ -299,6 +306,7 @@ export interface FileRoutesByFullPath {
   '/crackmode/docs/problems/merge-sorted-array': typeof CrackmodeDocsProblemsMergeSortedArrayRoute
   '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
   '/crackmode/docs/problems/most-common-word': typeof CrackmodeDocsProblemsMostCommonWordRoute
+  '/crackmode/docs/problems/number-of-1-bits': typeof CrackmodeDocsProblemsNumberOf1BitsRoute
   '/crackmode/docs/problems/number-of-good-pairs': typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
   '/crackmode/docs/problems/unique-number-of-occurrences': typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
   '/crackmode/docs/introduction': typeof CrackmodeDocsIntroductionIndexRoute
@@ -337,6 +345,7 @@ export interface FileRoutesByTo {
   '/crackmode/docs/problems/merge-sorted-array': typeof CrackmodeDocsProblemsMergeSortedArrayRoute
   '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
   '/crackmode/docs/problems/most-common-word': typeof CrackmodeDocsProblemsMostCommonWordRoute
+  '/crackmode/docs/problems/number-of-1-bits': typeof CrackmodeDocsProblemsNumberOf1BitsRoute
   '/crackmode/docs/problems/number-of-good-pairs': typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
   '/crackmode/docs/problems/unique-number-of-occurrences': typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
   '/crackmode/docs/introduction': typeof CrackmodeDocsIntroductionIndexRoute
@@ -378,6 +387,7 @@ export interface FileRoutesById {
   '/crackmode/docs/problems/merge-sorted-array': typeof CrackmodeDocsProblemsMergeSortedArrayRoute
   '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
   '/crackmode/docs/problems/most-common-word': typeof CrackmodeDocsProblemsMostCommonWordRoute
+  '/crackmode/docs/problems/number-of-1-bits': typeof CrackmodeDocsProblemsNumberOf1BitsRoute
   '/crackmode/docs/problems/number-of-good-pairs': typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
   '/crackmode/docs/problems/unique-number-of-occurrences': typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
   '/crackmode/docs/introduction/': typeof CrackmodeDocsIntroductionIndexRoute
@@ -419,6 +429,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/problems/merge-sorted-array'
     | '/crackmode/docs/problems/missing-number'
     | '/crackmode/docs/problems/most-common-word'
+    | '/crackmode/docs/problems/number-of-1-bits'
     | '/crackmode/docs/problems/number-of-good-pairs'
     | '/crackmode/docs/problems/unique-number-of-occurrences'
     | '/crackmode/docs/introduction'
@@ -457,6 +468,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/problems/merge-sorted-array'
     | '/crackmode/docs/problems/missing-number'
     | '/crackmode/docs/problems/most-common-word'
+    | '/crackmode/docs/problems/number-of-1-bits'
     | '/crackmode/docs/problems/number-of-good-pairs'
     | '/crackmode/docs/problems/unique-number-of-occurrences'
     | '/crackmode/docs/introduction'
@@ -497,6 +509,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/problems/merge-sorted-array'
     | '/crackmode/docs/problems/missing-number'
     | '/crackmode/docs/problems/most-common-word'
+    | '/crackmode/docs/problems/number-of-1-bits'
     | '/crackmode/docs/problems/number-of-good-pairs'
     | '/crackmode/docs/problems/unique-number-of-occurrences'
     | '/crackmode/docs/introduction/'
@@ -640,6 +653,13 @@ declare module '@tanstack/react-router' {
       path: '/problems/number-of-good-pairs'
       fullPath: '/crackmode/docs/problems/number-of-good-pairs'
       preLoaderRoute: typeof CrackmodeDocsProblemsNumberOfGoodPairsRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
+    '/crackmode/docs/problems/number-of-1-bits': {
+      id: '/crackmode/docs/problems/number-of-1-bits'
+      path: '/problems/number-of-1-bits'
+      fullPath: '/crackmode/docs/problems/number-of-1-bits'
+      preLoaderRoute: typeof CrackmodeDocsProblemsNumberOf1BitsRouteImport
       parentRoute: typeof CrackmodeDocsRoute
     }
     '/crackmode/docs/problems/most-common-word': {
@@ -826,6 +846,7 @@ interface CrackmodeDocsRouteChildren {
   CrackmodeDocsProblemsMergeSortedArrayRoute: typeof CrackmodeDocsProblemsMergeSortedArrayRoute
   CrackmodeDocsProblemsMissingNumberRoute: typeof CrackmodeDocsProblemsMissingNumberRoute
   CrackmodeDocsProblemsMostCommonWordRoute: typeof CrackmodeDocsProblemsMostCommonWordRoute
+  CrackmodeDocsProblemsNumberOf1BitsRoute: typeof CrackmodeDocsProblemsNumberOf1BitsRoute
   CrackmodeDocsProblemsNumberOfGoodPairsRoute: typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
   CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute: typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
   CrackmodeDocsIntroductionIndexRoute: typeof CrackmodeDocsIntroductionIndexRoute
@@ -868,6 +889,8 @@ const CrackmodeDocsRouteChildren: CrackmodeDocsRouteChildren = {
     CrackmodeDocsProblemsMissingNumberRoute,
   CrackmodeDocsProblemsMostCommonWordRoute:
     CrackmodeDocsProblemsMostCommonWordRoute,
+  CrackmodeDocsProblemsNumberOf1BitsRoute:
+    CrackmodeDocsProblemsNumberOf1BitsRoute,
   CrackmodeDocsProblemsNumberOfGoodPairsRoute:
     CrackmodeDocsProblemsNumberOfGoodPairsRoute,
   CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute:

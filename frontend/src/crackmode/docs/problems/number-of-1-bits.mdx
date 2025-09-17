@@ -1,0 +1,369 @@
+import { VStack, HStack, Text } from "@chakra-ui/react"
+
+# Number of 1 Bits
+
+**Difficulty:** <span style={{color: "#4ade80"}}>Easy</span>  
+**LeetCode:** [191. Number of 1 Bits](https://leetcode.com/problems/number-of-1-bits/)
+
+---
+
+## Problem
+
+Given a positive integer `n`, write a function that returns the number of set bits in its binary representation (also known as the **Hamming weight**).
+
+**Example 1:**
+```
+Input: n = 11
+Output: 3
+Explanation: The input binary string 1011 has a total of three set bits.
+```
+
+**Example 2:**
+```
+Input: n = 128
+Output: 1
+Explanation: The input binary string 10000000 has a total of one set bit.
+```
+
+**Example 3:**
+```
+Input: n = 2147483645
+Output: 30
+Explanation: The input binary string 1111111111111111111111111111101 has a total of thirty set bits.
+```
+
+---
+
+## Simple Explanation
+
+Think of this like **counting light bulbs that are ON** in a binary string!
+
+- Binary `1011` has 3 lights ON (three 1s)
+- Binary `10000000` has 1 light ON (one 1)
+- Just count how many `1` bits exist in the number
+
+**The Key:** Use bit manipulation tricks to efficiently count 1s without converting to string.
+
+---
+
+## Optimal Solutions
+
+<TabbedCode
+  files={[
+    {
+      title: "Python",
+      language: "python",
+      code: `def hammingWeight(n):
+    """
+    Brian Kernighan's Algorithm - Most Efficient
+    Time: O(number of 1 bits), Space: O(1)
+    """
+    count = 0
+    while n:
+        n &= n - 1  # Remove the rightmost 1 bit
+        count += 1
+    return count
+
+# How it works:
+# n = 1100 (12 in decimal)
+# n-1 = 1011 (11 in decimal)  
+# n & (n-1) = 1000 (removes rightmost 1)
+# Continue until n becomes 0
+
+def hammingWeight_v2(n):
+    """
+    Right Shift Method
+    Time: O(32), Space: O(1)
+    """
+    count = 0
+    while n:
+        count += n & 1  # Check if rightmost bit is 1
+        n >>= 1        # Right shift by 1
+    return count
+
+def hammingWeight_builtin(n):
+    """
+    Using Built-in Function
+    """
+    return bin(n).count('1')`
+    },
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function hammingWeight(n) {
+    // Brian Kernighan's Algorithm
+    let count = 0;
+    while (n !== 0) {
+        n &= n - 1;  // Remove rightmost 1 bit
+        count++;
+    }
+    return count;
+}
+
+function hammingWeight_v2(n) {
+    // Right shift method
+    let count = 0;
+    while (n !== 0) {
+        count += n & 1;  // Check rightmost bit
+        n >>>= 1;        // Unsigned right shift
+    }
+    return count;
+}
+
+function hammingWeight_builtin(n) {
+    // Using built-in method
+    return n.toString(2).split('1').length - 1;
+}`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `public class Solution {
+    public int hammingWeight(int n) {
+        // Brian Kernighan's Algorithm
+        int count = 0;
+        while (n != 0) {
+            n &= n - 1;  // Remove rightmost 1 bit
+            count++;
+        }
+        return count;
+    }
+    
+    public int hammingWeight_v2(int n) {
+        // Right shift method
+        int count = 0;
+        while (n != 0) {
+            count += n & 1;  // Check rightmost bit
+            n >>>= 1;        // Unsigned right shift
+        }
+        return count;
+    }
+    
+    public int hammingWeight_builtin(int n) {
+        // Using built-in method
+        return Integer.bitCount(n);
+    }
+}`
+    },
+    {
+      title: "C++",
+      language: "cpp",
+      code: `class Solution {
+public:
+    int hammingWeight(uint32_t n) {
+        // Brian Kernighan's Algorithm
+        int count = 0;
+        while (n) {
+            n &= (n - 1);  // Remove rightmost 1 bit
+            count++;
+        }
+        return count;
+    }
+
+    int hammingWeight_v2(uint32_t n) {
+        // Right shift method
+        int count = 0;
+        while (n) {
+            count += (n & 1);  // Check rightmost bit
+            n >>= 1;           // Logical shift
+        }
+        return count;
+    }
+
+    int hammingWeight_builtin(uint32_t n) {
+        // Using built-in function
+        return __builtin_popcount(n);
+    }
+};`
+    }
+  ]}
+/>
+
+
+---
+
+## Step-by-Step Walkthrough
+
+### Brian Kernighan's Algorithm for n = 12 (binary: 1100)
+
+```
+Step 1: n = 1100 (12)
+        n-1 = 1011 (11)
+        n & (n-1) = 1100 & 1011 = 1000 (8)
+        count = 1
+
+Step 2: n = 1000 (8)  
+        n-1 = 0111 (7)
+        n & (n-1) = 1000 & 0111 = 0000 (0)
+        count = 2
+
+Step 3: n = 0000 (0)
+        Loop ends, return count = 2 ✓
+```
+
+### Right Shift Method for n = 11 (binary: 1011)
+
+```
+Step 1: n = 1011, rightmost bit = 1
+        count += 1, n >>= 1 → n = 0101
+        count = 1
+
+Step 2: n = 0101, rightmost bit = 1  
+        count += 1, n >>= 1 → n = 0010
+        count = 2
+
+Step 3: n = 0010, rightmost bit = 0
+        count += 0, n >>= 1 → n = 0001
+        count = 2
+
+Step 4: n = 0001, rightmost bit = 1
+        count += 1, n >>= 1 → n = 0000
+        count = 3
+
+Step 5: n = 0000, loop ends
+        return count = 3 ✓
+```
+
+---
+
+## Why Brian Kernighan's Algorithm Works
+
+<VStack align="start" spacing={2}>
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Bit manipulation magic</Text>
+    <Text>- `n & (n-1)` always removes the rightmost 1 bit</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Fewer iterations</Text>
+    <Text>- Only loops for the number of 1 bits, not all 32 bits</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Mathematical property</Text>
+    <Text>- Subtracting 1 flips all trailing bits including first 1</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Optimal performance</Text>
+    <Text>- Best case O(1) for powers of 2, worst case O(log n)</Text>
+  </HStack>
+</VStack>
+
+---
+
+## Bit Manipulation Breakdown
+
+### Understanding `n & (n-1)`:
+
+```
+Example: n = 1100 (12)
+
+n     = 1100
+n-1   = 1011  (subtracting 1 flips rightmost 1 and all 0s after it)
+      ------
+n&(n-1)= 1000  (removes the rightmost 1 bit)
+
+Example: n = 1000 (8) 
+
+n     = 1000
+n-1   = 0111  (subtracting 1 flips the single 1 and all 0s after it)
+      ------  
+n&(n-1)= 0000  (removes the rightmost 1 bit)
+```
+
+### Why this works:
+1. Subtracting 1 from any number flips the rightmost 1 bit to 0
+2. It also flips all trailing 0s to 1s
+3. AND operation keeps only bits that are 1 in both numbers
+4. This effectively removes the rightmost 1 bit
+
+---
+
+## Edge Cases
+
+```python
+# Test cases:
+print(hammingWeight(0))          # 0 (binary: 0)
+print(hammingWeight(1))          # 1 (binary: 1)
+print(hammingWeight(2))          # 1 (binary: 10)
+print(hammingWeight(7))          # 3 (binary: 111)
+print(hammingWeight(8))          # 1 (binary: 1000)
+print(hammingWeight(15))         # 4 (binary: 1111)
+print(hammingWeight(2147483647)) # 31 (binary: 01111...1111)
+print(hammingWeight(2147483648)) # 1 (binary: 10000...0000)
+```
+
+---
+
+## Common Mistakes to Avoid
+
+1. **Signed vs unsigned shifts:** Use `>>>` in JavaScript for unsigned right shift
+
+2. **Infinite loops:** Make sure to handle the termination condition correctly
+
+3. **Overflow issues:** Be careful with large numbers in different languages
+
+4. **Wrong bit operations:** Don't confuse `&` (AND) with `&&` (logical AND)
+
+---
+
+## Complexity Analysis
+
+<Text color="green.400" fontWeight="bold">Brian Kernighan's Algorithm:</Text>
+<Text ml={4} as="li">**Time:** O(number of 1 bits) - Best case O(1), worst case O(32)</Text>
+<Text ml={4} as="li">**Space:** O(1)</Text>
+
+<Text color="green.400" fontWeight="bold" mt={2}>Right Shift Method:</Text>
+<Text ml={4} as="li">**Time:** O(32) - Always checks all bits</Text>
+<Text ml={4} as="li">**Space:** O(1)</Text>
+
+<Text color="green.400" fontWeight="bold" mt={2}>Built-in Methods:</Text>
+<Text ml={4} as="li">**Time:** O(1) - Optimized assembly instructions</Text>
+<Text ml={4} as="li">**Space:** O(1)</Text>
+
+---
+
+## Pattern Recognition
+
+This problem demonstrates key patterns:
+- **Bit Manipulation**: Core operations like AND, OR, XOR, shifts
+- **Brian Kernighan's Algorithm**: Efficiently removing rightmost set bits  
+- **Hamming Weight**: Counting set bits in binary representation
+- **Optimization**: Trading algorithm complexity for fewer iterations
+
+You'll see similar patterns in:
+- Power of Two detection: `n & (n-1) == 0`
+- Counting trailing zeros
+- Bit reversal problems
+- Binary tree problems with bit indexing
+
+---
+
+## Real-World Applications
+
+- **Error Detection**: Hamming codes for detecting/correcting errors
+- **Cryptography**: Bit counting in hash functions and encryption
+- **Computer Graphics**: Bit masks for pixel manipulation  
+- **Database Systems**: Bitmap indexes for fast queries
+- **Network Protocols**: Checksums and parity bits
+
+---
+
+## Visual Representation
+
+```
+Number: 1011 (11 in decimal)
+
+Bit positions:  3 2 1 0
+Binary:         1 0 1 1
+                ↑   ↑ ↑
+                1   1 1  ← Count these = 3
+
+Brian Kernighan's steps:
+1011 & 1010 = 1010  (removed rightmost 1)
+1010 & 1001 = 1000  (removed rightmost 1) 
+1000 & 0111 = 0000  (removed rightmost 1)
+
+Total operations: 3 (same as number of 1 bits)
+```
