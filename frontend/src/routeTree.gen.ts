@@ -18,6 +18,7 @@ import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as CrackmodeDocsRouteImport } from './routes/crackmode/docs'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as LayoutProfileSetupRouteImport } from './routes/_layout/profile-setup'
+import { Route as LayoutMentorRouteImport } from './routes/_layout/mentor'
 import { Route as LayoutExploreRouteImport } from './routes/_layout/explore'
 import { Route as CrackmodeDocsIndexRouteImport } from './routes/crackmode/docs/index'
 import { Route as LayoutDashboardIndexRouteImport } from './routes/_layout/dashboard/index'
@@ -25,6 +26,7 @@ import { Route as LayoutDashboardProfileRouteImport } from './routes/_layout/das
 import { Route as CrackmodeDocsLeetcode75IndexRouteImport } from './routes/crackmode/docs/leetcode75/index'
 import { Route as CrackmodeDocsIntroductionIndexRouteImport } from './routes/crackmode/docs/introduction/index'
 import { Route as CrackmodeDocsProblemsUniqueNumberOfOccurrencesRouteImport } from './routes/crackmode/docs/problems/unique-number-of-occurrences'
+import { Route as CrackmodeDocsProblemsTwoSumRouteImport } from './routes/crackmode/docs/problems/two-sum'
 import { Route as CrackmodeDocsProblemsNumberOfGoodPairsRouteImport } from './routes/crackmode/docs/problems/number-of-good-pairs'
 import { Route as CrackmodeDocsProblemsNumberOf1BitsRouteImport } from './routes/crackmode/docs/problems/number-of-1-bits'
 import { Route as CrackmodeDocsProblemsMostCommonWordRouteImport } from './routes/crackmode/docs/problems/most-common-word'
@@ -38,6 +40,7 @@ import { Route as CrackmodeDocsProblemsFindTheDifferenceRouteImport } from './ro
 import { Route as CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRouteImport } from './routes/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
 import { Route as CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRouteImport } from './routes/crackmode/docs/problems/find-all-duplicates-in-an-array'
 import { Route as CrackmodeDocsProblemsDistributeCandiesRouteImport } from './routes/crackmode/docs/problems/distribute-candies'
+import { Route as CrackmodeDocsProblemsContainsDuplicateRouteImport } from './routes/crackmode/docs/problems/contains-duplicate'
 import { Route as CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRouteImport } from './routes/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
 import { Route as CrackmodeDocsProblemsBestTimeToBuyAndSellStockRouteImport } from './routes/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/index'
@@ -93,6 +96,11 @@ const LayoutProfileSetupRoute = LayoutProfileSetupRouteImport.update({
   path: '/profile-setup',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutMentorRoute = LayoutMentorRouteImport.update({
+  id: '/mentor',
+  path: '/mentor',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutExploreRoute = LayoutExploreRouteImport.update({
   id: '/explore',
   path: '/explore',
@@ -129,6 +137,12 @@ const CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute =
   CrackmodeDocsProblemsUniqueNumberOfOccurrencesRouteImport.update({
     id: '/problems/unique-number-of-occurrences',
     path: '/problems/unique-number-of-occurrences',
+    getParentRoute: () => CrackmodeDocsRoute,
+  } as any)
+const CrackmodeDocsProblemsTwoSumRoute =
+  CrackmodeDocsProblemsTwoSumRouteImport.update({
+    id: '/problems/two-sum',
+    path: '/problems/two-sum',
     getParentRoute: () => CrackmodeDocsRoute,
   } as any)
 const CrackmodeDocsProblemsNumberOfGoodPairsRoute =
@@ -209,6 +223,12 @@ const CrackmodeDocsProblemsDistributeCandiesRoute =
     path: '/problems/distribute-candies',
     getParentRoute: () => CrackmodeDocsRoute,
   } as any)
+const CrackmodeDocsProblemsContainsDuplicateRoute =
+  CrackmodeDocsProblemsContainsDuplicateRouteImport.update({
+    id: '/problems/contains-duplicate',
+    path: '/problems/contains-duplicate',
+    getParentRoute: () => CrackmodeDocsRoute,
+  } as any)
 const CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute =
   CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRouteImport.update(
     {
@@ -285,6 +305,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
   '/explore': typeof LayoutExploreRoute
+  '/mentor': typeof LayoutMentorRoute
   '/profile-setup': typeof LayoutProfileSetupRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/crackmode/docs': typeof CrackmodeDocsRouteWithChildren
@@ -295,6 +316,7 @@ export interface FileRoutesByFullPath {
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
   '/crackmode/docs/problems/best-time-to-buy-and-sell-stock': typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
+  '/crackmode/docs/problems/contains-duplicate': typeof CrackmodeDocsProblemsContainsDuplicateRoute
   '/crackmode/docs/problems/distribute-candies': typeof CrackmodeDocsProblemsDistributeCandiesRoute
   '/crackmode/docs/problems/find-all-duplicates-in-an-array': typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute
   '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array': typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute
@@ -308,6 +330,7 @@ export interface FileRoutesByFullPath {
   '/crackmode/docs/problems/most-common-word': typeof CrackmodeDocsProblemsMostCommonWordRoute
   '/crackmode/docs/problems/number-of-1-bits': typeof CrackmodeDocsProblemsNumberOf1BitsRoute
   '/crackmode/docs/problems/number-of-good-pairs': typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
+  '/crackmode/docs/problems/two-sum': typeof CrackmodeDocsProblemsTwoSumRoute
   '/crackmode/docs/problems/unique-number-of-occurrences': typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
   '/crackmode/docs/introduction': typeof CrackmodeDocsIntroductionIndexRoute
   '/crackmode/docs/leetcode75': typeof CrackmodeDocsLeetcode75IndexRoute
@@ -325,6 +348,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
   '/explore': typeof LayoutExploreRoute
+  '/mentor': typeof LayoutMentorRoute
   '/profile-setup': typeof LayoutProfileSetupRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/': typeof LayoutIndexRoute
@@ -334,6 +358,7 @@ export interface FileRoutesByTo {
   '/crackmode/docs': typeof CrackmodeDocsIndexRoute
   '/crackmode/docs/problems/best-time-to-buy-and-sell-stock': typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
+  '/crackmode/docs/problems/contains-duplicate': typeof CrackmodeDocsProblemsContainsDuplicateRoute
   '/crackmode/docs/problems/distribute-candies': typeof CrackmodeDocsProblemsDistributeCandiesRoute
   '/crackmode/docs/problems/find-all-duplicates-in-an-array': typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute
   '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array': typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute
@@ -347,6 +372,7 @@ export interface FileRoutesByTo {
   '/crackmode/docs/problems/most-common-word': typeof CrackmodeDocsProblemsMostCommonWordRoute
   '/crackmode/docs/problems/number-of-1-bits': typeof CrackmodeDocsProblemsNumberOf1BitsRoute
   '/crackmode/docs/problems/number-of-good-pairs': typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
+  '/crackmode/docs/problems/two-sum': typeof CrackmodeDocsProblemsTwoSumRoute
   '/crackmode/docs/problems/unique-number-of-occurrences': typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
   '/crackmode/docs/introduction': typeof CrackmodeDocsIntroductionIndexRoute
   '/crackmode/docs/leetcode75': typeof CrackmodeDocsLeetcode75IndexRoute
@@ -366,6 +392,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
   '/_layout/explore': typeof LayoutExploreRoute
+  '/_layout/mentor': typeof LayoutMentorRoute
   '/_layout/profile-setup': typeof LayoutProfileSetupRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/crackmode/docs': typeof CrackmodeDocsRouteWithChildren
@@ -376,6 +403,7 @@ export interface FileRoutesById {
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
   '/crackmode/docs/problems/best-time-to-buy-and-sell-stock': typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
+  '/crackmode/docs/problems/contains-duplicate': typeof CrackmodeDocsProblemsContainsDuplicateRoute
   '/crackmode/docs/problems/distribute-candies': typeof CrackmodeDocsProblemsDistributeCandiesRoute
   '/crackmode/docs/problems/find-all-duplicates-in-an-array': typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute
   '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array': typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute
@@ -389,6 +417,7 @@ export interface FileRoutesById {
   '/crackmode/docs/problems/most-common-word': typeof CrackmodeDocsProblemsMostCommonWordRoute
   '/crackmode/docs/problems/number-of-1-bits': typeof CrackmodeDocsProblemsNumberOf1BitsRoute
   '/crackmode/docs/problems/number-of-good-pairs': typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
+  '/crackmode/docs/problems/two-sum': typeof CrackmodeDocsProblemsTwoSumRoute
   '/crackmode/docs/problems/unique-number-of-occurrences': typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
   '/crackmode/docs/introduction/': typeof CrackmodeDocsIntroductionIndexRoute
   '/crackmode/docs/leetcode75/': typeof CrackmodeDocsLeetcode75IndexRoute
@@ -408,6 +437,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify-email'
     | '/explore'
+    | '/mentor'
     | '/profile-setup'
     | '/auth/callback'
     | '/crackmode/docs'
@@ -418,6 +448,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/'
     | '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
+    | '/crackmode/docs/problems/contains-duplicate'
     | '/crackmode/docs/problems/distribute-candies'
     | '/crackmode/docs/problems/find-all-duplicates-in-an-array'
     | '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
@@ -431,6 +462,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/problems/most-common-word'
     | '/crackmode/docs/problems/number-of-1-bits'
     | '/crackmode/docs/problems/number-of-good-pairs'
+    | '/crackmode/docs/problems/two-sum'
     | '/crackmode/docs/problems/unique-number-of-occurrences'
     | '/crackmode/docs/introduction'
     | '/crackmode/docs/leetcode75'
@@ -448,6 +480,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify-email'
     | '/explore'
+    | '/mentor'
     | '/profile-setup'
     | '/auth/callback'
     | '/'
@@ -457,6 +490,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs'
     | '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
+    | '/crackmode/docs/problems/contains-duplicate'
     | '/crackmode/docs/problems/distribute-candies'
     | '/crackmode/docs/problems/find-all-duplicates-in-an-array'
     | '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
@@ -470,6 +504,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/problems/most-common-word'
     | '/crackmode/docs/problems/number-of-1-bits'
     | '/crackmode/docs/problems/number-of-good-pairs'
+    | '/crackmode/docs/problems/two-sum'
     | '/crackmode/docs/problems/unique-number-of-occurrences'
     | '/crackmode/docs/introduction'
     | '/crackmode/docs/leetcode75'
@@ -488,6 +523,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify-email'
     | '/_layout/explore'
+    | '/_layout/mentor'
     | '/_layout/profile-setup'
     | '/auth/callback'
     | '/crackmode/docs'
@@ -498,6 +534,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/'
     | '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
+    | '/crackmode/docs/problems/contains-duplicate'
     | '/crackmode/docs/problems/distribute-candies'
     | '/crackmode/docs/problems/find-all-duplicates-in-an-array'
     | '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
@@ -511,6 +548,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/problems/most-common-word'
     | '/crackmode/docs/problems/number-of-1-bits'
     | '/crackmode/docs/problems/number-of-good-pairs'
+    | '/crackmode/docs/problems/two-sum'
     | '/crackmode/docs/problems/unique-number-of-occurrences'
     | '/crackmode/docs/introduction/'
     | '/crackmode/docs/leetcode75/'
@@ -599,6 +637,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutProfileSetupRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/mentor': {
+      id: '/_layout/mentor'
+      path: '/mentor'
+      fullPath: '/mentor'
+      preLoaderRoute: typeof LayoutMentorRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/explore': {
       id: '/_layout/explore'
       path: '/explore'
@@ -646,6 +691,13 @@ declare module '@tanstack/react-router' {
       path: '/problems/unique-number-of-occurrences'
       fullPath: '/crackmode/docs/problems/unique-number-of-occurrences'
       preLoaderRoute: typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
+    '/crackmode/docs/problems/two-sum': {
+      id: '/crackmode/docs/problems/two-sum'
+      path: '/problems/two-sum'
+      fullPath: '/crackmode/docs/problems/two-sum'
+      preLoaderRoute: typeof CrackmodeDocsProblemsTwoSumRouteImport
       parentRoute: typeof CrackmodeDocsRoute
     }
     '/crackmode/docs/problems/number-of-good-pairs': {
@@ -739,6 +791,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrackmodeDocsProblemsDistributeCandiesRouteImport
       parentRoute: typeof CrackmodeDocsRoute
     }
+    '/crackmode/docs/problems/contains-duplicate': {
+      id: '/crackmode/docs/problems/contains-duplicate'
+      path: '/problems/contains-duplicate'
+      fullPath: '/crackmode/docs/problems/contains-duplicate'
+      preLoaderRoute: typeof CrackmodeDocsProblemsContainsDuplicateRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
     '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': {
       id: '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
       path: '/problems/check-if-number-has-equal-digit-count-and-digit-value'
@@ -814,6 +873,7 @@ declare module '@tanstack/react-router' {
 
 interface LayoutRouteChildren {
   LayoutExploreRoute: typeof LayoutExploreRoute
+  LayoutMentorRoute: typeof LayoutMentorRoute
   LayoutProfileSetupRoute: typeof LayoutProfileSetupRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
   LayoutDashboardProfileRoute: typeof LayoutDashboardProfileRoute
@@ -822,6 +882,7 @@ interface LayoutRouteChildren {
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutExploreRoute: LayoutExploreRoute,
+  LayoutMentorRoute: LayoutMentorRoute,
   LayoutProfileSetupRoute: LayoutProfileSetupRoute,
   LayoutIndexRoute: LayoutIndexRoute,
   LayoutDashboardProfileRoute: LayoutDashboardProfileRoute,
@@ -835,6 +896,7 @@ interface CrackmodeDocsRouteChildren {
   CrackmodeDocsIndexRoute: typeof CrackmodeDocsIndexRoute
   CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute: typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
   CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute: typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
+  CrackmodeDocsProblemsContainsDuplicateRoute: typeof CrackmodeDocsProblemsContainsDuplicateRoute
   CrackmodeDocsProblemsDistributeCandiesRoute: typeof CrackmodeDocsProblemsDistributeCandiesRoute
   CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute: typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute
   CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute: typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute
@@ -848,6 +910,7 @@ interface CrackmodeDocsRouteChildren {
   CrackmodeDocsProblemsMostCommonWordRoute: typeof CrackmodeDocsProblemsMostCommonWordRoute
   CrackmodeDocsProblemsNumberOf1BitsRoute: typeof CrackmodeDocsProblemsNumberOf1BitsRoute
   CrackmodeDocsProblemsNumberOfGoodPairsRoute: typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
+  CrackmodeDocsProblemsTwoSumRoute: typeof CrackmodeDocsProblemsTwoSumRoute
   CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute: typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
   CrackmodeDocsIntroductionIndexRoute: typeof CrackmodeDocsIntroductionIndexRoute
   CrackmodeDocsLeetcode75IndexRoute: typeof CrackmodeDocsLeetcode75IndexRoute
@@ -867,6 +930,8 @@ const CrackmodeDocsRouteChildren: CrackmodeDocsRouteChildren = {
     CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute,
   CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute:
     CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute,
+  CrackmodeDocsProblemsContainsDuplicateRoute:
+    CrackmodeDocsProblemsContainsDuplicateRoute,
   CrackmodeDocsProblemsDistributeCandiesRoute:
     CrackmodeDocsProblemsDistributeCandiesRoute,
   CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute:
@@ -893,6 +958,7 @@ const CrackmodeDocsRouteChildren: CrackmodeDocsRouteChildren = {
     CrackmodeDocsProblemsNumberOf1BitsRoute,
   CrackmodeDocsProblemsNumberOfGoodPairsRoute:
     CrackmodeDocsProblemsNumberOfGoodPairsRoute,
+  CrackmodeDocsProblemsTwoSumRoute: CrackmodeDocsProblemsTwoSumRoute,
   CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute:
     CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute,
   CrackmodeDocsIntroductionIndexRoute: CrackmodeDocsIntroductionIndexRoute,

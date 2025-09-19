@@ -1136,6 +1136,154 @@
     }
   },
   {
+    "id": "problems/contains-duplicate",
+    "title": "Contains Duplicate",
+    "content": "Contains Duplicate Difficulty: Easy LeetCode: 217. Contains Duplicate --- Problem Given an integer array nums, return true if any value appears at least twice in the array, and return false if every element is distinct. Example 1:    Input: nums    1,2,3,1  Output: true Explanation: The element 1 occurs at the indices 0 and 3.   Example 2:   Input: nums    1,2,3,4  Output: false Explanation: All elements are distinct.   Example 3:   Input: nums    1,1,1,3,3,4,3,2,4,2  Output: true   Constraints: - 1 a - b ; for  let i   1; i seen   new HashSet    ; for  int num : nums  if  seen.contains num   return true; seen.add num ; return false; public boolean containsDuplicate_optimized int   nums     Optimized Set approach Set seen   new HashSet    ; for  int num : nums  if  !seen.add num      add   returns false if element already exists return true; return false; public boolean containsDuplicate_sorting int   nums     Sorting Approach Arrays.sort nums ; for  int i   1; i  include  include class Solution public: bool containsDuplicate std::vector  nums     Hash Set Approach std::unordered_set seen; for  int num : nums  if  seen.find num  !  seen.end    return true; seen.insert num ; return false; bool containsDuplicate_optimized std::vector  nums     Optimized Set approach std::unordered_set seen; for  int num : nums  if  seen.insert num .second    false     insert returns pair return true; return false; bool containsDuplicate_sorting std::vector  nums     Sorting Approach std::sort nums.begin  , nums.end   ; for  int i   1; i   nums     Brute Force Approach for  int i   0; i --- Step-by-Step Walkthrough Hash Set Approach for nums    1,2,3,1     Step 1: num   1 1 not in seen seen   1 Step 2: num   2 2 not in seen seen   1, 2 Step 3: num   3 3 not in seen seen   1, 2, 3 Step 4: num   1 1 found in seen   Return true  duplicate found!    Sorting Approach for nums    1,1,1,3,3,4,3,2,4,2    Step 1: Sort array Original:  1,1,1,3,3,4,3,2,4,2  Sorted:  1,1,1,2,2,3,3,3,4,4  Step 2: Compare adjacent elements Compare nums 0  and nums 1 : 1    1   Return true  duplicate found!    --- Why Hash Set Works Best Constant lookup - Hash set provides O 1  average time for contains add operations Early termination - Returns immediately upon finding first duplicate Single pass - Only needs to iterate through array once Memory efficient - In worst case  no duplicates , stores each element once --- Algorithm Comparison Performance Analysis:   Hash Set Approach:   Time: O n  - single pass   Space: O n  - set storage   Early termination possible Best for: Most cases, optimal time complexity Sorting Approach:    Time: O n log n  - sorting dominates   Space: O 1  - if in-place sort   Early termination possible Best for: Memory-constrained environments One-liner Set Size:    Time: O n  - but always processes entire array    Space: O n  - creates complete set   No early termination Best for: Code golf, when you need the set anyway Brute Force:   Time: O n   - nested loops   Space: O 1  - no extra storage   Early termination possible Best for: Tiny arrays only   --- Edge Cases  python Test cases: print containsDuplicate  1, 2, 3, 1      True - basic duplicate print containsDuplicate  1, 2, 3, 4      False - all unique print containsDuplicate  1, 1, 1, 3, 3, 4      True - multiple duplicates print containsDuplicate  1      False - single element print containsDuplicate  0, 0      True - duplicate zeros print containsDuplicate  -1, -1      True - negative duplicates print containsDuplicate  1000000000, 1000000000      True - large numbers print containsDuplicate  2147483647, -2147483648      False - boundary values   --- Common Mistakes to Avoid 1. Modifying input array: Be careful with sorting approach if you need to preserve original array 2. Hash collision assumptions: Modern hash sets handle collisions well, don t over-optimize 3. Integer overflow: With constraints up to 10 9, standard int types are sufficient 4. Early vs complete processing: Choose hash set for early termination, size comparison for other use cases 5. Memory considerations: For very large arrays, consider sorting approach to save space --- Complexity Analysis Hash Set Approach  Optimal : Time: O n  - Single pass through array, O 1  set operations Space: O n  - Worst case stores all n elements in set Sorting Approach: Time: O n log n  - Sorting dominates, O n  for comparison Space: O 1  - If using in-place sort like heapsort Brute Force Approach: Time: O n   - Nested loops check all pairs Space: O 1  - No extra space used Set Size Comparison: Time: O n  - Creates set from entire array Space: O n  - Set stores all unique elements --- Pattern Recognition This problem demonstrates key patterns: - Hash Set for Uniqueness: Using set data structure to track seen elements - Early Termination Optimization: Returning as soon as duplicate is found - Space-Time Tradeoffs: Hash set vs sorting vs brute force approaches - Duplicate Detection: Core pattern used in many algorithms You ll see similar patterns in: - Finding missing numbers in arrays - Intersection of two arrays - Remove duplicates from arrays - Checking for anagrams - Cycle detection in linked lists  Floyd s algorithm  - Finding unique elements --- Real-World Applications - Data Validation: Ensuring unique IDs, usernames, or email addresses - Database Systems: Checking constraint violations before insertion - File Processing: Detecting duplicate files or records - User Input: Validating unique selections in forms - Security: Detecting replay attacks or duplicate tokens - Analytics: Finding unique visitors, events, or transactions --- Visual Representation   Array:  1, 2, 3, 1  Hash Set Approach Visualization:                             1   2   3   1                                     Add Add Add Found!         Set: 1   1,2   1,2,3   Duplicate! Timeline: Step 1: seen , num 1   seen 1 Step 2: seen 1, num 2   seen 1,2 Step 3: seen 1,2, num 3   seen 1,2,3 Step 4: seen 1,2,3, num 1   DUPLICATE FOUND! Result: Return true after checking 4 4 elements   --- Optimizations   Variations Hash Set Insert Optimization:  python def containsDuplicate_optimized nums : seen   set   for num in nums: if not seen.add num :   Some languages: add   returns success boolean return True return False   Memory-Conscious Approach:  python def containsDuplicate_memory_conscious nums :   For very large arrays, consider sorting if memory is limited if len nums    1000000:   Threshold based on available memory return containsDuplicate_sorting nums  return containsDuplicate nums    Use hash set for smaller arrays   Statistical Early Exit:  python def containsDuplicate_statistical nums :   If array is very large compared to possible values, likely has duplicates   For 32-bit integers: 2 32 possible values if len nums    65536:   sqrt 2 32  heuristic return True   Pigeonhole principle makes duplicates very likely return containsDuplicate nums     --- Follow-up Questions Q: What if the array is sorted? A: You can solve in O n  time, O 1  space by just checking adjacent elements. Q: What if you need to find the duplicate element, not just detect it? A: Modify hash set approach to return the element instead of True. Q: What if you need to count all duplicates? A: Use a frequency map  HashMap  instead of a set. Q: Can you solve it without extra space? A: Yes, with sorting approach O n log n  time, or O n   brute force. Q: What about floating point numbers? A: Same approaches work, but be careful with floating point precision issues.",
+    "excerpt": "Contains Duplicate Difficulty: Easy LeetCode: 217. Contains Duplicate --- Problem Given an integer array nums, return true if any value appears at least twice...",
+    "url": "/crackmode/docs/problems/contains-duplicate",
+    "canonicalUrl": "https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/contains-duplicate",
+    "section": "Problems",
+    "tags": [
+      "easy",
+      "array",
+      "arrays",
+      "sorting",
+      "leetcode",
+      "algorithm"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "Contains Duplicate",
+        "id": "contains-duplicate"
+      },
+      {
+        "level": 2,
+        "text": "Problem",
+        "id": "problem"
+      },
+      {
+        "level": 2,
+        "text": "Simple Explanation",
+        "id": "simple-explanation"
+      },
+      {
+        "level": 2,
+        "text": "Optimal Solutions",
+        "id": "optimal-solutions"
+      },
+      {
+        "level": 2,
+        "text": "Step-by-Step Walkthrough",
+        "id": "step-by-step-walkthrough"
+      },
+      {
+        "level": 3,
+        "text": "Hash Set Approach for nums = [1,2,3,1]",
+        "id": "hash-set-approach-for-nums-1231"
+      },
+      {
+        "level": 3,
+        "text": "Sorting Approach for nums = [1,1,1,3,3,4,3,2,4,2]",
+        "id": "sorting-approach-for-nums-1113343242"
+      },
+      {
+        "level": 2,
+        "text": "Why Hash Set Works Best",
+        "id": "why-hash-set-works-best"
+      },
+      {
+        "level": 2,
+        "text": "Algorithm Comparison",
+        "id": "algorithm-comparison"
+      },
+      {
+        "level": 3,
+        "text": "Performance Analysis:",
+        "id": "performance-analysis"
+      },
+      {
+        "level": 2,
+        "text": "Edge Cases",
+        "id": "edge-cases"
+      },
+      {
+        "level": 1,
+        "text": "Test cases:",
+        "id": "test-cases"
+      },
+      {
+        "level": 2,
+        "text": "Common Mistakes to Avoid",
+        "id": "common-mistakes-to-avoid"
+      },
+      {
+        "level": 2,
+        "text": "Complexity Analysis",
+        "id": "complexity-analysis"
+      },
+      {
+        "level": 2,
+        "text": "Pattern Recognition",
+        "id": "pattern-recognition"
+      },
+      {
+        "level": 2,
+        "text": "Real-World Applications",
+        "id": "real-world-applications"
+      },
+      {
+        "level": 2,
+        "text": "Visual Representation",
+        "id": "visual-representation"
+      },
+      {
+        "level": 2,
+        "text": "Optimizations & Variations",
+        "id": "optimizations-variations"
+      },
+      {
+        "level": 3,
+        "text": "Hash Set Insert Optimization:",
+        "id": "hash-set-insert-optimization"
+      },
+      {
+        "level": 3,
+        "text": "Memory-Conscious Approach:",
+        "id": "memory-conscious-approach"
+      },
+      {
+        "level": 3,
+        "text": "Statistical Early Exit:",
+        "id": "statistical-early-exit"
+      },
+      {
+        "level": 2,
+        "text": "Follow-up Questions",
+        "id": "follow-up-questions"
+      }
+    ],
+    "publishedAt": "2025-09-19T10:05:38.951Z",
+    "updatedAt": "2025-09-19T10:05:54.744Z",
+    "author": "Morgan Ngetich",
+    "readingTime": 6,
+    "seo": {
+      "title": "Contains Duplicate | Crackmode Documentation",
+      "description": "Contains Duplicate Difficulty: Easy LeetCode: 217. Contains Duplicate --- Problem Given an integer array nums, return true if any value appears at least twice...",
+      "keywords": "contains, duplicate, easy, array, arrays, sorting, leetcode, algorithm, return, approach, containsduplicate, crackmode",
+      "robots": "index,follow",
+      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Contains Duplicate\",\"description\":\"Contains Duplicate Difficulty: Easy LeetCode: 217. Contains Duplicate --- Problem Given an integer array nums, return true if any value appears at least twice...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/contains-duplicate\",\"datePublished\":\"2025-09-19T10:05:38.951Z\",\"dateModified\":\"2025-09-19T10:05:54.744Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"CrackMode\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/contains-duplicate\"},\"wordCount\":168,\"timeRequired\":\"PT6M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
+    },
+    "socialMedia": {
+      "ogTitle": "Contains Duplicate | Crackmode Documentation",
+      "ogDescription": "Given an integer array nums, return true if any value appears at least twice in the array, and return false if every element is distinct.",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Contains+Duplicate&description=Given+an+integer+array+nums%2C+return+true+if+any+value+appears+at+least+twice+in+the+array%2C+and+return+false+if+every+ele...&section=Documentation&theme=crackmode",
+      "twitterTitle": "Contains Duplicate | Crackmode Documentation",
+      "twitterDescription": "Given an integer array nums, return true if any value appears at least twice in the array, and return false if every element is distinct.",
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Contains+Duplicate&description=Given+an+integer+array+nums%2C+return+true+if+any+value+appears+at+least+twice+in+the+array%2C+and+return+false+if+every+ele...&section=Documentation&theme=crackmode"
+    }
+  },
+  {
     "id": "problems/distribute-candies",
     "title": "Distribute Candies",
     "content": "Distribute Candies Difficulty: Easy LeetCode: 575. Distribute Candies --- Problem Alice has n candies, where the ith candy is of type candyType i . Alice noticed that she started to gain weight, so she visited a doctor. The doctor advised Alice to only eat n   2 of the candies she has  n is always even . Alice likes her candies very much, and she wants to eat the maximum number of different types of candies while still following the doctor s advice. Given the integer array candyType of length n, return the maximum number of different types of candies she can eat if she only eats n   2 of them. Example 1:    Input: candyType    1,1,2,2,3,3  Output: 3 Explanation: Alice can only eat 6   2   3 candies. Since there are only 3 types, she can eat one of each type.   Example 2:   Input: candyType    1,1,2,3  Output: 2 Explanation: Alice can only eat 4   2   2 candies. Whether she eats types  1,2 ,  1,3 , or  2,3 , she still can only eat 2 different types.   Example 3:   Input: candyType    6,6,6,6  Output: 1 Explanation: Alice can only eat 4   2   2 candies. Even though she can eat 2 candies, she only has 1 type.   --- Simple Explanation Think of this like choosing different flavors at an ice cream shop with a limited budget! Just like in real life: - You have money for only 3 scoops  n 2   3  - The shop has flavors:  vanilla, vanilla, chocolate, chocolate, strawberry, strawberry  - You want maximum variety, so you pick: vanilla, chocolate, strawberry   3 different types!   - Even though you could pick 3 vanilla scoops, that s not maximizing variety The Key Insight: Alice wants maximum variety! She should pick one candy of each type until she either: 1. Runs out of allowed candies  n 2 , OR 2. Runs out of different types The answer is: min unique_types, n 2  --- Solution uniqueTypes   new HashSet    ; for  int candy : candyType  uniqueTypes.add candy ;    Alice can eat at most n 2 candies int maxCandies   candyType.length   2;    Return minimum for maximum variety return Math.min uniqueTypes.size  , maxCandies ;      --- Step-by-Step Walkthrough Let s trace through candyType    1,1,2,2,3,3 :    Step 1: Count unique candy types candyType    1,1,2,2,3,3  unique_types   1, 2, 3   3 different types Step 2: Calculate maximum candies Alice can eat total_candies   6 max_candies   6   2   3 Step 3: Find the limiting factor Alice wants maximum variety She can eat 3 candies and there are 3 types available result   min 3 types, 3 candies    3   Strategy: Pick one candy of each type:  1, 2, 3    Let s try another example: candyType    1,1,2,3 :   Step 1: Count unique types candyType    1,1,2,3  unique_types   1, 2, 3   3 different types Step 2: Calculate max candies total_candies   4 max_candies   4   2   2 Step 3: Find limiting factor Alice can only eat 2 candies but there are 3 types result   min 3 types, 2 candies    2   Strategy: Pick any 2 types, e.g.,  1, 2  or  1, 3  or  2, 3    Final example: candyType    6,6,6,6 :   Step 1: Count unique types candyType    6,6,6,6  unique_types   6   1 different type Step 2: Calculate max candies total_candies   4 max_candies   4   2   2 Step 3: Find limiting factor Alice can eat 2 candies but only 1 type exists result   min 1 type, 2 candies    1   Strategy: Pick 2 candies of type 6, but only 1 unique type   --- Why This Approach Works Greedy strategy - Always pick one of each type for maximum variety Two constraints - Limited by both candy count  n 2  and available types Simple math - Take minimum of the two limiting factors Set for uniqueness - Automatically handles counting distinct types --- Visual Understanding Let s visualize the decision process:   Scenario 1: Many types, few candies allowed candyType    1,2,3,4,5,6,7,8,9,10   10 candies, 10 types  max_candies   10 2   5 unique_types   10 result   min 10, 5    5   Limited by candy count Scenario 2: Few types, many candies allowed candyType    1,1,1,1,1,1   6 candies, 1 type  max_candies   6 2   3 unique_types   1 result   min 1, 3    1   Limited by variety Scenario 3: Perfect balance candyType    1,1,2,2,3,3   6 candies, 3 types  max_candies   6 2   3 unique_types   3 result   min 3, 3    3   Balanced   --- Alternative Counting Approach If you prefer explicit counting without sets:  python def distributeCandies_manual_count candyType :   Manually count unique types seen   for candy in candyType: seen candy    True unique_types   len seen  max_candies   len candyType     2 return min unique_types, max_candies    This does the same thing but shows the counting process explicitly. --- Real-World Analogy Think of it like planning a diverse meal with portion control: - You re at a buffet with 10 different dishes - Your diet plan allows only 4 servings total - To maximize nutrition variety, you d pick 4 different dishes - Even if there are 10 options, you re limited to 4 servings Same logic: - unique_types   dishes available - max_candies   servings allowed - result   maximum variety you can achieve --- Common Mistakes to Avoid 1. Overcomplicating: Don t try to track which specific candies to pick 2. Forgetting the constraint: Alice can only eat n 2 candies, not all of them 3. Misunderstanding the goal: She wants maximum variety, not maximum quantity 4. Integer division: Use    in Python or proper integer division 5. Edge cases: What if there are no candies?  Won t happen per constraints  --- Complexity Analysis Time Complexity: O n  Single pass to create the set of unique types Set operations are O 1  average case Space Complexity: O n  Set stores at most n unique candy types In worst case, all candies are different types --- Test Cases to Try  python Test your solution with these: print distributeCandies  1,1,2,2,3,3      Should return 3 print distributeCandies  1,1,2,3      Should return 2 print distributeCandies  6,6,6,6      Should return 1 print distributeCandies  1,1,1,1,2,2      Should return 2 print distributeCandies  1,2,3,4,5,6      Should return 3 print distributeCandies  100000,0,100000,0,100000,0,100000,0      Should return 2   --- Pattern Recognition This problem teaches important patterns: Greedy Choice: Always pick maximum variety when given freedom Constraint Optimization: Find the limiting factor among multiple constraints Set Usage: Use sets to count unique elements efficiently Min Max Logic: min available_options, allowed_choices  pattern appears frequently You ll see similar patterns in: - Resource allocation problems - Optimization with multiple constraints - Diversity maximization problems - Subset selection with limits --- Key Takeaway The beauty of this problem is its simplicity once you realize:   Alice should be greedy for variety - always pick different types until she hits a limit! The limit is either: - She runs out of candies she s allowed to eat  n 2 , OR - She runs out of different types to try Whichever comes first determines the answer: min unique_types, n 2",
@@ -2546,7 +2694,7 @@
   {
     "id": "problems/number-of-1-bits",
     "title": "Number Of 1 Bits",
-    "content": "Number of 1 Bits Difficulty: Easy LeetCode: 191. Number of 1 Bits --- Problem Given a positive integer n, write a function that returns the number of set bits in its binary representation  also known as the Hamming weight . Example 1:    Input: n   11 Output: 3 Explanation: The input binary string 1011 has a total of three set bits.   Example 2:   Input: n   128 Output: 1 Explanation: The input binary string 10000000 has a total of one set bit.   Example 3:   Input: n   2147483645 Output: 30 Explanation: The input binary string 1111111111111111111111111111101 has a total of thirty set bits.   --- Simple Explanation Think of this like counting light bulbs that are ON in a binary string! - Binary 1011 has 3 lights ON  three 1s  - Binary 10000000 has 1 light ON  one 1  - Just count how many 1 bits exist in the number The Key: Use bit manipulation tricks to efficiently count 1s without converting to string. --- Optimal Solutions    1   Right shift by 1 return count def hammingWeight_builtin n :     Using Built-in Function     return bin n .count  1   , title:  JavaScript , language:  javascript , code: function hammingWeight n     Brian Kernighan s Algorithm let count   0; while  n !   0  n    n - 1;    Remove rightmost 1 bit count  ; return count; function hammingWeight_v2 n     Right shift method let count   0; while  n !   0  count    n   1;    Check rightmost bit n      1;    Unsigned right shift return count; function hammingWeight_builtin n     Using built-in method return n.toString 2 .split  1  .length - 1; , title:  Java , language:  java , code: public class Solution public int hammingWeight int n     Brian Kernighan s Algorithm int count   0; while  n !  0  n    n - 1;    Remove rightmost 1 bit count  ; return count; public int hammingWeight_v2 int n     Right shift method int count   0; while  n !  0  count    n   1;    Check rightmost bit n      1;    Unsigned right shift return count; public int hammingWeight_builtin int n     Using built-in method return Integer.bitCount n ;      --- Step-by-Step Walkthrough Brian Kernighan s Algorithm for n   12  binary: 1100     Step 1: n   1100  12  n-1   1011  11  n    n-1    1100   1011   1000  8  count   1 Step 2: n   1000  8  n-1   0111  7  n    n-1    1000   0111   0000  0  count   2 Step 3: n   0000  0  Loop ends, return count   2     Right Shift Method for n   11  binary: 1011    Step 1: n   1011, rightmost bit   1 count    1, n     1   n   0101 count   1 Step 2: n   0101, rightmost bit   1 count    1, n     1   n   0010 count   2 Step 3: n   0010, rightmost bit   0 count    0, n     1   n   0001 count   2 Step 4: n   0001, rightmost bit   1 count    1, n     1   n   0000 count   3 Step 5: n   0000, loop ends return count   3     --- Why Brian Kernighan s Algorithm Works Bit manipulation magic - n    n-1  always removes the rightmost 1 bit Fewer iterations - Only loops for the number of 1 bits, not all 32 bits Mathematical property - Subtracting 1 flips all trailing bits including first 1 Optimal performance - Best case O 1  for powers of 2, worst case O log n  --- Bit Manipulation Breakdown Understanding n    n-1 :   Example: n   1100  12  n   1100 n-1   1011  subtracting 1 flips rightmost 1 and all 0s after it  ------ n  n-1   1000  removes the rightmost 1 bit  Example: n   1000  8  n   1000 n-1   0111  subtracting 1 flips the single 1 and all 0s after it  ------ n  n-1   0000  removes the rightmost 1 bit    Why this works: 1. Subtracting 1 from any number flips the rightmost 1 bit to 0 2. It also flips all trailing 0s to 1s 3. AND operation keeps only bits that are 1 in both numbers 4. This effectively removes the rightmost 1 bit --- Alternative Approaches 1. String Conversion  Simple but Inefficient   python def hammingWeight_string n : return bin n .count  1     Time: O log n , Space: O log n    2. Lookup Table  Fast but Memory-Heavy   python def hammingWeight_lookup n :   Precompute for all 8-bit values lookup    0    256 for i in range 256 : lookup i    lookup i    2     i   1    Break 32-bit number into 4 bytes return  lookup n   0xFF    lookup  n    8    0xFF    lookup  n    16    0xFF    lookup  n    24    0xFF     3. Parallel Bit Counting  python def hammingWeight_parallel n :   Count bits in parallel using bit manipulation n   n -   n    1    0x55555555  n    n   0x33333333      n    2    0x33333333  n    n    n    4     0x0F0F0F0F n   n    n    8  n   n    n    16  return n   0x3F   --- Edge Cases  python Test cases: print hammingWeight 0     0  binary: 0  print hammingWeight 1     1  binary: 1  print hammingWeight 2     1  binary: 10  print hammingWeight 7     3  binary: 111  print hammingWeight 8     1  binary: 1000  print hammingWeight 15     4  binary: 1111  print hammingWeight 2147483647     31  binary: 01111...1111  print hammingWeight 2147483648     1  binary: 10000...0000    --- Common Mistakes to Avoid 1. Signed vs unsigned shifts: Use     in JavaScript for unsigned right shift 2. Infinite loops: Make sure to handle the termination condition correctly 3. Overflow issues: Be careful with large numbers in different languages 4. Wrong bit operations: Don t confuse    AND  with     logical AND  --- Complexity Analysis Brian Kernighan s Algorithm: Time: O number of 1 bits  - Best case O 1 , worst case O 32  Space: O 1  Right Shift Method: Time: O 32  - Always checks all bits Space: O 1  Built-in Methods: Time: O 1  - Optimized assembly instructions Space: O 1  --- Pattern Recognition This problem demonstrates key patterns: - Bit Manipulation: Core operations like AND, OR, XOR, shifts - Brian Kernighan s Algorithm: Efficiently removing rightmost set bits - Hamming Weight: Counting set bits in binary representation - Optimization: Trading algorithm complexity for fewer iterations You ll see similar patterns in: - Power of Two detection: n    n-1     0 - Counting trailing zeros - Bit reversal problems - Binary tree problems with bit indexing --- Real-World Applications - Error Detection: Hamming codes for detecting correcting errors - Cryptography: Bit counting in hash functions and encryption - Computer Graphics: Bit masks for pixel manipulation - Database Systems: Bitmap indexes for fast queries - Network Protocols: Checksums and parity bits --- Visual Representation   Number: 1011  11 in decimal  Bit positions: 3 2 1 0 Binary: 1 0 1 1       1 1 1   Count these   3 Brian Kernighan s steps: 1011   1010   1010  removed rightmost 1  1010   1001   1000  removed rightmost 1  1000   0111   0000  removed rightmost 1  Total operations: 3  same as number of 1 bits",
+    "content": "Number of 1 Bits Difficulty: Easy LeetCode: 191. Number of 1 Bits --- Problem Given a positive integer n, write a function that returns the number of set bits in its binary representation  also known as the Hamming weight . Example 1:    Input: n   11 Output: 3 Explanation: The input binary string 1011 has a total of three set bits.   Example 2:   Input: n   128 Output: 1 Explanation: The input binary string 10000000 has a total of one set bit.   Example 3:   Input: n   2147483645 Output: 30 Explanation: The input binary string 1111111111111111111111111111101 has a total of thirty set bits.   --- Simple Explanation Think of this like counting light bulbs that are ON in a binary string! - Binary 1011 has 3 lights ON  three 1s  - Binary 10000000 has 1 light ON  one 1  - Just count how many 1 bits exist in the number The Key: Use bit manipulation tricks to efficiently count 1s without converting to string. --- Optimal Solutions    1   Right shift by 1 return count def hammingWeight_builtin n :     Using Built-in Function     return bin n .count  1   , title:  JavaScript , language:  javascript , code: function hammingWeight n     Brian Kernighan s Algorithm let count   0; while  n !   0  n    n - 1;    Remove rightmost 1 bit count  ; return count; function hammingWeight_v2 n     Right shift method let count   0; while  n !   0  count    n   1;    Check rightmost bit n      1;    Unsigned right shift return count; function hammingWeight_builtin n     Using built-in method return n.toString 2 .split  1  .length - 1; , title:  Java , language:  java , code: public class Solution public int hammingWeight int n     Brian Kernighan s Algorithm int count   0; while  n !  0  n    n - 1;    Remove rightmost 1 bit count  ; return count; public int hammingWeight_v2 int n     Right shift method int count   0; while  n !  0  count    n   1;    Check rightmost bit n      1;    Unsigned right shift return count; public int hammingWeight_builtin int n     Using built-in method return Integer.bitCount n ; , title:  C   , language:  cpp , code: class Solution public: int hammingWeight uint32_t n     Brian Kernighan s Algorithm int count   0; while  n  n     n - 1 ;    Remove rightmost 1 bit count  ; return count; int hammingWeight_v2 uint32_t n     Right shift method int count   0; while  n  count     n   1 ;    Check rightmost bit n     1;    Logical shift return count; int hammingWeight_builtin uint32_t n     Using built-in function return __builtin_popcount n ; ;      --- Step-by-Step Walkthrough Brian Kernighan s Algorithm for n   12  binary: 1100     Step 1: n   1100  12  n-1   1011  11  n    n-1    1100   1011   1000  8  count   1 Step 2: n   1000  8  n-1   0111  7  n    n-1    1000   0111   0000  0  count   2 Step 3: n   0000  0  Loop ends, return count   2     Right Shift Method for n   11  binary: 1011    Step 1: n   1011, rightmost bit   1 count    1, n     1   n   0101 count   1 Step 2: n   0101, rightmost bit   1 count    1, n     1   n   0010 count   2 Step 3: n   0010, rightmost bit   0 count    0, n     1   n   0001 count   2 Step 4: n   0001, rightmost bit   1 count    1, n     1   n   0000 count   3 Step 5: n   0000, loop ends return count   3     --- Why Brian Kernighan s Algorithm Works Bit manipulation magic - n    n-1  always removes the rightmost 1 bit Fewer iterations - Only loops for the number of 1 bits, not all 32 bits Mathematical property - Subtracting 1 flips all trailing bits including first 1 Optimal performance - Best case O 1  for powers of 2, worst case O log n  --- Bit Manipulation Breakdown Understanding n    n-1 :   Example: n   1100  12  n   1100 n-1   1011  subtracting 1 flips rightmost 1 and all 0s after it  ------ n  n-1   1000  removes the rightmost 1 bit  Example: n   1000  8  n   1000 n-1   0111  subtracting 1 flips the single 1 and all 0s after it  ------ n  n-1   0000  removes the rightmost 1 bit    Why this works: 1. Subtracting 1 from any number flips the rightmost 1 bit to 0 2. It also flips all trailing 0s to 1s 3. AND operation keeps only bits that are 1 in both numbers 4. This effectively removes the rightmost 1 bit --- Edge Cases  python Test cases: print hammingWeight 0     0  binary: 0  print hammingWeight 1     1  binary: 1  print hammingWeight 2     1  binary: 10  print hammingWeight 7     3  binary: 111  print hammingWeight 8     1  binary: 1000  print hammingWeight 15     4  binary: 1111  print hammingWeight 2147483647     31  binary: 01111...1111  print hammingWeight 2147483648     1  binary: 10000...0000    --- Common Mistakes to Avoid 1. Signed vs unsigned shifts: Use     in JavaScript for unsigned right shift 2. Infinite loops: Make sure to handle the termination condition correctly 3. Overflow issues: Be careful with large numbers in different languages 4. Wrong bit operations: Don t confuse    AND  with     logical AND  --- Complexity Analysis Brian Kernighan s Algorithm: Time: O number of 1 bits  - Best case O 1 , worst case O 32  Space: O 1  Right Shift Method: Time: O 32  - Always checks all bits Space: O 1  Built-in Methods: Time: O 1  - Optimized assembly instructions Space: O 1  --- Pattern Recognition This problem demonstrates key patterns: - Bit Manipulation: Core operations like AND, OR, XOR, shifts - Brian Kernighan s Algorithm: Efficiently removing rightmost set bits - Hamming Weight: Counting set bits in binary representation - Optimization: Trading algorithm complexity for fewer iterations You ll see similar patterns in: - Power of Two detection: n    n-1     0 - Counting trailing zeros - Bit reversal problems - Binary tree problems with bit indexing --- Real-World Applications - Error Detection: Hamming codes for detecting correcting errors - Cryptography: Bit counting in hash functions and encryption - Computer Graphics: Bit masks for pixel manipulation - Database Systems: Bitmap indexes for fast queries - Network Protocols: Checksums and parity bits --- Visual Representation   Number: 1011  11 in decimal  Bit positions: 3 2 1 0 Binary: 1 0 1 1       1 1 1   Count these   3 Brian Kernighan s steps: 1011   1010   1010  removed rightmost 1  1010   1001   1000  removed rightmost 1  1000   0111   0000  removed rightmost 1  Total operations: 3  same as number of 1 bits",
     "excerpt": "Number of 1 Bits Difficulty: Easy LeetCode: 191. Number of 1 Bits --- Problem Given a positive integer n, write a function that returns the number of set bits...",
     "url": "/crackmode/docs/problems/number-of-1-bits",
     "canonicalUrl": "https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/number-of-1-bits",
@@ -2642,26 +2790,6 @@
       },
       {
         "level": 2,
-        "text": "Alternative Approaches",
-        "id": "alternative-approaches"
-      },
-      {
-        "level": 3,
-        "text": "1. String Conversion (Simple but Inefficient)",
-        "id": "1-string-conversion-simple-but-inefficient"
-      },
-      {
-        "level": 3,
-        "text": "2. Lookup Table (Fast but Memory-Heavy)",
-        "id": "2-lookup-table-fast-but-memory-heavy"
-      },
-      {
-        "level": 3,
-        "text": "3. Parallel Bit Counting",
-        "id": "3-parallel-bit-counting"
-      },
-      {
-        "level": 2,
         "text": "Edge Cases",
         "id": "edge-cases"
       },
@@ -2697,15 +2825,15 @@
       }
     ],
     "publishedAt": "2025-09-17T08:06:39.403Z",
-    "updatedAt": "2025-09-17T08:06:52.077Z",
+    "updatedAt": "2025-09-17T08:16:52.603Z",
     "author": "Morgan Ngetich",
     "readingTime": 6,
     "seo": {
       "title": "Number Of 1 Bits | Crackmode Documentation",
       "description": "Number of 1 Bits Difficulty: Easy LeetCode: 191. Number of 1 Bits --- Problem Given a positive integer n, write a function that returns the number of set bits...",
-      "keywords": "number, bits, easy, string, tree, graph, leetcode, algorithm, count, rightmost, return, hammingweight, crackmode",
+      "keywords": "number, bits, easy, string, tree, graph, leetcode, algorithm, count, rightmost, return, hammingweight, shift, crackmode",
       "robots": "index,follow",
-      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Number Of 1 Bits\",\"description\":\"Number of 1 Bits Difficulty: Easy LeetCode: 191. Number of 1 Bits --- Problem Given a positive integer n, write a function that returns the number of set bits...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/number-of-1-bits\",\"datePublished\":\"2025-09-17T08:06:39.403Z\",\"dateModified\":\"2025-09-17T08:06:52.077Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"CrackMode\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/number-of-1-bits\"},\"wordCount\":203,\"timeRequired\":\"PT6M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
+      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Number Of 1 Bits\",\"description\":\"Number of 1 Bits Difficulty: Easy LeetCode: 191. Number of 1 Bits --- Problem Given a positive integer n, write a function that returns the number of set bits...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/number-of-1-bits\",\"datePublished\":\"2025-09-17T08:06:39.403Z\",\"dateModified\":\"2025-09-17T08:16:52.603Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"CrackMode\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/number-of-1-bits\"},\"wordCount\":203,\"timeRequired\":\"PT6M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
     },
     "socialMedia": {
       "ogTitle": "Number Of 1 Bits | Crackmode Documentation",
@@ -2852,6 +2980,134 @@
       "twitterTitle": "Number Of Good Pairs | Crackmode Documentation",
       "twitterDescription": "Given an array of integers nums, return the number of good pairs. A pair (i, j) is called good if nums[i] == nums[j] and i < j.",
       "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Number+Of+Good+Pairs&description=Given+an+array+of+integers+nums%2C+return+the+number+of+good+pairs.+A+pair+%28i%2C+j%29+is+called+good+if+nums%5Bi%5D+%3D%3D+nums%5Bj%5D+and...&section=Documentation&theme=crackmode"
+    }
+  },
+  {
+    "id": "problems/two-sum",
+    "title": "Two Sum",
+    "content": "Two Sum Difficulty: Easy LeetCode: 1. Two Sum --- Problem Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice. You can return the answer in any order. Example 1:    Input: nums    2,7,11,15 , target   9 Output:  0,1  Explanation: Because nums 0    nums 1     9, we return  0, 1 .   Example 2:   Input: nums    3,2,4 , target   6 Output:  1,2  Explanation: Because nums 1    nums 2     6, we return  1, 2 .   Example 3:   Input: nums    3,3 , target   6 Output:  0,1  Explanation: Because nums 0    nums 1     6, we return  0, 1 .   --- Simple Explanation Think of this like finding a pair of numbers that add up to your target! - You have a list of numbers:  2, 7, 11, 15  - You want to find two that add up to 9 - 2   7   9, so return their positions  0, 1  The Key: Use a hash map to store numbers you ve seen and their indices, then check if the complement exists. --- Optimal Solutions numMap   new HashMap    ; for  int i   0; i numMap   new HashMap    ;    First pass: build the hash map for  int i   0; i  include class Solution public: std::vector twoSum std::vector  nums, int target     Hash Map Approach std::unordered_map numMap;    value: index for  int i   0; i twoSum_bruteForce std::vector  nums, int target     Brute Force Approach for  int i   0; i twoSum_twoPass std::vector  nums, int target     Two Pass Hash Map std::unordered_map numMap;    First pass: build the hash map for  int i   0; i --- Step-by-Step Walkthrough Hash Map Approach for nums    2,7,11,15 , target   9   Step 1: i 0, num 2 complement   9 - 2   7 7 not in numMap Store: numMap 2    0 numMap   2: 0 Step 2: i 1, num 7 complement   9 - 7   2 2 found in numMap at index 0 Return  0, 1      Brute Force Approach for nums    3,2,4 , target   6   Step 1: i 0, j 1 nums 0    nums 1    3   2   5   6 Step 2: i 0, j 2 nums 0    nums 2    3   4   7   6 Step 3: i 1, j 2 nums 1    nums 2    2   4   6   6   Return  1, 2    --- Why Hash Map Works Constant lookup - Hash map provides O 1  average time for lookups Complement search - Instead of checking all pairs, find what s needed: target - current Single pass - Build map and search simultaneously in one iteration Index preservation - Store both value and index to return positions, not values --- Algorithm Comparison Hash Map vs Brute Force:   Hash Map Approach: - Time: O n  - single pass through array - Space: O n  - hash map storage - Best for: Most cases, especially larger arrays nums    2, 7, 11, 15 , target   9 Iteration 1: Check if 7 exists   No, store 2 0 Iteration 2: Check if 2 exists   Yes! Return  0,1  Brute Force Approach: - Time: O n   - nested loops - Space: O 1  - no extra storage - Best for: Very small arrays or memory-constrained systems nums    2, 7, 11, 15 , target   9 Check: 2 7 9   Return  0,1   Would check 2 11, 2 15, 7 11, 7 15, 11 15 if needed    --- Edge Cases  python Test cases: print twoSum  2, 7, 11, 15 , 9      0, 1  - normal case print twoSum  3, 2, 4 , 6      1, 2  - middle elements print twoSum  3, 3 , 6      0, 1  - duplicate numbers print twoSum  -1, -2, -3, -4, -5 , -8      2, 4  - negative numbers print twoSum  0, 4, 3, 0 , 0      0, 3  - zeros print twoSum  -3, 4, 3, 90 , 0      0, 2  - sum to zero   --- Common Mistakes to Avoid 1. Using same element twice: Make sure indices are different when complement equals current number 2. Wrong return format: Return indices, not the actual values 3. Hash collision handling: Use proper hash map implementation, not naive approaches 4. Index out of bounds: Ensure you re not accessing invalid array indices 5. Assuming sorted input: The array is not necessarily sorted --- Complexity Analysis Hash Map Approach  Optimal : Time: O n  - Single pass through array Space: O n  - Hash map can store up to n elements Brute Force Approach: Time: O n   - Nested loops check all pairs Space: O 1  - No extra space used Two Pass Hash Map: Time: O n  - Two separate O n  passes Space: O n  - Hash map storage --- Pattern Recognition This problem demonstrates key patterns: - Hash Map for Lookups: Trading space for time complexity - Complement Search: Finding pairs by searching for target - current - Index Tracking: Storing both values and positions - Early Termination: Returning as soon as solution is found You ll see similar patterns in: - Three Sum   Four Sum problems - Subarray sum problems - Finding pairs with specific properties - Anagram detection - Frequency counting problems --- Real-World Applications - Financial Systems: Finding transactions that sum to specific amounts - Inventory Management: Pairing items to meet weight value targets - Gaming: Finding combinations of items skills that reach targets - Data Analysis: Identifying correlated data points - Recommendation Systems: Finding complementary products content --- Visual Representation   Array:  2, 7, 11, 15 , Target: 9 Hash Map Approach Visualization: Step 1: num 2, complement 7 numMap: 2: 0 Step 2: num 7, complement 2 Check numMap: 2 exists at index 0 Found pair: indices  0, 1  Index: 0 1 2 3 Array:  2, 7, 11, 15                 Sum   9   Time taken: 2 iterations instead of checking all 6 possible pairs    --- Follow-up Questions Q: Can you solve it in less than O n  time complexity? A: No, we need to examine each element at least once, so O n  is optimal. Q: What if the array is sorted? A: Use two pointers  left 0, right n-1  moving towards each other based on sum comparison. Q: What if there are multiple valid pairs? A: The problem guarantees exactly one solution, but you could return the first found or all pairs. Q: What if no solution exists? A: Return empty array or throw exception  problem states solution always exists .",
+    "excerpt": "Two Sum Difficulty: Easy LeetCode: 1. Two Sum --- Problem Given an array of integers nums and an integer target, return indices of the two numbers such that...",
+    "url": "/crackmode/docs/problems/two-sum",
+    "canonicalUrl": "https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/two-sum",
+    "section": "Problems",
+    "tags": [
+      "easy",
+      "array",
+      "arrays",
+      "searching",
+      "leetcode",
+      "algorithm"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "Two Sum",
+        "id": "two-sum"
+      },
+      {
+        "level": 2,
+        "text": "Problem",
+        "id": "problem"
+      },
+      {
+        "level": 2,
+        "text": "Simple Explanation",
+        "id": "simple-explanation"
+      },
+      {
+        "level": 2,
+        "text": "Optimal Solutions",
+        "id": "optimal-solutions"
+      },
+      {
+        "level": 2,
+        "text": "Step-by-Step Walkthrough",
+        "id": "step-by-step-walkthrough"
+      },
+      {
+        "level": 3,
+        "text": "Hash Map Approach for nums = [2,7,11,15], target = 9",
+        "id": "hash-map-approach-for-nums-271115-target-9"
+      },
+      {
+        "level": 3,
+        "text": "Brute Force Approach for nums = [3,2,4], target = 6",
+        "id": "brute-force-approach-for-nums-324-target-6"
+      },
+      {
+        "level": 2,
+        "text": "Why Hash Map Works",
+        "id": "why-hash-map-works"
+      },
+      {
+        "level": 2,
+        "text": "Algorithm Comparison",
+        "id": "algorithm-comparison"
+      },
+      {
+        "level": 3,
+        "text": "Hash Map vs Brute Force:",
+        "id": "hash-map-vs-brute-force"
+      },
+      {
+        "level": 2,
+        "text": "Edge Cases",
+        "id": "edge-cases"
+      },
+      {
+        "level": 1,
+        "text": "Test cases:",
+        "id": "test-cases"
+      },
+      {
+        "level": 2,
+        "text": "Common Mistakes to Avoid",
+        "id": "common-mistakes-to-avoid"
+      },
+      {
+        "level": 2,
+        "text": "Complexity Analysis",
+        "id": "complexity-analysis"
+      },
+      {
+        "level": 2,
+        "text": "Pattern Recognition",
+        "id": "pattern-recognition"
+      },
+      {
+        "level": 2,
+        "text": "Real-World Applications",
+        "id": "real-world-applications"
+      },
+      {
+        "level": 2,
+        "text": "Visual Representation",
+        "id": "visual-representation"
+      },
+      {
+        "level": 2,
+        "text": "Follow-up Questions",
+        "id": "follow-up-questions"
+      }
+    ],
+    "publishedAt": "2025-09-19T09:54:52.412Z",
+    "updatedAt": "2025-09-19T09:59:08.637Z",
+    "author": "Morgan Ngetich",
+    "readingTime": 6,
+    "seo": {
+      "title": "Two Sum | Crackmode Documentation",
+      "description": "Two Sum Difficulty: Easy LeetCode: 1. Two Sum --- Problem Given an array of integers nums and an integer target, return indices of the two numbers such that...",
+      "keywords": "easy, array, arrays, searching, leetcode, algorithm, return, target, complement, twosum, crackmode",
+      "robots": "index,follow",
+      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Two Sum\",\"description\":\"Two Sum Difficulty: Easy LeetCode: 1. Two Sum --- Problem Given an array of integers nums and an integer target, return indices of the two numbers such that...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/two-sum\",\"datePublished\":\"2025-09-19T09:54:52.412Z\",\"dateModified\":\"2025-09-19T09:59:08.637Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"CrackMode\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/two-sum\"},\"wordCount\":196,\"timeRequired\":\"PT6M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
+    },
+    "socialMedia": {
+      "ogTitle": "Two Sum | Crackmode Documentation",
+      "ogDescription": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice. You can return the answer in any order.",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Two+Sum&description=Given+an+array+of+integers+nums+and+an+integer+target%2C+return+indices+of+the+two+numbers+such+that+they+add+up+to+target...&section=Documentation&theme=crackmode",
+      "twitterTitle": "Two Sum | Crackmode Documentation",
+      "twitterDescription": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice. You can return the answer in any order.",
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Two+Sum&description=Given+an+array+of+integers+nums+and+an+integer+target%2C+return+indices+of+the+two+numbers+such+that+they+add+up+to+target...&section=Documentation&theme=crackmode"
     }
   },
   {

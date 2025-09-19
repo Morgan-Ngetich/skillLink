@@ -198,6 +198,28 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
       "solved": true,
       "solvedAt": "2025-09-16T20:04:00Z"
     }
+  ],
+  "2025-09-18": [
+    {
+      "id": 1,
+      "title": "Two Sum",
+      "difficulty": "Easy",
+      "tags": ["Array", "Hash Table"],
+      "url": "https://leetcode.com/problems/two-sum/",
+      "docs": "/crackmode/docs/problems/two-sum",
+      "solved": true,
+      "solvedAt": "2025-09-18T17:12:00Z"
+    },
+    {
+      "id": 2,
+      "title": "Contains Duplicate",
+      "difficulty": "Easy",
+      "tags": ["Array", "Hash Table", "Sorting"],
+      "url": "https://leetcode.com/problems/contains-duplicate/",
+      "docs": "/crackmode/docs/problems/contains-duplicate",
+      "solved": true,
+      "solvedAt": "2025-09-18T17:28:00Z"
+    }
   ]
 
 
