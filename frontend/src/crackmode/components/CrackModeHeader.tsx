@@ -120,7 +120,7 @@ const CrackModeHeader: React.FC<HeaderProps> = ({ page }) => {
           </HStack>
 
           {/* Desktop Search */}
-          {showFullSearch && (
+          {typeof window !== "undefined" && showFullSearch && (
             <Box flex="1" maxW="600px" mx={6}>
               <DocsSearch
                 onNavigate={handleNavigation}
@@ -132,7 +132,7 @@ const CrackModeHeader: React.FC<HeaderProps> = ({ page }) => {
           )}
 
           {/* Tablet Search Icon */}
-          {!showFullSearch && !isMobile && (
+          {typeof window !== "undefined" && !showFullSearch && !isMobile && (
             <IconButton
               aria-label="Toggle Search"
               variant="ghost"
