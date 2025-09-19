@@ -149,7 +149,7 @@ const CrackModeHeader: React.FC<HeaderProps> = ({ page }) => {
           {/* User Menu & Controls */}
           <HStack gap={2}>
             {/* Mobile Search Icon */}
-            {isMobile && (
+            {typeof window !== "undefined" && isMobile && (
               <IconButton
                 aria-label="Toggle Search"
                 variant="ghost"
