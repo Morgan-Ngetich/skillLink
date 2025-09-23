@@ -1138,7 +1138,7 @@
   {
     "id": "problems/contains-duplicate",
     "title": "Contains Duplicate",
-    "content": "Contains Duplicate Difficulty: Easy LeetCode: 217. Contains Duplicate --- Problem Given an integer array nums, return true if any value appears at least twice in the array, and return false if every element is distinct. Example 1:    Input: nums    1,2,3,1  Output: true Explanation: The element 1 occurs at the indices 0 and 3.   Example 2:   Input: nums    1,2,3,4  Output: false Explanation: All elements are distinct.   Example 3:   Input: nums    1,1,1,3,3,4,3,2,4,2  Output: true   Constraints: - 1 a - b ; for  let i   1; i seen   new HashSet    ; for  int num : nums  if  seen.contains num   return true; seen.add num ; return false; public boolean containsDuplicate_optimized int   nums     Optimized Set approach Set seen   new HashSet    ; for  int num : nums  if  !seen.add num      add   returns false if element already exists return true; return false; public boolean containsDuplicate_sorting int   nums     Sorting Approach Arrays.sort nums ; for  int i   1; i  include  include class Solution public: bool containsDuplicate std::vector  nums     Hash Set Approach std::unordered_set seen; for  int num : nums  if  seen.find num  !  seen.end    return true; seen.insert num ; return false; bool containsDuplicate_optimized std::vector  nums     Optimized Set approach std::unordered_set seen; for  int num : nums  if  seen.insert num .second    false     insert returns pair return true; return false; bool containsDuplicate_sorting std::vector  nums     Sorting Approach std::sort nums.begin  , nums.end   ; for  int i   1; i   nums     Brute Force Approach for  int i   0; i --- Step-by-Step Walkthrough Hash Set Approach for nums    1,2,3,1     Step 1: num   1 1 not in seen seen   1 Step 2: num   2 2 not in seen seen   1, 2 Step 3: num   3 3 not in seen seen   1, 2, 3 Step 4: num   1 1 found in seen   Return true  duplicate found!    Sorting Approach for nums    1,1,1,3,3,4,3,2,4,2    Step 1: Sort array Original:  1,1,1,3,3,4,3,2,4,2  Sorted:  1,1,1,2,2,3,3,3,4,4  Step 2: Compare adjacent elements Compare nums 0  and nums 1 : 1    1   Return true  duplicate found!    --- Why Hash Set Works Best Constant lookup - Hash set provides O 1  average time for contains add operations Early termination - Returns immediately upon finding first duplicate Single pass - Only needs to iterate through array once Memory efficient - In worst case  no duplicates , stores each element once --- Algorithm Comparison Performance Analysis:   Hash Set Approach:   Time: O n  - single pass   Space: O n  - set storage   Early termination possible Best for: Most cases, optimal time complexity Sorting Approach:    Time: O n log n  - sorting dominates   Space: O 1  - if in-place sort   Early termination possible Best for: Memory-constrained environments One-liner Set Size:    Time: O n  - but always processes entire array    Space: O n  - creates complete set   No early termination Best for: Code golf, when you need the set anyway Brute Force:   Time: O n   - nested loops   Space: O 1  - no extra storage   Early termination possible Best for: Tiny arrays only   --- Edge Cases  python Test cases: print containsDuplicate  1, 2, 3, 1      True - basic duplicate print containsDuplicate  1, 2, 3, 4      False - all unique print containsDuplicate  1, 1, 1, 3, 3, 4      True - multiple duplicates print containsDuplicate  1      False - single element print containsDuplicate  0, 0      True - duplicate zeros print containsDuplicate  -1, -1      True - negative duplicates print containsDuplicate  1000000000, 1000000000      True - large numbers print containsDuplicate  2147483647, -2147483648      False - boundary values   --- Common Mistakes to Avoid 1. Modifying input array: Be careful with sorting approach if you need to preserve original array 2. Hash collision assumptions: Modern hash sets handle collisions well, don t over-optimize 3. Integer overflow: With constraints up to 10 9, standard int types are sufficient 4. Early vs complete processing: Choose hash set for early termination, size comparison for other use cases 5. Memory considerations: For very large arrays, consider sorting approach to save space --- Complexity Analysis Hash Set Approach  Optimal : Time: O n  - Single pass through array, O 1  set operations Space: O n  - Worst case stores all n elements in set Sorting Approach: Time: O n log n  - Sorting dominates, O n  for comparison Space: O 1  - If using in-place sort like heapsort Brute Force Approach: Time: O n   - Nested loops check all pairs Space: O 1  - No extra space used Set Size Comparison: Time: O n  - Creates set from entire array Space: O n  - Set stores all unique elements --- Pattern Recognition This problem demonstrates key patterns: - Hash Set for Uniqueness: Using set data structure to track seen elements - Early Termination Optimization: Returning as soon as duplicate is found - Space-Time Tradeoffs: Hash set vs sorting vs brute force approaches - Duplicate Detection: Core pattern used in many algorithms You ll see similar patterns in: - Finding missing numbers in arrays - Intersection of two arrays - Remove duplicates from arrays - Checking for anagrams - Cycle detection in linked lists  Floyd s algorithm  - Finding unique elements --- Real-World Applications - Data Validation: Ensuring unique IDs, usernames, or email addresses - Database Systems: Checking constraint violations before insertion - File Processing: Detecting duplicate files or records - User Input: Validating unique selections in forms - Security: Detecting replay attacks or duplicate tokens - Analytics: Finding unique visitors, events, or transactions --- Visual Representation   Array:  1, 2, 3, 1  Hash Set Approach Visualization:                             1   2   3   1                                     Add Add Add Found!         Set: 1   1,2   1,2,3   Duplicate! Timeline: Step 1: seen , num 1   seen 1 Step 2: seen 1, num 2   seen 1,2 Step 3: seen 1,2, num 3   seen 1,2,3 Step 4: seen 1,2,3, num 1   DUPLICATE FOUND! Result: Return true after checking 4 4 elements   --- Optimizations   Variations Hash Set Insert Optimization:  python def containsDuplicate_optimized nums : seen   set   for num in nums: if not seen.add num :   Some languages: add   returns success boolean return True return False   Memory-Conscious Approach:  python def containsDuplicate_memory_conscious nums :   For very large arrays, consider sorting if memory is limited if len nums    1000000:   Threshold based on available memory return containsDuplicate_sorting nums  return containsDuplicate nums    Use hash set for smaller arrays   Statistical Early Exit:  python def containsDuplicate_statistical nums :   If array is very large compared to possible values, likely has duplicates   For 32-bit integers: 2 32 possible values if len nums    65536:   sqrt 2 32  heuristic return True   Pigeonhole principle makes duplicates very likely return containsDuplicate nums     --- Follow-up Questions Q: What if the array is sorted? A: You can solve in O n  time, O 1  space by just checking adjacent elements. Q: What if you need to find the duplicate element, not just detect it? A: Modify hash set approach to return the element instead of True. Q: What if you need to count all duplicates? A: Use a frequency map  HashMap  instead of a set. Q: Can you solve it without extra space? A: Yes, with sorting approach O n log n  time, or O n   brute force. Q: What about floating point numbers? A: Same approaches work, but be careful with floating point precision issues.",
+    "content": "Contains Duplicate Difficulty: Easy LeetCode: 217. Contains Duplicate --- Problem Given an integer array nums, return true if any value appears at least twice in the array, and return false if every element is distinct. Example 1:    Input: nums    1,2,3,1  Output: true Explanation: The element 1 occurs at the indices 0 and 3.   Example 2:   Input: nums    1,2,3,4  Output: false Explanation: All elements are distinct.   Example 3:   Input: nums    1,1,1,3,3,4,3,2,4,2  Output: true   Constraints: - 1 a - b ; for  let i   1; i seen   new HashSet    ; for  int num : nums  if  seen.contains num   return true; seen.add num ; return false; public boolean containsDuplicate_optimized int   nums     Optimized Set approach Set seen   new HashSet    ; for  int num : nums  if  !seen.add num      add   returns false if element already exists return true; return false; public boolean containsDuplicate_sorting int   nums     Sorting Approach Arrays.sort nums ; for  int i   1; i  include  include class Solution public: bool containsDuplicate std::vector  nums     Hash Set Approach std::unordered_set seen; for  int num : nums  if  seen.find num  !  seen.end    return true; seen.insert num ; return false; bool containsDuplicate_optimized std::vector  nums     Optimized Set approach std::unordered_set seen; for  int num : nums  if  seen.insert num .second    false     insert returns pair return true; return false; bool containsDuplicate_sorting std::vector  nums     Sorting Approach std::sort nums.begin  , nums.end   ; for  int i   1; i   nums     Brute Force Approach for  int i   0; i --- Step-by-Step Walkthrough Hash Set Approach for nums    1,2,3,1     Step 1: num   1 1 not in seen seen   1 Step 2: num   2 2 not in seen seen   1, 2 Step 3: num   3 3 not in seen seen   1, 2, 3 Step 4: num   1 1 found in seen   Return true  duplicate found!    Sorting Approach for nums    1,1,1,3,3,4,3,2,4,2    Step 1: Sort array Original:  1,1,1,3,3,4,3,2,4,2  Sorted:  1,1,1,2,2,3,3,3,4,4  Step 2: Compare adjacent elements Compare nums 0  and nums 1 : 1    1   Return true  duplicate found!    --- Why Hash Set Works Best Constant lookup - Hash set provides O 1  average time for contains add operations Early termination - Returns immediately upon finding first duplicate Single pass - Only needs to iterate through array once Memory efficient - In worst case  no duplicates , stores each element once --- Algorithm Comparison Performance Analysis:   Hash Set Approach:   Time: O n  - single pass   Space: O n  - set storage   Early termination possible Best for: Most cases, optimal time complexity Sorting Approach:    Time: O n log n  - sorting dominates   Space: O 1  - if in-place sort   Early termination possible Best for: Memory-constrained environments One-liner Set Size:    Time: O n  - but always processes entire array    Space: O n  - creates complete set   No early termination Best for: Code golf, when you need the set anyway Brute Force:   Time: O n   - nested loops   Space: O 1  - no extra storage   Early termination possible Best for: Tiny arrays only   --- Edge Cases  python Test cases: print containsDuplicate  1, 2, 3, 1      True - basic duplicate print containsDuplicate  1, 2, 3, 4      False - all unique print containsDuplicate  1, 1, 1, 3, 3, 4      True - multiple duplicates print containsDuplicate  1      False - single element print containsDuplicate  0, 0      True - duplicate zeros print containsDuplicate  -1, -1      True - negative duplicates print containsDuplicate  1000000000, 1000000000      True - large numbers print containsDuplicate  2147483647, -2147483648      False - boundary values   --- Common Mistakes to Avoid 1. Modifying input array: Be careful with sorting approach if you need to preserve original array 2. Hash collision assumptions: Modern hash sets handle collisions well, don t over-optimize 3. Integer overflow: With constraints up to 10 9, standard int types are sufficient 4. Early vs complete processing: Choose hash set for early termination, size comparison for other use cases 5. Memory considerations: For very large arrays, consider sorting approach to save space --- Complexity Analysis Hash Set Approach  Optimal : Time: O n  - Single pass through array, O 1  set operations Space: O n  - Worst case stores all n elements in set Sorting Approach: Time: O n log n  - Sorting dominates, O n  for comparison Space: O 1  - If using in-place sort like heapsort Brute Force Approach: Time: O n   - Nested loops check all pairs Space: O 1  - No extra space used Set Size Comparison: Time: O n  - Creates set from entire array Space: O n  - Set stores all unique elements --- Pattern Recognition This problem demonstrates key patterns: - Hash Set for Uniqueness: Using set data structure to track seen elements - Early Termination Optimization: Returning as soon as duplicate is found - Space-Time Tradeoffs: Hash set vs sorting vs brute force approaches - Duplicate Detection: Core pattern used in many algorithms You ll see similar patterns in: - Finding missing numbers in arrays - Intersection of two arrays - Remove duplicates from arrays - Checking for anagrams - Cycle detection in linked lists  Floyd s algorithm  - Finding unique elements --- Real-World Applications - Data Validation: Ensuring unique IDs, usernames, or email addresses - Database Systems: Checking constraint violations before insertion - File Processing: Detecting duplicate files or records - User Input: Validating unique selections in forms - Security: Detecting replay attacks or duplicate tokens - Analytics: Finding unique visitors, events, or transactions --- Visual Representation   Array:  1, 2, 3, 1  Hash Set Approach Visualization:                             1   2   3   1                                     Add Add Add Found!         Set: 1   1,2   1,2,3   Duplicate! Timeline: Step 1: seen , num 1   seen 1 Step 2: seen 1, num 2   seen 1,2 Step 3: seen 1,2, num 3   seen 1,2,3 Step 4: seen 1,2,3, num 1   DUPLICATE FOUND! Result: Return true after checking 4 4 elements    --- Follow-up Questions Q: What if the array is sorted? A: You can solve in O n  time, O 1  space by just checking adjacent elements. Q: What if you need to find the duplicate element, not just detect it? A: Modify hash set approach to return the element instead of True. Q: What if you need to count all duplicates? A: Use a frequency map  HashMap  instead of a set. Q: Can you solve it without extra space? A: Yes, with sorting approach O n log n  time, or O n   brute force. Q: What about floating point numbers? A: Same approaches work, but be careful with floating point precision issues.",
     "excerpt": "Contains Duplicate Difficulty: Easy LeetCode: 217. Contains Duplicate --- Problem Given an integer array nums, return true if any value appears at least twice...",
     "url": "/crackmode/docs/problems/contains-duplicate",
     "canonicalUrl": "https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/contains-duplicate",
@@ -1239,32 +1239,12 @@
       },
       {
         "level": 2,
-        "text": "Optimizations & Variations",
-        "id": "optimizations-variations"
-      },
-      {
-        "level": 3,
-        "text": "Hash Set Insert Optimization:",
-        "id": "hash-set-insert-optimization"
-      },
-      {
-        "level": 3,
-        "text": "Memory-Conscious Approach:",
-        "id": "memory-conscious-approach"
-      },
-      {
-        "level": 3,
-        "text": "Statistical Early Exit:",
-        "id": "statistical-early-exit"
-      },
-      {
-        "level": 2,
         "text": "Follow-up Questions",
         "id": "follow-up-questions"
       }
     ],
     "publishedAt": "2025-09-19T10:05:38.951Z",
-    "updatedAt": "2025-09-19T10:05:54.744Z",
+    "updatedAt": "2025-09-19T10:12:02.591Z",
     "author": "Morgan Ngetich",
     "readingTime": 6,
     "seo": {
@@ -1272,7 +1252,7 @@
       "description": "Contains Duplicate Difficulty: Easy LeetCode: 217. Contains Duplicate --- Problem Given an integer array nums, return true if any value appears at least twice...",
       "keywords": "contains, duplicate, easy, array, arrays, sorting, leetcode, algorithm, return, approach, containsduplicate, crackmode",
       "robots": "index,follow",
-      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Contains Duplicate\",\"description\":\"Contains Duplicate Difficulty: Easy LeetCode: 217. Contains Duplicate --- Problem Given an integer array nums, return true if any value appears at least twice...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/contains-duplicate\",\"datePublished\":\"2025-09-19T10:05:38.951Z\",\"dateModified\":\"2025-09-19T10:05:54.744Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"CrackMode\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/contains-duplicate\"},\"wordCount\":168,\"timeRequired\":\"PT6M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
+      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Contains Duplicate\",\"description\":\"Contains Duplicate Difficulty: Easy LeetCode: 217. Contains Duplicate --- Problem Given an integer array nums, return true if any value appears at least twice...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/contains-duplicate\",\"datePublished\":\"2025-09-19T10:05:38.951Z\",\"dateModified\":\"2025-09-19T10:12:02.591Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"CrackMode\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/contains-duplicate\"},\"wordCount\":168,\"timeRequired\":\"PT6M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
     },
     "socialMedia": {
       "ogTitle": "Contains Duplicate | Crackmode Documentation",
@@ -1281,6 +1261,149 @@
       "twitterTitle": "Contains Duplicate | Crackmode Documentation",
       "twitterDescription": "Given an integer array nums, return true if any value appears at least twice in the array, and return false if every element is distinct.",
       "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Contains+Duplicate&description=Given+an+integer+array+nums%2C+return+true+if+any+value+appears+at+least+twice+in+the+array%2C+and+return+false+if+every+ele...&section=Documentation&theme=crackmode"
+    }
+  },
+  {
+    "id": "problems/determine-if-two-strings-are-close",
+    "title": "Determine If Two Strings Are Close",
+    "content": "Determine if Two Strings Are Close Difficulty: Medium LeetCode: 1657. Determine if Two Strings Are Close --- Problem Two strings are considered close if you can attain one from the other using the following operations: 1. Operation 1: Swap any two existing characters. - For example, abcde -  aecdb 2. Operation 2: Transform every occurrence of one existing character into another existing character, and do the same with the other character. - For example, aacabb -  bbcbaa  all a s turn into b s, and all b s turn into a s  You can use the operations on either string as many times as necessary. Given two strings, word1 and word2, return true if word1 and word2 are close, and false otherwise. Example 1:    Input: word1    abc , word2    bca  Output: true Explanation: You can attain word2 from word1 in 2 operations. Apply Operation 1:  abc  -   acb  Apply Operation 1:  acb  -   bca    Example 2:   Input: word1    a , word2    aa  Output: false Explanation: It is impossible to attain word2 from word1, or vice versa, in any number of operations.   Example 3:   Input: word1    cabbba , word2    abbccc  Output: true Explanation: You can attain word2 from word1 in 3 operations. Apply Operation 1:  cabbba  -   caabbb  Apply Operation 2:  caabbb  -   baaccc  Apply Operation 2:  baaccc  -   abbccc    --- Simple Explanation Think of this like rearranging and swapping character frequencies! Two strings are  close  if: 1. They have the same set of unique characters 2. The frequency counts can be rearranged to match The Key Insight: - Operation 1  swap  means order doesn t matter - Operation 2  transform  means we can swap frequency counts between characters So we need to check: - Same character sets: a,b,c vs a,b,c   - Same frequency patterns:  1,2,3  vs  2,1,3    --- Optimal Solutions 0, character exists for i in range 26 : if  freq1 i    0  !   freq2 i    0 : return False   Check frequency patterns freq1_values    f for f in freq1 if f   0  freq2_values    f for f in freq2 if f   0  return sorted freq1_values     sorted freq2_values  , title:  JavaScript , language:  javascript , code: function closeStrings word1, word2     Quick length check if  word1.length !   word2.length  return false;    Count character frequencies const count1   new Map  ; const count2   new Map  ; for  const char of word1  count1.set char,  count1.get char     0    1 ; for  const char of word2  count2.set char,  count2.get char     0    1 ;    Check same character sets const keys1   new Set count1.keys   ; const keys2   new Set count2.keys   ; if  keys1.size !   keys2.size  return false; for  const key of keys1  if  !keys2.has key   return false;    Check same frequency patterns const values1   Array.from count1.values   .sort  a, b     a - b ; const values2   Array.from count2.values   .sort  a, b     a - b ; return JSON.stringify values1      JSON.stringify values2 ; function closeStrings_object word1, word2     Using plain objects if  word1.length !   word2.length  return false; const freq1   ; const freq2   ; for  const char of word1  freq1 char     freq1 char     0    1; for  const char of word2  freq2 char     freq2 char     0    1;    Same character sets const keys1   Object.keys freq1 .sort  ; const keys2   Object.keys freq2 .sort  ; if  keys1.join  ,   !   keys2.join  ,    return false;    Same frequency patterns const values1   Object.values freq1 .sort  a, b     a - b ; const values2   Object.values freq2 .sort  a, b     a - b ; return values1.join  ,       values2.join  ,  ; function closeStrings_array word1, word2     Array-based for lowercase letters if  word1.length !   word2.length  return false; const freq1   new Array 26 .fill 0 ; const freq2   new Array 26 .fill 0 ; for  const char of word1  freq1 char.charCodeAt 0  -  a .charCodeAt 0    ; for  const char of word2  freq2 char.charCodeAt 0  -  a .charCodeAt 0    ;    Check character sets for  let i   0; i 0  !    freq2 i    0   return false;    Check frequency patterns const values1   freq1.filter f    f   0 .sort  a, b     a - b ; const values2   freq2.filter f    f   0 .sort  a, b     a - b ; return values1.join  ,       values2.join  ,  ; , title:  Java , language:  java , code: import java.util. ; public class Solution public boolean closeStrings String word1, String word2     Quick length check if  word1.length   !  word2.length    return false;    Count frequencies Map freq1   new HashMap    ; Map freq2   new HashMap    ; for  char c : word1.toCharArray    freq1.put c, freq1.getOrDefault c, 0    1 ; for  char c : word2.toCharArray    freq2.put c, freq2.getOrDefault c, 0    1 ;    Check same character sets if  !freq1.keySet  .equals freq2.keySet     return false;    Check same frequency patterns List values1   new ArrayList   freq1.values   ; List values2   new ArrayList   freq2.values   ; Collections.sort values1 ; Collections.sort values2 ; return values1.equals values2 ; public boolean closeStrings_array String word1, String word2     Array-based approach if  word1.length   !  word2.length    return false; int   freq1   new int 26 ; int   freq2   new int 26 ; for  char c : word1.toCharArray    freq1 c -  a    ; for  char c : word2.toCharArray    freq2 c -  a    ;    Check character sets for  int i   0; i 0  !   freq2 i    0   return false;    Check frequency patterns Arrays.sort freq1 ; Arrays.sort freq2 ; return Arrays.equals freq1, freq2 ; public boolean closeStrings_optimized String word1, String word2     Single pass with bit manipulation for character sets if  word1.length   !  word2.length    return false; int   freq1   new int 26 ; int   freq2   new int 26 ; int mask1   0, mask2   0; for  char c : word1.toCharArray    freq1 c -  a    ; mask1    1  include  include  include class Solution public: bool closeStrings std::string word1, std::string word2     Quick length check if  word1.length   !  word2.length    return false;    Count frequencies std::unordered_map freq1, freq2; for  char c : word1  freq1 c   ; for  char c : word2  freq2 c   ;    Check same character sets if  freq1.size   !  freq2.size    return false; for  auto  p : freq1  if  freq2.find p.first     freq2.end    return false;    Check same frequency patterns std::vector values1, values2; for  auto  p : freq1  values1.push_back p.second ; for  auto  p : freq2  values2.push_back p.second ; std::sort values1.begin  , values1.end   ; std::sort values2.begin  , values2.end   ; return values1    values2; bool closeStrings_array std::string word1, std::string word2     Array-based approach if  word1.length   !  word2.length    return false; std::vector freq1 26, 0 , freq2 26, 0 ; for  char c : word1  freq1 c -  a    ; for  char c : word2  freq2 c -  a    ;    Check character sets for  int i   0; i 0  !   freq2 i    0   return false;    Check frequency patterns std::sort freq1.begin  , freq1.end   ; std::sort freq2.begin  , freq2.end   ; return freq1    freq2; bool closeStrings_bitset std::string word1, std::string word2     Using bitset for character presence if  word1.length   !  word2.length    return false; std::vector freq1 26, 0 , freq2 26, 0 ; int mask1   0, mask2   0; for  char c : word1  freq1 c -  a    ; mask1    1 --- Step-by-Step Walkthrough Example: word1    cabbba , word2    abbccc    Step 1: Length Check len  cabbba     6, len  abbccc     6   Step 2: Count Frequencies word1 frequencies: c: 1, a: 2, b: 3 word2 frequencies: a: 1, b: 2, c: 3 Step 3: Check Character Sets word1 chars: a, b, c word2 chars: a, b, c   Step 4: Check Frequency Patterns word1 frequencies:  1, 2, 3  word2 frequencies:  1, 2, 3    Result: true   Example: word1    a , word2    aa    Step 1: Length Check len  a     1, len  aa     2   Result: false  early termination    Example: word1    abc , word2    bca    Step 1: Length Check len  abc     3, len  bca     3   Step 2: Count Frequencies word1 frequencies: a: 1, b: 1, c: 1 word2 frequencies: b: 1, c: 1, a: 1 Step 3: Check Character Sets word1 chars: a, b, c word2 chars: a, b, c   Step 4: Check Frequency Patterns word1 frequencies:  1, 1, 1  word2 frequencies:  1, 1, 1    Result: true   --- Why This Algorithm Works Operation 1  Swap  - Makes character order irrelevant, only frequencies matter Operation 2  Transform  - Allows swapping frequency counts between existing characters Character Set Check - Both strings must have exactly the same unique characters Frequency Pattern - The sorted frequency arrays must be identical --- Algorithm Analysis Key Insights:   Two strings are close if and only if: 1. Same character sets: set word1     set word2  2. Same frequency distribution: sorted freq1     sorted freq2  Why this works: - Operation 1: Rearrange   Order doesn t matter - Operation 2: Transform   Frequency counts can be swapped between chars Example Analysis: word1    aab    freq: a:2, b:1   pattern:  1,2  word2    bba    freq: b:2, a:1   pattern:  1,2  Same chars a,b, same pattern  1,2    Close   word1    aab    freq: a:2, b:1   pattern:  1,2  word2    bbc    freq: b:2, c:1   chars: b,c   a,b   Not close     --- Edge Cases  python Test cases: print closeStrings  abc ,  bca      true - same chars, same freq print closeStrings  a ,  aa      false - different lengths print closeStrings  cabbba ,  abbccc      true - same chars, diff freq distribution print closeStrings  cabbba ,  aabbss      false - different character sets print closeStrings   ,        true - both empty print closeStrings  a ,  b      false - different characters print closeStrings  aa ,  bb      false - different characters print closeStrings  abbbzcf ,  babzzcf      true - rearrangeable   --- Common Mistakes to Avoid 1. Ignoring length check: Always check if lengths are equal first 2. Wrong frequency comparison: Compare sorted frequency arrays, not the maps directly 3. Character set confusion: Must have exactly the same unique characters 4. Order dependency: Don t check character positions, only frequencies matter 5. Case sensitivity: Handle uppercase lowercase consistently --- Complexity Analysis Hash Map Approach  Optimal : Time: O n  - Single pass to count   O k log k  to sort frequencies where k   26 Space: O k  - Hash maps store at most 26 characters for lowercase letters Array Approach: Time: O n  - Count frequencies   O 26 log 26  for sorting Space: O 1  - Fixed size arrays  26 elements  Overall: Time: O n  - Dominated by string traversal since k   26 is constant Space: O 1  - Constant space for limited alphabet --- Pattern Recognition This problem demonstrates key patterns: - Frequency Counting: Core technique for character element analysis - Set Comparison: Checking if two collections have same elements - Frequency Distribution: Comparing patterns rather than exact mappings - Invariant Properties: What remains constant under allowed operations You ll see similar patterns in: - Group Anagrams - Valid Anagram - Find All Anagrams in a String - Character replacement problems - String transformation problems --- Real-World Applications - Text Processing: Determining if documents can be made equivalent through edits - Data Deduplication: Identifying files that can be transformed to identical content - Game Development: Checking if game states can be reached from one another - Cryptography: Analyzing character frequency patterns in cipher text - Language Processing: Comparing text similarity with allowed transformations --- Visual Representation   word1    cabbba , word2    abbccc  Frequency Analysis: word1: c 1    a 2    b 3     cabbba        v v v word2: c 3    a 1    b 2     abbccc  Character Sets: a,b,c    a,b,c   Frequency Patterns:  1,2,3      1,2,3    Transformation Path:  cabbba     caabbb   swap positions   caabbb     baaccc   transform c a   baaccc     abbccc   swap positions  Result: Close     --- Follow-up Questions Q: What if we allow insertion deletion operations? A: That would be edit distance problem - much more complex with dynamic programming. Q: Can this be solved without sorting? A: Yes, use frequency counting of frequencies, but sorting is simpler and efficient for small alphabets. Q: What about Unicode characters? A: Same algorithm works, but space complexity becomes O unique_chars  instead of O 26 . Q: How would you optimize for very large strings? A: Early termination after first mismatch in character sets, or use parallel processing for frequency counting. Q: What if strings can have different lengths but still be  close ? A: Then they can t be close - the operations preserve string length. --- Alternative Approaches Frequency of Frequencies: Instead of sorting frequency arrays, count how many characters appear with each frequency:  python def closeStrings_freq_of_freq word1, word2 : if len word1  !  len word2 : return False from collections import Counter freq1   Counter word1  freq2   Counter word2    Same character sets if set freq1.keys    !  set freq2.keys   : return False   Count frequency of frequencies freq_freq1   Counter freq1.values    freq_freq2   Counter freq2.values    return freq_freq1    freq_freq2    This avoids sorting but uses more space for the frequency-of-frequency counters.",
+    "excerpt": "Determine if Two Strings Are Close Difficulty: Medium LeetCode: 1657. Determine if Two Strings Are Close --- Problem Two strings are considered close if you...",
+    "url": "/crackmode/docs/problems/determine-if-two-strings-are-close",
+    "canonicalUrl": "https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/determine-if-two-strings-are-close",
+    "section": "Problems",
+    "tags": [
+      "medium",
+      "array",
+      "arrays",
+      "string",
+      "strings",
+      "graph"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "Determine if Two Strings Are Close",
+        "id": "determine-if-two-strings-are-close"
+      },
+      {
+        "level": 2,
+        "text": "Problem",
+        "id": "problem"
+      },
+      {
+        "level": 2,
+        "text": "Simple Explanation",
+        "id": "simple-explanation"
+      },
+      {
+        "level": 2,
+        "text": "Optimal Solutions",
+        "id": "optimal-solutions"
+      },
+      {
+        "level": 2,
+        "text": "Step-by-Step Walkthrough",
+        "id": "step-by-step-walkthrough"
+      },
+      {
+        "level": 3,
+        "text": "Example: word1 = \"cabbba\", word2 = \"abbccc\"",
+        "id": "example-word1-cabbba-word2-abbccc"
+      },
+      {
+        "level": 3,
+        "text": "Example: word1 = \"a\", word2 = \"aa\"",
+        "id": "example-word1-a-word2-aa"
+      },
+      {
+        "level": 3,
+        "text": "Example: word1 = \"abc\", word2 = \"bca\"",
+        "id": "example-word1-abc-word2-bca"
+      },
+      {
+        "level": 2,
+        "text": "Why This Algorithm Works",
+        "id": "why-this-algorithm-works"
+      },
+      {
+        "level": 2,
+        "text": "Algorithm Analysis",
+        "id": "algorithm-analysis"
+      },
+      {
+        "level": 3,
+        "text": "Key Insights:",
+        "id": "key-insights"
+      },
+      {
+        "level": 2,
+        "text": "Edge Cases",
+        "id": "edge-cases"
+      },
+      {
+        "level": 1,
+        "text": "Test cases:",
+        "id": "test-cases"
+      },
+      {
+        "level": 2,
+        "text": "Common Mistakes to Avoid",
+        "id": "common-mistakes-to-avoid"
+      },
+      {
+        "level": 2,
+        "text": "Complexity Analysis",
+        "id": "complexity-analysis"
+      },
+      {
+        "level": 2,
+        "text": "Pattern Recognition",
+        "id": "pattern-recognition"
+      },
+      {
+        "level": 2,
+        "text": "Real-World Applications",
+        "id": "real-world-applications"
+      },
+      {
+        "level": 2,
+        "text": "Visual Representation",
+        "id": "visual-representation"
+      },
+      {
+        "level": 2,
+        "text": "Follow-up Questions",
+        "id": "follow-up-questions"
+      },
+      {
+        "level": 2,
+        "text": "Alternative Approaches",
+        "id": "alternative-approaches"
+      },
+      {
+        "level": 3,
+        "text": "Frequency of Frequencies:",
+        "id": "frequency-of-frequencies"
+      }
+    ],
+    "publishedAt": "2025-09-23T15:08:36.404Z",
+    "updatedAt": "2025-09-23T15:28:02.178Z",
+    "author": "Morgan Ngetich",
+    "readingTime": 11,
+    "seo": {
+      "title": "Determine If Two Strings Are Close | Crackmode Documentation",
+      "description": "Determine if Two Strings Are Close Difficulty: Medium LeetCode: 1657. Determine if Two Strings Are Close --- Problem Two strings are considered close if you...",
+      "keywords": "determine, strings, close, medium, array, arrays, string, graph, return, frequency, character, check, const, crackmode, leetcode, algorithm",
+      "robots": "index,follow",
+      "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Determine If Two Strings Are Close\",\"description\":\"Determine if Two Strings Are Close Difficulty: Medium LeetCode: 1657. Determine if Two Strings Are Close --- Problem Two strings are considered close if you...\",\"url\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/determine-if-two-strings-are-close\",\"datePublished\":\"2025-09-23T15:08:36.404Z\",\"dateModified\":\"2025-09-23T15:28:02.178Z\",\"author\":{\"@type\":\"Person\",\"name\":\"Morgan Ngetich\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"CrackMode\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://frontend-production-a85f.up.railway.app/group.png\"}},\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://frontend-production-a85f.up.railway.app/crackmode/docs/problems/determine-if-two-strings-are-close\"},\"wordCount\":175,\"timeRequired\":\"PT11M\",\"inLanguage\":\"en-US\",\"isAccessibleForFree\":true}"
+    },
+    "socialMedia": {
+      "ogTitle": "Determine If Two Strings Are Close | Crackmode Documentation",
+      "ogDescription": "Two strings are considered close if you can attain one from the other using the following operations: 1. Operation 1: Swap any two existing characters.",
+      "ogImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Determine+If+Two+Strings+Are+Close&description=Two+strings+are+considered+close+if+you+can+attain+one+from+the+other+using+the+following+operations%3A+1.+Operation+1%3A+Sw...&section=Documentation&theme=crackmode",
+      "twitterTitle": "Determine If Two Strings Are Close | Crackmode Documentation",
+      "twitterDescription": "Two strings are considered close if you can attain one from the other using the following operations: 1. Operation 1: Swap any two existing characters.",
+      "twitterImage": "https://frontend-production-a85f.up.railway.app/api/v1/og?title=Determine+If+Two+Strings+Are+Close&description=Two+strings+are+considered+close+if+you+can+attain+one+from+the+other+using+the+following+operations%3A+1.+Operation+1%3A+Sw...&section=Documentation&theme=crackmode"
     }
   },
   {

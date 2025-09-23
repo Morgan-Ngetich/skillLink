@@ -40,6 +40,7 @@ import { Route as CrackmodeDocsProblemsFindTheDifferenceRouteImport } from './ro
 import { Route as CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRouteImport } from './routes/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
 import { Route as CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRouteImport } from './routes/crackmode/docs/problems/find-all-duplicates-in-an-array'
 import { Route as CrackmodeDocsProblemsDistributeCandiesRouteImport } from './routes/crackmode/docs/problems/distribute-candies'
+import { Route as CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRouteImport } from './routes/crackmode/docs/problems/determine-if-two-strings-are-close'
 import { Route as CrackmodeDocsProblemsContainsDuplicateRouteImport } from './routes/crackmode/docs/problems/contains-duplicate'
 import { Route as CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRouteImport } from './routes/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
 import { Route as CrackmodeDocsProblemsBestTimeToBuyAndSellStockRouteImport } from './routes/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
@@ -223,6 +224,12 @@ const CrackmodeDocsProblemsDistributeCandiesRoute =
     path: '/problems/distribute-candies',
     getParentRoute: () => CrackmodeDocsRoute,
   } as any)
+const CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRoute =
+  CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRouteImport.update({
+    id: '/problems/determine-if-two-strings-are-close',
+    path: '/problems/determine-if-two-strings-are-close',
+    getParentRoute: () => CrackmodeDocsRoute,
+  } as any)
 const CrackmodeDocsProblemsContainsDuplicateRoute =
   CrackmodeDocsProblemsContainsDuplicateRouteImport.update({
     id: '/problems/contains-duplicate',
@@ -317,6 +324,7 @@ export interface FileRoutesByFullPath {
   '/crackmode/docs/problems/best-time-to-buy-and-sell-stock': typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
   '/crackmode/docs/problems/contains-duplicate': typeof CrackmodeDocsProblemsContainsDuplicateRoute
+  '/crackmode/docs/problems/determine-if-two-strings-are-close': typeof CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRoute
   '/crackmode/docs/problems/distribute-candies': typeof CrackmodeDocsProblemsDistributeCandiesRoute
   '/crackmode/docs/problems/find-all-duplicates-in-an-array': typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute
   '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array': typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute
@@ -359,6 +367,7 @@ export interface FileRoutesByTo {
   '/crackmode/docs/problems/best-time-to-buy-and-sell-stock': typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
   '/crackmode/docs/problems/contains-duplicate': typeof CrackmodeDocsProblemsContainsDuplicateRoute
+  '/crackmode/docs/problems/determine-if-two-strings-are-close': typeof CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRoute
   '/crackmode/docs/problems/distribute-candies': typeof CrackmodeDocsProblemsDistributeCandiesRoute
   '/crackmode/docs/problems/find-all-duplicates-in-an-array': typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute
   '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array': typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute
@@ -404,6 +413,7 @@ export interface FileRoutesById {
   '/crackmode/docs/problems/best-time-to-buy-and-sell-stock': typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
   '/crackmode/docs/problems/contains-duplicate': typeof CrackmodeDocsProblemsContainsDuplicateRoute
+  '/crackmode/docs/problems/determine-if-two-strings-are-close': typeof CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRoute
   '/crackmode/docs/problems/distribute-candies': typeof CrackmodeDocsProblemsDistributeCandiesRoute
   '/crackmode/docs/problems/find-all-duplicates-in-an-array': typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute
   '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array': typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute
@@ -449,6 +459,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
     | '/crackmode/docs/problems/contains-duplicate'
+    | '/crackmode/docs/problems/determine-if-two-strings-are-close'
     | '/crackmode/docs/problems/distribute-candies'
     | '/crackmode/docs/problems/find-all-duplicates-in-an-array'
     | '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
@@ -491,6 +502,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
     | '/crackmode/docs/problems/contains-duplicate'
+    | '/crackmode/docs/problems/determine-if-two-strings-are-close'
     | '/crackmode/docs/problems/distribute-candies'
     | '/crackmode/docs/problems/find-all-duplicates-in-an-array'
     | '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
@@ -535,6 +547,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
     | '/crackmode/docs/problems/contains-duplicate'
+    | '/crackmode/docs/problems/determine-if-two-strings-are-close'
     | '/crackmode/docs/problems/distribute-candies'
     | '/crackmode/docs/problems/find-all-duplicates-in-an-array'
     | '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
@@ -791,6 +804,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrackmodeDocsProblemsDistributeCandiesRouteImport
       parentRoute: typeof CrackmodeDocsRoute
     }
+    '/crackmode/docs/problems/determine-if-two-strings-are-close': {
+      id: '/crackmode/docs/problems/determine-if-two-strings-are-close'
+      path: '/problems/determine-if-two-strings-are-close'
+      fullPath: '/crackmode/docs/problems/determine-if-two-strings-are-close'
+      preLoaderRoute: typeof CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
     '/crackmode/docs/problems/contains-duplicate': {
       id: '/crackmode/docs/problems/contains-duplicate'
       path: '/problems/contains-duplicate'
@@ -897,6 +917,7 @@ interface CrackmodeDocsRouteChildren {
   CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute: typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
   CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute: typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
   CrackmodeDocsProblemsContainsDuplicateRoute: typeof CrackmodeDocsProblemsContainsDuplicateRoute
+  CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRoute: typeof CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRoute
   CrackmodeDocsProblemsDistributeCandiesRoute: typeof CrackmodeDocsProblemsDistributeCandiesRoute
   CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute: typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute
   CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute: typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute
@@ -932,6 +953,8 @@ const CrackmodeDocsRouteChildren: CrackmodeDocsRouteChildren = {
     CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute,
   CrackmodeDocsProblemsContainsDuplicateRoute:
     CrackmodeDocsProblemsContainsDuplicateRoute,
+  CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRoute:
+    CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRoute,
   CrackmodeDocsProblemsDistributeCandiesRoute:
     CrackmodeDocsProblemsDistributeCandiesRoute,
   CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute:

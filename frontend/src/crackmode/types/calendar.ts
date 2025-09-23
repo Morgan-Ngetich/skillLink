@@ -220,7 +220,17 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
       "solved": true,
       "solvedAt": "2025-09-18T17:28:00Z"
     }
-  ]
-
-
+  ],
+  "2025-09-19": [
+    {
+      "id": 1,
+      "title": "Determine if Two Strings are Close",
+      "difficulty": "Easy",
+      "tags": ["Array", "Two Pointers", "Sorting"],
+      "url": "https://leetcode.com/problems/determine-if-two-strings-are-close/",
+      "docs": "/crackmode/docs/problems/determine-if-two-strings-are-close",
+      "solved": true,
+      "solvedAt": "2025-09-19T20:24:00Z"
+    }
+  ],
 }

@@ -1,0 +1,471 @@
+import { VStack, HStack, Text } from "@chakra-ui/react"
+
+# Determine if Two Strings Are Close
+
+**Difficulty:** <span style={{color: "#f59e0b"}}>Medium</span>  
+**LeetCode:** [1657. Determine if Two Strings Are Close](https://leetcode.com/problems/determine-if-two-strings-are-close/)
+
+---
+
+## Problem
+
+Two strings are considered **close** if you can attain one from the other using the following operations:
+
+1. **Operation 1:** Swap any two existing characters.
+   - For example, `abcde -> aecdb`
+2. **Operation 2:** Transform every occurrence of one existing character into another existing character, and do the same with the other character.
+   - For example, `aacabb -> bbcbaa` (all `a`'s turn into `b`'s, and all `b`'s turn into `a`'s)
+
+You can use the operations on either string as many times as necessary.
+
+Given two strings, `word1` and `word2`, return `true` if `word1` and `word2` are **close**, and `false` otherwise.
+
+**Example 1:**
+```
+Input: word1 = "abc", word2 = "bca"
+Output: true
+Explanation: You can attain word2 from word1 in 2 operations.
+Apply Operation 1: "abc" -> "acb"
+Apply Operation 1: "acb" -> "bca"
+```
+
+**Example 2:**
+```
+Input: word1 = "a", word2 = "aa"
+Output: false
+Explanation: It is impossible to attain word2 from word1, or vice versa, in any number of operations.
+```
+
+**Example 3:**
+```
+Input: word1 = "cabbba", word2 = "abbccc"
+Output: true
+Explanation: You can attain word2 from word1 in 3 operations.
+Apply Operation 1: "cabbba" -> "caabbb"
+Apply Operation 2: "caabbb" -> "baaccc"
+Apply Operation 2: "baaccc" -> "abbccc"
+```
+
+---
+
+## Simple Explanation
+
+Think of this like **rearranging and swapping character frequencies**!
+
+Two strings are "close" if:
+1. They have the **same set of unique characters**
+2. The **frequency counts can be rearranged** to match
+
+**The Key Insight:** 
+- Operation 1 (swap) means order doesn't matter
+- Operation 2 (transform) means we can swap frequency counts between characters
+
+So we need to check:
+- Same character sets: `{a,b,c}` vs `{a,b,c}` ✓
+- Same frequency patterns: `[1,2,3]` vs `[2,1,3]` ✓
+
+---
+
+## Optimal Solutions
+
+<TabbedCode
+  files={[
+    {
+      title: "Python",
+      language: "python",
+      code: `def closeStrings(word1, word2):
+    """
+    Frequency Count + Set Comparison
+    Time: O(n), Space: O(1) - limited by alphabet size
+    """
+    # Quick length check
+    if len(word1) != len(word2):
+        return False
+    
+    # Count character frequencies
+    from collections import Counter
+    count1 = Counter(word1)
+    count2 = Counter(word2)
+    
+    # Check if same set of characters exist
+    if set(count1.keys()) != set(count2.keys()):
+        return False
+    
+    # Check if frequency patterns match
+    if sorted(count1.values()) != sorted(count2.values()):
+        return False
+    
+    return True
+
+
+`
+    },
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function closeStrings(word1, word2) {
+    // Quick length check
+    if (word1.length !== word2.length) {
+        return false;
+    }
+    
+    // Count character frequencies
+    const count1 = new Map();
+    const count2 = new Map();
+    
+    for (const char of word1) {
+        count1.set(char, (count1.get(char) || 0) + 1);
+    }
+    
+    for (const char of word2) {
+        count2.set(char, (count2.get(char) || 0) + 1);
+    }
+    
+    // Check same character sets
+    const keys1 = new Set(count1.keys());
+    const keys2 = new Set(count2.keys());
+    
+    if (keys1.size !== keys2.size) {
+        return false;
+    }
+    
+    for (const key of keys1) {
+        if (!keys2.has(key)) {
+            return false;
+        }
+    }
+    
+    // Check same frequency patterns
+    const values1 = Array.from(count1.values()).sort((a, b) => a - b);
+    const values2 = Array.from(count2.values()).sort((a, b) => a - b);
+    
+    return JSON.stringify(values1) === JSON.stringify(values2);
+}`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `import java.util.*;
+
+public class Solution {
+    public boolean closeStrings(String word1, String word2) {
+        // Quick length check
+        if (word1.length() != word2.length()) {
+            return false;
+        }
+        
+        // Count frequencies
+        Map<Character, Integer> freq1 = new HashMap<>();
+        Map<Character, Integer> freq2 = new HashMap<>();
+        
+        for (char c : word1.toCharArray()) {
+            freq1.put(c, freq1.getOrDefault(c, 0) + 1);
+        }
+        
+        for (char c : word2.toCharArray()) {
+            freq2.put(c, freq2.getOrDefault(c, 0) + 1);
+        }
+        
+        // Check same character sets
+        if (!freq1.keySet().equals(freq2.keySet())) {
+            return false;
+        }
+        
+        // Check same frequency patterns
+        List<Integer> values1 = new ArrayList<>(freq1.values());
+        List<Integer> values2 = new ArrayList<>(freq2.values());
+        Collections.sort(values1);
+        Collections.sort(values2);
+        
+        return values1.equals(values2);
+    }`
+    },
+    {
+      title: "C++",
+      language: "cpp",
+      code: `#include <string>
+#include <unordered_map>
+#include <vector>
+#include <algorithm>
+
+class Solution {
+public:
+    bool closeStrings(std::string word1, std::string word2) {
+        // Quick length check
+        if (word1.length() != word2.length()) {
+            return false;
+        }
+        
+        // Count frequencies
+        std::unordered_map<char, int> freq1, freq2;
+        
+        for (char c : word1) {
+            freq1[c]++;
+        }
+        
+        for (char c : word2) {
+            freq2[c]++;
+        }
+        
+        // Check same character sets
+        if (freq1.size() != freq2.size()) {
+            return false;
+        }
+        
+        for (auto& p : freq1) {
+            if (freq2.find(p.first) == freq2.end()) {
+                return false;
+            }
+        }
+        
+        // Check same frequency patterns
+        std::vector<int> values1, values2;
+        
+        for (auto& p : freq1) {
+            values1.push_back(p.second);
+        }
+        
+        for (auto& p : freq2) {
+            values2.push_back(p.second);
+        }
+        
+        std::sort(values1.begin(), values1.end());
+        std::sort(values2.begin(), values2.end());
+        
+        return values1 == values2;
+    }`
+    }
+  ]}
+/>
+
+---
+
+## Step-by-Step Walkthrough
+
+### Example: word1 = "cabbba", word2 = "abbccc"
+
+```
+Step 1: Length Check
+        len("cabbba") = 6, len("abbccc") = 6 ✓
+
+Step 2: Count Frequencies
+        word1 frequencies: {c: 1, a: 2, b: 3}
+        word2 frequencies: {a: 1, b: 2, c: 3}
+
+Step 3: Check Character Sets
+        word1 chars: {a, b, c}
+        word2 chars: {a, b, c} ✓
+
+Step 4: Check Frequency Patterns
+        word1 frequencies: [1, 2, 3]
+        word2 frequencies: [1, 2, 3] ✓
+        
+        Result: true
+```
+
+### Example: word1 = "a", word2 = "aa"
+
+```
+Step 1: Length Check
+        len("a") = 1, len("aa") = 2 ✗
+        
+        Result: false (early termination)
+```
+
+### Example: word1 = "abc", word2 = "bca"
+
+```
+Step 1: Length Check
+        len("abc") = 3, len("bca") = 3 ✓
+
+Step 2: Count Frequencies
+        word1 frequencies: {a: 1, b: 1, c: 1}
+        word2 frequencies: {b: 1, c: 1, a: 1}
+
+Step 3: Check Character Sets
+        word1 chars: {a, b, c}
+        word2 chars: {a, b, c} ✓
+
+Step 4: Check Frequency Patterns
+        word1 frequencies: [1, 1, 1]
+        word2 frequencies: [1, 1, 1] ✓
+        
+        Result: true
+```
+
+---
+
+## Why This Algorithm Works
+
+<VStack align="start" spacing={2}>
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Operation 1 (Swap)</Text>
+    <Text>- Makes character order irrelevant, only frequencies matter</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Operation 2 (Transform)</Text>
+    <Text>- Allows swapping frequency counts between existing characters</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Character Set Check</Text>
+    <Text>- Both strings must have exactly the same unique characters</Text>
+  </HStack>
+
+  <HStack spacing={2}>
+    <Text color="green.400" fontWeight="extrabold">Frequency Pattern</Text>
+    <Text>- The sorted frequency arrays must be identical</Text>
+  </HStack>
+</VStack>
+
+---
+
+## Algorithm Analysis
+
+### Key Insights:
+
+```
+Two strings are close if and only if:
+1. Same character sets: set(word1) == set(word2)
+2. Same frequency distribution: sorted(freq1) == sorted(freq2)
+
+Why this works:
+- Operation 1: Rearrange → Order doesn't matter
+- Operation 2: Transform → Frequency counts can be swapped between chars
+
+Example Analysis:
+word1 = "aab" → freq: {a:2, b:1} → pattern: [1,2]
+word2 = "bba" → freq: {b:2, a:1} → pattern: [1,2]
+Same chars {a,b}, same pattern [1,2] → Close ✓
+
+word1 = "aab" → freq: {a:2, b:1} → pattern: [1,2]  
+word2 = "bbc" → freq: {b:2, c:1} → chars: {b,c} ≠ {a,b} → Not close ✗
+```
+
+---
+
+## Edge Cases
+
+```python
+# Test cases:
+print(closeStrings("abc", "bca"))         # true - same chars, same freq
+print(closeStrings("a", "aa"))            # false - different lengths
+print(closeStrings("cabbba", "abbccc"))   # true - same chars, diff freq distribution  
+print(closeStrings("cabbba", "aabbss"))   # false - different character sets
+print(closeStrings("", ""))               # true - both empty
+print(closeStrings("a", "b"))             # false - different characters
+print(closeStrings("aa", "bb"))           # false - different characters
+print(closeStrings("abbbzcf", "babzzcf"))  # true - rearrangeable
+```
+
+---
+
+## Common Mistakes to Avoid
+
+1. **Ignoring length check:** Always check if lengths are equal first
+
+2. **Wrong frequency comparison:** Compare sorted frequency arrays, not the maps directly
+
+3. **Character set confusion:** Must have exactly the same unique characters
+
+4. **Order dependency:** Don't check character positions, only frequencies matter
+
+5. **Case sensitivity:** Handle uppercase/lowercase consistently
+
+---
+
+## Complexity Analysis
+
+<Text color="green.400" fontWeight="bold">Hash Map Approach (Optimal):</Text>
+<Text ml={4} as="li">**Time:** O(n) - Single pass to count + O(k log k) to sort frequencies where k ≤ 26</Text>
+<Text ml={4} as="li">**Space:** O(k) - Hash maps store at most 26 characters for lowercase letters</Text>
+
+---
+
+## Pattern Recognition
+
+This problem demonstrates key patterns:
+- **Frequency Counting**: Core technique for character/element analysis
+- **Set Comparison**: Checking if two collections have same elements
+- **Frequency Distribution**: Comparing patterns rather than exact mappings
+- **Invariant Properties**: What remains constant under allowed operations
+
+You'll see similar patterns in:
+- Group Anagrams
+- Valid Anagram
+- Find All Anagrams in a String
+- Character replacement problems
+- String transformation problems
+
+---
+
+## Visual Representation
+
+```
+word1 = "cabbba", word2 = "abbccc"
+
+Frequency Analysis:
+word1: c(1) + a(2) + b(3) = "cabbba"
+       │     │     │
+       v     v     v
+word2: c(3) + a(1) + b(2) = "abbccc"
+
+Character Sets: {a,b,c} == {a,b,c} ✓
+Frequency Patterns: [1,2,3] == [1,2,3] ✓
+
+Transformation Path:
+"cabbba" → "caabbb" (swap positions)
+"caabbb" → "baaccc" (transform c↔a)  
+"baaccc" → "abbccc" (swap positions)
+
+Result: Close ✓
+```
+
+---
+
+## Follow-up Questions
+
+**Q: What if we allow insertion/deletion operations?**
+A: That would be edit distance problem - much more complex with dynamic programming.
+
+**Q: Can this be solved without sorting?**
+A: Yes, use frequency counting of frequencies, but sorting is simpler and efficient for small alphabets.
+
+**Q: What about Unicode characters?**
+A: Same algorithm works, but space complexity becomes O(unique_chars) instead of O(26).
+
+**Q: How would you optimize for very large strings?**
+A: Early termination after first mismatch in character sets, or use parallel processing for frequency counting.
+
+**Q: What if strings can have different lengths but still be "close"?**
+A: Then they can't be close - the operations preserve string length.
+
+---
+
+## Alternative Approaches
+
+### Frequency of Frequencies:
+Instead of sorting frequency arrays, count how many characters appear with each frequency:
+
+```python
+def closeStrings_freq_of_freq(word1, word2):
+    if len(word1) != len(word2):
+        return False
+    
+    from collections import Counter
+    freq1 = Counter(word1)
+    freq2 = Counter(word2)
+    
+    # Same character sets
+    if set(freq1.keys()) != set(freq2.keys()):
+        return False
+    
+    # Count frequency of frequencies
+    freq_freq1 = Counter(freq1.values())
+    freq_freq2 = Counter(freq2.values())
+    
+    return freq_freq1 == freq_freq2
+```
+
+This avoids sorting but uses more space for the frequency-of-frequency counters.
