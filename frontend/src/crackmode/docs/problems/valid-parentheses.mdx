@@ -1,0 +1,276 @@
+import { VStack, HStack, Text } from "@chakra-ui/react"
+
+# Valid Parentheses
+
+**Difficulty:** <span style={{color: "#4ade80"}}>Easy</span>  
+**LeetCode:** [20. Valid Parentheses](https://leetcode.com/problems/valid-parentheses/)
+
+---
+
+## Problem
+
+Given a string `s` containing just the characters `'('`, `')'`, `'['`, `']'`, `'{'` and `'}'`, determine if the input string is valid.
+
+An input string is valid if:
+
+1. Open brackets must be closed by the same type of brackets.
+2. Open brackets must be closed in the correct order.
+3. Every close bracket has a corresponding open bracket of the same type.
+
+**Example 1:**
+```
+Input: s = "()"
+Output: true
+```
+
+**Example 2:**
+```
+Input: s = "()[]{}"
+Output: true
+```
+
+**Example 3:**
+```
+Input: s = "(]"
+Output: false
+```
+
+**Example 4:**
+```
+Input: s = "([)]"
+Output: false
+```
+
+**Example 5:**
+```
+Input: s = "{[]}"
+Output: true
+```
+
+---
+
+## Simple Explanation
+
+This function checks if parentheses, brackets, and braces are properly matched and nested using a **stack**.
+
+**The key insight:** Use a stack to track opening brackets and match them with closing brackets in reverse order (LIFO - Last In, First Out).
+
+
+## Solution
+
+<TabbedCode
+  files={[
+    {
+      title: "Python",
+      language: "python",
+      code: `def isValid(s):
+    """
+    Stack-based approach for valid parentheses
+    Time: O(n), Space: O(n)
+    """
+    # Stack to keep track of opening brackets
+    stack = []
+    
+    # Mapping of closing to opening brackets
+    mapping = {')': '(', ']': '[', '}': '{'}
+    
+    for char in s:
+        if char in mapping:  # It's a closing bracket
+            # Check if stack is empty or top doesn't match
+            if not stack or stack.pop() != mapping[char]:
+                return False
+        else:  # It's an opening bracket
+            stack.append(char)
+    
+    # Valid if stack is empty (all brackets matched)
+    return len(stack) == 0`
+    },
+    {
+      title: "JavaScript",
+      language: "javascript",
+      code: `function isValid(s) {
+    // Stack to keep track of opening brackets
+    const stack = [];
+    
+    // Mapping of closing to opening brackets
+    const mapping = {
+        ')': '(',
+        ']': '[',
+        '}': '{'
+    };
+    
+    for (const char of s) {
+        if (char in mapping) {  // It's a closing bracket
+            // Check if stack is empty or top doesn't match
+            if (stack.length === 0 || stack.pop() !== mapping[char]) {
+                return false;
+            }
+        } else {  // It's an opening bracket
+            stack.push(char);
+        }
+    }
+    
+    // Valid if stack is empty (all brackets matched)
+    return stack.length === 0;
+}`
+    },
+    {
+      title: "Java",
+      language: "java",
+      code: `import java.util.*;
+
+public class Solution {
+    public boolean isValid(String s) {
+        // Stack to keep track of opening brackets
+        Stack<Character> stack = new Stack<>();
+        
+        // Mapping of closing to opening brackets
+        Map<Character, Character> mapping = new HashMap<>();
+        mapping.put(')', '(');
+        mapping.put(']', '[');
+        mapping.put('}', '{');
+        
+        for (char c : s.toCharArray()) {
+            if (mapping.containsKey(c)) {  // It's a closing bracket
+                // Check if stack is empty or top doesn't match
+                if (stack.isEmpty() || stack.pop() != mapping.get(c)) {
+                    return false;
+                }
+            } else {  // It's an opening bracket
+                stack.push(c);
+            }
+        }
+        
+        // Valid if stack is empty (all brackets matched)
+        return stack.isEmpty();
+    }
+}`
+    },
+    {
+      title: "C++",
+      language: "cpp",
+      code: `#include <string>
+#include <stack>
+#include <unordered_map>
+
+class Solution {
+public:
+    bool isValid(std::string s) {
+        // Stack to keep track of opening brackets
+        std::stack<char> stack;
+        
+        // Mapping of closing to opening brackets
+        std::unordered_map<char, char> mapping = {
+            {')', '('},
+            {']', '['},
+            {'}', '{'}
+        };
+        
+        for (char c : s) {
+            if (mapping.find(c) != mapping.end()) {  // It's a closing bracket
+                // Check if stack is empty or top doesn't match
+                if (stack.empty() || stack.top() != mapping[c]) {
+                    return false;
+                }
+                stack.pop();
+            } else {  // It's an opening bracket
+                stack.push(c);
+            }
+        }
+        
+        // Valid if stack is empty (all brackets matched)
+        return stack.empty();
+    }
+};`
+    }
+  ]}
+/>
+
+---
+
+
+## Step-by-Step Walkthrough
+
+### Example 1: s = "()[]{}"
+
+```
+char = '(': Opening bracket → stack = ['(']
+char = ')': Closing bracket, matches '(' → stack = []
+char = '[': Opening bracket → stack = ['[']  
+char = ']': Closing bracket, matches '[' → stack = []
+char = '{': Opening bracket → stack = ['{']
+char = '}': Closing bracket, matches '{' → stack = []
+
+Final stack: [] (empty)
+Result: True
+```
+
+### Example 2: s = "([)]"
+
+```
+char = '(': Opening bracket → stack = ['(']
+char = '[': Opening bracket → stack = ['(', '[']
+char = ')': Closing bracket, expects '(' but top is '[' → False
+
+Result: False (mismatch detected)
+```
+
+### Example 3: s = "((("
+
+```
+char = '(': Opening bracket → stack = ['(']
+char = '(': Opening bracket → stack = ['(', '(']  
+char = '(': Opening bracket → stack = ['(', '(', '(']
+
+Final stack: ['(', '(', '('] (not empty)
+Result: False
+```
+
+---
+
+
+
+## Edge Cases
+
+```python
+# Test cases:
+print(isValid(""))           # True - empty string is valid
+print(isValid("()"))         # True - simple pair
+print(isValid("()[]{}"))     # True - multiple pairs
+print(isValid("([{}])"))     # True - nested brackets
+print(isValid("([)]"))       # False - wrong nesting order
+print(isValid("(("))         # False - unmatched opening
+print(isValid("))"))         # False - unmatched closing
+print(isValid("("))          # False - single opening
+print(isValid(")"))          # False - single closing
+```
+
+---
+
+## Complexity Analysis
+
+<Text color="green.400" fontWeight="bold">Time Complexity:</Text>
+<Text ml={4} as="li">**O(n)** - Single pass through the string</Text>
+
+<Text color="green.400" fontWeight="bold" mt={2}>Space Complexity:</Text>
+<Text ml={4} as="li">**O(n)** - In worst case, stack can hold all opening brackets</Text>
+<Text ml={4} as="li">Example: "(((((" requires stack of size n</Text>
+
+---
+
+## Pattern Recognition
+
+This problem demonstrates key patterns:
+- **Stack for Matching**: Using LIFO structure for paired elements
+- **Character Mapping**: Dictionary lookups for fast matching
+- **State Validation**: Checking conditions at each step and final state
+- **Early Termination**: Return False as soon as invalid condition is found
+
+You'll see similar patterns in:
+- Balanced Binary Tree validation
+- Expression evaluation problems
+- Nested structure parsing
+- Undo/Redo functionality
+- Browser history navigation
+
+---

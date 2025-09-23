@@ -61,6 +61,7 @@ export const sidebarConfig: DocSection[] = [
       { title: "Two sum", href: "/crackmode/docs/problems/two-sum" },
       { title: "Contains Duplicate", href: "/crackmode/docs/problems/contains-duplicate" },
       { title: "Determine if Two Strings are Close", href: "/crackmode/docs/problems/determine-if-two-strings-are-close" },
+      { title: "Valid Parentheses", href: "/crackmode/docs/problems/valid-parentheses" },
     ]
   },
   {

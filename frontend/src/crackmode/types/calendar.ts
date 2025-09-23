@@ -233,4 +233,18 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
       "solvedAt": "2025-09-19T20:24:00Z"
     }
   ],
+  "2025-09-22": [
+    {
+      "id": 1,
+      "title": "Valid Parentheses",
+      "difficulty": "Easy",
+      "tags": ["Stack", "String"],
+      "url": "https://leetcode.com/problems/valid-parentheses/",
+      "docs": "/crackmode/docs/problems/valid-parentheses",
+      "solved": true,
+      "solvedAt": "2025-09-22T20:24:00Z"
+    }
+  ]
 }
+
+

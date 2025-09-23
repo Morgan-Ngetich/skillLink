@@ -25,6 +25,7 @@ import { Route as LayoutDashboardIndexRouteImport } from './routes/_layout/dashb
 import { Route as LayoutDashboardProfileRouteImport } from './routes/_layout/dashboard/profile'
 import { Route as CrackmodeDocsLeetcode75IndexRouteImport } from './routes/crackmode/docs/leetcode75/index'
 import { Route as CrackmodeDocsIntroductionIndexRouteImport } from './routes/crackmode/docs/introduction/index'
+import { Route as CrackmodeDocsProblemsValidParenthesesRouteImport } from './routes/crackmode/docs/problems/valid-parentheses'
 import { Route as CrackmodeDocsProblemsUniqueNumberOfOccurrencesRouteImport } from './routes/crackmode/docs/problems/unique-number-of-occurrences'
 import { Route as CrackmodeDocsProblemsTwoSumRouteImport } from './routes/crackmode/docs/problems/two-sum'
 import { Route as CrackmodeDocsProblemsNumberOfGoodPairsRouteImport } from './routes/crackmode/docs/problems/number-of-good-pairs'
@@ -132,6 +133,12 @@ const CrackmodeDocsIntroductionIndexRoute =
   CrackmodeDocsIntroductionIndexRouteImport.update({
     id: '/introduction/',
     path: '/introduction/',
+    getParentRoute: () => CrackmodeDocsRoute,
+  } as any)
+const CrackmodeDocsProblemsValidParenthesesRoute =
+  CrackmodeDocsProblemsValidParenthesesRouteImport.update({
+    id: '/problems/valid-parentheses',
+    path: '/problems/valid-parentheses',
     getParentRoute: () => CrackmodeDocsRoute,
   } as any)
 const CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute =
@@ -340,6 +347,7 @@ export interface FileRoutesByFullPath {
   '/crackmode/docs/problems/number-of-good-pairs': typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
   '/crackmode/docs/problems/two-sum': typeof CrackmodeDocsProblemsTwoSumRoute
   '/crackmode/docs/problems/unique-number-of-occurrences': typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
+  '/crackmode/docs/problems/valid-parentheses': typeof CrackmodeDocsProblemsValidParenthesesRoute
   '/crackmode/docs/introduction': typeof CrackmodeDocsIntroductionIndexRoute
   '/crackmode/docs/leetcode75': typeof CrackmodeDocsLeetcode75IndexRoute
   '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
@@ -383,6 +391,7 @@ export interface FileRoutesByTo {
   '/crackmode/docs/problems/number-of-good-pairs': typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
   '/crackmode/docs/problems/two-sum': typeof CrackmodeDocsProblemsTwoSumRoute
   '/crackmode/docs/problems/unique-number-of-occurrences': typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
+  '/crackmode/docs/problems/valid-parentheses': typeof CrackmodeDocsProblemsValidParenthesesRoute
   '/crackmode/docs/introduction': typeof CrackmodeDocsIntroductionIndexRoute
   '/crackmode/docs/leetcode75': typeof CrackmodeDocsLeetcode75IndexRoute
   '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
@@ -429,6 +438,7 @@ export interface FileRoutesById {
   '/crackmode/docs/problems/number-of-good-pairs': typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
   '/crackmode/docs/problems/two-sum': typeof CrackmodeDocsProblemsTwoSumRoute
   '/crackmode/docs/problems/unique-number-of-occurrences': typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
+  '/crackmode/docs/problems/valid-parentheses': typeof CrackmodeDocsProblemsValidParenthesesRoute
   '/crackmode/docs/introduction/': typeof CrackmodeDocsIntroductionIndexRoute
   '/crackmode/docs/leetcode75/': typeof CrackmodeDocsLeetcode75IndexRoute
   '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
@@ -475,6 +485,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/problems/number-of-good-pairs'
     | '/crackmode/docs/problems/two-sum'
     | '/crackmode/docs/problems/unique-number-of-occurrences'
+    | '/crackmode/docs/problems/valid-parentheses'
     | '/crackmode/docs/introduction'
     | '/crackmode/docs/leetcode75'
     | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
@@ -518,6 +529,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/problems/number-of-good-pairs'
     | '/crackmode/docs/problems/two-sum'
     | '/crackmode/docs/problems/unique-number-of-occurrences'
+    | '/crackmode/docs/problems/valid-parentheses'
     | '/crackmode/docs/introduction'
     | '/crackmode/docs/leetcode75'
     | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
@@ -563,6 +575,7 @@ export interface FileRouteTypes {
     | '/crackmode/docs/problems/number-of-good-pairs'
     | '/crackmode/docs/problems/two-sum'
     | '/crackmode/docs/problems/unique-number-of-occurrences'
+    | '/crackmode/docs/problems/valid-parentheses'
     | '/crackmode/docs/introduction/'
     | '/crackmode/docs/leetcode75/'
     | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
@@ -697,6 +710,13 @@ declare module '@tanstack/react-router' {
       path: '/introduction'
       fullPath: '/crackmode/docs/introduction'
       preLoaderRoute: typeof CrackmodeDocsIntroductionIndexRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
+    '/crackmode/docs/problems/valid-parentheses': {
+      id: '/crackmode/docs/problems/valid-parentheses'
+      path: '/problems/valid-parentheses'
+      fullPath: '/crackmode/docs/problems/valid-parentheses'
+      preLoaderRoute: typeof CrackmodeDocsProblemsValidParenthesesRouteImport
       parentRoute: typeof CrackmodeDocsRoute
     }
     '/crackmode/docs/problems/unique-number-of-occurrences': {
@@ -933,6 +953,7 @@ interface CrackmodeDocsRouteChildren {
   CrackmodeDocsProblemsNumberOfGoodPairsRoute: typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
   CrackmodeDocsProblemsTwoSumRoute: typeof CrackmodeDocsProblemsTwoSumRoute
   CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute: typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
+  CrackmodeDocsProblemsValidParenthesesRoute: typeof CrackmodeDocsProblemsValidParenthesesRoute
   CrackmodeDocsIntroductionIndexRoute: typeof CrackmodeDocsIntroductionIndexRoute
   CrackmodeDocsLeetcode75IndexRoute: typeof CrackmodeDocsLeetcode75IndexRoute
   CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute: typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
@@ -984,6 +1005,8 @@ const CrackmodeDocsRouteChildren: CrackmodeDocsRouteChildren = {
   CrackmodeDocsProblemsTwoSumRoute: CrackmodeDocsProblemsTwoSumRoute,
   CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute:
     CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute,
+  CrackmodeDocsProblemsValidParenthesesRoute:
+    CrackmodeDocsProblemsValidParenthesesRoute,
   CrackmodeDocsIntroductionIndexRoute: CrackmodeDocsIntroductionIndexRoute,
   CrackmodeDocsLeetcode75IndexRoute: CrackmodeDocsLeetcode75IndexRoute,
   CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute:
