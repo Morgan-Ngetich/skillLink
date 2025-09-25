@@ -62,6 +62,7 @@ export const sidebarConfig: DocSection[] = [
       { title: "Contains Duplicate", href: "/crackmode/docs/problems/contains-duplicate" },
       { title: "Determine if Two Strings are Close", href: "/crackmode/docs/problems/determine-if-two-strings-are-close" },
       { title: "Valid Parentheses", href: "/crackmode/docs/problems/valid-parentheses" },
+       { title: "Asteroid Collision", href: "/crackmode/docs/problems/asteroid-collision" },
     ]
   },
   {

@@ -244,6 +244,18 @@ export const mockProblems: Record<string, LeetcodeProblem[]> = {
       "solved": true,
       "solvedAt": "2025-09-22T20:24:00Z"
     }
+  ],
+    "2025-09-23": [
+    {
+      "id": 1,
+      "title": "Asteroid Collision",
+      "difficulty": "Easy",
+      "tags": ["Array", "Stack", "Simulation"],
+      "url": "https://leetcode.com/problems/asteroid-collision/",
+      "docs": "/crackmode/docs/problems/asteroid-collision",
+      "solved": true,
+      "solvedAt": "2025-09-23T20:20:00Z"
+    }
   ]
 }
 

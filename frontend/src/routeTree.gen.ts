@@ -45,6 +45,7 @@ import { Route as CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRouteImport 
 import { Route as CrackmodeDocsProblemsContainsDuplicateRouteImport } from './routes/crackmode/docs/problems/contains-duplicate'
 import { Route as CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRouteImport } from './routes/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
 import { Route as CrackmodeDocsProblemsBestTimeToBuyAndSellStockRouteImport } from './routes/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
+import { Route as CrackmodeDocsProblemsAsteroidCollisionRouteImport } from './routes/crackmode/docs/problems/asteroid-collision'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/index'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsStringCompressionRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/string-compression'
 import { Route as CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self'
@@ -257,6 +258,12 @@ const CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute =
     path: '/problems/best-time-to-buy-and-sell-stock',
     getParentRoute: () => CrackmodeDocsRoute,
   } as any)
+const CrackmodeDocsProblemsAsteroidCollisionRoute =
+  CrackmodeDocsProblemsAsteroidCollisionRouteImport.update({
+    id: '/problems/asteroid-collision',
+    path: '/problems/asteroid-collision',
+    getParentRoute: () => CrackmodeDocsRoute,
+  } as any)
 const CrackmodeDocsLeetcode75ArraysStringsIndexRoute =
   CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport.update({
     id: '/leetcode75/arrays-strings/',
@@ -328,6 +335,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/profile': typeof LayoutDashboardProfileRoute
   '/dashboard': typeof LayoutDashboardIndexRoute
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
+  '/crackmode/docs/problems/asteroid-collision': typeof CrackmodeDocsProblemsAsteroidCollisionRoute
   '/crackmode/docs/problems/best-time-to-buy-and-sell-stock': typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
   '/crackmode/docs/problems/contains-duplicate': typeof CrackmodeDocsProblemsContainsDuplicateRoute
@@ -372,6 +380,7 @@ export interface FileRoutesByTo {
   '/dashboard/profile': typeof LayoutDashboardProfileRoute
   '/dashboard': typeof LayoutDashboardIndexRoute
   '/crackmode/docs': typeof CrackmodeDocsIndexRoute
+  '/crackmode/docs/problems/asteroid-collision': typeof CrackmodeDocsProblemsAsteroidCollisionRoute
   '/crackmode/docs/problems/best-time-to-buy-and-sell-stock': typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
   '/crackmode/docs/problems/contains-duplicate': typeof CrackmodeDocsProblemsContainsDuplicateRoute
@@ -419,6 +428,7 @@ export interface FileRoutesById {
   '/_layout/dashboard/profile': typeof LayoutDashboardProfileRoute
   '/_layout/dashboard/': typeof LayoutDashboardIndexRoute
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
+  '/crackmode/docs/problems/asteroid-collision': typeof CrackmodeDocsProblemsAsteroidCollisionRoute
   '/crackmode/docs/problems/best-time-to-buy-and-sell-stock': typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
   '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
   '/crackmode/docs/problems/contains-duplicate': typeof CrackmodeDocsProblemsContainsDuplicateRoute
@@ -466,6 +476,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard'
     | '/crackmode/docs/'
+    | '/crackmode/docs/problems/asteroid-collision'
     | '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
     | '/crackmode/docs/problems/contains-duplicate'
@@ -510,6 +521,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard'
     | '/crackmode/docs'
+    | '/crackmode/docs/problems/asteroid-collision'
     | '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
     | '/crackmode/docs/problems/contains-duplicate'
@@ -556,6 +568,7 @@ export interface FileRouteTypes {
     | '/_layout/dashboard/profile'
     | '/_layout/dashboard/'
     | '/crackmode/docs/'
+    | '/crackmode/docs/problems/asteroid-collision'
     | '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
     | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
     | '/crackmode/docs/problems/contains-duplicate'
@@ -852,6 +865,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRouteImport
       parentRoute: typeof CrackmodeDocsRoute
     }
+    '/crackmode/docs/problems/asteroid-collision': {
+      id: '/crackmode/docs/problems/asteroid-collision'
+      path: '/problems/asteroid-collision'
+      fullPath: '/crackmode/docs/problems/asteroid-collision'
+      preLoaderRoute: typeof CrackmodeDocsProblemsAsteroidCollisionRouteImport
+      parentRoute: typeof CrackmodeDocsRoute
+    }
     '/crackmode/docs/leetcode75/arrays-strings/': {
       id: '/crackmode/docs/leetcode75/arrays-strings/'
       path: '/leetcode75/arrays-strings'
@@ -934,6 +954,7 @@ const LayoutRouteWithChildren =
 
 interface CrackmodeDocsRouteChildren {
   CrackmodeDocsIndexRoute: typeof CrackmodeDocsIndexRoute
+  CrackmodeDocsProblemsAsteroidCollisionRoute: typeof CrackmodeDocsProblemsAsteroidCollisionRoute
   CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute: typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
   CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute: typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
   CrackmodeDocsProblemsContainsDuplicateRoute: typeof CrackmodeDocsProblemsContainsDuplicateRoute
@@ -968,6 +989,8 @@ interface CrackmodeDocsRouteChildren {
 
 const CrackmodeDocsRouteChildren: CrackmodeDocsRouteChildren = {
   CrackmodeDocsIndexRoute: CrackmodeDocsIndexRoute,
+  CrackmodeDocsProblemsAsteroidCollisionRoute:
+    CrackmodeDocsProblemsAsteroidCollisionRoute,
   CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute:
     CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute,
   CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute:
