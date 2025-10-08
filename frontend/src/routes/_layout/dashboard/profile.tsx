@@ -6,10 +6,10 @@ import ProfilePage from "@/pages/ProfilePage";
 import { requireProfileCompletion } from "@/utils/routeGuards";
 
 export const Route = createFileRoute("/_layout/dashboard/profile")({
-  loader: async ({ location }) => {
-    await requireProfileCompletion(location)
-    return { requiresAuth: true };
-  },
+  // loader: async ({ location }) => {
+  //   await requireProfileCompletion(location)
+  //   return { requiresAuth: true };
+  // },
   // beforeLoad: async ({ location }) => {
   //   await requireProfileCompletion(location)
   // },
