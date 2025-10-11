@@ -41,6 +41,7 @@ const Sidebar = () => {
         position="sticky"
         top={0}
         zIndex="99"
+        display={{base: "none", md: "block"}}
       >
         {/* Toggle Button */}
         <Flex justify="flex-end" mb={6}>
