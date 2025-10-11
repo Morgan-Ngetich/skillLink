@@ -42,7 +42,7 @@ export const MentorshipCalendar: React.FC<MentorshipCalendarProps> = ({ sessions
   // Color mode values
   const cardBg = { base: 'gray.300', _dark: 'blackAlpha.950' }
   // const cardHoverBg = { base: 'gray.50', _dark: 'gray.700' }
-  const borderColor = { base: 'gray.200', _dark: 'gray.600' }
+  // const borderColor = { base: 'gray.200', _dark: 'gray.600' }
   const textColor = { base: 'gray.800', _dark: 'gray.100' }
   const mutedTextColor = { base: 'gray.600', _dark: 'gray.400' }
   const todayRingColor = { base: 'blue.500', _dark: 'blue.300' }
