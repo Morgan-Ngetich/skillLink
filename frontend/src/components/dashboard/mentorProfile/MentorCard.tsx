@@ -8,6 +8,7 @@ import {
   Button,
   Icon,
   Image,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import { Avatar, Tooltip } from '@/components/ui';
 import { FaStar, FaMapMarkerAlt } from 'react-icons/fa';
@@ -21,7 +22,14 @@ interface MentorCardProps {
 
 export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
   const badgeBg = { base: 'gray.50', _dark: 'gray.100' }
-  
+
+  const isMobile = useBreakpointValue({ base: true, md: false })
+  // const cardWidth = useBreakpointValue({
+  //   base: '320px',
+  //   sm: '320px',
+  //   md: '100%'
+  // })
+
   return (
     <Box
       // TODO Create a variant in the theme file, add this as the default styles for card.
@@ -30,6 +38,10 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
       bg={"cardbg"}
       borderWidth="2px"
       borderColor={{ base: 'gray.200', _dark: 'gray.700' }}
+
+      w={{ base: "320px", sm: "320px", md: "100%" }}
+      // minW={isMobile ? '260px' : 'auto'}
+      cursor="pointer"
     >
       {/* Cover Image and Avatar */}
       <Box position="relative" borderRadius="xl">
@@ -44,6 +56,15 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
                 w="100%"
                 h="100%"
               />
+
+              <Box
+                position="absolute"
+                bottom="0"
+                left="0"
+                right="0"
+                height="50%"
+                bgGradient="linear(to-t, blackAlpha.600, transparent)"
+              />
             </Box>
 
             {/* Tags */}
@@ -51,6 +72,7 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
               position="absolute"
               bottom="4px"
               right="10px"
+              left="34%"
               gap={2}
               maxW={'190px'}
               overflowX="auto"
@@ -120,9 +142,9 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
         {/* Bio */}
         <Tooltip content={mentor.bio} showArrow portalled={false} disabled={!mentor.bio}>
 
-        <Text mt={1} fontSize="sm" lineClamp={2} color="fg.muted" >
-          {mentor.bio}
-        </Text>
+          <Text mt={1} fontSize="sm" lineClamp={2} color="fg.muted" >
+            {mentor.bio}
+          </Text>
         </Tooltip>
 
         {/* Skills */}
@@ -146,20 +168,22 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
         <HStack mt={4} justify="space-between" fontSize="sm">
           <HStack>
             <Icon as={FaStar} color="yellow.400" />
-            <Text color={'fg.muted'}>
+            <Text color={'fg.muted'} lineClamp={1}>
               {mentor.rating} ({mentor.reviews})
             </Text>
           </HStack>
           <HStack>
             <Icon as={FaMapMarkerAlt} />
-            <Text color='fg.muted'>{mentor.location}</Text>
+            <Text color='fg.muted' lineClamp={1}>{mentor.location}</Text>
           </HStack>
         </HStack>
 
         {/* CTA */}
-        <Button mt={5} width="100%">
-          View Profile
-        </Button>
+        {!isMobile && (
+          <Button mt={5} width="100%">
+            View Profile
+          </Button>
+        )}
       </Box>
     </Box>
   );
