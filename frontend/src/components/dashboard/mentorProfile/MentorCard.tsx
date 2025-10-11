@@ -13,6 +13,7 @@ import {
 import { Avatar, Tooltip } from '@/components/ui';
 import { FaStar, FaMapMarkerAlt } from 'react-icons/fa';
 import type { Mentor } from '@/client/services/ment';
+import { Link, useNavigate } from '@tanstack/react-router';
 
 
 interface MentorCardProps {
@@ -23,6 +24,7 @@ interface MentorCardProps {
 export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
   const badgeBg = { base: 'gray.50', _dark: 'gray.100' }
 
+  const navigate = useNavigate()
   const isMobile = useBreakpointValue({ base: true, md: false })
   // const cardWidth = useBreakpointValue({
   //   base: '320px',
@@ -31,6 +33,7 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
   // })
 
   return (
+
     <Box
       // TODO Create a variant in the theme file, add this as the default styles for card.
       borderRadius="xl"
@@ -41,7 +44,8 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
 
       w={{ base: "320px", sm: "320px", md: "100%" }}
       // minW={isMobile ? '260px' : 'auto'}
-      cursor="pointer"
+      onClick={isMobile ? () => navigate({ to: '/mentor' }) : undefined}
+
     >
       {/* Cover Image and Avatar */}
       <Box position="relative" borderRadius="xl">
@@ -180,11 +184,14 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
 
         {/* CTA */}
         {!isMobile && (
-          <Button mt={5} width="100%">
-            View Profile
-          </Button>
+          <Link to={"/mentor"}>
+            <Button mt={5} width="100%">
+              View Profile
+            </Button>
+          </Link>
         )}
       </Box>
     </Box>
+
   );
 };
