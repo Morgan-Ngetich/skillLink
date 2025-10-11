@@ -28,9 +28,10 @@ export default function MenteeHeaderProfileSection() {
     <Flex
       justify="space-between"
       align="flex-start"
+      direction={'column'}
     >
-      {/* Left: User Details */}
-      <VStack align="flex-start" gap={3}>
+
+      <HStack justify={'space-between'} w="full">
         <VStack align={'flex-start'} gap={0}>
 
           <Heading size="md">{user.full_name}</Heading>
@@ -38,16 +39,8 @@ export default function MenteeHeaderProfileSection() {
           <Text fontSize="sm">{user.location}</Text>
         </VStack>
 
-        <HStack mt={3} gap={3}>
-          <Button colorScheme="blue" size="sm">Get a Mentor</Button>
-          <Button variant="outline" size="sm">Settings</Button>
-        </HStack>
-      </VStack>
-
-      {/* Right: Logos + Socials */}
-      <Flex direction="column" align="flex-end" justify="space-between" h="100%">
         {/* Education & Work Logos */}
-        <VStack gap={4} mb={6}>
+        <VStack gap={4}>
           <Image
             src={user.education_logo}
             alt="Education"
@@ -63,7 +56,11 @@ export default function MenteeHeaderProfileSection() {
             objectFit="cover"
           />
         </VStack>
+      </HStack>
 
+
+      {/* Left: User Details */}
+      <Flex direction={{base: "column", lg: "row-reverse"}} align={{base: "flex-start", md: "flex-end" }} gap={0} w="full" justify={"space-between"}>
         {/* Social Media Icons */}
         <HStack gap={3}>
           {user.linkedin && (
@@ -87,7 +84,14 @@ export default function MenteeHeaderProfileSection() {
             </Link>
           )}
         </HStack>
+
+        <HStack mt={3} gap={3}>
+          <Button colorScheme="blue" size="sm">Get a Mentor</Button>
+          <Button variant="outline" size="sm">Settings</Button>
+        </HStack>
       </Flex>
+
+
     </Flex>
   );
 }

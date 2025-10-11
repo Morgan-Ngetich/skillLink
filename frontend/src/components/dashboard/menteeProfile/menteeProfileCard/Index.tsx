@@ -1,156 +1,382 @@
-'use client';
-
 import {
   Box,
   Flex,
-  IconButton,
-  HStack,
-  Image,
   Separator,
+  Tabs,
+  useBreakpointValue,
   Text,
-  Button,
-  Collapsible,
+  HStack,
+  IconButton,
 } from '@chakra-ui/react';
-import { Tag } from '@/components/ui';
-import { FiEdit } from 'react-icons/fi';
-import { FaAngleLeft, FaAngleRight } from 'react-icons/fa6';
-import { useState } from 'react';
-
-import { Avatar } from '@/components/ui';
-import GoalAndInterestSection from './GoalAndInterestSection';
+import { LuUser, LuStar, LuActivity, LuCalendarArrowUp, LuThumbsUp, LuThumbsDown } from "react-icons/lu";
 import ExperienceSection from './ExperienceSection';
 import EducationSection from './EducationSection';
 import SkillsSection from './SkillsSection';
-import MenteeHeaderProfileSection from './MenteeHeaderProfileSection';
+import UserProfileBanner from './UserProfileBanner';
+import MentorshipCalendarContent from '../calendar/MentorshipCalendarContent ';
+import HeroCard from '@/components/homepage/herocard/HeroCard';
+import { FaUsers } from 'react-icons/fa';
+import { Avatar } from '@/components/ui';
 
-const user = {
-  full_name: 'Aisha Kamau',
-  role: 'Mentee - Aspiring Product Designer',
-  location: 'Nairobi, Kenya',
-  avatar_url: 'https://randomuser.me/api/portraits/women/44.jpg',
-  education: 'BSc in Information Technology, JKUAT (2020 - 2024)',
-  background:
-    'Self-taught designer with 1 year of freelance experience in branding and basic web design.',
-  interests: ['UX Research', 'Inclusive Design', 'Mobile App Design'],
-  preferred_communication: 'Weekly calls, async text updates',
-  goals: {
-    title: 'Become a UX/UI Designer in 3 months',
-    progress: 35,
-    summary:
-      'Build a portfolio of 3 case studies, apply to 10 job openings, and land a junior role or internship.',
-  },
-  skills: ['Figma', 'UI Design', 'Wireframing', 'Prototyping', 'HTML', 'Canva'],
-  area_of_focus: ['Tech', 'Business', 'Engineering'],
-  education_logo:
-    'https://upload.wikimedia.org/wikipedia/commons/4/44/Moringa_School_logo.png',
-  work_logo: 'https://cdn-icons-png.flaticon.com/512/25/25284.png',
-  twitter: 'https://twitter.com/fakeprofile',
-  linkedin: 'https://linkedin.com/in/fakeprofile',
-  github: 'https://github.com/fakeprofile',
-};
+// Type definition for user profile
+export interface UserProfile {
+  full_name: string;
+  role: string;
+  location: string;
+  avatar_url: string;
+  education?: string;
+  background?: string;
+  interests?: string[];
+  preferred_communication?: string;
+  goals?: {
+    title: string;
+    progress: number;
+    summary: string;
+  };
+  skills?: string[];
+  area_of_focus?: string[];
+  education_logo?: string;
+  work_logo?: string;
+  twitter?: string;
+  linkedin?: string;
+  github?: string;
+}
 
-export default function MenteeProfileCard() {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const border = { base: '1px solid', _dark: '' };
+interface ProfileCardProps {
+  user?: UserProfile;
+  userType?: 'mentee' | 'mentor';
+  onEditClick?: () => void;
+  activeTab?: string;
+}
 
-  const renderTags = () =>
-    user.area_of_focus?.map((focus) => (
-      <Tag
-        key={focus}
-        size="md"
-        bg="white"
-        color="black"
-        border={border}
-        borderColor="black"
-        borderRadius="sm"
+export default function ProfileCard({
+  user,
+  userType,
+  onEditClick,
+  activeTab = 'about',
+}: ProfileCardProps) {
+  const isMobile = useBreakpointValue({ base: true, md: false })
+  const sessions = true
+  // Guard clause - return null or loading state if user is undefined
+  if (!user) {
+    return (
+      <Box
+        borderRadius="lg"
+        overflow="hidden"
+        boxShadow="lg"
+        maxW="3xl"
+        minW="3xl"
+        border="1px solid"
+        p={6}
       >
-        {focus}
-      </Tag>
-    ));
+        <p>Loading profile...</p>
+      </Box>
+    );
+  }
+
+  const handleEdit = () => {
+    console.log(`Edit ${userType} profile clicked`);
+    onEditClick?.();
+  };
+
 
   const renderSeparatorSection = (Component: React.ElementType, props = {}) => (
     <>
       <Component {...props} />
-      <Separator mt={4} />
+      <Separator my={4} />
     </>
   );
 
-  return (
-    <Box borderRadius="lg" overflow="hidden" boxShadow="lg" maxW="3xl" minW={'3xl'} border="1px solid">
-      <Box position="relative">
-        {/* Banner */}
-        <Box h="150px" position="relative">
-          <Image
-            src={user.avatar_url || '/fallback-banner.jpg'}
-            alt="Banner"
-            objectFit="cover"
-            w="full"
-            h="100%"
-          />
-          <IconButton
-            aria-label="Edit"
-            size="sm"
-            position="absolute"
-            top="10px"
-            right="10px"
-            borderRadius="full"
-            boxShadow="md"
-            _hover={{ bg: 'gray.100' }}
-          >
-            <FiEdit />
-          </IconButton>
-          <HStack
-            position="absolute"
-            bottom="3px"
-            right="10px"
-            gap={2}
-            flexWrap="wrap"
-            justify="flex-end"
-          >
-            {renderTags()}
-          </HStack>
-        </Box>
+  const renderAboutContent = () => (
+    <Box>
+      {renderSeparatorSection(ExperienceSection)}
+      {renderSeparatorSection(EducationSection)}
+      {user.skills && renderSeparatorSection(SkillsSection, { skills: user.skills })}
+    </Box>
+  );
 
-        {/* Avatar */}
-        <Avatar
-          boxSize="100px"
-          src={user.avatar_url}
-          name={user.full_name}
-          position="absolute"
-          bottom="-40px"
-          left="20px"
-          border="2px solid"
-          boxShadow="md"
-        />
-      </Box>
+  const renderReviewsContent = () => (
+    <Box>
+      <Text fontWeight="bold" fontSize="lg" mb={6}>
+        Reviews from {userType === 'mentor' ? 'Mentees' : 'Mentors'}
+      </Text>
 
-      <Box px={6} pt={12} pb={3}>
-        <Flex direction="column" gap={4} position={'relative'}>
-          {/* Always visible */}
-          {renderSeparatorSection(MenteeHeaderProfileSection)}
-          {renderSeparatorSection(GoalAndInterestSection)}
+      {[
+        {
+          name: "Grace Wanjiru",
+          role: "UI/UX Designer",
+          time: "2 weeks ago",
+          stars: 5,
+          text: `Incredible ${userType}! The guidance helped me land my first design role.
+        Patient, knowledgeable, and genuinely cares about growth. Highly recommend!`,
+          avatar: "https://randomuser.me/api/portraits/women/65.jpg"
+        },
+        {
+          name: "James Mwangi",
+          role: "Product Designer",
+          time: "1 month ago",
+          stars: 4,
+          text: `Outstanding expertise in design systems and product strategy.
+        Feedback was constructive and actionable. Great ${userType} for anyone serious about product design!`,
+          avatar: "https://randomuser.me/api/portraits/men/75.jpg"
+        },
+        {
+          name: "Sarah Njeri",
+          role: "UX Researcher",
+          time: "2 months ago",
+          stars: 5,
+          text: `Working together transformed my approach to UX research.
+        Learned how to think like a product designer and communicate research findings effectively. Amazing experience!`,
+          avatar: "https://randomuser.me/api/portraits/women/90.jpg"
+        }
+      ].map((review, i) => (
+        <Box
+          key={i}
+          pb={6}
+          mb={6}
+          borderBottom="1px solid"
+          borderColor="fg.muted"
+          _last={{ borderBottom: "none", mb: 0, pb: 0 }}
+        >
+          <Flex align="flex-start" direction={"column"} gap={1}>
+            <HStack align={'flex-start'}>
 
-          {/* Collapsible Section */}
-          <Collapsible.Root open={isExpanded} onOpenChange={({ open }) => setIsExpanded(open)} unmountOnExit>
-            <Collapsible.Content>
-              <Box mt={2} transition="all 0.3s ease-in-out">
-                {renderSeparatorSection(ExperienceSection)}
-                {renderSeparatorSection(EducationSection)}
-                {renderSeparatorSection(SkillsSection, { skills: user.skills })}
+              <Avatar
+                src={review.avatar}
+                name={review.name}
+              />
+
+              <Flex justify="space-between" align="start" direction={"column"}>
+                <Box>
+                  <Text fontWeight="semibold" fontSize="sm">
+                    {review.name}
+                  </Text>
+                  <Text fontSize="xs" color="fg.muted">
+                    {review.role} • {review.time}
+                  </Text>
+                </Box>
+                <HStack gap={1} mt={1} mb={2}>
+                  {[...Array(5)].map((_, idx) => (
+                    <LuStar
+                      key={idx}
+                      size={14}
+                      fill={idx < review.stars ? "orange" : "transparent"}
+                      color="orange"
+                    />
+                  ))}
+                </HStack>
+              </Flex>
+
+            </HStack>
+
+
+            <Box>
+              <Box ml={{base: 0, lg: 10}}>
+                <Text fontSize="sm" color="fg.muted" lineHeight="1.5">
+                  {review.text}
+                </Text>
               </Box>
-            </Collapsible.Content>
 
-            <Flex justify="flex-end" position={'absolute'} right={0} bottom={0}>
-              <Collapsible.Trigger asChild>
-                <Button size="sm" mt={2}>
-                  <Flex align="center" gap="1">
-                    {isExpanded ? <FaAngleLeft /> : <FaAngleRight />}
-                    <Text>{isExpanded ? 'Show Less' : 'Show More'}</Text>
-                  </Flex>
-                </Button>
-              </Collapsible.Trigger>
-            </Flex>
-          </Collapsible.Root>
+              <HStack mt={2} gap={4} fontSize="sm" color="fg.muted">
+                <HStack gap={0}>
+                  <IconButton
+                    aria-label="Like"
+                    variant="ghost"
+                    size="xs"
+                  // color="gray.600"
+                  >
+                    <LuThumbsUp />
+                  </IconButton>
+                  <Text fontSize="xs">12</Text>
+                </HStack>
+
+                <HStack gap={1}>
+                  <IconButton
+                    aria-label="Dislike"
+                    variant="ghost"
+                    size="xs"
+                  // color="gray.600"
+                  >
+                    <LuThumbsDown />
+                  </IconButton>
+                </HStack>
+              </HStack>
+            </Box>
+          </Flex>
+        </Box>
+      ))}
+    </Box>
+  );
+
+  const renderActivityContent = () => (
+    <Box>
+      <Box fontWeight="bold" fontSize="lg" mb={4}>Recent Activity</Box>
+
+      <Box>
+        {/* Activity Item 1 */}
+        <Flex gap={4} mb={6}>
+          <Box
+            w="2"
+            bg="blue.500"
+            borderRadius="full"
+            flexShrink={0}
+          />
+          <Box flex={1}>
+            <Box fontWeight="semibold" mb={1}>Completed {userType}ship session</Box>
+            <Box color="gray.600" fontSize="sm" mb={1}>
+              Had a great session discussing portfolio optimization
+            </Box>
+            <Box color="gray.500" fontSize="xs">3 days ago</Box>
+          </Box>
+        </Flex>
+
+        {/* Activity Item 2 */}
+        <Flex gap={4} mb={6}>
+          <Box
+            w="2"
+            bg="green.500"
+            borderRadius="full"
+            flexShrink={0}
+          />
+          <Box flex={1}>
+            <Box fontWeight="semibold" mb={1}>Received 5-star review</Box>
+            <Box color="gray.600" fontSize="sm" mb={1}>
+              Received positive feedback after completing the {userType}ship program
+            </Box>
+            <Box color="gray.500" fontSize="xs">1 week ago</Box>
+          </Box>
+        </Flex>
+
+        {/* Activity Item 3 */}
+        <Flex gap={4} mb={6}>
+          <Box
+            w="2"
+            bg="purple.500"
+            borderRadius="full"
+            flexShrink={0}
+          />
+          <Box flex={1}>
+            <Box fontWeight="semibold" mb={1}>Updated profile skills</Box>
+            <Box color="gray.600" fontSize="sm" mb={1}>
+              Added new skills: Design Thinking, Team Leadership
+            </Box>
+            <Box color="gray.500" fontSize="xs">2 weeks ago</Box>
+          </Box>
+        </Flex>
+
+        {/* Activity Item 4 */}
+        <Flex gap={4}>
+          <Box
+            w="2"
+            bg="orange.500"
+            borderRadius="full"
+            flexShrink={0}
+          />
+          <Box flex={1}>
+            <Box fontWeight="semibold" mb={1}>Started new {userType}ship</Box>
+            <Box color="gray.600" fontSize="sm" mb={1}>
+              Began new journey in UX Research fundamentals
+            </Box>
+            <Box color="gray.500" fontSize="xs">3 weeks ago</Box>
+          </Box>
+        </Flex>
+      </Box>
+    </Box>
+  );
+
+  // Render content with tabs for mentors, without tabs for mentees
+  const renderContent = () => {
+    if (userType === 'mentor') {
+      return (
+        <Tabs.Root defaultValue={activeTab} w="full">
+          <Box
+            overflowX="auto"
+            whiteSpace="nowrap"
+            scrollbar={'hidden'}
+          >
+            <Tabs.List display="flex" w="max-content" minW="100%">
+              <Tabs.Trigger value="about">
+                <LuUser />
+                About
+              </Tabs.Trigger>
+
+              {isMobile && sessions && (
+                <Tabs.Trigger value="upcoming-sessions">
+                  <FaUsers />
+                  Upcoming Sessions
+                </Tabs.Trigger>
+              )}
+
+              {isMobile && sessions && (
+                <Tabs.Trigger value="availability">
+                  <LuCalendarArrowUp />
+                  Availability
+                </Tabs.Trigger>
+              )}
+
+              <Tabs.Trigger value="reviews">
+                <LuStar />
+                Reviews
+              </Tabs.Trigger>
+
+              <Tabs.Trigger value="activity">
+                <LuActivity />
+                Activity
+              </Tabs.Trigger>
+
+              <Tabs.Indicator />
+            </Tabs.List>
+          </Box>
+
+          <Box mt={4}>
+            <Tabs.Content value="about">{renderAboutContent()}</Tabs.Content>
+
+            {isMobile && sessions && (
+              <Tabs.Content value="upcoming-sessions">
+                <HeroCard variant="card" />
+              </Tabs.Content>
+            )}
+
+            {isMobile && sessions && (
+              <Tabs.Content value="availability">
+                <MentorshipCalendarContent />
+              </Tabs.Content>
+            )}
+
+            <Tabs.Content value="reviews">{renderReviewsContent()}</Tabs.Content>
+            <Tabs.Content value="activity">{renderActivityContent()}</Tabs.Content>
+          </Box>
+        </Tabs.Root>
+
+      );
+    }
+
+    // For mentees, just show the about content
+    return renderAboutContent();
+  };
+
+  return (
+    <Box
+      borderRadius="lg"
+      overflow="hidden"
+      boxShadow="lg"
+      w="full"
+      border="1px solid"
+    >
+      {/* Banner Section - Same for both */}
+      <UserProfileBanner
+        user={user}
+        onEditClick={handleEdit}
+        userType={userType}
+      />
+
+      {/* Content Section */}
+      <Box px={{ base: 3, md: 6 }} pt={5} pb={3}>
+        <Flex direction="column" gap={4} position="relative">
+          {userType == "mentee" && (
+            <Separator />
+          )}
+          {renderContent()}
         </Flex>
       </Box>
     </Box>

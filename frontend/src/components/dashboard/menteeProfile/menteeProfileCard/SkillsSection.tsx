@@ -24,8 +24,8 @@ export default function SkillsSection({ skills }: SkillsSectionProps) {
         {skills.map((skill) => (
           <WrapItem key={skill}>
             <Box
-              px={3}
-              py={2}
+              px={{base: 2, lg: 3}}
+              py={{base: 2}}
               fontSize="sm"
               borderRadius="lg"
               border="1px solid"
