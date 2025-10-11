@@ -14,6 +14,7 @@ import {
   LuHeartHandshake,
   LuMessageSquare,
   LuCheck,
+  LuActivity,
 } from 'react-icons/lu';
 import { useNavigate, useRouter, useSearch } from '@tanstack/react-router';
 import {
@@ -29,6 +30,7 @@ import type { UserProfileCreate } from '@/client';
 import Step1BasicInfo from './forms/Step1BasicInfo';
 import Step2AreaOfFocus from './forms/Step2AreaOfFocus';
 import Step3GoalsInterests from './forms/Step3GoalsInterests';
+import Step4InterestsSkills from "./forms/Step4InterestsSkills"
 import { useAuthRouteGuard } from '@/hooks/auth/useAuthRouteGuard';
 
 const steps = [
@@ -50,13 +52,19 @@ const steps = [
     icon: <LuMessageSquare />,
     content: <Step3GoalsInterests />,
   },
+  {
+    title: 'Interests & Skills',
+    description: 'What you love & can do',
+    icon: <LuActivity />,
+    content: <Step4InterestsSkills />,
+  },
 ];
 
 export default function ProfileSetup() {
   const router = useRouter();
   const navigate = useNavigate()
   const { isBlocked, isLoading } = useAuthRouteGuard()
-  
+
   const { step: stepParam } = useSearch({ from: '/_layout/profile-setup' });
 
   const stepIndex = Math.max(0, Math.min(Number(stepParam) - 1 || 0, steps.length - 1));
@@ -74,9 +82,14 @@ export default function ProfileSetup() {
     defaultValues: {
       location: '',
       bio: '',
+      contact_details: {
+        email: '',
+        phone: '',
+      },
       goals: [],
       area_of_focus: [],
       interests: [],
+      skills: []
     },
   });
 
@@ -85,16 +98,35 @@ export default function ProfileSetup() {
   // Validation watches
   const location = useWatch({ control, name: 'location' });
   const bio = useWatch({ control, name: 'bio' });
+  const contactEmail = useWatch({ control, name: 'contact_details.email' });
+  const contactPhone = useWatch({ control, name: 'contact_details.phone' });
   const area_of_focus = useWatch({ control, name: 'area_of_focus' });
   const goals = useWatch({ control, name: 'goals' });
   const interests = useWatch({ control, name: 'interests' });
+  const skills = useWatch({ control, name: 'skills' });
 
   const isStepValid = (index: number) => {
-    if (index === 0) return !!location?.trim() && !!bio?.trim();
-    if (index === 1) return Array.isArray(area_of_focus) && area_of_focus.length > 0;
-    if (index === 2)
-      return Array.isArray(goals) && goals.length >= 2 &&
-        Array.isArray(interests) && interests.length >= 2;
+    if (index === 0) {
+      // Basic info: location, bio, and at least email required
+      return !!location?.trim() &&
+        !!bio?.trim() &&
+        !!contactEmail?.trim() &&
+        !!contactPhone &&
+        /\S+@\S+\.\S+/.test(contactEmail); // Basic email validation
+    }
+    if (index === 1) {
+      // Focus areas: at least one area selected
+      return Array.isArray(area_of_focus) && area_of_focus.length > 0;
+    }
+    if (index === 2) {
+      // Goals: at least 2 goals
+      return Array.isArray(goals) && goals.length >= 2;
+    }
+    if (index === 3) {
+      // Interests & Skills: at least 2 interests and 1 skill
+      return Array.isArray(interests) && interests.length >= 2 &&
+        Array.isArray(skills) && skills.length >= 1;
+    }
     return false;
   };
 
@@ -122,7 +154,7 @@ export default function ProfileSetup() {
   return (
     <FormProvider {...methods}>
       <Flex
-        maxW="5xl"
+        maxW="6xl"
         mx="auto"
         minH="calc(100vh - 70px)"
         px={4}
@@ -135,7 +167,7 @@ export default function ProfileSetup() {
           // onStepChange={onStepChange}
           count={steps.length}
           orientation={{ base: 'horizontal', md: 'vertical' }}
-          minH="500px"
+          h="80vh"
         >
           <StepsList>
             {steps.map((step, index) => (

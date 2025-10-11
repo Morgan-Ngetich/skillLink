@@ -43,6 +43,11 @@ export interface UserProfilePublic {
 
 export interface UserProfileCreate {
   bio?: string;
+  contact_details?: {
+    email: '',
+    phone: '',
+  },
+  skills: string[],
   location?: string;
   goals?: string[] | string;
   interests?: string[] | string;
