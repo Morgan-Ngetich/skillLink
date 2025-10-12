@@ -7,6 +7,9 @@ import {
   VStack,
   Card,
   CloseButton,
+  Box,
+  Separator,
+  Stack,
 } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
 import { IoTimeSharp, IoVideocam, IoCalendarOutline } from "react-icons/io5"
@@ -30,8 +33,6 @@ interface SessionDetailsProps {
 }
 
 export function SessionDetails({ isOpen, date, sessions, onClose }: SessionDetailsProps) {
-  const borderColor = { base: 'gray.200', _dark: 'gray.600' }
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString("en-US", {
@@ -62,7 +63,7 @@ export function SessionDetails({ isOpen, date, sessions, onClose }: SessionDetai
   const getStatusColorScheme = (status: string) => {
     switch (status) {
       case "scheduled":
-        return "yellow"
+        return "blue"
       case "completed":
         return "green"
       case "cancelled":
@@ -106,175 +107,253 @@ export function SessionDetails({ isOpen, date, sessions, onClose }: SessionDetai
   }
 
   return (
-    <DialogRoot open={isOpen} onOpenChange={(open) => !open && onClose()} placement={'center'}>
-      <DialogContent maxW="3xl" border="1px solid">
-        <DialogHeader>
+    <DialogRoot
+      open={isOpen}
+      onOpenChange={(open) => !open && onClose()}
+      placement={{base: "bottom", md: "center"}}
+      size={{ base: "", md: "md" }}
+    >
+      <DialogContent
+
+        h={{ base: "85vh", md: "80vh" }}
+        maxW={{ base: "100%", md: "3xl" }}
+        m={{ base: 0, md: 4 }}
+        borderRadius={{ base: 0, md: "xl" }}
+        borderTopRadius={{base: "2xl", md: "xl"}}
+      >
+
+        <Box
+          mx="36%"
+          mt={1}
+          mb={-3}
+          bg="fg.muted"
+          h="7px"
+          w="130px"
+          borderRadius={'full'}
+          onClick={() => onClose()}
+        />
+
+        <DialogHeader
+          pb={4}
+          borderBottom="1px solid"
+          borderColor="border.subtle"
+        >
           <VStack align="start" gap={1}>
-            <Text fontSize={{ base: "lg", md: "xl" }}>Sessions for {formatDate(date)}</Text>
-            <Text fontSize="sm" color={'fg.muted'}>
+            <Text fontSize={{ base: "xl", md: "2xl" }} fontWeight="bold">
+              {formatDate(date)}
+            </Text>
+            <Text fontSize="sm" color="fg.muted">
               {sessions.length} session{sessions.length !== 1 ? "s" : ""} scheduled
             </Text>
           </VStack>
         </DialogHeader>
 
-        <DialogCloseTrigger asChild >
-          <CloseButton onClick={onClose} variant={'surface'} />
+        <DialogCloseTrigger asChild>
+          <CloseButton
+            onClick={onClose}
+            variant="ghost"
+            size="sm"
+          />
         </DialogCloseTrigger>
 
-        <DialogBody maxH={"lg"} overflowY={"auto"}>
-          <VStack gap={4}>
+        <DialogBody
+          overflowY="auto"
+          p={{ base: 4, md: 6 }}
+        >
+          <VStack gap={4} align="stretch">
             {sessions.map((session) => (
               <Card.Root
                 key={session.id}
-                w="full"
-                bg={'cardbg'}
-                borderColor={borderColor}
                 borderWidth="1px"
+                borderColor="border.emphasized"
+                borderRadius="xl"
+                overflow="hidden"
+                transition="all 0.2s"
+                shadow="md"
+
               >
-                <Card.Body p={5}>
-                  {/* Session Header */}
-                  <Flex justify="space-between" align="flex-start" mb={4}>
-                    <VStack align="start" gap={2} flex={1}>
-                      <Text fontSize={{ base: "lg", md: "xl" }} fontWeight="semibold" lineClamp={2}>
+                <Card.Body p={{ base: 4, md: 5 }}>
+                  {/* Header Section */}
+                  <VStack align="stretch" gap={{base: 3, md: 4}}>
+                    {/* Title and Badges */}
+                    <Stack
+                      direction={{ base: "column", md: "row" }}
+                      justify="space-between"
+                      align={{ base: "start", md: "center" }}
+                      gap={3}
+                    >
+                      <Text
+                        fontSize={{ base: "lg", md: "xl" }}
+                        fontWeight="semibold"
+                        flex={1}
+                      >
                         {session.title}
                       </Text>
 
-                      {/* Mentor Info */}
-                      <HStack gap={3} justify={'space-between'} align="flex-end" w="full">
-                        <HStack>
-                          <Avatar name={session.mentorName} src={session.mentorAvatar} />
-                          <VStack align="start" gap={0}>
-                            <Text fontSize="xs" color={'fg.muted'}>
-                              Mentor
-                            </Text>
-                            <Text fontSize="sm" fontWeight="medium">
-                              {session.mentorName}
-                            </Text>
-                          </VStack>
-                        </HStack>
+                      <HStack gap={2} flexWrap="wrap">
+                        <Badge
+                          colorPalette={getStatusColorScheme(session.status)}
+                          variant="subtle"
+                          fontSize="xs"
+                          px={2}
+                          py={0.5}
+                        >
+                          {session.status === "scheduled" && "📅 "}
+                          {session.status === "completed" && "✅ "}
+                          {session.status === "cancelled" && "❌ "}
+                          {session.status === "in-progress" && "🔄 "}
+                          {session.status.charAt(0).toUpperCase() + session.status.slice(1)}
+                        </Badge>
+                        <Badge
+                          colorPalette={getSessionTypeColorScheme(session.sessionType)}
+                          variant="subtle"
+                          fontSize="xs"
+                          px={2}
+                          py={0.5}
+                        >
+                          {session.sessionType}
+                        </Badge>
+                        {session.difficulty && (
+                          <Badge
+                            colorPalette={getDifficultyColorScheme(session.difficulty)}
+                            variant="outline"
+                            fontSize="xs"
+                            px={2}
+                            py={0.5}
+                          >
+                            {session.difficulty}
+                          </Badge>
+                        )}
+                      </HStack>
+                    </Stack>
 
-                        {/* Session Meta */}
-                        <HStack gap={4} wrap="wrap">
-                          <HStack gap={1}>
-                            <IoCalendarOutline />
-                            <Text fontSize="sm">
-                              {formatTime(session.scheduledAt)}
-                            </Text>
-                          </HStack>
-
-                          <HStack gap={1}>
-                            <FaClock size="14" />
-                            <Text fontSize="sm" color={'fg.muted'}>
-                              {formatDuration(session.duration)}
-                            </Text>
-                          </HStack>
-                        </HStack>
+                    {/* Mentor Info and Time */}
+                    <Stack
+                      direction={"row"}
+                      justify="space-between"
+                      align={{ base: "end", md: "center" }}
+                      gap={3}
+                    >
+                      {/* Mentor */}
+                      <HStack gap={3}>
+                        <Avatar
+                          name={session.mentorName}
+                          src={session.mentorAvatar}
+                          size={{ base: "sm", md: "md" }}
+                        />
+                        <VStack align="start" gap={0}>
+                          <Text fontSize="xs" color="fg.muted">
+                            Mentor
+                          </Text>
+                          <Text fontSize="sm" fontWeight="medium">
+                            {session.mentorName}
+                          </Text>
+                        </VStack>
                       </HStack>
 
-                    </VStack>
-
-                    {/* Status and Action Buttons */}
-
-                    <HStack gap={2}>
-                      <Badge
-                        colorPalette={getSessionTypeColorScheme(session.sessionType)}
-                        variant="surface"
-                        fontSize="xs"
+                      {/* Time Info */}
+                      <HStack
+                        gap={4}
+                        fontSize="sm"
+                        color="fg.muted"
+                        flexWrap="wrap"
                       >
-                        {session.sessionType}
-                      </Badge>
-                      <Badge
-                        colorPalette={getStatusColorScheme(session.status)}
-                        variant="surface"
-                        fontSize="xs"
-                      >
-                        {session.status === "scheduled" && "📅"}
-                        {session.status === "completed" && "✅"}
-                        {session.status === "cancelled" && "❌"}
-                        {session.status === "in-progress" && "🔄"}
-                        {" "}{session.status.charAt(0).toUpperCase() + session.status.slice(1)}
-                      </Badge>
-                      {session.difficulty && (
-                        <Badge
-                          colorPalette={getDifficultyColorScheme(session.difficulty)}
-                          variant="surface"
-                          fontSize="xs"
-                        >
-                          {session.difficulty}
-                        </Badge>
-                      )}
-                    </HStack>
-                  </Flex>
+                        <HStack gap={1}>
+                          <IoCalendarOutline />
+                          <Text>{formatTime(session.scheduledAt)}</Text>
+                        </HStack>
+                        <HStack gap={1}>
+                          <FaClock size="14" />
+                          <Text>{formatDuration(session.duration)}</Text>
+                        </HStack>
+                      </HStack>
+                    </Stack>
 
-                  {/* Topics */}
-                  <HStack w="100%" justify={'space-between'} align={'flex-end'}>
-                    <VStack align="start" gap={3} mb={4}>
-                      <Text fontSize="sm" fontWeight="medium">
-                        Topics to Cover:
+                    <Separator />
+
+                    {/* Topics Section */}
+                    <VStack align="start" gap={2}>
+                      <Text fontSize="sm" fontWeight="semibold" color="fg.muted">
+                        Topics to Cover
                       </Text>
                       <Flex wrap="wrap" gap={2}>
                         {session.topics.map((topic) => (
-                          <Badge key={topic} variant="outline" fontSize="xs" bg={"fg.inverted"} border="1px solid gray">
+                          <Badge
+                            key={topic}
+                            variant="outline"
+                            fontSize="xs"
+                            colorPalette="gray"
+                          >
                             {topic}
                           </Badge>
                         ))}
                       </Flex>
                     </VStack>
 
-                    {/* Action Button */}
-                    {session.status === "scheduled" && session.meetingLink && (
-                      <Link
-                        to={session.meetingLink}
-                        target="_blank"
-                      >
-                        <Button
-                          rel="noopener noreferrer"
-                          size="sm"
-                          colorPalette="blue"
-                          variant="surface"
-                          _hover={{ border: "1px solid" }}
+                    {/* Session Notes (for completed) */}
+                    {session.status === "completed" && session.notes && (
+                      <VStack align="start" gap={2}>
+                        <HStack gap={2}>
+                          <BiNotepad size="16" />
+                          <Text fontSize="sm" fontWeight="semibold" color="fg.muted">
+                            Session Notes
+                          </Text>
+                        </HStack>
+                        <Box
+                          bg="bg.muted"
+                          p={3}
+                          borderRadius="md"
+                          w="full"
                         >
-                          <IoVideocam />
-                          Join Session
-                        </Button>
-                      </Link>
-                    )}
-                  </HStack>
-
-                  {/* Session Notes (for completed sessions) */}
-                  {session.status === "completed" && session.notes && (
-                    <VStack align="start" gap={2}>
-                      <HStack gap={2}>
-                        <BiNotepad size="16" />
-                        <Text fontSize="sm" fontWeight="medium">
-                          Session Notes:
-                        </Text>
-                      </HStack>
-                      <Card.Root bg={'gray.50'} _dark={{ bg: 'gray.700' }} w="full">
-                        <Card.Body p={3}>
-                          <Text fontSize="sm" color={'fg.muted'}>
+                          <Text fontSize="sm" color="fg.muted">
                             {session.notes}
                           </Text>
-                        </Card.Body>
-                      </Card.Root>
-                    </VStack>
-                  )}
+                        </Box>
+                      </VStack>
+                    )}
 
-                  {/* Completion Time */}
-                  {session.status === "completed" && session.completedAt && (
-                    <Flex justify="flex-end" mt={3}>
-                      <HStack gap={1} fontSize="sm" color={'fg.muted'}>
-                        <IoTimeSharp />
-                        <Text>Completed at {formatTime(session.completedAt)}</Text>
-                      </HStack>
-                    </Flex>
-                  )}
+                    {/* Footer Section */}
+                    <Stack
+                      direction={{ base: "column", sm: "row" }}
+                      justify="space-between"
+                      align={{ base: "stretch", sm: "center" }}
+                      gap={3}
+                      pt={2}
+                    >
+                      {/* Completion Time */}
+                      {session.status === "completed" && session.completedAt && (
+                        <HStack gap={1} fontSize="sm" color="fg.muted">
+                          <IoTimeSharp />
+                          <Text>Completed at {formatTime(session.completedAt)}</Text>
+                        </HStack>
+                      )}
+
+                      {/* Join Button */}
+                      {session.status === "scheduled" && session.meetingLink && (
+                        <Link to={session.meetingLink} target="_blank">
+                          <Button
+                            size="sm"
+                            colorPalette="blue"
+                            w={{ base: "full", sm: "auto" }}
+                          >
+                            <IoVideocam />
+                            Join Session
+                          </Button>
+                        </Link>
+                      )}
+
+                      {/* Spacer for layout when no completion time */}
+                      {session.status === "scheduled" && !session.completedAt && (
+                        <Box display={{ base: "none", sm: "block" }} />
+                      )}
+                    </Stack>
+                  </VStack>
                 </Card.Body>
               </Card.Root>
             ))}
           </VStack>
         </DialogBody>
       </DialogContent>
-    </DialogRoot>
+    </DialogRoot >
   )
 }

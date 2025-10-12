@@ -249,7 +249,7 @@ export const MentorshipCalendar: React.FC<MentorshipCalendarProps> = ({ sessions
             />
           )}
 
-          <Card.Body p={1.5} position="relative" zIndex={1}>
+          <Card.Body px={1.5} pt={1.5} pb={{base: 1, md: 1.5}} position="relative" zIndex={1}>
             <Flex direction="column" justify="space-between" h="full" minH={"30px"}>
 
               <Text
