@@ -12,7 +12,7 @@ const FeaturedMentors = () => {
         justify="space-between"
         position={{ base: "static", md: "sticky" }}
         top={{ base: undefined, md: 0 }}
-        zIndex={{ base: undefined, md: "sticky" }}
+        zIndex={{ base: undefined, md: "5" }}
         py={2}
         bg={{ base: 'white', _dark: 'gray.900' }}
       >
@@ -33,7 +33,7 @@ const FeaturedMentors = () => {
       {isMobile ? (
         <HStack direction="row" w="100vw" overflowX={"auto"} pr={4}>
           {mentors.map((mentor, index) => (
-            <MentorCard key={index} mentor={mentor} />
+            <MentorCard key={index} mentor={mentor} maxW="300px"/>
           ))}
         </HStack>
       ) : (

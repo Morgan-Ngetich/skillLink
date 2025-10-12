@@ -24,14 +24,13 @@ export default function SkillsSection({ skills }: SkillsSectionProps) {
         {skills.map((skill) => (
           <WrapItem key={skill}>
             <Box
-              px={{base: 2, lg: 3}}
-              py={{base: 2}}
+              px={{base: 1.5, lg: 3}}
+              py={{base: 1.5, lg: 2}}
               fontSize="sm"
               borderRadius="lg"
               border="1px solid"
               bg={bg}
               transition="all 0.2s"
-              as="button"
               textAlign="center"
             >
               {skill}
