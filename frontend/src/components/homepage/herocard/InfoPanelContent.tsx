@@ -33,7 +33,7 @@ const InfoPanelContent: React.FC<InfoPanelContentProps> = ({ data, closeButton, 
       display="flex"
       flexDirection="column"
       h='full'
-      p={isMobileLayout || isMobile ? 1 : 6 }
+      p={isMobileLayout || isMobile ? 1 : 6}
     >
       <Tabs.Root defaultValue="details" display="flex" flexDirection="column" flex="1" minH="0">
         <Tabs.List mb={{ base: 0, md: 4 }}>
@@ -153,7 +153,7 @@ const InfoPanelContent: React.FC<InfoPanelContentProps> = ({ data, closeButton, 
 };
 
 // Container component for the drawer
-export const DrawerContainer = React.forwardRef(function DrawerContainer(props, ref) {
+export const DrawerContainer = React.forwardRef<HTMLDivElement, { children: React.ReactNode }>((props, ref) => {
   return (
     <Box
       pos="relative"
@@ -165,5 +165,6 @@ export const DrawerContainer = React.forwardRef(function DrawerContainer(props, 
     />
   );
 });
+
 
 export default InfoPanelContent;

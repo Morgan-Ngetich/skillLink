@@ -19,10 +19,35 @@ import InfoPanelContent from './InfoPanelContent';
 import { DrawerContainer } from './InfoPanelContent';
 import { LuInfo } from 'react-icons/lu';
 import { useRef } from "react"
-import { FaArrowLeft, FaArrowRight, FaCommentDots, FaHandDots } from 'react-icons/fa6';
-import { HiDotsCircleHorizontal } from 'react-icons/hi';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa6';
 
-const MentorSessionInfo = ({ data, onPrevious, onNext, currentIndex, totalSlides, isMobileLayout }) => {
+interface MentorSessionInfoProps {
+  data: {
+    session: {
+      avatarGroup: Array<{ avatar: string }>;
+      mentor: {
+        avatar: string;
+        name: string;
+        role: string;
+        company: string;
+        bio: string;
+      };
+      image: string;
+      startTime: string;
+      title: string;
+      fullTitle: string;
+      bookedSlots: number;
+      totalSlots: number;
+    };
+  };
+  onPrevious: () => void;
+  onNext: () => void;
+  currentIndex: number;
+  totalSlides: number;
+  isMobileLayout: boolean;
+}
+
+const MentorSessionInfo: React.FC<MentorSessionInfoProps> = ({ data, onPrevious, onNext, currentIndex, totalSlides, isMobileLayout }) => {
   const portalRef = useRef(null);
   const isMobile = useBreakpointValue({ base: true, md: false })
   const { isOpen, onClose } = useDisclosure({ defaultOpen: true })
