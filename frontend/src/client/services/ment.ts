@@ -80,7 +80,7 @@ export const mentors: Mentor[] = [
     coverImage: 'https://picsum.photos/id/180/400/200',
     available: true,
     sessions: 450,
-    badges: ["Kaggle Grandmaster", "Published Author"]
+    badges: ["Kaggle Grandmaster", "Published Author", "Ex-Spotify", "Design Jury"]
   }
 ];
 

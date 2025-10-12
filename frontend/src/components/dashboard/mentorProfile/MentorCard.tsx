@@ -19,9 +19,10 @@ import { Link, useNavigate } from '@tanstack/react-router';
 interface MentorCardProps {
   mentor: Mentor;
   onCollapse?: () => void;
+  maxW?: string;
 }
 
-export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
+export const MentorCard: React.FC<MentorCardProps> = ({ mentor, maxW="full" }) => {
   const badgeBg = { base: 'gray.50', _dark: 'gray.100' }
 
   const navigate = useNavigate()
@@ -42,7 +43,7 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
       borderWidth="2px"
       borderColor={{ base: 'gray.200', _dark: 'gray.700' }}
 
-      w={{ base: "320px", sm: "320px", md: "100%" }}
+      w={maxW}
       // minW={isMobile ? '260px' : 'auto'}
       onClick={isMobile ? () => navigate({ to: '/mentor' }) : undefined}
 
@@ -78,7 +79,7 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
               right="10px"
               left="34%"
               gap={2}
-              maxW={'190px'}
+              // maxW={''}
               overflowX="auto"
               whiteSpace="nowrap"
               alignItems="flex-end"
@@ -87,14 +88,20 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor }) => {
               {mentor.badges?.map((badge: string) => (
                 <Badge
                   key={badge}
-                  bg={badgeBg}
-                  color="black"
+                  bg="blackAlpha.600"
+                  backdropFilter="blur(10px)"
+                  color="white"
                   fontSize="xs"
-                  whiteSpace="nowrap"
-                  flexShrink={0}
+                  px={2}
+                  py={1}
+                  borderRadius="md"
+                  fontWeight="semibold"
+                  border="1px solid"
+                  borderColor="whiteAlpha.600"
                 >
                   {badge}
                 </Badge>
+
               ))}
             </HStack>
 
