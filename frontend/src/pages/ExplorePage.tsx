@@ -14,7 +14,7 @@ const ExplorePage = () => {
     <Box p={{ base: 4, md: 8 }} maxW="1600px" mx="auto">
       <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} gap={6}>
         {filteredMentorResults.map(({ item }, index) => (
-          <MentorCard key={index} mentor={item} />
+          <MentorCard key={index} mentor={item} maxW="full"/>
         ))}
       </SimpleGrid>
     </Box>
