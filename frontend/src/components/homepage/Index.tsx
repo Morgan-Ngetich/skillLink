@@ -1,13 +1,11 @@
 import {
   Box,
-  Flex,
   SimpleGrid,
   VStack,
-  useBreakpointValue,
   HStack,
 } from "@chakra-ui/react";
 import { useKeenSlider } from "keen-slider/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import HeroCard from "./herocard/HeroCard";
 import GrowthStats from "./GrowthStats";
@@ -17,9 +15,8 @@ import FeaturedMentors from "./FeaturedMentors";
 import "keen-slider/keen-slider.min.css";
 
 const Home = () => {
-  const isMobile = useBreakpointValue({ base: true, xl: false });
-
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isMounted, setIsMounted] = useState(false);
 
   const [sliderRef, sliderInstanceRef] = useKeenSlider<HTMLDivElement>(
     {
@@ -32,68 +29,99 @@ const Home = () => {
       slideChanged(slider) {
         setCurrentSlide(slider.track.details.rel);
       },
-    }
+    },
+    []
   );
 
-  const bg = ({ base: "black", _dark: "white" })
+  // Detect when client-side hydration is complete
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
-    <Box py="6" px={{ base: "2", md: "8" }} maxW="100vw">
-      {isMobile ? (
-        <Flex direction="column" gap={4}>
-          <Box>
-            <Box ref={sliderRef} className="keen-slider" w="100%">
-              <Box className="keen-slider__slide">
-                <HeroCard />
+    <Box py={{ base: 4, md: 6 }} px={{ base: 4, md: 8 }} maxW="1600px" mx="auto">
+      {/* Mobile Layout - Hidden on Desktop */}
+      <Box display={{ base: "block", xl: "none" }}>
+        <VStack gap={6} align="stretch">
+          {/* Hero Section - Progressive Enhancement */}
+          {isMounted ? (
+            // Client-side: Show slider with both cards
+            <Box>
+              <Box
+                ref={sliderRef}
+                className="keen-slider"
+                w="100%"
+                overflow="hidden"
+                borderRadius="xl"
+              >
+                <Box className="keen-slider__slide">
+                  <HeroCard />
+                </Box>
+                <Box className="keen-slider__slide">
+                  <GrowthStats />
+                </Box>
               </Box>
-              <Box className="keen-slider__slide">
-                <GrowthStats />
-              </Box>
+
+              {/* Slider Dots */}
+              <HStack justify="center" mt={4} gap={2}>
+                {[0, 1].map((i) => (
+                  <Box
+                    key={i}
+                    h="8px"
+                    w={currentSlide === i ? "24px" : "8px"}
+                    bg={currentSlide === i ? "teal.500" : "gray.300"}
+                    _dark={{
+                      bg: currentSlide === i ? "teal.400" : "gray.600"
+                    }}
+                    borderRadius="full"
+                    cursor="pointer"
+                    onClick={() => sliderInstanceRef.current?.moveToIdx(i)}
+                    transition="all 0.3s"
+                  />
+                ))}
+              </HStack>
             </Box>
+          ) : (
+            // SSR: Show only HeroCard
+            <Box borderRadius="xl">
+              <HeroCard />
+            </Box>
+          )}
 
-            <HStack justify="center" mt={2}>
-              {[0, 1].map((i) => (
-                <Box
-                  key={i}
-                  h="6px"
-                  w={currentSlide === i ? "15px" : "6px"}
-                  bg={currentSlide === i ? bg : "fg.muted"}
-                  borderRadius="full"
-                  cursor="pointer"
-                  onClick={() => sliderInstanceRef.current?.moveToIdx(i)}
-                />
-              ))}
-            </HStack>
-          </Box>
-
-
+          {/* Featured Mentors */}
           <Box>
             <FeaturedMentors />
           </Box>
 
+          {/* Top Mentors */}
           <Box>
             <TopMentors />
           </Box>
-        </Flex>
-      ) : (
-        <SimpleGrid columns={3} gap="6" alignItems="start">
-          {/* Left Panel */}
-          <VStack as="section" gridColumn={{ xl: "span 2" }} gap={5}>
+        </VStack>
+      </Box>
+
+      {/* Desktop Layout - Hidden on Mobile */}
+      <Box display={{ base: "none", xl: "block" }}>
+        <SimpleGrid columns={3} gap={6} alignItems="start">
+          {/* Left Column - Main Content (2/3 width) */}
+          <VStack
+            gridColumn="span 2"
+            gap={6}
+            align="stretch"
+          >
             <HeroCard />
             <FeaturedMentors />
           </VStack>
 
-          {/* Right Panel */}
-          <Box>
-            <Box mb="6">
-              <GrowthStats />
-            </Box>
-            <Box position="sticky" top="6" zIndex="1">
+          {/* Right Column - Sidebar (1/3 width) */}
+          <VStack gap={6} align="stretch">
+            <GrowthStats />
+            <Box position="sticky" top="80px">
               <TopMentors />
             </Box>
-          </Box>
+          </VStack>
         </SimpleGrid>
-      )}
+      </Box>
     </Box>
   );
 };
