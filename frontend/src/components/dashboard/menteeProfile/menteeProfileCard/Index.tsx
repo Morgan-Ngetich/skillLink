@@ -171,7 +171,7 @@ export default function ProfileCard({
 
 
             <Box>
-              <Box ml={{base: 0, lg: 10}}>
+              <Box ml={{ base: 0, lg: 10 }}>
                 <Text fontSize="sm" color="fg.muted" lineHeight="1.5">
                   {review.text}
                 </Text>
@@ -213,7 +213,7 @@ export default function ProfileCard({
       <Box fontWeight="bold" fontSize="lg" mb={4}>Recent Activity</Box>
 
       <Box>
-        {/* Activity Item 1 */}
+        {/* Completed mentoring session */}
         <Flex gap={4} mb={6}>
           <Box
             w="2"
@@ -222,15 +222,15 @@ export default function ProfileCard({
             flexShrink={0}
           />
           <Box flex={1}>
-            <Box fontWeight="semibold" mb={1}>Completed {userType}ship session</Box>
+            <Box fontWeight="semibold" mb={1}>Completed mentorship session</Box>
             <Box color="gray.600" fontSize="sm" mb={1}>
-              Had a great session discussing portfolio optimization
+              Had a great session with Sarah discussing portfolio optimization
             </Box>
             <Box color="gray.500" fontSize="xs">3 days ago</Box>
           </Box>
         </Flex>
 
-        {/* Activity Item 2 */}
+        {/* Received review from mentee */}
         <Flex gap={4} mb={6}>
           <Box
             w="2"
@@ -241,13 +241,13 @@ export default function ProfileCard({
           <Box flex={1}>
             <Box fontWeight="semibold" mb={1}>Received 5-star review</Box>
             <Box color="gray.600" fontSize="sm" mb={1}>
-              Received positive feedback after completing the {userType}ship program
+              "Amazing mentor! Really helped me land my dream job" - John D.
             </Box>
             <Box color="gray.500" fontSize="xs">1 week ago</Box>
           </Box>
         </Flex>
 
-        {/* Activity Item 3 */}
+        {/* Updated mentor profile */}
         <Flex gap={4} mb={6}>
           <Box
             w="2"
@@ -258,13 +258,13 @@ export default function ProfileCard({
           <Box flex={1}>
             <Box fontWeight="semibold" mb={1}>Updated profile skills</Box>
             <Box color="gray.600" fontSize="sm" mb={1}>
-              Added new skills: Design Thinking, Team Leadership
+              Added new expertise: Design Thinking, Team Leadership
             </Box>
             <Box color="gray.500" fontSize="xs">2 weeks ago</Box>
           </Box>
         </Flex>
 
-        {/* Activity Item 4 */}
+        {/* Accepted new mentee */}
         <Flex gap={4}>
           <Box
             w="2"
@@ -273,9 +273,9 @@ export default function ProfileCard({
             flexShrink={0}
           />
           <Box flex={1}>
-            <Box fontWeight="semibold" mb={1}>Started new {userType}ship</Box>
+            <Box fontWeight="semibold" mb={1}>Accepted new mentee</Box>
             <Box color="gray.600" fontSize="sm" mb={1}>
-              Began new journey in UX Research fundamentals
+              Started guiding Emma in UX Research fundamentals
             </Box>
             <Box color="gray.500" fontSize="xs">3 weeks ago</Box>
           </Box>
@@ -359,9 +359,10 @@ export default function ProfileCard({
     <Box
       borderRadius="lg"
       overflow="hidden"
-      // boxShadow="lg"
+      boxShadow={{ base: "none", md: "sm" }}
       w="full"
-      // border="1px solid"
+      border={{ base: "none", md: "1px solid" }}
+      borderColor={"gray.muted"}
     >
       {/* Banner Section - Same for both */}
 
@@ -372,7 +373,7 @@ export default function ProfileCard({
       />
 
       {/* Content Section */}
-      <Box px={{ base: 0, md: 6 }} pt={{base: 3, md: 5}} pb={3}>
+      <Box px={{ base: 0, md: 6 }} pt={{ base: 3, md: 5 }} pb={3}>
         <Flex direction="column" gap={4} position="relative">
           {userType == "mentee" && (
             <Separator />
