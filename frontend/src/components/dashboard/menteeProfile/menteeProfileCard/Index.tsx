@@ -359,11 +359,12 @@ export default function ProfileCard({
     <Box
       borderRadius="lg"
       overflow="hidden"
-      boxShadow="lg"
+      // boxShadow="lg"
       w="full"
-      border="1px solid"
+      // border="1px solid"
     >
       {/* Banner Section - Same for both */}
+
       <UserProfileBanner
         user={user}
         onEditClick={handleEdit}
@@ -371,7 +372,7 @@ export default function ProfileCard({
       />
 
       {/* Content Section */}
-      <Box px={{ base: 3, md: 6 }} pt={5} pb={3}>
+      <Box px={{ base: 0, md: 6 }} pt={{base: 3, md: 5}} pb={3}>
         <Flex direction="column" gap={4} position="relative">
           {userType == "mentee" && (
             <Separator />

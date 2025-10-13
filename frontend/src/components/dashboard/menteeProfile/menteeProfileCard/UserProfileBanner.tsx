@@ -32,7 +32,7 @@ const UserProfileBanner = ({
   onEditClick
 }: UserProfileBannerProps) => {
   return (
-    <>
+    <Box border={{base: "1px solid", md: "none"}} borderColor={'gray.muted'} pb={{base: 2, md: 0}} borderBottomRadius={"lg"}>
       <Box h={bannerHeight} position="relative">
         <Image
           src={user.avatar_url || '/fallback-banner.jpg'}
@@ -108,7 +108,7 @@ const UserProfileBanner = ({
           <MenteeHeaderProfileSection />
         </Flex>
       </Box>
-    </>
+    </Box>
   )
 }
 

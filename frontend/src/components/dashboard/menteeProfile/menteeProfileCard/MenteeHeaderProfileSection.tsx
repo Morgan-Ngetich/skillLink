@@ -85,9 +85,9 @@ export default function MenteeHeaderProfileSection() {
           )}
         </HStack>
 
-        <HStack mt={3} gap={3}>
-          <Button colorScheme="blue" size="sm">Get a Mentor</Button>
-          <Button variant="outline" size="sm">Settings</Button>
+        <HStack mt={4} gap={3}>
+          <Button size="sm">Book a Session</Button>
+          {/* <Button variant="outline" size="sm">Settings</Button> */}
         </HStack>
       </Flex>
 
