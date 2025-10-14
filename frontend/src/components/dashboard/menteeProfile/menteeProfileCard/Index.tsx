@@ -69,7 +69,7 @@ export default function ProfileCard({
         border="1px solid"
         p={6}
       >
-        <p>Loading profile...</p>
+        <p>Loading profile..</p>
       </Box>
     );
   }
