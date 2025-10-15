@@ -26,12 +26,34 @@ export interface UserUpdate {
   email?: string;
 }
 
+export interface Education {
+  institution: string;
+  logo?: string;
+  degree: string;
+  field_of_study?: string;
+  start_date?: string;  // ISO date string
+  end_date?: string;    // ISO date string
+}
+
+export interface Experience {
+  company: string;
+  logo?: string;
+  position?: string;
+  description?: string;
+  start_date?: string;  // ISO date string
+  end_date?: string;    // ISO date string
+}
+
 export interface UserProfilePublic {
   user_id: number;
   uuid: string;
   bio?: string;
   location?: string;
   goals?: string[];
+  education?: Education[];
+  experience?: Experience[];
+  skills?: string[];
+  contact_details?: { [key: string]: string };
   interests?: string[];
   area_of_focus?: string[];
   social_links?: { [key: string]: string };
@@ -43,24 +65,27 @@ export interface UserProfilePublic {
 
 export interface UserProfileCreate {
   bio?: string;
-  contact_details?: {
-    email: '',
-    phone: '',
-  },
+  contact_details?: { [key: string]: string };
   skills: string[],
   location?: string;
-  goals?: string[] | string;
-  interests?: string[] | string;
-  area_of_focus?: string[] | string;
+  goals?: string[]
+  interests?: string[]
+  experience?: Experience[];
+  education?: Education[];
+  area_of_focus?: string[]
   social_links?: { [key: string]: string };
 }
 
 export interface UserProfileUpdate {
   bio?: string;
+  contact_details?: { [key: string]: string };
+  skills: string[],
   location?: string;
-  goals?: string[] | string;
-  interests?: string[] | string;
-  area_of_focus?: string[] | string;
+  goals?: string[]
+  interests?: string[]
+  experience?: Experience[];
+  education?: Education[];
+  area_of_focus?: string[]
   social_links?: { [key: string]: string };
 }
 
