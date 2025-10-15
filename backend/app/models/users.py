@@ -23,6 +23,7 @@ from app.utils.helper import ProgressService
 # ================== PUBLIC MODELS ==================
 class Education(BaseModel):
     institution: str
+    logo: Optional[str] = None
     degree: str
     field_of_study: Optional[str] = None
     start_date: Optional[datetime] = None
@@ -31,6 +32,7 @@ class Education(BaseModel):
 
 class Experience(BaseModel):
     company: str
+    logo: Optional[str] = None
     position: Optional[str] = None
     description: Optional[str] = None
     start_date: Optional[datetime] = None
@@ -425,7 +427,7 @@ class UserProfileBaseModel(BaseModel):
         json_schema_extra={
             "examples": [
                 {
-                    "bio": "Software engineer passionate about education.",
+                    "bio": "Software engineer at Microsoft",
                     "location": "Berlin, Germany",
                     "area_of_focus": ["AI", "EdTech", "Open Source"],
                     "goals": ["Build an online course", "Contribute to open source"],

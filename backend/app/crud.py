@@ -34,6 +34,7 @@ from app.models.users import (
 from app.core.security import get_password_hash, verify_password
 from uuid import UUID
 from app.utils.logger_config import llm_logger
+from app.utils.logo_fetcher import enrich_with_logos
 
 def get_user_by_email(session: Session, email: str) -> User | None:
     statement = select(User).where(User.email == email)
@@ -236,6 +237,8 @@ def create_user_profile(session: Session, profile_in: UserProfileCreate, user_id
     if 'experience' in create_data:
         create_data['experience'] = serialize_datetime_fields(create_data['experience'])
 
+    create_data = enrich_with_logos(create_data)
+
     profile = UserProfile(
         user_id=user_id,
         **create_data
@@ -255,6 +258,8 @@ def update_user_profile(session: Session, user_id: int, profile_in: UserProfileU
         update_data['education'] = serialize_datetime_fields(update_data['education'])
     if 'experience' in update_data:
         update_data['experience'] = serialize_datetime_fields(update_data['experience'])
+
+    update_data = enrich_with_logos(update_data)
 
     for key, value in update_data.items():
         setattr(profile, key, value)
