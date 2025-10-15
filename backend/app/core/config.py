@@ -54,6 +54,8 @@ class Settings(BaseSettings):
     
     LLM_TIMEOUT: int = 360000000
     LLAMA2_TIMEOUT: int = 45
+    
+    LOGODEV_PUBLIC_TOKEN: Optional[str] = None
 
     @computed_field
     def SQLALCHEMY_DATABASE_URI(self) -> str:

@@ -1,6 +1,7 @@
 import re
 import requests
 from functools import lru_cache
+from app.core.config import settings
 
 CLEARBIT_BASE_URL = "https://logo.clearbit.com/"
 LOGODEV_BASE_URL = "https://logo.dev/api/v1/logo/"
@@ -42,7 +43,7 @@ def fetch_logo_url(organization: str) -> str:
         except requests.RequestException:
             continue
 
-    return f"{LOGODEV_BASE_URL}{organization}"
+    return f"{LOGODEV_BASE_URL}{organization}?token={settings.LOGODEV_PUBLIC_TOKEN}"
 
 
 def enrich_with_logos(data: dict) -> dict:
