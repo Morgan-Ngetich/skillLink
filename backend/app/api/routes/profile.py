@@ -94,3 +94,17 @@ def update_profile(session: SessionDep, profile_in: UserProfileUpdate , current_
         return profile.to_public()
     except ValueError:
         raise HTTPException(status_code=404, detail="Profile not found")
+    
+@router.patch("/{id}", response_model=UserProfilePublic)
+def update_profile_by_id(id: int, session: SessionDep, profile_in: UserProfileUpdate , current_user: CurrentUser):
+    """
+    Update a user's Profile by id (admin usage)
+    """
+    if not current_user.is_superuser:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+    
+    try:
+        profile = crud.update_user_profile(session, id, profile_in)
+        return profile.to_public()
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Profile not found")
