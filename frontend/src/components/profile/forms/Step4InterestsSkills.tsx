@@ -106,7 +106,7 @@ export default function Step4InterestsSkills() {
     colorScheme: string
   ) => (
     <Box>
-
+      
       {items.length > 0 ? (
         <Flex flexWrap="wrap" gap={3} maxH="300px" overflowY="auto" py={2}>
           {items.map((item) => {
@@ -121,9 +121,9 @@ export default function Step4InterestsSkills() {
                 key={item.label}
                 onClick={() => toggleItem(item.label, type)}
                 borderWidth="1px"
-                borderRadius="xl"
-                px={4}
-                py={3}
+                borderRadius={{base: "lg", md: "xl"}}
+                px={{ base: 2, md: 4 }}
+                py={2}
                 bg={isSelected ? selectedBg : 'transparent'}
                 borderColor={isSelected ? `${colorScheme}.400` : 'gray.200'}
                 boxShadow={isSelected ? 'md' : 'sm'}
@@ -201,7 +201,7 @@ export default function Step4InterestsSkills() {
 
       {/* Validation Alert */}
       {!isValid && (
-        <Alert status="warning" borderRadius="md" fontSize="sm">
+        <Alert status="warning" borderRadius="md" fontSize="sm" p={2}>
           Please select at least{' '}
           {missingInterests > 0 && `${missingInterests} more interest${missingInterests > 1 ? 's' : ''}`}
           {missingInterests > 0 && missingSkills > 0 && ' and '}
@@ -232,7 +232,7 @@ export default function Step4InterestsSkills() {
           </Tabs.Trigger>
         </Tabs.List>
 
-        <Tabs.Content value="interests" p={4}>
+        <Tabs.Content value="interests" p={{base: 2, md: 4}}>
           <FormControl>
             <Controller
               control={control}

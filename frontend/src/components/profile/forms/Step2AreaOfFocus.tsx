@@ -48,9 +48,9 @@ export default function Step1AreaOfFocus() {
                       key={option.value}
                       onClick={() => handleToggle(option.value)}
                       borderWidth="1px"
-                      borderRadius="2xl"
-                      px={4}
-                      py={3}
+                      borderRadius={"xl"}
+                      px={{base: 2, md: 4}}
+                      py={{base: 2, md: 3}}
                       bg={isSelected ? selectedBg : 'transparent'}
                       borderColor={isSelected ? 'teal.500' : 'gray.200'}
                       boxShadow={isSelected ? 'md' : 'sm'}

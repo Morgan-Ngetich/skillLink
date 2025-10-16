@@ -87,7 +87,7 @@ export default function Step3Goals() {
 
       {/* Validation Alert */}
       {!isValid && (
-        <Alert status="warning" borderRadius="md" fontSize="sm">
+        <Alert status="warning" borderRadius="md" fontSize="sm" p={2}>
           Please select at least {missingGoals} more goal{missingGoals > 1 ? 's' : ''} to continue.
         </Alert>
       )}
@@ -105,7 +105,7 @@ export default function Step3Goals() {
                   gap={4}
                   maxH="400px"
                   overflowY="auto"
-                  p={2}
+                  p={{base: 0, md: 2}}
                 >
                   {allGoals.map((goal) => {
                     const isSelected = selectedGoals.includes(goal.label);
@@ -118,8 +118,8 @@ export default function Step3Goals() {
                         onClick={() => toggleGoal(goal.label)}
                         borderWidth="1px"
                         borderRadius="xl"
-                        px={4}
-                        py={3}
+                        px={{base: 3, md: 4}}
+                        py={{base: 2, md: 3}}
                         bg={isSelected ? selectedBg : 'transparent'}
                         borderColor={isSelected ? 'teal.400' : 'gray.200'}
                         boxShadow={isSelected ? 'md' : 'sm'}

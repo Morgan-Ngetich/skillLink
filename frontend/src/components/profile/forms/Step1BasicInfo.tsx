@@ -11,18 +11,18 @@ export default function Step1BasicInfo() {
   // Watch for validation feedback
   const location = useWatch({ control, name: 'location' });
   const bio = useWatch({ control, name: 'bio' });
-  const contactEmail = useWatch({ control, name: 'contact_details.email' });
-  const contactPhone = useWatch({ control, name: 'contact_details.phone' });
+  // const contactEmail = useWatch({ control, name: 'contact_details.email' });
+  // const contactPhone = useWatch({ control, name: 'contact_details.phone' });
 
   const isStepComplete = !!location?.trim() &&
-    !!bio?.trim() &&
-    !!contactEmail?.trim() &&
-    /\S+@\S+\.\S+/.test(contactEmail);
+    !!bio?.trim()
+    // !!contactEmail?.trim() &&
+    // /\S+@\S+\.\S+/.test(contactEmail);
 
   return (
     <VStack gap={8} align="stretch" mx="auto" w="full" maxW="6xl" px={4}>
       {!isStepComplete && (
-        <Alert status="info" borderRadius="md" fontSize="sm">
+        <Alert status="info" borderRadius="md" fontSize="sm" p={2}>
           Please fill in your basic information and contact details to continue.
         </Alert>
       )}
@@ -47,7 +47,7 @@ export default function Step1BasicInfo() {
                 Personal Information
               </Text>
 
-              <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
+              <SimpleGrid columns={1} gap={4}>
                 <FormControl isInvalid={!!errors.location}>
                   <FormLabel htmlFor="location">Location *</FormLabel>
                   <StyledInput
@@ -83,7 +83,7 @@ export default function Step1BasicInfo() {
             </Box>
 
             {/* Contact Information */}
-            <Box>
+            {/* <Box>
               <Text fontSize="lg" fontWeight="semibold" mb={4} color="fg.muted">
                 Contact Details
               </Text>
@@ -129,7 +129,7 @@ export default function Step1BasicInfo() {
                   </Text>
                 </FormControl>
               </SimpleGrid>
-            </Box>
+            </Box> */}
           </VStack>
         </Box>
       </Flex>
