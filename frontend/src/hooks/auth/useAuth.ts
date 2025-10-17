@@ -19,6 +19,9 @@ export function useAuth() {
     // const redirectUrl = `${window.location.origin}/auth/callback?email=${encodeURIComponent(email)}`;
     // console.log('Redirect URL:', redirectUrl);
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectToParam = urlParams.get("redirectTo") || "/dashboard/profile";
+    
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -51,7 +54,10 @@ export function useAuth() {
     await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
 
     // Navigate to sync user to the backend
-    navigate({ to: '/auth/callback' });
+    navigate({
+      to: '/auth/callback',
+      search: { redirectTo: redirectToParam },
+    });
     return { data };
   };
 
@@ -124,10 +130,13 @@ export function useAuth() {
 
 
   const signInWithGoogle = async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectToParam = urlParams.get("redirectTo") || "/dashboard/profile";
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectToParam)}`,
       },
     });
 

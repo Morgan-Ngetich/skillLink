@@ -65,13 +65,13 @@ export default function ProfileSetup() {
   const navigate = useNavigate()
   const { isBlocked, isLoading } = useAuthRouteGuard()
 
-  const { step: stepParam } = useSearch({ from: '/_layout/profile-setup' });
+  const { step: stepParam, redirectTo } = useSearch({ from: '/_layout/profile-setup' });
 
   const stepIndex = Math.max(0, Math.min(Number(stepParam) - 1 || 0, steps.length - 1));
   const setStepInUrl = (index: number) => {
     router.navigate({
       to: "/profile-setup",
-      search: { step: index + 1 },
+      search: { step: index + 1, redirectTo },
       replace: true,
     });
   };
@@ -82,10 +82,6 @@ export default function ProfileSetup() {
     defaultValues: {
       location: '',
       bio: '',
-      contact_details: {
-        email: '',
-        phone: '',
-      },
       goals: [],
       area_of_focus: [],
       interests: [],
@@ -98,8 +94,8 @@ export default function ProfileSetup() {
   // Validation watches
   const location = useWatch({ control, name: 'location' });
   const bio = useWatch({ control, name: 'bio' });
-  const contactEmail = useWatch({ control, name: 'contact_details.email' });
-  const contactPhone = useWatch({ control, name: 'contact_details.phone' });
+  // const contactEmail = useWatch({ control, name: 'contact_details.email' });
+  // const contactPhone = useWatch({ control, name: 'contact_details.phone' });
   const area_of_focus = useWatch({ control, name: 'area_of_focus' });
   const goals = useWatch({ control, name: 'goals' });
   const interests = useWatch({ control, name: 'interests' });
@@ -109,10 +105,10 @@ export default function ProfileSetup() {
     if (index === 0) {
       // Basic info: location, bio, and at least email required
       return !!location?.trim() &&
-        !!bio?.trim() &&
-        !!contactEmail?.trim() &&
-        !!contactPhone &&
-        /\S+@\S+\.\S+/.test(contactEmail); // Basic email validation
+        !!bio?.trim()
+      // !!contactEmail?.trim() &&
+      // !!contactPhone &&
+      // /\S+@\S+\.\S+/.test(contactEmail); // Basic email validation
     }
     if (index === 1) {
       // Focus areas: at least one area selected
@@ -140,7 +136,7 @@ export default function ProfileSetup() {
   const onSubmit = async (data: UserProfileCreate) => {
     await updateProfileAll(data, {
       onSuccess: async () => {
-        await navigate({ to: "/dashboard/profile" })
+        await navigate({ to: redirectTo || "/dashboard/profile" })
       },
       onError: (err) => console.error(err),
     });
@@ -154,22 +150,23 @@ export default function ProfileSetup() {
   return (
     <FormProvider {...methods}>
       <Flex
-        maxW="6xl"
+        maxW="5xl"
         mx="auto"
         minH="calc(100vh - 70px)"
-        px={4}
+        px={{ base: 4, md: 10 }}
         justifyContent="center"
         alignItems="center"
         direction={{ base: 'column', md: 'row' }}
+        mb={10}
       >
         <StepsRoot
           step={stepIndex}
           // onStepChange={onStepChange}
           count={steps.length}
           orientation={{ base: 'horizontal', md: 'vertical' }}
-          h="80vh"
+          h="full"
         >
-          <StepsList>
+          <StepsList maxH={"90vh"}>
             {steps.map((step, index) => (
               <StepsItem
                 key={index}
@@ -201,7 +198,14 @@ export default function ProfileSetup() {
           </StepsList>
 
           {steps.map((step, index) => (
-            <StepsContent key={index} index={index} w="full" px={{ base: 4, md: 10 }} py={{ base: 6, md: 10 }}>
+            <StepsContent
+              key={index}
+              index={index}
+              w="full"
+              px={{ base: 0, md: 10 }}
+              py={{ base: 6, md: 10 }}
+              transition="opacity 0.3s"
+            >
               <VStack align="stretch" gap={6}>
                 <Heading as="h3" fontSize="xl" borderBottom="1px solid" pb={4}>
                   Step {index + 1} / {steps.length}
@@ -218,7 +222,7 @@ export default function ProfileSetup() {
                     Back
                   </Button>
                   {stepIndex === steps.length - 1 ? (
-                    <Button onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+                    <Button onClick={handleSubmit(onSubmit)} loading={isSubmitting} colorPalette={"green"}>
                       Finish
                     </Button>
                   ) : (
