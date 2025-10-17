@@ -27,7 +27,7 @@ export function useCleanRedirect(paramKey = 'redirectTo') {
     const redirectTo = search[paramKey] as string | undefined;
 
     const fallbackUrl = document.referrer.includes('https://frontend-production-a85f.up.railway.app/')
-      ? '/crackmode' //TODO <- change this to "/"
+      ? '/'
       : '/crackmode';
       
     if (redirectTo) {
@@ -56,8 +56,8 @@ export function useNavigateWithRedirect() {
   const navigate = useNavigate();
   const routerState = useRouterState();
 
-  return (path: string) => {
-    const redirectToState = routerState.location.pathname;
+  return (path: string, redirectTarget?: string) => {
+    const redirectToState = redirectTarget || routerState.location.pathname;
 
     navigate({
       to: path,
