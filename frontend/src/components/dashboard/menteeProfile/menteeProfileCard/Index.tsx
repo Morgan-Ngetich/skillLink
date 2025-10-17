@@ -13,6 +13,7 @@ import ExperienceSection from './ExperienceSection';
 import EducationSection from './EducationSection';
 import SkillsOrInterests from './SkillsOrInterests';
 import UserProfileBanner from './UserProfileBanner';
+import Goals from './Goals';
 import MentorshipCalendarContent from '../calendar/MentorshipCalendarContent ';
 import { Avatar } from '@/components/ui';
 import { FaCalendar } from 'react-icons/fa6';
@@ -72,6 +73,7 @@ export default function ProfileCard({
     <Box>
       {profile?.experience && renderSeparatorSection(ExperienceSection, { experience: profile?.experience })}
       {profile?.education && renderSeparatorSection(EducationSection, { education: profile?.education })}
+       {profile?.goals && renderSeparatorSection(Goals, { goals: profile?.goals })}
       {profile?.skills && renderSeparatorSection(SkillsOrInterests, { skillsOrinterests: profile?.skills, section: "skillsSection" })}
       {profile?.interests && renderSeparatorSection(SkillsOrInterests, { skillsOrinterests: profile?.interests })}
     </Box>

@@ -80,7 +80,11 @@ const MenteeHeaderProfileSection: React.FC<MenteeHeaderProfileSectionProps> = ({
         </HStack>
 
         <HStack mt={4} gap={3}>
-          <Button size="sm">Book a Session</Button>
+          {user?.is_mentee && (
+            <Link href="/explore">
+              <Button size="sm">Find a Mentor</Button>
+            </Link>
+          )}
           {/* <Button variant="outline" size="sm">Settings</Button> */}
         </HStack>
       </Flex>
