@@ -153,6 +153,7 @@ export const useProfile = () => {
     } finally {
       setIsSubmitting(false);
       callbacks?.onSettled?.();
+      refetch();
     }
   };
 

@@ -1,4 +1,3 @@
-// MentorCard.jsx
 import {
   Box,
   Text,
@@ -23,7 +22,7 @@ interface MentorCardProps {
 }
 
 export const MentorCard: React.FC<MentorCardProps> = ({ mentor, maxW="full" }) => {
-  const badgeBg = { base: 'gray.50', _dark: 'gray.100' }
+  // const badgeBg = { base: 'gray.50', _dark: 'gray.100' }
 
   const navigate = useNavigate()
   const isMobile = useBreakpointValue({ base: true, md: false })
