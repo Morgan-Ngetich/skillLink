@@ -22,9 +22,11 @@ import { useSession } from '@/hooks/auth/useSession';
 import { HiMenuAlt3 } from 'react-icons/hi';
 
 const Header = () => {
-  const { isLoggingOut, signOut } = useAuth();
+  const { user: authUser, isLoggingOut, signOut } = useAuth();
   const { user, isLoading } = useSession();
   const navigate = useNavigate();
+
+
 
   useEffect(() => {
     console.log('UserME:', user);
@@ -32,6 +34,14 @@ const Header = () => {
   }, [user]);
 
   const navigateWithRedirect = useNavigateWithRedirect();
+
+  const handleBecomeMentorClick = () => {
+    if (authUser) {
+      navigateWithRedirect('/mentor-application', "/dashboard/profile");
+    } else {
+      navigateWithRedirect('/login', '/mentor-application');
+    }
+  };
 
   return (
     <Box
@@ -91,6 +101,12 @@ const Header = () => {
           {/* Color Mode Toggle */}
           <ColorModeButton variant="ghost" size="sm" />
 
+          {!authUser?.is_mentor && (
+            <Button onClick={handleBecomeMentorClick}>
+              Become a Mentor
+            </Button>
+          )}
+
           {/* User Menu / Auth Buttons */}
           {isLoading ? (
             <HStack gap={2} display={{ base: 'none', md: 'flex' }}>
@@ -119,13 +135,15 @@ const Header = () => {
                         name={user.user_metadata?.full_name}
                         src={user.user_metadata?.avatar_url}
                       />
-                      <Text
-                        display={{ base: 'none', lg: 'inline' }}
-                        fontWeight="medium"
-                        fontSize="sm"
-                      >
-                        {user.user_metadata?.full_name}
-                      </Text>
+                      {authUser?.is_mentor && (
+                        <Text
+                          display={{ base: 'none', lg: 'inline' }}
+                          fontWeight="medium"
+                          fontSize="sm"
+                        >
+                          {user.user_metadata?.full_name}
+                        </Text>
+                      )}
                       <FaChevronDown size={10} style={{ opacity: 0.7 }} />
                     </HStack>
                   )}
@@ -173,6 +191,7 @@ const Header = () => {
                       <Text fontSize="sm">Profile</Text>
                     </Menu.Item>
 
+{/* 
                     <Menu.Item
                       value="dashboard"
                       onSelect={() => navigate({ to: '/dashboard' })}
@@ -183,7 +202,8 @@ const Header = () => {
                       py={2}
                     >
                       <Text fontSize="sm">Dashboard</Text>
-                    </Menu.Item>
+                    </Menu.Item> */}
+                    
                   </Box>
 
                   <Box borderTop="1px solid" borderColor="border.subtle" pt={1}>
