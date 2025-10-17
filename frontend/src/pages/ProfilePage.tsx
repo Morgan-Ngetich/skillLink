@@ -1,73 +1,105 @@
-import { ProfilePerformanceCard } from "@/components/dashboard/menteeProfile/analytics/ProfilePerformanceCard"
-// import { MentorshipCalendar } from "@/components/dashboard/menteeProfile/calendar/MentorshipCalendar"
 import MentorshipCalendarContent from "@/components/dashboard/menteeProfile/calendar/MentorshipCalendarContent "
-import MenteeProfileCard from "@/components/dashboard/menteeProfile/menteeProfileCard/Index"
-import { MentorFeedbackCard } from "@/components/dashboard/menteeProfile/MentorFeedbackCard"
-// import MentorshipTimeline from "@/components/dashboard/mentorProfile/MentorshipTimeline"
-// import YourMentors from "@/components/dashboard/mentorProfile/YourMentors"
+
 import { useAuthRouteGuard } from "@/hooks/auth/useAuthRouteGuard"
-import { Box, Flex, VStack, Container, Tabs } from "@chakra-ui/react"
-import { FaCalendar, FaFolder } from "react-icons/fa6"
+import { Box, Flex, VStack, Container, Heading } from "@chakra-ui/react"
+import { useBreakpointValue } from "@chakra-ui/react"
+import ProfileCard from "@/components/dashboard/menteeProfile/menteeProfileCard/Index"
+import PeopleAlsoViewed from "@/components/homepage/TopMentors"
+import HeroCard from "@/components/homepage/herocard/HeroCard"
+import { useProfile } from "@/hooks/useProfile"
+import { useAuth } from "@/hooks/auth/useAuth"
+import { useState } from "react"
+import ProfileEditModal from "@/components/dashboard/menteeProfile/menteeProfileCard/editProfileCard/ProfileEditModal"
+import ProfileCompletionCard from "@/components/dashboard/menteeProfile/menteeProfileCard/ProfileCardCompletion"
 
 const ProfilePage = () => {
   const { isBlocked, isLoading } = useAuthRouteGuard()
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+
+  const isMobile = useBreakpointValue({ base: true, md: false })
+  const { profile } = useProfile()
+  const { user } = useAuth()
 
   if (isLoading || isBlocked) {
     // TODO: return the page's skeleton structure.
     return null
   }
 
+  const onEditClick = () => {
+    console.log('Edit button clicked');
+    setIsEditModalOpen(true);
+  }
+
+  
   return (
-    <Container w="100%" h="full" p={4}>
-      <Flex h="100%" gap={5}>
-        {/* Left Panel: Scrollable */}
-        <Box
-          // w="320px" // or any fixed width you want
-          h="100%"
-          overflowY="auto"
-          pr={2}
-          pb={4}
+    <>
+      <ProfileEditModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+      />
+
+      <Container h="full" p={{ base: 2, md: 5 }} maxW="breakpoint-xl">
+        <Flex
+          justify="space-between"
+          gap={5}
+          direction={{ base: "column", md: "row" }}
         >
-          <VStack gap={5} align="stretch">
-            <MenteeProfileCard />
-            {/* <MentorshipTimeline /> */}
-          </VStack>
-        </Box>
+          {/* LEFT SIDE */}
+          <Box
+            flex={{ base: "none", lg: "0 0 60%" }}  // 60% width on lg+
+            w={{ base: "100%", lg: "60%" }}
+          >
+            <Flex mx="auto">
+              <ProfileCard
+                user={user || undefined}
+                profile={profile}
+                onEditClick={onEditClick}
+                activeTab="about"
+              />
+            </Flex>
+          </Box>
 
-        {/* Right Panel: Also Scrollable */}
-        <Box
-          flex="1"
-          h="100%"
-          overflowY="auto"
-          pr={2}
-          // scrollbar={"hidden"}
-        >
-          <VStack gap={2} align="stretch">
-            <ProfilePerformanceCard />
-            <Tabs.Root defaultValue="calendar" variant={'enclosed'}>
-              <Tabs.List>
-                <Tabs.Trigger value="calendar">
-                  <FaCalendar style={{ marginRight: 6 }} />
-                  Calendar
-                </Tabs.Trigger>
-                <Tabs.Trigger value="feedback">
-                  <FaFolder style={{ marginRight: 6 }} />
-                  Feedback
-                </Tabs.Trigger>
-              </Tabs.List>
+          {/* RIGHT SIDE */}
+          {isMobile ? (
+            <VStack>
+              <VStack w="full" gap={6}>
+                {!profile?.is_profile_complete && (
+                  <ProfileCompletionCard onEditProfile={onEditClick} />
+                )}
+                <PeopleAlsoViewed />
+              </VStack>
+            </VStack>
+          ) : (
+            <VStack
+              gap={6}
+              align="start"
+              flex={{ base: "none", lg: "0 0 36%" }}  // 40% width on lg+
+              w={{ base: "100%", lg: "36%" }}
+            >
+              {!profile?.is_profile_complete && (
+                <VStack align="start" w="full">
+                  <ProfileCompletionCard onEditProfile={onEditClick} />
+                </VStack>
+              )}
 
-              <Tabs.Content value="feedback">
-                <MentorFeedbackCard />
-              </Tabs.Content>
+              <VStack align="start" w="full">
+                <Heading>Upcoming Sessions</Heading>
+                <HeroCard variant="card" />
+              </VStack>
 
-              <Tabs.Content value="calendar">
+              <VStack align="start" w="full">
+                <Heading>Availability</Heading>
                 <MentorshipCalendarContent />
-              </Tabs.Content>
-            </Tabs.Root>
-          </VStack>
-        </Box>
-      </Flex>
-    </Container>
+              </VStack>
+
+              <VStack align="start" w="full">
+                <PeopleAlsoViewed />
+              </VStack>
+            </VStack>
+          )}
+        </Flex>
+      </Container>
+    </>
   )
 }
 
