@@ -17,3 +17,4 @@ export * from './switch'
 export * from './select'
 export * from './breadcrumb'
 export * from "./dialog"
+export * from "./field"
