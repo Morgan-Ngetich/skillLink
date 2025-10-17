@@ -1,3 +1,4 @@
+import type { Education } from "@/client"
 import {
   Box,
   VStack,
@@ -6,42 +7,21 @@ import {
   Image,
 } from "@chakra-ui/react"
 
-interface EducationItem {
-  schoolLogo: string
-  schoolName: string
-  degree: string
-  duration: string
-  description?: string
+interface EducationSectionProps {
+  education: Education[]
 }
 
-const educationItems: EducationItem[] = [
-  {
-    schoolLogo: "https://picsum.photos/seed/jkuat/40",
-    schoolName: "Jomo Kenyatta University of Agriculture and Technology (JKUAT)",
-    degree: "BSc in Information Technology",
-    duration: "2020 – 2024",
-    description: "Focused on software development, user-centered design, and systems analysis.",
-  },
-  {
-    schoolLogo: "https://picsum.photos/seed/udemy/40",
-    schoolName: "Udemy / Self-paced",
-    degree: "Certificate in UX/UI Design",
-    duration: "2022",
-    description: "Completed a 40-hour course covering Figma, wireframing, and user research fundamentals.",
-  },
-]
-
-export default function EducationSection() {
+const EducationSection: React.FC<EducationSectionProps> = ({ education }) => {
   return (
-    <VStack align="start" gap={6} w="full">
+    <VStack align="start" gap={6} w="full" px={{base: 3, md: ""}}>
       <Text fontWeight="semibold" fontSize="md">Education</Text>
 
-      {educationItems.map((item, index) => (
+      {education.map((item, index) => (
         <HStack key={index} align="start" gap={4} w="full">
           {/* Logo */}
           <Image
-            src={item.schoolLogo}
-            alt={`${item.schoolName} logo`}
+            src={item.logo}
+            alt={`${item.institution} logo`}
             boxSize="40px"
             borderRadius="md"
             objectFit="cover"
@@ -50,16 +30,28 @@ export default function EducationSection() {
           {/* Content */}
           <Box flex="1">
             <Text fontWeight="medium">{item.degree}</Text>
-            <Text fontSize="sm" color="fg.muted">{item.schoolName}</Text>
-            <Text fontSize="sm" color="fg.muted">{item.duration}</Text>
-            {item.description && (
-              <Text fontSize="sm" mt={2} color="fg.muted">
-                {item.description}
+            <Text fontSize="sm" color="fg.muted">{item.institution}</Text>
+            <HStack fontSize="sm" color="fg.muted">
+              <Text>
+                {item.start_date ? new Date(item.start_date).toLocaleDateString("en-US", {
+                  month: "short",
+                  year: "numeric",
+                }) : ""}
+                {" – "}
+                {item.end_date
+                  ? new Date(item.end_date).toLocaleDateString("en-US", {
+                    month: "short",
+                    year: "numeric",
+                  })
+                  : "Present"}
               </Text>
-            )}
+            </HStack>
           </Box>
         </HStack>
       ))}
     </VStack>
   )
 }
+
+
+export default EducationSection;

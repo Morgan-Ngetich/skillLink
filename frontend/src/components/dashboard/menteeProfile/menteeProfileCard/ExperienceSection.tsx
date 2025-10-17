@@ -1,3 +1,5 @@
+
+import type { Experience } from "@/client"
 import {
   Box,
   VStack,
@@ -6,59 +8,47 @@ import {
   Image,
 } from "@chakra-ui/react"
 
-interface ExperienceItem {
-  companyLogo: string
-  companyName: string
-  role: string
-  duration: string
-  description: string
+
+interface ExperienceSection {
+  experience: Experience[]
 }
 
-const experienceItems: ExperienceItem[] = [
-  {
-    companyLogo: "https://picsum.photos/seed/google/40",
-    companyName: "Google",
-    role: "UX Design Intern",
-    duration: "Jun 2024 – Aug 2024",
-    description: "Worked on improving mobile user flows for Google Maps, contributing to UI accessibility and performance enhancements.",
-  },
-  {
-    companyLogo: "https://picsum.photos/seed/startup/40",
-    companyName: "Brightly Labs",
-    role: "Junior Product Designer",
-    duration: "Jan 2023 – May 2024",
-    description: "Designed wireframes and prototypes for an ed-tech platform. Collaborated with devs and product managers on agile teams.",
-  },
-  {
-    companyLogo: "https://picsum.photos/seed/freelance/40",
-    companyName: "Freelance",
-    role: "Freelance UI/UX Designer",
-    duration: "2021 – Present",
-    description: "Delivered branding and website UI design to over 10 small businesses and startups.",
-  },
-]
-
-export default function ExperienceSection() {
+const ExperienceSection: React.FC<ExperienceSection> = ({ experience }) => {
   return (
-    <VStack align="start" gap={6} w="full">
+    <VStack align="start" gap={6} w="full" px={{base: 3, md: ""}}>
       <Text fontWeight="semibold">Experience</Text>
 
-      {experienceItems.map((item, index) => (
-        <HStack key={index} align="start" gap={4} w="full">
+      {experience.map((item, index) => (
+        <HStack key={index} align="start" gap={{base: 3, md: 4}} w="full">
           {/* Logo */}
           <Image
-            src={item.companyLogo}
-            alt={`${item.companyName} logo`}
+            src={item.logo}
+            alt={`${item.company} logo`}
             boxSize="40px"
             borderRadius="sm"
             objectFit="cover"
           />
 
           {/* Content */}
-          <Box flex="1">            
-            <Text fontWeight="medium">{item.role}</Text>
-            <Text fontSize="sm" color="fg.muted">{item.companyName}</Text>
-            <Text fontSize="sm" color="fg.muted">{item.duration}</Text>
+          <Box flex="1">
+            <Text fontWeight="medium">{item.position}</Text>
+            <Text fontSize="sm" color="fg.muted">{item.company}</Text>
+            <HStack fontSize="sm" color="fg.muted">
+              <Text>
+                {item.start_date ? new Date(item.start_date).toLocaleDateString("en-US", {
+                  month: "short",
+                  year: "numeric",
+                }) : ""}
+                {" – "}
+                {item.end_date
+                  ? new Date(item.end_date).toLocaleDateString("en-US", {
+                    month: "short",
+                    year: "numeric",
+                  })
+                  : "Present"}
+              </Text>
+            </HStack>
+
             <Text fontSize="sm" mt={2} color="fg.muted">
               {item.description}
             </Text>
@@ -69,3 +59,5 @@ export default function ExperienceSection() {
     </VStack>
   )
 }
+
+export default ExperienceSection;

@@ -1,3 +1,4 @@
+import type { UserPublic } from '@/client';
 import {
   Flex,
   Heading,
@@ -11,19 +12,12 @@ import {
 import { FaLinkedin, FaGithub } from 'react-icons/fa';
 import { FaXTwitter, FaInstagram } from "react-icons/fa6";
 
-const user = {
-  full_name: 'Morgan Ngetich',
-  role: 'Full-Stack Developer',
-  location: 'Nairobi, Kenya',
-  education_logo: 'https://picsum.photos/30?random=1',
-  work_logo: 'https://picsum.photos/30?random=2',
-  twitter: 'https://twitter.com/fakeprofile',
-  linkedin: 'https://linkedin.com/in/fakeprofile',
-  github: 'https://github.com/fakeprofile',
-  instagram: 'https://instagram.com/fakeprofile'
-};
+interface MenteeHeaderProfileSectionProps {
+  user?: UserPublic;
+  profile?: UserPublic["profile"];
+}
 
-export default function MenteeHeaderProfileSection() {
+const MenteeHeaderProfileSection: React.FC<MenteeHeaderProfileSectionProps> = ({ user, profile }) => {
   return (
     <Flex
       justify="space-between"
@@ -34,23 +28,23 @@ export default function MenteeHeaderProfileSection() {
       <HStack justify={'space-between'} w="full">
         <VStack align={'flex-start'} gap={0}>
 
-          <Heading size="md">{user.full_name}</Heading>
-          <Text fontSize="sm">{user.role}</Text>
-          <Text fontSize="sm">{user.location}</Text>
+          <Heading size="md">{user?.full_name}</Heading>
+          <Text fontSize="sm">{profile?.bio}</Text>
+          <Text fontSize="sm">{profile?.location}</Text>
         </VStack>
 
         {/* Education & Work Logos */}
         <VStack gap={4}>
           <Image
-            src={user.education_logo}
-            alt="Education"
+            src={profile?.experience?.[0]?.logo}
+            alt="Experience"
             boxSize="40px"
             borderRadius="sm"
             objectFit="cover"
           />
           <Image
-            src={user.work_logo}
-            alt="Work"
+            src={profile?.education?.[0]?.logo}
+            alt="Education"
             boxSize="40px"
             borderRadius="sm"
             objectFit="cover"
@@ -60,26 +54,26 @@ export default function MenteeHeaderProfileSection() {
 
 
       {/* Left: User Details */}
-      <Flex direction={{base: "column", lg: "row-reverse"}} align={{base: "flex-start", md: "flex-end" }} gap={0} w="full" justify={"space-between"}>
+      <Flex direction={{ base: "column", lg: "row-reverse" }} align={{ base: "flex-start", md: "flex-end" }} gap={0} w="full" justify={"space-between"}>
         {/* Social Media Icons */}
         <HStack gap={3}>
-          {user.linkedin && (
-            <Link href={user.linkedin}>
+          {profile?.social_links?.linkedin && (
+            <Link href={profile?.social_links?.linkedin || ''}>
               <FaLinkedin size={25} />
             </Link>
           )}
-          {user.github && (
-            <Link href={user.github}>
+          {profile?.social_links?.github && (
+            <Link href={profile?.social_links?.github || ''}>
               <FaGithub size={25} />
             </Link>
           )}
-          {user.twitter && (
-            <Link href={user.twitter} >
+          {profile?.social_links?.Xtwitter && (
+            <Link href={profile?.social_links?.Xtwitter || ''} >
               <FaXTwitter size={25} />
             </Link>
           )}
-          {user.instagram && (
-            <Link href={user.instagram}>
+          {profile?.social_links?.instagram && (
+            <Link href={profile?.social_links?.instagram || ''}>
               <FaInstagram size={25} />
             </Link>
           )}
@@ -95,3 +89,6 @@ export default function MenteeHeaderProfileSection() {
     </Flex>
   );
 }
+
+
+export default MenteeHeaderProfileSection;

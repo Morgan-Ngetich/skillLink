@@ -2,16 +2,11 @@ import { Box, Image, IconButton, HStack, Flex } from "@chakra-ui/react"
 import { Avatar, Tag } from "@/components/ui"
 import { FiEdit } from "react-icons/fi"
 import MenteeHeaderProfileSection from "./MenteeHeaderProfileSection";
-
-interface User {
-  full_name: string;
-  avatar_url: string;
-  area_of_focus?: string[];
-  // Add other user properties as needed
-}
+import type { UserProfilePublic, UserPublic } from "@/client";
 
 interface UserProfileBannerProps {
-  user: User;
+  user?: UserPublic;
+  profile?: UserProfilePublic;
   showEditButton?: boolean;
   bannerHeight?: { base: string, md: string };
   avatarSize?: string;
@@ -20,11 +15,11 @@ interface UserProfileBannerProps {
     left: string;
   };
   onEditClick?: () => void;
-  userType?: 'mentee' | 'mentor';
 }
 
 const UserProfileBanner = ({
   user,
+  profile,
   showEditButton = true,
   bannerHeight = { base: "100px", md: "150px" },
   avatarSize = "100px",
@@ -35,7 +30,7 @@ const UserProfileBanner = ({
     <Box border={{base: "1px solid", md: "none"}} borderColor={'gray.muted'} pb={{base: 2, md: 0}} borderBottomRadius={"lg"}>
       <Box h={bannerHeight} position="relative">
         <Image
-          src={user.avatar_url || '/fallback-banner.jpg'}
+          src={user?.avatar_url || '/fallback-banner.jpg'}
           alt="Banner"
           objectFit="cover"
           w="full"
@@ -57,7 +52,7 @@ const UserProfileBanner = ({
           </IconButton>
         )}
 
-        {user.area_of_focus && user.area_of_focus.length > 0 && (
+        {profile?.area_of_focus && profile?.area_of_focus.length > 0 && (
           <HStack
             position="absolute"
             bottom={{base: "4px", md: "8px"}}
@@ -71,7 +66,7 @@ const UserProfileBanner = ({
             px={2}
             scrollbar={"hidden"}
           >
-            {user.area_of_focus.map((focus) => (
+            {profile.area_of_focus.map((focus) => (
               <Tag
                 key={focus}
                 size="sm"
@@ -92,8 +87,8 @@ const UserProfileBanner = ({
         {/* Avatar */}
         <Avatar
           boxSize={avatarSize}
-          src={user.avatar_url}
-          name={user.full_name}
+          src={user?.avatar_url}
+          name={user?.full_name}
           position="absolute"
           bottom={avatarPosition.bottom}
           left={avatarPosition.left}
@@ -105,7 +100,7 @@ const UserProfileBanner = ({
       <Box px={{base: 6, md: 8}} pt={8} pb={{base: 0, md: 3}}>
         <Flex direction="column" gap={4} position={'relative'}>
           {/* Header Profile Section */}
-          <MenteeHeaderProfileSection />
+          <MenteeHeaderProfileSection  user={user} profile={profile}/>
         </Flex>
       </Box>
     </Box>

@@ -11,52 +11,31 @@ import {
 import { LuUser, LuStar, LuActivity, LuCalendarArrowUp, LuThumbsUp, LuThumbsDown } from "react-icons/lu";
 import ExperienceSection from './ExperienceSection';
 import EducationSection from './EducationSection';
-import SkillsSection from './SkillsSection';
+import SkillsOrInterests from './SkillsOrInterests';
 import UserProfileBanner from './UserProfileBanner';
 import MentorshipCalendarContent from '../calendar/MentorshipCalendarContent ';
-import HeroCard from '@/components/homepage/herocard/HeroCard';
-import { FaUsers } from 'react-icons/fa';
 import { Avatar } from '@/components/ui';
+import { FaCalendar } from 'react-icons/fa6';
+import type { UserProfilePublic, UserPublic } from '@/client';
+// import ProfileCompletionCard from './ProfileCardCompletion';
 
-// Type definition for user profile
-export interface UserProfile {
-  full_name: string;
-  role: string;
-  location: string;
-  avatar_url: string;
-  education?: string;
-  background?: string;
-  interests?: string[];
-  preferred_communication?: string;
-  goals?: {
-    title: string;
-    progress: number;
-    summary: string;
-  };
-  skills?: string[];
-  area_of_focus?: string[];
-  education_logo?: string;
-  work_logo?: string;
-  twitter?: string;
-  linkedin?: string;
-  github?: string;
-}
+
 
 interface ProfileCardProps {
-  user?: UserProfile;
-  userType?: 'mentee' | 'mentor';
+  user?: UserPublic;
+  profile?: UserProfilePublic;
   onEditClick?: () => void;
   activeTab?: string;
 }
 
 export default function ProfileCard({
   user,
-  userType,
+  profile,
   onEditClick,
   activeTab = 'about',
 }: ProfileCardProps) {
   const isMobile = useBreakpointValue({ base: true, md: false })
-  const sessions = true
+  // const sessions = true
   // Guard clause - return null or loading state if user is undefined
   if (!user) {
     return (
@@ -74,8 +53,10 @@ export default function ProfileCard({
     );
   }
 
+  console.log(profile)
+
   const handleEdit = () => {
-    console.log(`Edit ${userType} profile clicked`);
+    // console.log(`Edit ${userType} profile clicked`);
     onEditClick?.();
   };
 
@@ -89,16 +70,17 @@ export default function ProfileCard({
 
   const renderAboutContent = () => (
     <Box>
-      {renderSeparatorSection(ExperienceSection)}
-      {renderSeparatorSection(EducationSection)}
-      {user.skills && renderSeparatorSection(SkillsSection, { skills: user.skills })}
+      {profile?.experience && renderSeparatorSection(ExperienceSection, { experience: profile?.experience })}
+      {profile?.education && renderSeparatorSection(EducationSection, { education: profile?.education })}
+      {profile?.skills && renderSeparatorSection(SkillsOrInterests, { skillsOrinterests: profile?.skills, section: "skillsSection" })}
+      {profile?.interests && renderSeparatorSection(SkillsOrInterests, { skillsOrinterests: profile?.interests })}
     </Box>
   );
 
   const renderReviewsContent = () => (
     <Box>
       <Text fontWeight="bold" fontSize="lg" mb={6}>
-        Reviews from {userType === 'mentor' ? 'Mentees' : 'Mentors'}
+        Reviews from {user.is_mentor ? 'Mentees' : 'Mentors'}
       </Text>
 
       {[
@@ -107,7 +89,7 @@ export default function ProfileCard({
           role: "UI/UX Designer",
           time: "2 weeks ago",
           stars: 5,
-          text: `Incredible ${userType}! The guidance helped me land my first design role.
+          text: `Incredible mentor! The guidance helped me land my first design role.
         Patient, knowledgeable, and genuinely cares about growth. Highly recommend!`,
           avatar: "https://randomuser.me/api/portraits/women/65.jpg"
         },
@@ -117,7 +99,7 @@ export default function ProfileCard({
           time: "1 month ago",
           stars: 4,
           text: `Outstanding expertise in design systems and product strategy.
-        Feedback was constructive and actionable. Great ${userType} for anyone serious about product design!`,
+        Feedback was constructive and actionable. Great mentor for anyone serious about product design!`,
           avatar: "https://randomuser.me/api/portraits/men/75.jpg"
         },
         {
@@ -286,33 +268,20 @@ export default function ProfileCard({
 
   // Render content with tabs for mentors, without tabs for mentees
   const renderContent = () => {
-    if (userType === 'mentor') {
+    if (user.is_mentor) {
       return (
         <Tabs.Root defaultValue={activeTab} w="full">
-          <Box
-            overflowX="auto"
-            whiteSpace="nowrap"
-            scrollbar={'hidden'}
-          >
+          <Box overflowX="auto" whiteSpace="nowrap" scrollbar="hidden">
             <Tabs.List display="flex" w="max-content" minW="100%">
               <Tabs.Trigger value="about">
                 <LuUser />
                 About
               </Tabs.Trigger>
 
-              {isMobile && sessions && (
-                <Tabs.Trigger value="upcoming-sessions">
-                  <FaUsers />
-                  Upcoming Sessions
-                </Tabs.Trigger>
-              )}
-
-              {isMobile && sessions && (
-                <Tabs.Trigger value="availability">
-                  <LuCalendarArrowUp />
-                  Availability
-                </Tabs.Trigger>
-              )}
+              <Tabs.Trigger value="availability">
+                <LuCalendarArrowUp />
+                Availability
+              </Tabs.Trigger>
 
               <Tabs.Trigger value="reviews">
                 <LuStar />
@@ -330,30 +299,57 @@ export default function ProfileCard({
 
           <Box mt={4}>
             <Tabs.Content value="about">{renderAboutContent()}</Tabs.Content>
-
-            {isMobile && sessions && (
-              <Tabs.Content value="upcoming-sessions">
-                <HeroCard variant="card" />
-              </Tabs.Content>
-            )}
-
-            {isMobile && sessions && (
-              <Tabs.Content value="availability">
-                <MentorshipCalendarContent />
-              </Tabs.Content>
-            )}
-
+            <Tabs.Content value="availability">
+              <MentorshipCalendarContent />
+            </Tabs.Content>
             <Tabs.Content value="reviews">{renderReviewsContent()}</Tabs.Content>
             <Tabs.Content value="activity">{renderActivityContent()}</Tabs.Content>
           </Box>
         </Tabs.Root>
-
       );
     }
 
-    // For mentees, just show the about content
+    // mentee layout
+    if (user.is_mentee && isMobile) {
+      return (
+        <Tabs.Root defaultValue={activeTab} w="full">
+          <Box overflowX="auto" whiteSpace="nowrap" scrollbar="hidden">
+            <Tabs.List display="flex" w="max-content" minW="100%">
+              <Tabs.Trigger value="about">
+                <LuUser />
+                About
+              </Tabs.Trigger>
+
+              <Tabs.Trigger value="calendar">
+                <FaCalendar />
+                Calendar
+              </Tabs.Trigger>
+
+              <Tabs.Trigger value="activity">
+                <LuActivity />
+                Activity
+              </Tabs.Trigger>
+
+              <Tabs.Indicator />
+            </Tabs.List>
+          </Box>
+
+          <Box mt={4}>
+            <Tabs.Content value="about">{renderAboutContent()}</Tabs.Content>
+            <Tabs.Content value="calendar">
+              <MentorshipCalendarContent />
+            </Tabs.Content>
+            <Tabs.Content value="activity">{renderActivityContent()}</Tabs.Content>
+          </Box>
+        </Tabs.Root>
+      );
+    }
+
+    // fallback (if userType is undefined)
     return renderAboutContent();
   };
+
+
 
   return (
     <Box
@@ -368,18 +364,24 @@ export default function ProfileCard({
 
       <UserProfileBanner
         user={user}
+        profile={profile}
         onEditClick={handleEdit}
-        userType={userType}
       />
 
       {/* Content Section */}
       <Box px={{ base: 0, md: 6 }} pt={{ base: 3, md: 5 }} pb={3}>
-        <Flex direction="column" gap={4} position="relative">
-          {userType == "mentee" && (
-            <Separator />
-          )}
+        <Flex direction="column" gap={4} position="relative" >
+          {/* 
+          {profile && (
+            <Box mx="auto" w={{ base: "100%", md: "80%" }}>
+              <ProfileCompletionCard onEditProfile={handleEdit} />
+            </Box>
+          )} */}
+          {!isMobile && <Separator />}
           {renderContent()}
+
         </Flex>
+
       </Box>
     </Box>
   );
