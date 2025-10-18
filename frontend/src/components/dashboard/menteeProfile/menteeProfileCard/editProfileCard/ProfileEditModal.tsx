@@ -24,10 +24,12 @@ import type { UserProfileUpdate, UserProfileCreate } from '@/client'
 import { useState, useEffect, useRef } from 'react'
 import InstitutionAutocomplete from './InstitutionAutocomplete'
 import SocialLinksSelector from './SocialLinksSelector'
+import { useRouter, useSearch } from '@tanstack/react-router'
 
 interface ProfileEditModalProps {
   isOpen: boolean
   onClose: () => void
+  initialStep: string
 }
 
 type Step = 'basic' | 'experience' | 'education' | 'skills' | 'social'
@@ -65,15 +67,67 @@ const STEPS: { id: Step; title: string; description: string; icon: React.Element
   },
 ]
 
-export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
+const EMPTY_EXPERIENCE_ENTRY = {
+  company: '',
+  position: '',
+  description: '',
+  start_date: '',
+  end_date: '',
+  logo: '',
+}
+
+const EMPTY_EDUCATION_ENTRY = {
+  institution: '',
+  degree: '',
+  field_of_study: '',
+  start_date: '',
+  end_date: '',
+  logo: '',
+}
+
+export default function ProfileEditModal({ isOpen, onClose, initialStep = "basic" }: ProfileEditModalProps) {
   const { profile, updateProfileAll, isSubmitting } = useProfile()
   // const { user } = useAuth()
   // const showPreview = useBreakpointValue({ base: false, lg: true })
 
-  const [step, setStep] = useState<number>(0)
+  const router = useRouter()
+  const search = useSearch({ from: "/_layout/dashboard/profile" })
 
-  const goPrev = () => setStep((s) => Math.max(s - 1, 0))
-  const goNext = () => setStep((s) => Math.min(s + 1, STEPS.length - 1))
+  const getStepIndex = (stepId: string): number => {
+    const index = STEPS.findIndex(s => s.id === stepId)
+    return index >= 0 ? index : 0
+  }
+
+  const [step, setStep] = useState<number>(getStepIndex(initialStep))
+
+  useEffect(() => {
+    if (search.step) {
+      setStep(getStepIndex(search.step))
+    }
+  }, [search.step])
+
+  const updateStep = (newStepIndex: number) => {
+    setStep(newStepIndex)
+    router.navigate({
+      to: "/dashboard/profile",
+      search: {
+        drawer: "setup-profile",
+        step: STEPS[newStepIndex].id
+      },
+      replace: true,
+    })
+  }
+
+  const goPrev = () => {
+    const newStep = Math.max(step - 1, 0)
+    updateStep(newStep)
+  }
+
+  const goNext = () => {
+    const newStep = Math.min(step + 1, STEPS.length - 1)
+    updateStep(newStep)
+  }
+
 
   // Form state - Initialize from profile when modal opens
   const [formData, setFormData] = useState<Partial<UserProfileUpdate | UserProfileCreate>>({
@@ -101,8 +155,14 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
         skills: profile.skills || [],
         social_links: profile.social_links || {},
         contact_details: profile.contact_details || {},
-        education: profile.education || [],
-        experience: profile.experience || [],
+
+        // Ensure at least one empty entry for experience and education
+        education: profile.education && profile.education.length > 0
+          ? profile.education
+          : [EMPTY_EDUCATION_ENTRY],
+        experience: profile.experience && profile.experience.length > 0
+          ? profile.experience
+          : [EMPTY_EXPERIENCE_ENTRY],
       })
     }
   }, [isOpen, profile])
@@ -112,23 +172,6 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
   const [newGoal, setNewGoal] = useState('')
   const [newInterest, setNewInterest] = useState('')
   const [newSkill, setNewSkill] = useState('')
-
-  // const currentStepIndex = STEPS.findIndex(s => s.id === currentStep)
-  // const progress = ((currentStepIndex + 1) / STEPS.length) * 100
-
-  // const handleNext = () => {
-  //   const nextIndex = currentStepIndex + 1
-  //   if (nextIndex < STEPS.length) {
-  //     setCurrentStep(STEPS[nextIndex].id)
-  //   }
-  // }
-
-  // const handlePrevious = () => {
-  //   const prevIndex = currentStepIndex - 1
-  //   if (prevIndex >= 0) {
-  //     setCurrentStep(STEPS[prevIndex].id)
-  //   }
-  // }
 
   const { refetch } = useProfile()
 
@@ -159,14 +202,7 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
     const current = formData.experience || []
     setFormData({
       ...formData,
-      experience: [...current, {
-        company: '',
-        position: '',
-        description: '',
-        start_date: '',
-        end_date: '',
-        logo: '',
-      }]
+      experience: [...current, EMPTY_EXPERIENCE_ENTRY],
     })
   }
 
@@ -180,22 +216,23 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
 
 
   const removeExperience = (index: number) => {
-    const current = formData.experience || []
-    setFormData({ ...formData, experience: current.filter((_, i) => i !== index) })
-  }
+    setFormData(prev => {
+      const current = prev.experience || [];
+      const updated = current.filter((_, i) => i !== index);
+
+      //  keep at least one blank card
+      return {
+        ...prev,
+        experience: updated.length > 0 ? updated : [EMPTY_EXPERIENCE_ENTRY]
+      };
+    });
+  };
 
   const addEducation = () => {
     const current = formData.education || []
     setFormData({
       ...formData,
-      education: [...current, {
-        institution: '',
-        degree: '',
-        field_of_study: '',
-        start_date: '',
-        end_date: '',
-        logo: '',
-      }]
+      education: [...current, EMPTY_EDUCATION_ENTRY]
     })
   }
 
@@ -209,10 +246,17 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
 
 
   const removeEducation = (index: number) => {
-    const current = formData.education || []
-    setFormData({ ...formData, education: current.filter((_, i) => i !== index) })
-  }
+    setFormData(prev => {
+      const current = prev.education || [];
+      const updated = current.filter((_, i) => i !== index);
 
+      //  keep at least one blank card
+      return {
+        ...prev,
+        education: updated.length > 0 ? updated : [EMPTY_EDUCATION_ENTRY]
+      };
+    });
+  };
 
   const educationEndRef = useRef<HTMLDivElement | null>(null)
   const experienceEndRef = useRef<HTMLDivElement | null>(null)
@@ -366,15 +410,18 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
               )}
               <Text fontWeight="semibold">Experience {i + 1}</Text>
             </HStack>
-            <IconButton
-              aria-label="Remove experience"
-              size="sm"
-              colorPalette="red"
-              variant="ghost"
-              onClick={() => removeExperience(i)}
-            >
-              <LuTrash2 />
-            </IconButton>
+            {/* Only show tracj if more that 1 card */}
+            {(formData.experience || []).length > 1 && (
+              <IconButton
+                aria-label="Remove experience"
+                size="sm"
+                colorPalette="red"
+                variant="ghost"
+                onClick={() => removeExperience(i)}
+              >
+                <LuTrash2 />
+              </IconButton>
+            )}
           </Flex>
 
           <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={3}>
@@ -459,15 +506,17 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
               )}
               <Text fontWeight="semibold">Education {i + 1}</Text>
             </HStack>
-            <IconButton
-              aria-label="Remove education"
-              size="sm"
-              colorPalette="red"
-              variant="ghost"
-              onClick={() => removeEducation(i)}
-            >
-              <LuTrash2 />
-            </IconButton>
+            {(formData.education || []).length > 1 && (
+              <IconButton
+                aria-label="Remove education"
+                size="sm"
+                colorPalette="red"
+                variant="ghost"
+                onClick={() => removeEducation(i)}
+              >
+                <LuTrash2 />
+              </IconButton>
+            )}
           </Flex>
 
           <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={3}>
@@ -650,9 +699,14 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
   return (
     <DialogRoot open={isOpen} onOpenChange={(e) => !e.open && onClose()} size={{ base: "full", md: "xl" }}>
       <DialogContent border="1px solid" borderColor="fg.subtle">
-        <DialogBody maxH={{ base: "100vh", md: "90vh"}} overflowY="auto" px={{ base: 4, md: 6 }} py={4}>
+        <DialogBody maxH={{ base: "100vh", md: "90vh" }} overflowY="auto" px={{ base: 4, md: 6 }} py={4}>
           {/* Steps.Root is controlled via "step" and onStepChange */}
-          <Steps.Root count={STEPS.length} step={step} onStepChange={(e) => setStep(e.step)} orientation="horizontal" size="md">
+          <Steps.Root
+            count={STEPS.length} step={step}
+            onStepChange={(e) => updateStep(e.step)}
+            orientation="horizontal"
+            size="md"
+          >
             {/* TOP: icons-only step list */}
             <Steps.List w="full" justifyContent="center" >
               {STEPS.map((s, i) => (

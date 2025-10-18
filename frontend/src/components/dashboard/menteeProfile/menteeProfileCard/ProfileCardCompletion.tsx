@@ -12,7 +12,7 @@ import { useProfile } from '@/hooks/useProfile'
 import { Progress } from '@/components/ui'
 
 interface ProfileCompletionCardProps {
-  onEditProfile: () => void
+  onEditProfile: (stepId?: string) => void // Add optional stepId parameter
 }
 
 interface CompletionItem {
@@ -20,48 +20,54 @@ interface CompletionItem {
   label: string
   isComplete: boolean
   weight: number
+  stepId: string // Add stepId to map to modal steps
 }
 
 export default function ProfileCompletionCard({ onEditProfile }: ProfileCompletionCardProps) {
   const { profile } = useProfile()
 
-  // TODO: Hanlde this in the backend. Return percentage and list[] of steps to be completed.
   const completionItems: CompletionItem[] = [
     {
       id: 'bio',
       label: 'Add a bio',
       isComplete: Boolean(profile?.bio && profile.bio.length > 20),
       weight: 15,
+      stepId: 'basic', // Maps to the 'basic' step in modal
     },
     {
       id: 'location',
       label: 'Set your location',
       isComplete: Boolean(profile?.location),
       weight: 10,
+      stepId: 'basic',
     },
     {
       id: 'experience',
       label: 'Add work experience',
       isComplete: Boolean(profile?.experience && profile.experience.length > 0),
       weight: 20,
+      stepId: 'experience',
     },
     {
       id: 'education',
       label: 'Add education',
       isComplete: Boolean(profile?.education && profile.education.length > 0),
       weight: 15,
+      stepId: 'education',
     },
     {
       id: 'skills',
       label: 'List your skills (at least 3)',
       isComplete: Boolean(profile?.skills && profile.skills.length >= 3),
       weight: 15,
+      stepId: 'skills',
     },
     {
       id: 'interests',
       label: 'Share your interests',
       isComplete: Boolean(profile?.interests && profile.interests.length > 0),
       weight: 10,
+      stepId: 'skills',
     },
     {
       id: 'social',
@@ -71,6 +77,7 @@ export default function ProfileCompletionCard({ onEditProfile }: ProfileCompleti
         (profile.social_links.linkedin || profile.social_links.github)
       ),
       weight: 15,
+      stepId: 'social',
     },
   ]
 
@@ -83,10 +90,13 @@ export default function ProfileCompletionCard({ onEditProfile }: ProfileCompleti
 
   const incompleteItems = completionItems.filter(item => !item.isComplete)
 
-  // Don't show the card if profile is 100% complete
-  // if (completionPercentage === 100) {
-  //   return null
-  // }
+  // Find the first incomplete step
+  const firstIncompleteStep = incompleteItems[0]?.stepId || 'basic'
+
+  // Handle click - open modal at first incomplete step
+  const handleCompleteProfile = () => {
+    onEditProfile(firstIncompleteStep)
+  }
 
   return (
     <Box
@@ -134,10 +144,10 @@ export default function ProfileCompletionCard({ onEditProfile }: ProfileCompleti
         <VStack align="stretch" gap={2} mt={2}>
           {incompleteItems.slice(0, 3).map((item) => (
             <Flex key={item.id} align="center" gap={2}>
-              <Box color="gray.400">
+              <Box color="fg.subtle">
                 <LuCircle size={16} />
               </Box>
-              <Text fontSize="sm" color="gray.700">
+              <Text fontSize="sm" color="fg.muted">
                 {item.label}
               </Text>
             </Flex>
@@ -152,11 +162,15 @@ export default function ProfileCompletionCard({ onEditProfile }: ProfileCompleti
 
         <Button
           colorScheme="blue"
-          onClick={onEditProfile}
+          onClick={handleCompleteProfile}
           size="md"
           w="full"
         >
-          Complete Profile
+          {completionPercentage === 0 
+            ? 'Start Profile Setup' 
+            : completionPercentage === 100 
+            ? 'View Profile' 
+            : 'Complete Profile'}
         </Button>
       </VStack>
     </Box>

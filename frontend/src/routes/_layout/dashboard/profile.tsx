@@ -13,6 +13,10 @@ export const Route = createFileRoute("/_layout/dashboard/profile")({
   beforeLoad: async ({ location }) => {
     await requireProfileCompletion(location)
   },
+  validateSearch: (search) => ({
+    drawer: search.drawer ?? undefined,
+    step: search.step as string | undefined,
+  }),
   component: () => (
     <Suspense fallback={<Spinner />}>
       <ProfilePage />
