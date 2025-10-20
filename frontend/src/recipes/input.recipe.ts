@@ -3,7 +3,7 @@ import { defineRecipe } from '@chakra-ui/react';
 export const inputRecipe = defineRecipe({
   className: 'input',
   base: {
-    h: "50px",
+    minH: "50px",
     borderRadius: '2xl',
     w: 'full',
     border: '1px solid',
