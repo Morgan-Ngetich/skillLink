@@ -16,6 +16,7 @@ export const Route = createFileRoute("/_layout/dashboard/profile")({
   validateSearch: (search) => ({
     drawer: search.drawer ?? undefined,
     step: search.step as string | undefined,
+    redirectTo: search.redirectTo as string | undefined
   }),
   component: () => (
     <Suspense fallback={<Spinner />}>
