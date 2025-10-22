@@ -107,15 +107,19 @@ export default function ProfileEditModal({ isOpen, onClose, initialStep = "basic
   }, [search.step])
 
   const updateStep = (newStepIndex: number) => {
-    setStep(newStepIndex)
+    const newStep = STEPS[newStepIndex].id
+
     router.navigate({
       to: "/dashboard/profile",
-      search: {
+      //eslint-disable-next-line @typescript-eslint/no-explicit-any
+      search: (prev: any) => ({
+        ...prev, // now prev is inferred as the current search object
         drawer: "setup-profile",
-        step: STEPS[newStepIndex].id
-      },
-      replace: true,
+        step: newStep,
+      }),
     })
+
+    setStep(newStepIndex)
   }
 
   const goPrev = () => {
@@ -131,7 +135,8 @@ export default function ProfileEditModal({ isOpen, onClose, initialStep = "basic
 
   // Form state - Initialize from profile when modal opens
   const [formData, setFormData] = useState<Partial<UserProfileUpdate | UserProfileCreate>>({
-    bio: '',
+    title: '',
+    about: '',
     location: '',
     area_of_focus: [],
     goals: [],
@@ -147,7 +152,8 @@ export default function ProfileEditModal({ isOpen, onClose, initialStep = "basic
   useEffect(() => {
     if (isOpen && profile) {
       setFormData({
-        bio: profile.bio || '',
+        title: profile.title || '',
+        about: profile.about || '',
         location: profile.location || '',
         area_of_focus: profile.area_of_focus || [],
         goals: profile.goals || [],
@@ -178,18 +184,37 @@ export default function ProfileEditModal({ isOpen, onClose, initialStep = "basic
   const handleSubmit = async () => {
     await updateProfileAll(formData, {
       onSuccess: () => {
-        onClose()
-        // Reset to first step for next time
-        setStep(0)
         refetch()
+
+        // Check if there's a redirect
+        if (search.redirectTo === 'mentor-setup') {
+          // Profile complete, now open mentor setup
+          router.navigate({
+            to: '/dashboard/profile',
+            search: { drawer: 'mentor-setup', step: 'expertise' },
+            replace: true,
+          })
+        } else {
+          // Normal flow - just close
+          onClose()
+          setStep(0)
+        }
       },
     })
   }
 
+
+  const toTitleCase = (text: string) =>
+    text
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ')
+
   const addArrayItem = (field: keyof typeof formData, value: string, setter: (v: string) => void) => {
-    if (!value.trim()) return
+    const cleanValue = toTitleCase(value.trim())
+    if (!cleanValue) return
     const current = (formData[field] as string[]) || []
-    setFormData({ ...formData, [field]: [...current, value.trim()] })
+    setFormData({ ...formData, [field]: [...current, cleanValue] })
     setter('')
   }
 
@@ -270,13 +295,22 @@ export default function ProfileEditModal({ isOpen, onClose, initialStep = "basic
 
   const renderBasicInfo = () => (
     <VStack gap={4} align="stretch">
-      <Field label="Bio" required>
+      <Field label="Title" required>
+        <Input
+          value={formData.title || ''}
+          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+          placeholder="Business Consultant at Utumishi"
+          fontSize={{ base: "sm", md: "md" }}
+        />
+      </Field>
+
+      <Field label="About" required>
         <Textarea
-          value={formData.bio || ''}
-          onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+          value={formData.about || ''}
+          onChange={(e) => setFormData({ ...formData, about: e.target.value })}
           placeholder="Tell us about yourself..."
           rows={4}
-          fontSize={{ base: "sm", md: "md" }}
+          fontSize={"sm"}
         />
       </Field>
 
@@ -495,7 +529,7 @@ export default function ProfileEditModal({ isOpen, onClose, initialStep = "basic
         <Box key={i} p={4} border="1px solid" borderColor="gray.200" borderRadius="md" bg={{ base: "gray.50", _dark: "gray.900" }}>
           <Flex justify="space-between" align="center" mb={3}>
             <HStack align={'center'}>
-              {edu.institution && (
+              {edu.institution && edu?.logo && (
                 <Image
                   src={edu?.logo}
                   alt="Experience"
