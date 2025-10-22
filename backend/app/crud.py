@@ -15,6 +15,15 @@ from app.models.users import (
     MentorProfile,
     MentorProfileCreate,
     MentorProfileUpdate,
+    MentorSettings,
+    MentorSettingsCreate,
+    MentorSession,
+    MentorSessionCreate,
+    MentorSessionUpdate,
+    MentorService,
+    MentorServiceCreate,
+    MentorServiceUpdate,
+    
     Board,
     BoardList,
     BoardCreate,
@@ -298,6 +307,127 @@ def update_mentor_profile(session: Session, user_id: int, profile_in: MentorProf
     session.commit()
     session.refresh(profile)
     return profile
+
+# MENTOR Settings:
+def get_mentor_settings(session: Session, mentor_id: int) -> MentorSettings | None:
+    return session.query(MentorSettings).filter(MentorSettings.mentor_id == mentor_id).first()
+
+def get_mentor_settings_or_404(session: Session, mentor_id: int) -> MentorSettings:
+    settings = get_mentor_settings(session, mentor_id)
+    if not settings:
+        raise HTTPException(status_code=404, detail="Mentor settings not found")
+    return settings
+
+def create_mentor_settings(session: Session, settings_in: MentorSettingsCreate) -> MentorSettings:
+    """Create mentor settings (after profile creation)."""
+    # Check if settings already exist for this mentor
+    existing = get_mentor_settings(session, settings_in.mentor_id)
+    if existing:
+        raise HTTPException(status_code=400, detail="Mentor settings already exist")
+
+    settings = MentorSettings.model_validate(settings_in)
+    session.add(settings)
+    session.commit()
+    session.refresh(settings)
+    return settings
+
+def update_mentor_settings(session: Session, mentor_id: int, settings_in: dict | MentorSettingsCreate) -> MentorSettings:
+    settings = get_mentor_settings_or_404(session, mentor_id)
+    
+    update_data = (
+        settings_in.dict(exclude_unset=True)
+        if hasattr(settings_in, "dict") else settings_in
+    )
+    
+    for key, value in update_data.items():
+        setattr(settings, key, value)
+    
+    session.add(settings)
+    session.commit()
+    session.refresh(settings)
+    return settings
+
+
+
+# MENTOR SESSIONS
+def get_mentor_session(session: Session, session_id: int) -> MentorSession | None:
+    return session.get(MentorSession, session_id)
+
+
+def get_mentor_session_or_404(session: Session, session_id: int) -> MentorSession:
+    session_obj = get_mentor_session(session, session_id)
+    if not session_obj:
+        raise HTTPException(status_code=404, detail="Mentor session not found")
+    return session_obj
+
+def get_all_mentor_sessions(session: Session, mentor_id: int, active_only: bool = False) -> List[MentorSession]:
+    query = session.query(MentorSession).filter(MentorSession.mentor_id == mentor_id)
+    if active_only:
+        query = query.filter(MentorSession.is_active)
+    return query.all()
+
+def create_mentor_session(session: Session, session_in: MentorSessionCreate) -> MentorSession:
+    session_obj = MentorSession.model_validate(session_in)
+    session.add(session_obj)
+    session.commit()
+    session.refresh(session_obj)
+    return session_obj
+
+def update_mentor_session(session: Session, session_id: int, session_in: MentorSessionUpdate) -> MentorSession:
+    session_obj = get_mentor_session_or_404(session, session_id)
+    for key, value in session_in.dict(exclude_unset=True).items():
+        setattr(session_obj, key, value)
+    session.add(session_obj)
+    session.commit()
+    session.refresh(session_obj)
+    return session_obj
+
+def delete_mentor_session(session: Session, session_id: int) -> None:
+    session_obj = get_mentor_session_or_404(session, session_id)
+    session.delete(session_obj)
+    session.commit()
+
+
+
+# MENTOR SERVICES
+def get_mentor_service(session: Session, service_id: int) -> MentorService | None:
+    return session.get(MentorService, service_id)
+
+
+def get_mentor_service_or_404(session: Session, service_id: int) -> MentorService:
+    service_obj = get_mentor_service(session, service_id)
+    if not service_obj:
+        raise HTTPException(status_code=404, detail="Mentor service not found")
+    return service_obj
+
+def get_all_mentor_services(session: Session, mentor_id: int, active_only: bool = True) -> List[MentorService]:
+    query = session.query(MentorService).filter(MentorService.mentor_id == mentor_id)
+    if active_only:
+        query = query.filter(MentorService.is_active)
+    return query.all()
+
+def create_mentor_service(session: Session, service_in: MentorServiceCreate) -> MentorService:
+    service_obj = MentorService.model_validate(service_in)
+    session.add(service_obj)
+    session.commit()
+    session.refresh(service_obj)
+    return service_obj
+
+def update_mentor_service(session: Session, service_id: int, service_in: MentorServiceUpdate) -> MentorService:
+    service_obj = get_mentor_service_or_404(session, service_id)
+    for key, value in service_in.dict(exclude_unset=True).items():
+        setattr(service_obj, key, value)
+    session.add(service_obj)
+    session.commit()
+    session.refresh(service_obj)
+    return service_obj
+
+def delete_mentor_service(session: Session, service_id: int) -> None:
+    service_obj = get_mentor_service_or_404(session, service_id)
+    session.delete(service_obj)
+    session.commit()
+
+
 
 
 def create_board_from_llm(
