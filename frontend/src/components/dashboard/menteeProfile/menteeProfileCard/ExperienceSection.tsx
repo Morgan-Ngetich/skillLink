@@ -15,11 +15,11 @@ interface ExperienceSection {
 
 const ExperienceSection: React.FC<ExperienceSection> = ({ experience }) => {
   return (
-    <VStack align="start" gap={6} w="full" px={{base: 3, md: ""}}>
+    <VStack align="start" gap={6} w="full" px={{ base: 3, md: "" }}>
       <Text fontWeight="semibold">Experience</Text>
 
       {experience.map((item, index) => (
-        <HStack key={index} align="start" gap={{base: 3, md: 4}} w="full">
+        <HStack key={index} align="start" gap={{ base: 3, md: 4 }} w="full">
           {/* Logo */}
           <Image
             src={item.logo}

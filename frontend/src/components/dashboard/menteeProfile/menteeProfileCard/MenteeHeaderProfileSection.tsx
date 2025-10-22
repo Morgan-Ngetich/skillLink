@@ -25,30 +25,43 @@ const MenteeHeaderProfileSection: React.FC<MenteeHeaderProfileSectionProps> = ({
       direction={'column'}
     >
 
-      <HStack justify={'space-between'} w="full">
-        <VStack align={'flex-start'} gap={0}>
-
+      <HStack
+        justify="space-between"
+        w="full"
+        mt={
+          profile?.education?.length && profile?.experience?.length
+            ? 0
+            : 4
+        }
+        gap={0}
+      >
+        <VStack align="flex-start" gap={0}>
           <Heading size="md">{user?.full_name}</Heading>
-          <Text fontSize="sm">{profile?.bio}</Text>
+          <Text fontSize="sm">{profile?.title}</Text>
           <Text fontSize="sm">{profile?.location}</Text>
         </VStack>
 
         {/* Education & Work Logos */}
         <VStack gap={4}>
-          <Image
-            src={profile?.experience?.[0]?.logo}
-            alt="Experience"
-            boxSize="40px"
-            borderRadius="sm"
-            objectFit="cover"
-          />
-          <Image
-            src={profile?.education?.[0]?.logo}
-            alt="Education"
-            boxSize="40px"
-            borderRadius="sm"
-            objectFit="cover"
-          />
+          {profile?.experience?.length ? (
+            <Image
+              src={profile.experience[0]?.logo}
+              alt="Experience"
+              boxSize="40px"
+              borderRadius="sm"
+              objectFit="cover"
+            />
+          ) : null}
+
+          {profile?.education?.length ? (
+            <Image
+              src={profile.education[0]?.logo}
+              alt="Education"
+              boxSize="40px"
+              borderRadius="sm"
+              objectFit="cover"
+            />
+          ) : null}
         </VStack>
       </HStack>
 

@@ -13,7 +13,7 @@ interface EducationSectionProps {
 
 const EducationSection: React.FC<EducationSectionProps> = ({ education }) => {
   return (
-    <VStack align="start" gap={6} w="full" px={{base: 3, md: ""}}>
+    <VStack align="start" gap={6} w="full" px={{ base: 3, md: "" }}>
       <Text fontWeight="semibold" fontSize="md">Education</Text>
 
       {education.map((item, index) => (
