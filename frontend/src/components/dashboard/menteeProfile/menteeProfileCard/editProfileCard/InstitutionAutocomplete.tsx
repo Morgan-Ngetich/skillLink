@@ -243,6 +243,7 @@ export default function InstitutionAutocomplete({
 
       {showSuggestions && !loading && query.length >= 2 && filteredSuggestions.length === 0 && (
         <Box
+          ref={dropdownRef}
           bg="cardbg"
           border="1px solid"
           borderColor="gray.subtle"
