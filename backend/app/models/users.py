@@ -21,17 +21,28 @@ from app.utils.helper import ProgressService
 
 
 # ================== PUBLIC MODELS ==================
-class Education(BaseModel):
-    institution: str
+class CleanStrFieldsMixin(BaseModel):
+    """Converts empty strings to None for all fields in inheriting models."""
+
+    @field_validator("*", mode="before")
+    @classmethod
+    def empty_string_to_none(cls, v):
+        if isinstance(v, str) and v.strip() == "":
+            return None
+        return v
+
+
+class Education(CleanStrFieldsMixin):
+    institution: Optional[str] = None
     logo: Optional[str] = None
-    degree: str
+    degree: Optional[str] = None
     field_of_study: Optional[str] = None
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
 
 
-class Experience(BaseModel):
-    company: str
+class Experience(CleanStrFieldsMixin):
+    company: Optional[str] = None
     logo: Optional[str] = None
     position: Optional[str] = None
     description: Optional[str] = None
@@ -42,7 +53,8 @@ class Experience(BaseModel):
 class UserProfilePublic(SQLModel):
     user_id: int
     uuid: str
-    bio: Optional[str] = None
+    title: Optional[str] = None
+    about: Optional[str] = None
     location: Optional[str] = None
     area_of_focus: Optional[List[str]] = None
     goals: Optional[List[str]] = None
@@ -87,7 +99,7 @@ class UserPublic(SQLModel):
     is_mentor: bool
     is_mentee: bool
     profile: Optional["UserProfilePublic"] = None
-    mentor_profile: Optional["MentorProfilePublic"] = None
+    # mentor_profile: Optional["MentorProfilePublic"] = None
 
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
@@ -106,20 +118,24 @@ class UsersPublic(BaseModel):
     count: int
 
 
-class MentorProfilePublic(SQLModel):
-    user_id: int
-    uuid: str
-    title: Optional[str] = None
-    industry: Optional[str] = None
-    expertise: Optional[List[str]] = None
-    experience_level: Optional[str] = None
-    available_times: Optional[List[str]] = None
-    tags: Optional[List[str]] = None
-    badges: Optional[List[str]] = None
-    currently_open_to_mentees: bool
-    is_mentor_profile_complete: Optional[bool] = None
-    created_at: datetime
-    updated_at: datetime
+class ExperienceLevel(str, Enum):
+    JUNIOR = "junior"
+    MID = "mid"
+    SENIOR = "senior"
+    LEAD = "lead"
+
+
+class MentorType(str, Enum):
+    CAREER_COACH = "career_coach"
+    TECHNICAL_MENTOR = "technical_mentor"
+    INDUSTRY_EXPERT = "industry_expert"
+    LEADERSHIP_COACH = "leadership_coach"
+    ENTREPRENEUR = "entrepreneur"
+
+
+class SessionType(str, Enum):
+    ONE_ON_ONE = "1-on-1 Video Call"
+    CODE_REVIEW = "Code Review"
 
 
 # ================== ROLES AND PERMISSIONS ==================
@@ -301,7 +317,8 @@ class UserProfileBase(SQLModel):
     user_id: int = Field(
         foreign_key="users.id", index=True, primary_key=True, **{"ondelete": "CASCADE"}
     )
-    bio: Optional[str] = Field(default=None, nullable=True)
+    title: Optional[str] = Field(default=None, nullable=True)
+    about: Optional[str] = Field(default=None, nullable=True)
     location: Optional[str] = Field(default=None, nullable=True)
 
     area_of_focus: Optional[List[str]] = Field(
@@ -347,7 +364,8 @@ class UserProfile(UserProfileBase, table=True):
         return all(
             is_valid(field)
             for field in [
-                self.bio,
+                self.title,
+                self.about,
                 self.location,
                 self.area_of_focus,
                 self.goals,
@@ -367,7 +385,8 @@ class UserProfile(UserProfileBase, table=True):
         return all(
             is_valid(field)
             for field in [
-                self.bio,
+                self.title,
+                self.about,
                 self.location,
                 self.area_of_focus,
                 self.goals,
@@ -380,7 +399,8 @@ class UserProfile(UserProfileBase, table=True):
         return UserProfilePublic(
             user_id=self.user_id,
             uuid=str(self.user.uuid),
-            bio=self.bio,
+            title=self.title,
+            about=self.about,
             location=self.location,
             area_of_focus=self.area_of_focus,
             goals=self.goals,
@@ -397,9 +417,9 @@ class UserProfile(UserProfileBase, table=True):
         )
 
 
-
 class UserProfileBaseModel(BaseModel):
-    bio: Optional[str] = None
+    title: Optional[str] = None
+    about: Optional[str] = None
     location: Optional[str] = None
 
     area_of_focus: Optional[List[str]] = None
@@ -423,11 +443,31 @@ class UserProfileBaseModel(BaseModel):
                 return [v]
         return v
 
+    @field_validator("education", "experience", mode="before")
+    @classmethod
+    def remove_empty_entries(cls, v):
+        if not v:
+            return []
+
+        # Keep only the entries that have atleast non-empty field
+        cleaned = None
+        for entry in v:
+            if not isinstance(entry, dict):
+                continue
+
+            # Filter out entries where all empty, null, or blank strings
+            if any(value not in (None, [], {}) for value in entry.values()):
+                cleaned = []
+                cleaned.append(entry)
+
+        return cleaned
+
     model_config = ConfigDict(
         json_schema_extra={
             "examples": [
                 {
-                    "bio": "Software engineer at Microsoft",
+                    "title": "Software enginerr at Microsoft",
+                    "about": "I am a Software engineer at Microsoft",
                     "location": "Berlin, Germany",
                     "area_of_focus": ["AI", "EdTech", "Open Source"],
                     "goals": ["Build an online course", "Contribute to open source"],
@@ -435,19 +475,19 @@ class UserProfileBaseModel(BaseModel):
                     "skills": ["Python", "FastAPI", "Docker"],
                     "social_links": {
                         "linkedin": "https://linkedin.com/in/morgan",
-                        "github": "https://github.com/morgan"
+                        "github": "https://github.com/morgan",
                     },
                     "contact_details": {
                         "email": "user@example.com",
-                        "phone": "+1234567890"
+                        "phone": "+1234567890",
                     },
                     "education": [
                         {
                             "institution": "MIT",
                             "degree": "BSc Computer Science",
-                            "field_of_study": "Computer Science", 
+                            "field_of_study": "Computer Science",
                             "start_date": "2015-09-01T00:00:00",
-                            "end_date": "2019-06-01T00:00:00"
+                            "end_date": "2019-06-01T00:00:00",
                         }
                     ],
                     "experience": [
@@ -456,14 +496,13 @@ class UserProfileBaseModel(BaseModel):
                             "position": "Software Engineer",
                             "description": "Worked on internal tools",
                             "start_date": "2020-01-01T00:00:00",
-                            "end_date": "2023-07-01T00:00:00"
+                            "end_date": "2023-07-01T00:00:00",
                         }
-                    ]
+                    ],
                 }
             ]
         }
     )
-
 
 
 class UserProfileCreate(UserProfileBaseModel):
@@ -475,86 +514,298 @@ class UserProfileUpdate(UserProfileBaseModel):
 
 
 class MentorProfileBase(SQLModel):
-    user_id: int = Field(foreign_key="users.id", index=True, primary_key=True)
-    title: Optional[str] = None
-    industry: Optional[str] = None
+    user_id: int = Field(foreign_key="users.id", index=True)
 
-    expertise: Optional[List[str]] = Field(
+    # Core Identity (Required for onboarding)
+    title: str  # "Senior Software Engineer at Google"
+    industries: Optional[List[str]] = Field(
+        sa_column=Column(ARRAY(String), nullable=True),
+        default=None
+    )
+    expertise: List[str] = Field(
+        sa_column=Column(ARRAY(String), nullable=False)
+    )  # ["Career Transitions", "System Design"]
+    experience_level: ExperienceLevel = Field(sa_column=Column(String, nullable=False))
+
+    # Optional Identity Enhancements
+    mentor_type: Optional[List[MentorType]] = Field(
         sa_column=Column(ARRAY(String), nullable=True), default=None
     )
 
-    experience_level: Optional[str] = None
-
-    available_times: Optional[List[str]] = Field(
-        sa_column=Column(ARRAY(String), nullable=True), default=None
-    )
-
-    currently_open_to_mentees: bool = Field(default=True)
-    # For bagdes and filtering purposes e.g ["Live Now", "Hiring Manager", "Trending", "Workshop Host"]
+    # Display Tags & Badges
     tags: Optional[List[str]] = Field(
         sa_column=Column(ARRAY(String), nullable=True), default=None
-    )
-
-
-class MentorProfile(MentorProfileBase, table=True):
-    user: "User" = Relationship(back_populates="mentor_profile")
+    )  # e.g., ["Hiring Manager", "Open Source Contributor"]
     badges: Optional[List[str]] = Field(
         sa_column=Column(ARRAY(String), nullable=True), default=None
-    )
+    )  # e.g., ["Top Mentor", "5-Star Rated"]
 
-    created_at: Optional[datetime] = Field(
-        default_factory=lambda: datetime.now(timezone.utc)
-    )
-    updated_at: Optional[datetime] = Field(
-        default_factory=lambda: datetime.now(timezone.utc)
-    )
+    @field_validator("experience_level")
+    def validate_experience_level(cls, v):
+        if v is not None and v not in [level.value for level in ExperienceLevel]:
+            raise ValueError(
+                f"Invalid experience_level '{v}'. Must be one of: {[e.value for e in ExperienceLevel]}"
+            )
+        return v
+    
 
-    @computed_field(return_type=bool)
+
+class MentorSettingsBase(SQLModel):
+    """All preferences, availability, and operational settings"""
+    mentor_id: int = Field(foreign_key="mentorprofile.user_id")
+
+    # Availability Flags
+    currently_open_to_mentees: bool = Field(default=True)
+    profile_visibility: bool = Field(default=True)
+    auto_accept_bookings: bool = Field(default=False)
+    require_intro_message: bool = Field(default=True)
+    
+    # Scheduling
+    timezone: Optional[str] = None  # e.g., "America/New_York"
+    available_times: Optional[List[str]] = Field(
+        sa_column=Column(ARRAY(String), nullable=True), 
+        default=None
+    )  # e.g., ["Mon-Fri 6-9pm"]
+    weekly_schedule: Optional[Dict[str, Any]] = Field(
+        sa_column=Column(JSON, nullable=True), 
+        default=None
+    )  # Detailed weekly schedule
+    booking_buffer_hours: int = Field(default=24)
+    session_gap_minutes: int = Field(default=15)
+    
+    # Capacity
+    max_mentees: Optional[int] = Field(default=5)
+    
+    # Mentorship Style
+    mentorship_philosophy: Optional[str] = Field(default=None, max_length=500)
+    ideal_mentee_description: Optional[str] = Field(default=None, max_length=300)
+    communication_style: Optional[List[str]] = Field(
+        sa_column=Column(ARRAY(String), nullable=True), 
+        default=None
+    )  # e.g., ["Supportive", "Direct"]
+    response_time_hours: int = Field(default=48)
+
+class MentorSettings(MentorSettingsBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    mentor: "MentorProfile" = Relationship(back_populates="settings")
+
+
+class MentorProfilePublic(MentorProfileBase):
+    """Public-facing profile data"""
+    total_sessions: int
+    total_mentees: int
+    average_rating: Optional[float]
+    created_at: datetime
+    updated_at: datetime
+
+class MentorProfile(MentorProfileBase, table=True):   
+    user_id: int = Field(foreign_key="users.id", primary_key=True, index=True)
+    
+    # Stats (computed/cached)
+    total_sessions: int = Field(default=0)
+    total_mentees: int = Field(default=0)
+    average_rating: Optional[float] = Field(default=None)
+    
+    # Timestamps
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    
+    # Relationships
+    user: Optional["User"] = Relationship(back_populates="mentor_profile")
+    sessions: List["MentorSession"] = Relationship(back_populates="mentor")
+    services: List["MentorService"] = Relationship(back_populates="mentor")
+    settings: Optional["MentorSettings"] = Relationship(back_populates="mentor")
+    
     @property
     def is_mentor_profile_complete(self) -> bool:
-        return all(
-            is_valid(field)
-            for field in [
-                self.title,
-                self.industry,
-                self.expertise,
-                self.experience_level,
-                self.available_times,
-                self.tags,
-            ]
+        """Profile is complete if all required fields are filled"""
+        return bool(
+            self.title and 
+            self.industries and 
+            self.expertise and 
+            len(self.expertise) > 0 and
+            self.experience_level
         )
-
-    def to_public(self) -> "MentorProfilePublic":
+    
+    @property
+    def completion_percentage(self) -> int:
+        """Calculate profile completion percentage"""
+        fields = [
+            bool(self.title),
+            bool(self.industries),
+            bool(self.expertise and len(self.expertise) > 0),
+            bool(self.experience_level),
+            bool(self.mentor_type and len(self.mentor_type) > 0),
+        ]
+        return int((sum(fields) / len(fields)) * 100)
+    
+    def to_public(self) -> MentorProfilePublic:
         return MentorProfilePublic(
             user_id=self.user_id,
-            uuid=str(self.user.uuid),
             title=self.title,
-            industry=self.industry,
+            industries=self.industries,
             expertise=self.expertise,
             experience_level=self.experience_level,
-            available_times=self.available_times,
+            mentor_type=self.mentor_type,
             tags=self.tags,
             badges=self.badges,
-            currently_open_to_mentees=self.currently_open_to_mentees,
-            is_mentor_profile_complete=self.is_mentor_profile_complete,
+            total_sessions=self.total_sessions,
+            total_mentees=self.total_mentees,
+            average_rating=self.average_rating,
             created_at=self.created_at,
             updated_at=self.updated_at,
         )
 
-
+    
 class MentorProfileCreate(MentorProfileBase):
     pass
 
 
 class MentorProfileUpdate(SQLModel):
+    """All fields optional for updates"""
     title: Optional[str] = None
-    industry: Optional[str] = None
+    industries: Optional[List[str]] = None
     expertise: Optional[List[str]] = None
-    experience_level: Optional[str] = None
-    available_times: Optional[List[str]] = None
+    experience_level: Optional[ExperienceLevel] = None
+    mentor_type: Optional[List[MentorType]] = None
     tags: Optional[List[str]] = None
     badges: Optional[List[str]] = None
+
+    
+# MENTOR SESSION
+class MentorSessionBase(SQLModel):
+    mentor_id: int = Field(foreign_key="mentorprofile.user_id")
+    
+    # Session Details
+    title: str  # e.g., "1-on-1 Career Strategy Session"
+    description: Optional[str] = None
+    session_type: SessionType
+    duration_minutes: int = 60
+    price: Optional[float] = None  # None = free
+    
+    # Optional metadata
+    tags: Optional[List[str]] = Field(
+        sa_column=Column(ARRAY(String), nullable=True), 
+        default=None
+    )
+
+
+class MentorSession(MentorSessionBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    
+    # Availability
+    is_active: bool = Field(default=True)
+    max_bookings_per_week: Optional[int] = None
+    
+    # Timestamps
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    
+    # Relationships
+    mentor: MentorProfile = Relationship(back_populates="sessions")
+
+class MentorSessionCreate(MentorSessionBase):
+    pass
+
+class MentorSessionUpdate(SQLModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    session_type: Optional[SessionType] = None
+    duration_minutes: Optional[int] = None
+    price: Optional[float] = None
+    is_active: Optional[bool] = None
+    max_bookings_per_week: Optional[int] = None
+    tags: Optional[List[str]] = None
+
+class MentorSessionPublic(MentorSessionBase):
+    id: int
+    is_active: bool
+    max_bookings_per_week: Optional[int]
+    created_at: datetime
+    updated_at: datetime
+
+
+# Mentor Service
+class MentorServiceBase(SQLModel):
+    mentor_id: int = Field(foreign_key="mentorprofile.user_id")
+    
+    # Display info
+    title: str # "Portfolio FeedBack"
+    description: Optional[str] = Field(default=None, max_length=500)
+    price: Optional[float] = None
+    estimated_duration_minutes: Optional[int] = None
+    
+    # Categorization
+    category: Optional[str] = None # "Career", "Tech Review"
+    highlights: Optional[List[str]] = Field(
+        sa_column=Column(ARRAY(String), nullable=True),
+        default=None
+    ) # e.g., ["@4hr turnaround", "Detailed Feedback"]
+    
+class MentorService(MentorServiceBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    
+    is_active: bool = Field(default=True)
+    
+    # Timestamps
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    
+    # Relationships
+    mentor: MentorProfile = Relationship(back_populates="services")
+
+class MentorServiceCreate(MentorServiceBase):
+    pass
+
+class MentorServiceUpdate(SQLModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    price_usd: Optional[float] = None
+    estimated_duration_minutes: Optional[int] = None
+    category: Optional[str] = None
+    highlights: Optional[List[str]] = None
+    is_active: Optional[bool] = None
+
+
+class MentorServicePublic(MentorServiceBase):
+    id: int
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+
+
+# MENTOR SETTINGS
+ 
+class MentorSettingsCreate(MentorSettingsBase):
+    """Create with defaults"""
+    pass
+
+class MentorSettingsUpdate(SQLModel):
+    """All fields optional for updates"""
     currently_open_to_mentees: Optional[bool] = None
+    profile_visibility: Optional[bool] = None
+    auto_accept_bookings: Optional[bool] = None
+    require_intro_message: Optional[bool] = None
+    timezone: Optional[str] = None
+    available_times: Optional[List[str]] = None
+    weekly_schedule: Optional[Dict[str, Any]] = None
+    booking_buffer_hours: Optional[int] = None
+    session_gap_minutes: Optional[int] = None
+    max_mentees: Optional[int] = None
+    mentorship_philosophy: Optional[str] = None
+    ideal_mentee_description: Optional[str] = None
+    communication_style: Optional[List[str]] = None
+    response_time_hours: Optional[int] = None
+
+
+class MentorSettingsPublic(MentorSettingsBase):
+    created_at: datetime
+    updated_at: datetime
+
+
+
+
+
 
 
 # ====================== ROADMAP SCHEMA =======================
@@ -606,7 +857,7 @@ class RoadmapUpdate(SQLModel):
     tags: Optional[List[str]] = None
     start_date: Optional[datetime] = None
     target_date: Optional[datetime] = None
-    
+
     model_config = ConfigDict(
         json_schema_extra={
             "examples": [
@@ -615,12 +866,9 @@ class RoadmapUpdate(SQLModel):
                     "description": "Create a complete implementation plan for applying Python in real-world projects",
                     "visibility": "public",
                     "status": "draft",
-                    "tags": [
-                        "Python",
-                        "Real-World Projects"
-                    ],
+                    "tags": ["Python", "Real-World Projects"],
                     "start_date": "2024-01-01T00:00:00",
-                    "target_date": "2024-12-31T00:00:00"
+                    "target_date": "2024-12-31T00:00:00",
                 }
             ]
         }
@@ -639,6 +887,7 @@ class RoadmapPublic(SQLModel):
     is_llm_generated: bool
     created_at: datetime
     updated_at: datetime
+
 
 # ========================= GOAL SCHEMA (LLM-Generated) ============================
 # TODO: Add other(relevant, any) goaltypes
@@ -689,6 +938,7 @@ class GoalBase(SQLModel):
             raise ValueError("Start date cannot be after target date")
         return v
 
+
 class GoalPublic(GoalBase):
     id: int
     owner_id: int
@@ -698,6 +948,7 @@ class GoalPublic(GoalBase):
     is_llm_generated: bool
     created_at: datetime
     updated_at: datetime
+
 
 class Goal(GoalBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -722,7 +973,7 @@ class Goal(GoalBase, table=True):
     parent_goal: Optional["Goal"] = Relationship(
         back_populates="sub_goals", sa_relationship_kwargs={"remote_side": "Goal.id"}
     )
-    
+
     def to_public(self) -> "GoalPublic":
         """Convert Goal ORM instance to public representation"""
         return GoalPublic(
@@ -741,7 +992,7 @@ class Goal(GoalBase, table=True):
             status=self.status,
             is_llm_generated=self.is_llm_generated,
             created_at=self.created_at,
-            updated_at=self.updated_at
+            updated_at=self.updated_at,
         )
 
 
@@ -769,15 +1020,13 @@ class GoalCreationRequest(GoalCreate):
     """User-facing model to create goals with optional AI assistance."""
 
     generate_plan: bool = Field(
-        default=True,
-        description="Whether to generate a roadmap and tasks using AI"
+        default=True, description="Whether to generate a roadmap and tasks using AI"
     )
 
     ai_settings: Optional[Dict[str, Any]] = Field(
-        default=None,
-        description="Optional parameters for customizing AI generation"
+        default=None, description="Optional parameters for customizing AI generation"
     )
-    
+
     model_config = ConfigDict(
         json_schema_extra={
             "examples": [
@@ -790,14 +1039,12 @@ class GoalCreationRequest(GoalCreate):
                     "start_date": "2024-01-01T00:00:00",
                     "target_date": "2024-06-30T23:59:59",
                     "generate_plan": True,
-                    "ai_settings": {
-                        "model": "compound-beta-mini",
-                        "temperature": 0.7
-                    }
+                    "ai_settings": {"model": "compound-beta-mini", "temperature": 0.7},
                 }
             ]
         }
     )
+
 
 class GoalUpdate(SQLModel):
     title: Optional[str] = None
@@ -832,7 +1079,6 @@ class Board(BoardBase, table=True):
     roadmap: Optional[Roadmap] = Relationship(back_populates="boards")
     goal: Optional[Goal] = Relationship()
     lists: List["BoardList"] = Relationship(back_populates="board")
-    
 
 
 class BoardCreate(BoardBase):
@@ -846,13 +1092,15 @@ class BoardUpdate(SQLModel):
     is_archived: Optional[bool] = None
 
     # ========================= BOARD LIST SCHEMA ========================
-    
+
+
 class CardStatus(str, Enum):
     BACKLOG = "backlog"
     TODO = "todo"
     IN_PROGRESS = "in_progress"
     DONE = "done"
     BLOCKED = "blocked"
+
 
 class BoardListBase(SQLModel):
     title: str
@@ -883,6 +1131,7 @@ class BoardListUpdate(SQLModel):
     is_archived: Optional[bool] = None
 
     # ================== CARD SCHEMA ==================
+
 
 class CardPriority(str, Enum):
     LOW = "low"
@@ -1050,8 +1299,7 @@ class SafetyViolationType(str, Enum):
     TIMING = "timing"
     PREREQUISITES = "prerequisites"
     CONFLICT = "conflict"
-    SYSTEM="system"
-
+    SYSTEM = "system"
 
 
 # TODO :// move to public.py
@@ -1065,7 +1313,8 @@ class LLMTargetEntity(str, Enum):
     @classmethod
     def list(cls):
         return [item.value for item in cls]
-    
+
+
 class SafetyViolation(BaseModel):
     type: SafetyViolationType
     message: str
@@ -1088,12 +1337,14 @@ class ProgressiveUpdateProposal(BaseModel):
     final_goal: Dict[str, Any]
     confirmation_required: bool = Field(default=True)
 
+
 class LLMActionType(str, Enum):
     CREATE = "create"
     UPDATE = "update"
     ANALYZE = "analyze"
     CONFIRM = "confirm"
-    
+
+
 class LLMGenerationRequest(BaseModel):
     prompt: str = Field(..., description="Primary instruction for the LLM")
     context: Dict[str, Any] = Field(
@@ -1102,21 +1353,22 @@ class LLMGenerationRequest(BaseModel):
     )
     action: LLMActionType = Field(default=LLMActionType.CREATE)
     model: Literal[
-        "gpt-3.5-turbo", 
-        "gpt-4", 
-        "falcon-7b", 
-        "falcon-7b-instruct", 
+        "gpt-3.5-turbo",
+        "gpt-4",
+        "falcon-7b",
+        "falcon-7b-instruct",
         "claude-2",
-        "compound-beta-mini"
+        "compound-beta-mini",
     ] = "compound-beta-mini"
 
-    
     temperature: float = Field(default=0.7, ge=0.0, le=1.0)
-    max_tokens: int = Field(default=1024, ge=1, le=4096, description="Maximum number of tokens to generate")
+    max_tokens: int = Field(
+        default=1024, ge=1, le=4096, description="Maximum number of tokens to generate"
+    )
     top_p: float = Field(default=0.7, ge=0.0, le=1.0)
     frequency_penalty: float = Field(default=0.0, ge=0.0, le=2.0)
     presence_penalty: float = Field(default=0.0, ge=0.0, le=2.0)
-    
+
     target_entities: List[LLMTargetEntity] = Field(default=LLMTargetEntity.GOALS)
     update_constraints: Dict[str, Any] = Field(
         default={"max_difficulty_change": 2, "allow_progressive_steps": True}
@@ -1169,18 +1421,23 @@ class LLMGenerationRequest(BaseModel):
             raise ValueError("presence_penalty must be between 0.0 and 2.0")
         return v
 
+
 # TODO create BOADWITHLISTCREATE that will have `boards`: & `lists` instead of `Dict[str, Any]`, to house the `board_with_lists`
 class LLMStructuredOutput(BaseModel):
-    creations: Optional[Dict[str, List[Union[GoalCreate, RoadCreate, CardCreate, BoardCreate, Dict[str, Any]]]]] = (
-        Field(
-            default_factory=dict,
-            description="Structured output containing created entities like goals, roadmaps, or cards",
-        )
+    creations: Optional[
+        Dict[
+            str,
+            List[
+                Union[GoalCreate, RoadCreate, CardCreate, BoardCreate, Dict[str, Any]]
+            ],
+        ]
+    ] = Field(
+        default_factory=dict,
+        description="Structured output containing created entities like goals, roadmaps, or cards",
     )
     updates: Optional[List[Dict[str, Any]]] = None
     progressive_updates: Optional[List[ProgressiveUpdateProposal]] = Field(
-        default_factory=list,
-        description="When multi-step progression is needed"
+        default_factory=list, description="When multi-step progression is needed"
     )
     analysis: Optional[str] = None
     resources: List[Dict[str, str]] = Field(default_factory=list)
@@ -1231,7 +1488,7 @@ class LLMGenerationResponse(BaseModel):
         default=None,
         description="Presented when confirmation required",
     )
-    
+
     def to_public(self) -> Dict[str, Any]:
         return {
             "request_id": self.request_id,
@@ -1279,10 +1536,12 @@ class LLMGenerationResponse(BaseModel):
         }
     )
 
+
 class TaskStatusEnum(str, Enum):
     PROCESSING = "processing"
     COMPLETED = "completed"
     FAILED = "failed"
+
 
 # TASK STATUS
 class TaskStatus(BaseModel):
@@ -1290,55 +1549,59 @@ class TaskStatus(BaseModel):
     status: TaskStatusEnum
     message: Optional[str] = None
     result: Optional[LLMGenerationResponse] = None
-    
+
 
 # TODO: Place this in the public folder.
 class ListWithCards(SQLModel):
     """List with its cards"""
+
     boardlist: BoardList
     cards: List[CardPublic]
-    
+
     @computed_field
     def card_count(self) -> int:
         return len(self.cards)
-    
+
     @classmethod
     def from_list(cls, board_list: BoardList):
         return cls(
             boardlist=board_list,
             cards=sorted(
                 [card.to_public() for card in board_list.cards],
-                key=lambda x : x.position
-        ))
+                key=lambda x: x.position,
+            ),
+        )
 
 
 class BoardWithLists(SQLModel):
     """Board with nested lists and cards"""
+
     board: Board
     lists: List[ListWithCards]
-    
+
     @computed_field
     def active_card_count(self) -> int:
         return sum(len(lst.cards) for lst in self.lists)
-    
+
     @classmethod
     def from_board(cls, board: Board):
         return cls(
             board=board,
             lists=sorted(
                 [ListWithCards.from_list(l) for l in board.lists],
-                key=lambda x: x.boardlist.position
-            )
+                key=lambda x: x.boardlist.position,
+            ),
         )
 
 
 class GoalWithSubgoals(SQLModel):
     """Goal with nested subgoals structure"""
+
     goal: GoalPublic
     subgoals: List["GoalWithSubgoals"]
     cards: List[CardPublic]
     progress: float = Field(0.0, ge=0.0, le=1.0)
-    
+
     @classmethod
     def from_goal(cls, goal: Goal, progress_service: ProgressService, depth: int = 3):
         """takes progress_service as dependency"""
@@ -1347,36 +1610,42 @@ class GoalWithSubgoals(SQLModel):
                 goal=goal.to_public(),
                 subgoals=[],
                 cards=[],
-                progress=progress_service.calculate_goal_progress(goal)
+                progress=progress_service.calculate_goal_progress(goal),
             )
-            
+
         return cls(
             goal=goal.to_public(),
-            subgoals=[cls.from_goal(subgoal, progress_service, depth-1) 
-                      for subgoal in goal.sub_goals],
+            subgoals=[
+                cls.from_goal(subgoal, progress_service, depth - 1)
+                for subgoal in goal.sub_goals
+            ],
             cards=[c.to_public() for c in goal.cards],
-            progress=progress_service.calculate_goal_progress(goal)
+            progress=progress_service.calculate_goal_progress(goal),
         )
-        
+
+
 class RoadmapDisplay(SQLModel):
     """Combined view for displaying roadmap hierachy"""
+
     roadmap: Roadmap
     goals: List["GoalWithSubgoals"]
     boards: List[BoardWithLists]
-    
+
     @classmethod
     def from_roadmap(cls, roadmap: Roadmap, session):
         """Now takes session to create ProgressService"""
         progress_service = ProgressService(session)
-        
+
         return cls(
             roadmap=roadmap,
-            goals=[GoalWithSubgoals.from_goal(goal, progress_service) 
-                  for goal in roadmap.goals if goal.parent_goal_id is None],  # Only top-level
+            goals=[
+                GoalWithSubgoals.from_goal(goal, progress_service)
+                for goal in roadmap.goals
+                if goal.parent_goal_id is None
+            ],  # Only top-level
             boards=[BoardWithLists.from_board(board) for board in roadmap.boards],
             # progress_summary=progress_service.calculate_roadmap_progress(roadmap)
         )
-
 
 
 """
