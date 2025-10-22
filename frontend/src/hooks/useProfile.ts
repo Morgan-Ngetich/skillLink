@@ -6,9 +6,7 @@ import {
   type UserProfilePublic,
   type UserProfileCreate,
   type UserProfileUpdate,
-  type MentorProfilePublic,
-  type MentorProfileCreate,
-  type MentorProfileUpdate,
+  type ProfileCompletionStatus,
   // type UserPublic,
 } from '@/client';
 import { toNativePromise } from '@/utils/toNativePromisse';
@@ -32,6 +30,20 @@ export const useProfile = () => {
     staleTime: 1000 * 60 * 2,
     retry: 1,
   });
+
+  const {
+    data: profileCompletionStatus,
+    isLoading: isProfileCompletionStatusLoading,
+    refetch: refetchProfileCompletionStatus,
+  } = useQuery<ProfileCompletionStatus, Error>({
+    queryKey: ['mentorStats', 'me'],
+    queryFn: () => toNativePromise(ProfileService.getProfileCompletionStatus()),
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
+    enabled: !!profile, // Only fetch if mentor profile exists
+  });
+
+
 
   // Create user profile mutation
   const createUserProfile = useMutation<UserProfilePublic, Error, UserProfileCreate>({
@@ -75,61 +87,6 @@ export const useProfile = () => {
     },
   });
 
-  // Fetch mentor profile
-  const {
-    data: mentorProfile,
-    error: mentorError,
-    isLoading: isMentorLoading,
-    isError: isMentorError,
-    refetch: refetchMentorProfile,
-  } = useQuery<MentorProfilePublic, Error>({
-    queryKey: ['mentorProfile', 'me'],
-    queryFn: () => toNativePromise(ProfileService.getMyMentorProfile()),
-    staleTime: 1000 * 60 * 2,
-    retry: 1,
-  });
-
-  // Create mentor profile mutation
-  const createMentorProfile = useMutation<MentorProfilePublic, Error, MentorProfileCreate>({
-    mutationFn: (data) => toNativePromise(ProfileService.createMentorProfile(data)),
-    onSuccess: () => {
-      toast({
-        id: 'create-mentor-profile-success',
-        title: 'Mentor profile created',
-        status: 'success',
-      });
-      queryClient.invalidateQueries({ queryKey: ['mentorProfile', 'me'] });
-    },
-    onError: (error: unknown) => {
-      toast({
-        id: 'create-mentor-profile-error',
-        title: 'Failed to create mentor profile',
-        description: getApiErrorMessage(error),
-        status: 'error',
-      });
-    },
-  });
-
-  // Update mentor profile mutation
-  const updateMentorProfile = useMutation<MentorProfilePublic, Error, MentorProfileUpdate>({
-    mutationFn: (data) => toNativePromise(ProfileService.updateMentorProfile(data)),
-    onSuccess: () => {
-      toast({
-        id: 'update-mentor-profile-success',
-        title: 'Mentor profile updated',
-        status: 'success',
-      });
-      queryClient.invalidateQueries({ queryKey: ['mentorProfile', 'me'] });
-    },
-    onError: (error: unknown) => {
-      toast({
-        id: 'update-mentor-profile-error',
-        title: 'Failed to update mentor profile',
-        description: getApiErrorMessage(error),
-        status: 'error',
-      });
-    },
-  });
 
   // Create or update user profile based on existence
   const updateProfileAll = async (
@@ -174,18 +131,15 @@ export const useProfile = () => {
     isSubmitting,
     setIsSubmitting,
 
-    // Mentor profile
-    mentorProfile,
-    mentorError,
-    isMentorLoading,
-    isMentorError,
-    refetchMentorProfile,
-
     // Mutations
     createUserProfile: createUserProfile.mutate,
     updateUserProfile: updateUserProfile.mutate,
-    createMentorProfile: createMentorProfile.mutate,
-    updateMentorProfile: updateMentorProfile.mutate,
+
+    // Profile status
+    profileCompletionStatus,
+    isProfileCompletionStatusLoading,
+    refetchProfileCompletionStatus,
+
 
     // Smart update
     updateProfileAll,
