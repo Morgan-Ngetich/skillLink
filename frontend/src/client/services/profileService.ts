@@ -5,6 +5,9 @@ import type {
   MentorProfileCreate,
   MentorProfilePublic,
   MentorProfileUpdate,
+  ProfileCompletionStatus,
+  MentorStats,
+
 } from '../models';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -15,7 +18,7 @@ export class ProfileService {
 
   /**
    * Get Current User Profile
-   * Returns the authenticated user's profile details (bio, goals, interests, etc).
+   * Returns the authenticated user's profile details (about, goals, interests, etc).
    * @returns UserProfilePublic - Public profile of the current user
    * @throws ApiError
    */
@@ -43,7 +46,7 @@ export class ProfileService {
   /**
    * Create User Profile
    * Creates a new profile for the authenticated user and assigns the MENTEE role.
-   * @param profile - User profile data (bio, location, goals, etc)
+   * @param profile - User profile data (about, location, goals, etc)
    * @returns UserProfilePublic - Created public profile
    * @throws ApiError
    */
@@ -74,6 +77,20 @@ export class ProfileService {
       body: profile,
       mediaType: 'application/json',
     });
+  }
+
+
+  /**
+   * Get Profile Completion Status
+   * Return detailed completion status with missing fields and their corresponding steps.
+   * @returns ProfileCompletionStatus - Completion details
+   * @throws ApiError
+   */
+  public static getProfileCompletionStatus(): CancelablePromise<ProfileCompletionStatus> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/profile/completion-status"
+    })
   }
 
   // ========== MENTOR PROFILE ==========
@@ -108,7 +125,7 @@ export class ProfileService {
   /**
    * Create Mentor Profile
    * Creates a new mentor profile and assigns the MENTOR role.
-   * @param profile - Mentor profile data (industry, expertise, availability, etc)
+   * @param profile - Mentor profile data (industries, expertise, availability, etc)
    * @returns MentorProfilePublic - Created mentor profile
    * @throws ApiError
    */
@@ -139,5 +156,19 @@ export class ProfileService {
       body: profile,
       mediaType: 'application/json',
     });
+  }
+
+
+  /**
+   * Get Mentor Stats
+   * Returns statistics and analytics for the current mentor.
+   * @returns MentorStats - Mentor statistics
+   * @thows ApiError
+   */
+  public static getMentorStats(): CancelablePromise<MentorStats> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/profile/mentor/stats"
+    })
   }
 }
