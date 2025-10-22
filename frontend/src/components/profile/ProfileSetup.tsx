@@ -1,5 +1,3 @@
-'use client';
-
 import {
   Box,
   Button,
@@ -7,6 +5,7 @@ import {
   Flex,
   Heading,
   VStack,
+  Text
 } from '@chakra-ui/react';
 import { useForm, FormProvider, useWatch } from 'react-hook-form';
 import {
@@ -22,7 +21,6 @@ import {
   StepsRoot,
   StepsList,
   StepsContent,
-  // StepsCompletedContent,
 } from '../ui/steps';
 import { useProfile } from '@/hooks/useProfile';
 import type { UserProfileCreate } from '@/client';
@@ -32,10 +30,11 @@ import Step2AreaOfFocus from './forms/Step2AreaOfFocus';
 import Step3GoalsInterests from './forms/Step3GoalsInterests';
 import Step4InterestsSkills from "./forms/Step4InterestsSkills"
 import { useAuthRouteGuard } from '@/hooks/auth/useAuthRouteGuard';
+import { useEffect } from 'react';
 
 const steps = [
   {
-    title: 'Your Name',
+    title: 'Personal Information',
     description: 'Provide your basic info',
     icon: <LuUser />,
     content: <Step1BasicInfo />,
@@ -48,7 +47,7 @@ const steps = [
   },
   {
     title: 'Goals & Interests',
-    description: 'Set your goals',
+    description: 'Set your goals & interest',
     icon: <LuMessageSquare />,
     content: <Step3GoalsInterests />,
   },
@@ -63,25 +62,17 @@ const steps = [
 export default function ProfileSetup() {
   const router = useRouter();
   const navigate = useNavigate()
-  const { isBlocked, isLoading } = useAuthRouteGuard()
+  const { isBlocked, isLoading: authLoading } = useAuthRouteGuard()
 
   const { step: stepParam, redirectTo } = useSearch({ from: '/_layout/profile-setup' });
 
-  const stepIndex = Math.max(0, Math.min(Number(stepParam) - 1 || 0, steps.length - 1));
-  const setStepInUrl = (index: number) => {
-    router.navigate({
-      to: "/profile-setup",
-      search: { step: index + 1, redirectTo },
-      replace: true,
-    });
-  };
-
-  const { updateProfileAll, isSubmitting } = useProfile();
+  const { profile, isLoading: profileLoading, updateProfileAll, isSubmitting } = useProfile();
 
   const methods = useForm<UserProfileCreate>({
     defaultValues: {
       location: '',
-      bio: '',
+      title: '',
+      about: '',
       goals: [],
       area_of_focus: [],
       interests: [],
@@ -89,13 +80,27 @@ export default function ProfileSetup() {
     },
   });
 
-  const { control, handleSubmit } = methods;
+  const { control, handleSubmit, reset } = methods;
+
+  // Prefetch existing profile data
+  useEffect(() => {
+    if (profile) {
+      reset({
+        location: profile.location || '',
+        title: profile.title || '',
+        about: profile.about || '',
+        goals: profile.goals || [],
+        area_of_focus: profile.area_of_focus || [],
+        interests: profile.interests || [],
+        skills: profile.skills || []
+      });
+    }
+  }, [profile, reset]);
 
   // Validation watches
+  const title = useWatch({ control, name: "title" })
   const location = useWatch({ control, name: 'location' });
-  const bio = useWatch({ control, name: 'bio' });
-  // const contactEmail = useWatch({ control, name: 'contact_details.email' });
-  // const contactPhone = useWatch({ control, name: 'contact_details.phone' });
+  const about = useWatch({ control, name: 'about' });
   const area_of_focus = useWatch({ control, name: 'area_of_focus' });
   const goals = useWatch({ control, name: 'goals' });
   const interests = useWatch({ control, name: 'interests' });
@@ -103,29 +108,47 @@ export default function ProfileSetup() {
 
   const isStepValid = (index: number) => {
     if (index === 0) {
-      // Basic info: location, bio, and at least email required
-      return !!location?.trim() &&
-        !!bio?.trim()
-      // !!contactEmail?.trim() &&
-      // !!contactPhone &&
-      // /\S+@\S+\.\S+/.test(contactEmail); // Basic email validation
+      return !!title?.trim() && !!location?.trim() && !!about?.trim()
     }
     if (index === 1) {
-      // Focus areas: at least one area selected
       return Array.isArray(area_of_focus) && area_of_focus.length > 0;
     }
     if (index === 2) {
-      // Goals: at least 2 goals
       return Array.isArray(goals) && goals.length >= 2;
     }
     if (index === 3) {
-      // Interests & Skills: at least 2 interests and 1 skill
       return Array.isArray(interests) && interests.length >= 2 &&
         Array.isArray(skills) && skills.length >= 1;
     }
     return false;
   };
 
+  // Check if all steps are valid
+  const allStepsValid = [0, 1, 2, 3].every(isStepValid);
+
+  // Determine initial step
+  const getInitialStep = () => {
+    if (stepParam) return Math.max(0, Math.min(Number(stepParam) - 1 || 0, steps.length - 1));
+
+    // If all steps are valid, go to last step
+    if (allStepsValid) return steps.length - 1;
+
+    // Otherwise, find first invalid step
+    for (let i = 0; i < steps.length; i++) {
+      if (!isStepValid(i)) return i;
+    }
+    return 0;
+  };
+
+  const stepIndex = getInitialStep();
+
+  const setStepInUrl = (index: number) => {
+    router.navigate({
+      to: "/profile-setup",
+      search: { step: index + 1, redirectTo },
+      replace: true,
+    });
+  };
 
   const onStepChange = (nextStep: number) => {
     if (nextStep <= stepIndex || isStepValid(stepIndex)) {
@@ -142,8 +165,7 @@ export default function ProfileSetup() {
     });
   };
 
-  if (isLoading || isBlocked) {
-    // TODO return the pages' skeletopn structure. 
+  if (authLoading || profileLoading || isBlocked) {
     return null
   }
 
@@ -161,7 +183,6 @@ export default function ProfileSetup() {
       >
         <StepsRoot
           step={stepIndex}
-          // onStepChange={onStepChange}
           count={steps.length}
           orientation={{ base: 'horizontal', md: 'vertical' }}
           h="full"
@@ -207,9 +228,14 @@ export default function ProfileSetup() {
               transition="opacity 0.3s"
             >
               <VStack align="stretch" gap={6}>
-                <Heading as="h3" fontSize="xl" borderBottom="1px solid" pb={4}>
-                  Step {index + 1} / {steps.length}
-                </Heading>
+                <Box pb={4} borderBottom={"1px solid"}>
+                  <Heading as="h3" fontSize="xl">
+                    {steps[index].title}
+                  </Heading>
+                  <Text color="fg.muted" fontSize={"sm"}>
+                    {steps[index].description}
+                  </Text>
+                </Box>
 
                 {step.content}
 
@@ -222,7 +248,11 @@ export default function ProfileSetup() {
                     Back
                   </Button>
                   {stepIndex === steps.length - 1 ? (
-                    <Button onClick={handleSubmit(onSubmit)} loading={isSubmitting} colorPalette={"green"}>
+                    <Button
+                      onClick={handleSubmit(onSubmit)}
+                      loading={isSubmitting}
+                      colorPalette={"green"}
+                    >
                       Finish
                     </Button>
                   ) : (
@@ -237,8 +267,6 @@ export default function ProfileSetup() {
               </VStack>
             </StepsContent>
           ))}
-
-          {/* <StepsCompletedContent>All steps are complete!</StepsCompletedContent> */}
         </StepsRoot>
       </Flex>
     </FormProvider>

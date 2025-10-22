@@ -1,23 +1,22 @@
-import { VStack, Box, Flex, SimpleGrid, Text } from '@chakra-ui/react';
-import { StyledInput } from '@/components/ui';
+import { VStack, Box, Flex, SimpleGrid } from '@chakra-ui/react';
+import { StyledInput, StyledTextarea } from '@/components/ui';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/form-control';
-import { Alert } from '@/components/ui';
+import { Alert, Field } from '@/components/ui';
 import UserProfileCard from '@/components/common/UserProfileCard';
 
 export default function Step1BasicInfo() {
   const { register, control, formState: { errors } } = useFormContext();
 
   // Watch for validation feedback
+  const title = useWatch({ control, name: "title" })
   const location = useWatch({ control, name: 'location' });
-  const bio = useWatch({ control, name: 'bio' });
+  const about = useWatch({ control, name: 'about' });
   // const contactEmail = useWatch({ control, name: 'contact_details.email' });
   // const contactPhone = useWatch({ control, name: 'contact_details.phone' });
 
-  const isStepComplete = !!location?.trim() &&
-    !!bio?.trim()
-    // !!contactEmail?.trim() &&
-    // /\S+@\S+\.\S+/.test(contactEmail);
+  const isStepComplete = !!title.trim() && !!location?.trim() && !!about?.trim()
+  // !!contactEmail?.trim() &&
+  // /\S+@\S+\.\S+/.test(contactEmail);
 
   return (
     <VStack gap={8} align="stretch" mx="auto" w="full" maxW="6xl" px={4}>
@@ -43,44 +42,59 @@ export default function Step1BasicInfo() {
           <VStack gap={6} align="stretch">
             {/* Personal Information */}
             <Box>
-              <Text fontSize="lg" fontWeight="semibold" mb={4} color="fg.muted">
-                Personal Information
-              </Text>
-
               <SimpleGrid columns={1} gap={4}>
-                <FormControl isInvalid={!!errors.location}>
-                  <FormLabel htmlFor="location">Location *</FormLabel>
+                {/* Title */}
+                <Field
+                  label="Title"
+                  required
+                  errorText={errors.title?.message as string}
+                >
+                  <StyledInput
+                    id="title"
+                    type="text"
+                    placeholder="Business Consultant at Utumishi"
+                    {...register('title', {
+                      required: 'Title is required',
+                    })}
+                  />
+                </Field>
+
+                {/* About */}
+                <Field
+                  label="About"
+                  required
+                  errorText={errors.about?.message as string}
+                  helperText="At least 100 characters recommended"
+                >
+                  <StyledTextarea
+                    id="about"
+                    placeholder="Tell us about yourself..."
+                    {...register('about', {
+                      required: 'About is required',
+                      minLength: { value: 100, message: 'About must be at least 100 characters' },
+                    })}
+                  />
+                </Field>
+
+                {/* Location */}
+                <Field
+                  label="Location"
+                  required
+                  errorText={errors.location?.message as string}
+                >
                   <StyledInput
                     id="location"
                     type="text"
+                    placeholder="e.g. San Francisco, CA"
                     {...register('location', {
                       required: 'Location is required',
-                      minLength: { value: 2, message: 'Location must be at least 2 characters' }
+                      minLength: { value: 2, message: 'Location must be at least 2 characters' },
                     })}
-                    placeholder="e.g. San Francisco, CA"
                   />
-                  <FormErrorMessage>
-                    {errors.location?.message as string}
-                  </FormErrorMessage>
-                </FormControl>
-
-                <FormControl isInvalid={!!errors.bio}>
-                  <FormLabel htmlFor="bio">Bio *</FormLabel>
-                  <StyledInput
-                    id="bio"
-                    type="text"
-                    {...register('bio', {
-                      required: 'Bio is required',
-                      minLength: { value: 10, message: 'Bio must be at least 10 characters' }
-                    })}
-                    placeholder="Tell us about yourself..."
-                  />
-                  <FormErrorMessage>
-                    {errors.bio?.message as string}
-                  </FormErrorMessage>
-                </FormControl>
+                </Field>
               </SimpleGrid>
             </Box>
+
 
             {/* Contact Information */}
             {/* <Box>
