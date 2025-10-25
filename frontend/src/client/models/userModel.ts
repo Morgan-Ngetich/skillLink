@@ -73,7 +73,7 @@ export interface UserProfileCreate {
 }
 
 export interface UserProfileUpdate {
-  title?:string;
+  title?: string;
   about?: string;
   contact_details?: { [key: string]: string };
   skills?: string[];
@@ -137,7 +137,7 @@ export const ExperienceLevel = {
   LEAD: 'lead',
 }
 
-export const MentorApproach =  {
+export const MentorApproach = {
   CAREER_COACH: 'career_coach',
   TECHNICAL_MENTOR: 'technical_mentor',
   INDUSTRY_EXPERT: 'industry_expert',
@@ -145,7 +145,7 @@ export const MentorApproach =  {
   ENTREPRENEUR: 'entrepreneur',
 }
 
-export const SessionApproach =  {
+export const SessionApproach = {
   ONE_ON_ONE: '1-on-1 Video Call',
   CODE_REVIEW: 'Code Review',
   RESUME_REVIEW: 'Resume Review',
@@ -164,7 +164,7 @@ export interface MentorProfileBase {
   title: string;
   industries: string[];
   expertise: string[];
-  experience_level: ExperienceLevelType| string;
+  experience_level: ExperienceLevelType | string;
   mentor_type?: MentorType[] | string[];
   tags?: string[];
   badges?: string[];
@@ -190,6 +190,10 @@ export interface MentorProfilePublic extends MentorProfileBase {
   currently_open_to_mentees?: boolean;
   created_at: string;
   updated_at: string;
+
+  sessions: MentorSessionPublic[]
+  services: MentorServicePublic[]
+  settings?: MentorSettingsPublic[]
 }
 
 // Mentor Session Types
@@ -218,6 +222,7 @@ export interface MentorSessionUpdate {
 
 export interface MentorSessionPublic extends MentorSessionBase {
   id: number;
+  uuid: string;
   is_active: boolean;
   max_bookings_per_week?: number;
   created_at: string;
@@ -229,6 +234,7 @@ export interface MentorServiceBase {
   mentor_id: number;
   title: string;
   description?: string;
+  banner_url?: string;
   price_usd?: number;
   estimated_duration_minutes?: number;
   category?: string;
@@ -248,6 +254,7 @@ export interface MentorServiceUpdate {
 
 export interface MentorServicePublic extends MentorServiceBase {
   id: number;
+  uuid: string;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -271,7 +278,6 @@ export interface MentorSettingsBase {
   communication_style?: string[];
   response_time_hours: number;
 }
-
 
 
 export interface MentorSettingsUpdate {
@@ -322,10 +328,10 @@ export interface MentorStats {
 
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 
-export interface MentorProfileCreate extends MentorProfileBase {}
-export interface MentorSessionCreate extends MentorSessionBase {}
-export interface MentorServiceCreate extends MentorServiceBase {}
-export interface MentorSettingsCreate extends MentorSettingsBase {}
+export interface MentorProfileCreate extends MentorProfileBase { }
+export interface MentorSessionCreate extends MentorSessionBase { }
+export interface MentorServiceCreate extends MentorServiceBase { }
+export interface MentorSettingsCreate extends MentorSettingsBase { }
 
 /* eslint-enable @typescript-eslint/no-empty-object-type */
 

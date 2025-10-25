@@ -681,7 +681,7 @@ class MentorSessionBase(SQLModel):
     description: Optional[str] = None
     session_type: SessionType
     duration_minutes: int = 60
-    price: Optional[float] = None  # None = free
+    price_usd: Optional[float] = None  # None = free
     
     # Optional metadata
     tags: Optional[List[str]] = Field(
@@ -692,6 +692,7 @@ class MentorSessionBase(SQLModel):
 
 class MentorSession(MentorSessionBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
+    uuid: UUID = Field(default_factory=uuid4, index=True, unique=True)
     
     # Availability
     is_active: bool = Field(default=True)
@@ -712,13 +713,14 @@ class MentorSessionUpdate(SQLModel):
     description: Optional[str] = None
     session_type: Optional[SessionType] = None
     duration_minutes: Optional[int] = None
-    price: Optional[float] = None
+    price_usd: Optional[float] = None
     is_active: Optional[bool] = None
     max_bookings_per_week: Optional[int] = None
     tags: Optional[List[str]] = None
 
 class MentorSessionPublic(MentorSessionBase):
     id: int
+    uuid: UUID
     is_active: bool
     max_bookings_per_week: Optional[int]
     created_at: datetime
@@ -732,7 +734,8 @@ class MentorServiceBase(SQLModel):
     # Display info
     title: str # "Portfolio FeedBack"
     description: Optional[str] = Field(default=None, max_length=500)
-    price: Optional[float] = None
+    banner_url: Optional[str] = Field(default=None, max_length=500) 
+    price_usd: Optional[float] = None
     estimated_duration_minutes: Optional[int] = None
     
     # Categorization
@@ -742,8 +745,26 @@ class MentorServiceBase(SQLModel):
         default=None
     ) # e.g., ["@4hr turnaround", "Detailed Feedback"]
     
+    def to_public(self) -> "MentorServicePublic":
+        return MentorServicePublic(
+            id=getattr(self, "id", None),
+            uuid=getattr(self, "uuid", None),
+            mentor_id=self.mentor_id,
+            title=self.title,
+            description=self.description,
+            banner_url=self.banner_url,
+            price_usd=self.price_usd,
+            estimated_duration_minutes=self.estimated_duration_minutes,
+            category=self.category,
+            highlights=self.highlights,
+            is_active=getattr(self, "is_active", True),
+            created_at=getattr(self, "created_at", None),
+            updated_at=getattr(self, "updated_at", None),
+        )
+    
 class MentorService(MentorServiceBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
+    uuid: UUID = Field(default_factory=uuid4, index=True, unique=True)
     
     is_active: bool = Field(default=True)
     
@@ -760,6 +781,7 @@ class MentorServiceCreate(MentorServiceBase):
 class MentorServiceUpdate(SQLModel):
     title: Optional[str] = None
     description: Optional[str] = None
+    banner_url: Optional[str] = None
     price_usd: Optional[float] = None
     estimated_duration_minutes: Optional[int] = None
     category: Optional[str] = None
@@ -769,6 +791,7 @@ class MentorServiceUpdate(SQLModel):
 
 class MentorServicePublic(MentorServiceBase):
     id: int
+    uuid: UUID
     is_active: bool
     created_at: datetime
     updated_at: datetime
@@ -801,8 +824,6 @@ class MentorSettingsUpdate(SQLModel):
 class MentorSettingsPublic(MentorSettingsBase):
     created_at: datetime
     updated_at: datetime
-
-
 
 
 
