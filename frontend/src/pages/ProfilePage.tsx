@@ -1,6 +1,6 @@
-import { Box, Flex, VStack, Container, Heading, Tabs } from "@chakra-ui/react"
+import { Box, Flex, VStack, Container } from "@chakra-ui/react"
 import { useBreakpointValue } from "@chakra-ui/react"
-import { LuActivity, LuCalendar, LuClock4 } from "react-icons/lu"
+import { LuCalendar, LuClock4 } from "react-icons/lu"
 import { useRouter, useSearch } from "@tanstack/react-router"
 
 import { useAuthRouteGuard } from "@/hooks/auth/useAuthRouteGuard"
@@ -11,10 +11,13 @@ import ProfileCard from "@/components/dashboard/menteeProfile/menteeProfileCard/
 import ProfileEditModal from "@/components/dashboard/menteeProfile/menteeProfileCard/editProfileCard/ProfileEditModal"
 import ProfileCompletionCard from "@/components/dashboard/menteeProfile/menteeProfileCard/ProfileCardCompletion"
 import MentorProfileSetupModal from "@/components/dashboard/mentorProfile/mentorProfileSetup/MentorProfileSetupModal"
-import BecomeMentorButton from "@/components/dashboard/mentorProfile/mentorProfileSetup/BecomeMentorButton"
 import PeopleAlsoViewed from "@/components/homepage/TopMentors"
 import HeroCard from "@/components/homepage/herocard/HeroCard"
 import MentorshipCalendarContent from "@/components/dashboard/menteeProfile/calendar/MentorshipCalendarContent "
+import { SessionExploreCardExample } from "@/components/explore/SessionExploreCard"
+import { FaServicestack } from "react-icons/fa6"
+import MentorServices from "@/components/dashboard/mentorProfile/mentorServices/MentorServices"
+import { Tabs } from "@chakra-ui/react"
 
 const ProfilePage = () => {
   const { isBlocked, isLoading } = useAuthRouteGuard()
@@ -24,50 +27,95 @@ const ProfilePage = () => {
   const router = useRouter()
   const search = useSearch({ from: "/_layout/dashboard/profile" })
 
-  // ========== MODAL HANDLERS ==========
-  
+  // MODAL HANDLERS 
   const openModal = (drawer: string, step?: string) => {
     router.navigate({
       to: "/dashboard/profile",
-      search: { drawer, step },
+      search: { ...search, drawer, step },
       replace: false,
     })
   }
 
   const closeModal = () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { drawer, step, ...rest } = search
     router.navigate({
       to: "/dashboard/profile",
-      search: {},
+      search: rest,
       replace: true,
     })
   }
 
-  // ========== LOADING STATE ==========
-  
+  // SERVICE MODAL HANDLERS 
+  const openServiceModal = (mode: "create" | "edit", serviceId?: string) => {
+    router.navigate({
+      to: "/dashboard/profile",
+      search: {
+        ...search,
+        serviceModal: mode,
+        ...(serviceId && { serviceId })
+      },
+      replace: false,
+    })
+  }
+
+  const closeServiceModal = () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { serviceModal, serviceId, ...rest } = search
+    router.navigate({
+      to: "/dashboard/profile",
+      search: rest,
+      replace: true,
+    })
+  }
+
+  // TAB HANDLERS 
+  // Profile card tabs (works on both mobile and desktop)
+  const handleProfileTabChange = (profileTab: string) => {
+    router.navigate({
+      to: "/dashboard/profile",
+      search: { ...search, profileTab },
+      replace: false,
+    })
+  }
+
+  // Sidebar tabs (desktop only)
+  const handleSidebarTabChange = (sidebarTab: string) => {
+    router.navigate({
+      to: "/dashboard/profile",
+      search: { ...search, sidebarTab },
+      replace: false,
+    })
+  }
+
+  // LOADING STATE 
   if (isLoading || isBlocked) return null
 
-  // ========== SIDEBAR CONTENT ==========
-  
   const SidebarTabs = () => {
     const tabs = [
       {
-        value: 'activity',
-        label: 'Activity',
-        icon: LuActivity,
+        value: 'services',
+        label: 'Services',
+        icon: FaServicestack,
         content: (
-          <>
-            {!profile?.is_profile_complete && (
-              <ProfileCompletionCard onEditProfile={() => openModal('setup-profile', 'basic')} />
-            )}
-            {!user?.is_mentor && <BecomeMentorButton />}
-          </>
+          <MentorServices
+            serviceModal={search.serviceModal}
+            serviceId={search.serviceId}
+            onOpenServiceModal={openServiceModal}
+            onCloseServiceModal={closeServiceModal}
+          />
         )
       },
       {
         value: 'sessions',
         label: 'Sessions',
         icon: LuClock4,
-        content: <HeroCard variant="card" />
+        content: (
+          <VStack gap={4} align="stretch">
+            <HeroCard variant="card" />
+            <SessionExploreCardExample />
+          </VStack>
+        )
       },
       {
         value: 'availability',
@@ -78,8 +126,13 @@ const ProfilePage = () => {
     ]
 
     return (
-      <Tabs.Root defaultValue="activity" variant="enclosed" w="full">
-        <Tabs.List justifyContent="space-between" w="full">
+      <Tabs.Root
+        value={search.sidebarTab || 'services'}
+        onValueChange={(e) => handleSidebarTabChange(e.value)}
+        variant="enclosed"
+        w="full"
+      >
+        <Tabs.List justifyContent="space-between" w="full" bg="cardbg">
           {tabs.map(({ value, label, icon: Icon }) => (
             <Tabs.Trigger
               key={value}
@@ -97,9 +150,6 @@ const ProfilePage = () => {
 
         {tabs.map(({ value, content }) => (
           <Tabs.Content key={value} value={value} pt={4}>
-            <Heading size="sm" mb={4}>
-              {value.charAt(0).toUpperCase() + value.slice(1)}
-            </Heading>
             {content}
           </Tabs.Content>
         ))}
@@ -107,20 +157,18 @@ const ProfilePage = () => {
     )
   }
 
-  // ========== MOBILE SIDEBAR ==========
-  
+  // MOBILE SIDEBAR 
   const MobileSidebar = () => (
     <VStack w="full" gap={6}>
       {!profile?.is_profile_complete && (
         <ProfileCompletionCard onEditProfile={() => openModal('setup-profile', 'basic')} />
       )}
-      {/* {!user?.is_mentor && <BecomeMentorButton />} */}
+      <SessionExploreCardExample />
       <PeopleAlsoViewed />
     </VStack>
   )
 
-  // ========== DESKTOP SIDEBAR ==========
-  
+  // DESKTOP SIDEBAR 
   const DesktopSidebar = () => (
     <VStack gap={6} align="start" flex="0 0 36%" w="36%">
       <SidebarTabs />
@@ -128,8 +176,7 @@ const ProfilePage = () => {
     </VStack>
   )
 
-  // ========== RENDER ==========
-
+  // RENDER 
   return (
     <>
       {/* Modals */}
@@ -157,7 +204,8 @@ const ProfilePage = () => {
               user={user || undefined}
               profile={profile}
               onEditClick={() => openModal('setup-profile', 'basic')}
-              activeTab="about"
+              activeTab={search.profileTab || 'about'}
+              onTabChange={handleProfileTabChange}
             />
           </Box>
 
