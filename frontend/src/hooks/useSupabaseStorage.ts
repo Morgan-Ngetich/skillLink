@@ -3,174 +3,191 @@ import { supabase } from "./supabaseClient";
 import useToaster from "../hooks/useToaster";
 import { getApiErrorMessage } from "@/utils/errorUtils";
 
-type BucketType =
-  | "avatars"
-  | "mentor-services"
-  | "mentor-profiles"
-  | "session-images";
+// ==================== TYPES ====================
+type BucketType = "avatars" | "mentor-services" | "mentor-profiles" | "session-images";
 
 interface UploadOptions {
   userUuid: string;
   serviceUuid?: string;
   sessionUuid?: string;
+  oldFilePath?: string;
+  onProgress?: (progress: number) => void;
 }
 
 interface UploadResult {
   path: string;
   url: string;
+  bucket: BucketType;
+  timestamp: number;
 }
 
-// Core Upload Logic (non-hook utility)
+interface DeleteOptions {
+  bucket: BucketType;
+  path: string;
+  userUuid?: string;
+}
+
+// ==================== UTILITIES ====================
+const sanitize = (v: string) => v.toLowerCase().replace(/[^a-z0-9]/g, "");
+const getExt = (file: File) => file.type?.split("/")[1]?.toLowerCase().replace(/[^a-z0-9]/g, "") ?? "jpg";
+
+// Always safe paths — no hyphens, uppercase, or symbols
+const buildPath = (
+  bucket: BucketType,
+  opts: UploadOptions,
+  ext: string,
+  timestamp: number
+) => {
+  const u = sanitize(opts.userUuid);
+  const s = opts.serviceUuid ? sanitize(opts.serviceUuid) : "";
+  const ss = opts.sessionUuid ? sanitize(opts.sessionUuid) : "";
+
+  switch (bucket) {
+    case "mentor-services":
+      if (!s) throw new Error("serviceUuid required");
+      return `${u}/service_${s}_${timestamp}.${ext}`;
+
+    case "session-images":
+      if (!ss) throw new Error("sessionUuid required");
+      return `${u}/session_${ss}_${timestamp}.${ext}`;
+
+    case "avatars":
+      return `${u}/avatar_${timestamp}.${ext}`;
+
+    case "mentor-profiles":
+      return `${u}/cover_${timestamp}.${ext}`;
+
+    default:
+      throw new Error("Unsupported bucket");
+  }
+};
+
+const encodeStoragePath = (p: string) => encodeURI(p);
+
+// ==================== CORE ====================
 async function supabaseUploadFile(
   bucket: BucketType,
   file: File,
-  options: UploadOptions
+  opts: UploadOptions
 ): Promise<UploadResult> {
-  if (!options.userUuid) throw new Error("userUuid is required for all uploads");
+  if (!opts.userUuid) throw new Error("userUuid is required");
 
-  const ext = file.name.split(".").pop() || file.type.split("/")[1] || "jpg";
   const timestamp = Date.now();
-  let filePath = "";
+  const ext = getExt(file);
+  const filePath = buildPath(bucket, opts, ext, timestamp);
 
-  switch (bucket) {
-    case "avatars": {
-      const randomSuffix = crypto.randomUUID().slice(0, 8);
-      filePath = `${options.userUuid}/avatar_${randomSuffix}.${ext}`;
-      break;
+  // Safe delete old file
+  if (opts.oldFilePath) {
+    try {
+      await supabase.storage.from(bucket).remove([opts.oldFilePath]);
+    } catch (e) {
+      console.warn("Old file cleanup failed:", e);
     }
-    case "mentor-services": {
-      if (!options.serviceUuid)
-        throw new Error("serviceUuid is required for mentor-services");
-      filePath = `${options.userUuid}/service_${options.serviceUuid}_${timestamp}.${ext}`;
-      break;
-    }
-    case "mentor-profiles": {
-      filePath = `${options.userUuid}/cover_${timestamp}.${ext}`;
-      break;
-    }
-    case "session-images": {
-      if (!options.sessionUuid)
-        throw new Error("sessionUuid is required for session-images");
-      filePath = `${options.userUuid}/session_${options.sessionUuid}_${timestamp}.${ext}`;
-      break;
-    }
-    default:
-      throw new Error(`Unsupported bucket: ${bucket}`);
   }
 
-  // Auto-detect & delete previous files
-  const { data: existingFiles, error: listError } = await supabase.storage
-    .from(bucket)
-    .list(options.userUuid + "/", { limit: 50 });
-
-  if (!listError && existingFiles?.length) {
-    const filesToDelete = existingFiles.map((f) => `${options.userUuid}/${f.name}`);
-    const { error: deleteError } = await supabase.storage
-      .from(bucket)
-      .remove(filesToDelete);
-    if (deleteError) console.warn("Could not delete old files:", deleteError.message);
-  }
-
-  // Upload new file
-  const { error: uploadError } = await supabase.storage
+  const upload = await supabase.storage
     .from(bucket)
     .upload(filePath, file, {
-      cacheControl: "3600",
       upsert: true,
+      contentType: file.type || "image/png",
+      cacheControl: "3600",
     });
 
-  if (uploadError) throw uploadError;
+  if (upload.error) throw upload.error;
 
-  // Get public URL
-  const { data: publicData } = supabase.storage.from(bucket).getPublicUrl(filePath);
+  const { data } = supabase.storage
+    .from(bucket)
+    .getPublicUrl(encodeStoragePath(filePath));
 
   return {
     path: filePath,
-    url: publicData.publicUrl,
+    url: data.publicUrl ?? "",
+    bucket,
+    timestamp,
   };
 }
 
-// Delete Logic
 async function supabaseDeleteFile(bucket: BucketType, path: string) {
-  if (!path) throw new Error("No file path provided");
-  const { error: deleteError } = await supabase.storage.from(bucket).remove([path]);
-  if (deleteError) throw new Error(deleteError.message);
+  if (!path) throw new Error("Missing storage path");
+  const { error } = await supabase.storage.from(bucket).remove([path]);
+  if (error) throw error;
   return true;
 }
 
+function getPublicUrl(bucket: BucketType, path: string) {
+  if (!path) return "";
+  const encoded = encodeStoragePath(path);
+  const { data } = supabase.storage.from(bucket).getPublicUrl(encoded);
+  return data.publicUrl ?? "";
+}
+
+// ==================== CACHE ====================
+function invalidateQueries(
+  qc: ReturnType<typeof useQueryClient>,
+  bucket: BucketType,
+  userUuid: string,
+  resourceId?: string
+) {
+  qc.invalidateQueries({ queryKey: ["storage", bucket, userUuid] });
+
+  switch (bucket) {
+    case "mentor-services":
+      qc.invalidateQueries({ queryKey: ["mentor-services"] });
+      if (resourceId) qc.invalidateQueries({ queryKey: ["mentor-service", resourceId] });
+      break;
+    case "session-images":
+      qc.invalidateQueries({ queryKey: ["mentor-sessions"] });
+      break;
+    case "avatars":
+      qc.invalidateQueries({ queryKey: ["current-user"] });
+      break;
+    case "mentor-profiles":
+      qc.invalidateQueries({ queryKey: ["mentor-profile", userUuid] });
+      break;
+  }
+}
+
+// ==================== HOOK ====================
 export function useSupabaseStorage() {
   const toast = useToaster();
-  const queryClient = useQueryClient();
+  const qc = useQueryClient();
 
-  // Upload File Mutation
-  const uploadMutation = useMutation<
-    UploadResult,
-    Error,
-    { bucket: BucketType; file: File; options: UploadOptions }
-  >({
-    mutationFn: ({ bucket, file, options }) => supabaseUploadFile(bucket, file, options),
-    onSuccess: (_, variables) => {
-      toast({
-        id: "upload-success",
-        title: "Upload successful",
-        status: "success",
-      });
-      // Invalidate cache related to this bucket/user
-      queryClient.invalidateQueries({
-        queryKey: ["storage", variables.bucket, variables.options.userUuid],
-      });
+  const uploadMutation = useMutation({
+    mutationFn: ({ bucket, file, options }: { bucket: BucketType; file: File; options: UploadOptions }) =>
+      supabaseUploadFile(bucket, file, options),
+
+    onSuccess: (_, v) => {
+      const id = v.options.serviceUuid || v.options.sessionUuid;
+      invalidateQueries(qc, v.bucket, v.options.userUuid, id);
+      toast({ id: "upload-success", title: "Uploaded!", status: "success" });
     },
-    onError: (error) => {
+
+    onError: (e: unknown) =>
       toast({
         id: "upload-error",
         title: "Upload failed",
-        description: getApiErrorMessage(error),
+        description: getApiErrorMessage(e),
         status: "error",
-      });
-    },
+      }),
   });
 
-  // Delete File Mutation
-  const deleteMutation = useMutation<
-    boolean,
-    Error,
-    { bucket: BucketType; path: string }
-  >({
-    mutationFn: ({ bucket, path }) => supabaseDeleteFile(bucket, path),
-    onSuccess: (_, variables) => {
-      toast({
-        id: "delete-success",
-        title: "File deleted",
-        status: "info",
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["storage", variables.bucket],
-      });
-    },
-    onError: (error) => {
-      toast({
-        id: "delete-error",
-        title: "Failed to delete file",
-        description: getApiErrorMessage(error),
-        status: "error",
-      });
+  const deleteMutation = useMutation({
+    mutationFn: ({ bucket, path }: DeleteOptions) => supabaseDeleteFile(bucket, path),
+    onSuccess: (_, v) => {
+      toast({ id: "delete-success", title: "File deleted", status: "info" });
+      if (v.userUuid) invalidateQueries(qc, v.bucket, v.userUuid);
     },
   });
-
-  // Utility — get public URL
-  function getPublicUrl(bucket: BucketType, path: string) {
-    const { data } = supabase.storage.from(bucket).getPublicUrl(path);
-    return data.publicUrl;
-  }
 
   return {
     uploadFile: uploadMutation.mutate,
-    uploadFileAsync: uploadMutation.mutateAsync, // Promise-based for chaining
+    uploadFileAsync: uploadMutation.mutateAsync,
+    isUploading: uploadMutation.isPending,
     deleteFile: deleteMutation.mutate,
     deleteFileAsync: deleteMutation.mutateAsync,
-    getPublicUrl,
-    isUploading: uploadMutation.isPending,
     isDeleting: deleteMutation.isPending,
+    getPublicUrl,
   };
 }
 
+export type { BucketType, UploadOptions, UploadResult, DeleteOptions };
