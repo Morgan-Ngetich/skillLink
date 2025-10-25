@@ -7,7 +7,7 @@ import type {
   MentorProfileUpdate,
   ProfileCompletionStatus,
   MentorStats,
-
+  MentorServicePublic,
 } from '../models';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -25,7 +25,7 @@ export class ProfileService {
   public static getMyProfile(): CancelablePromise<UserProfilePublic> {
     return __request(OpenAPI, {
       method: 'GET',
-      url: '/api/v1/profile/',
+      url: '/api/v1/profile/me',
     });
   }
 
@@ -104,7 +104,7 @@ export class ProfileService {
   public static getMyMentorProfile(): CancelablePromise<MentorProfilePublic> {
     return __request(OpenAPI, {
       method: 'GET',
-      url: '/api/v1/profile/mentor',
+      url: '/api/v1/profile/mentor/profile',
     });
   }
 
@@ -118,7 +118,7 @@ export class ProfileService {
   public static getMentorProfileByUserId(userId: number): CancelablePromise<MentorProfilePublic> {
     return __request(OpenAPI, {
       method: 'GET',
-      url: `/api/v1/profile/mentor/${userId}`,
+      url: `/api/v1/profile/mentor/${userId}/profile`,
     });
   }
 
@@ -134,7 +134,7 @@ export class ProfileService {
   ): CancelablePromise<MentorProfilePublic> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/v1/profile/mentor',
+      url: '/api/v1/profile/mentor/profile',
       body: profile,
       mediaType: 'application/json',
     });
@@ -152,7 +152,7 @@ export class ProfileService {
   ): CancelablePromise<MentorProfilePublic> {
     return __request(OpenAPI, {
       method: 'PATCH',
-      url: '/api/v1/profile/mentor',
+      url: '/api/v1/profile/mentor/profile',
       body: profile,
       mediaType: 'application/json',
     });
@@ -160,15 +160,59 @@ export class ProfileService {
 
 
   /**
+ * Delete Mentor Profile
+ * Deletes a mentor profile by user ID. Admins can delete any profile, users can only delete their own.
+ * @param userId - Numeric ID of the user
+ * @returns void
+ * @throws ApiError
+ */
+  public static deleteMentorProfile(userId: number): CancelablePromise<void> {
+    return __request(OpenAPI, {
+      method: 'DELETE',
+      url: `/api/v1/profile/mentor/${userId}/profile`,
+    });
+  }
+
+  /**
    * Get Mentor Stats
    * Returns statistics and analytics for the current mentor.
    * @returns MentorStats - Mentor statistics
-   * @thows ApiError
+   * @throws ApiError
    */
   public static getMentorStats(): CancelablePromise<MentorStats> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/profile/mentor/stats"
-    })
+      method: 'GET',
+      url: '/api/v1/profile/mentor/stats',
+    });
+  }
+
+
+  /**
+   * Toggle Mentor Availability
+   * Quick toggle to open/close mentor availability for mentees.
+   * @returns MentorProfilePublic - Updated mentor profile with toggled availability
+   * @throws ApiError
+   */
+  public static toggleMentorAvailability(): CancelablePromise<MentorProfilePublic> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/v1/profile/mentor/toggle-availability',
+    });
+  }
+
+  /**
+   * Get Mentor Services by User ID
+   * Returns all active services offered by a specific mentor (public usage).
+   * @param userId - Numeric ID of the mentor
+   * @returns MentorServicePublic[] - List of active mentor services
+   * @throws ApiError
+   */
+  public static getMentorServicesByUserId(
+    userId: number
+  ): CancelablePromise<MentorServicePublic[]> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: `/api/v1/profile/mentor/${userId}/services`,
+    });
   }
 }

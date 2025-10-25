@@ -27,56 +27,41 @@ export class MentorSessionService {
   public static getMySessions(): CancelablePromise<MentorSessionPublic[]> {
     return __request(OpenAPI, {
       method: 'GET',
-      url: '/api/v1/mentor/sessions',
+      url: '/api/v1/profile/mentor/sessions',
     });
   }
 
   /**
-   * Get a Specific Mentor Session by ID
-   * @param sessionId - Numeric ID of the session
-   * @returns MentorSessionPublic - Session details
-   * @throws ApiError
-   */
-  public static getSessionById(
-    sessionId: number
-  ): CancelablePromise<MentorSessionPublic> {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: `/api/v1/mentor/sessions/${sessionId}`,
-    });
-  }
-
-  /**
-   * Create a New Mentor Session
-   * @param session - Session data (title, duration, price, etc.)
-   * @returns MentorSessionPublic - Created session
-   * @throws ApiError
-   */
+ * Create a New Mentor Session
+ * @param session - Session data (title, duration, price_usd, etc.)
+ * @returns MentorSessionPublic - Created session
+ * @throws ApiError
+ */
   public static createSession(
     session: MentorSessionCreate
   ): CancelablePromise<MentorSessionPublic> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/v1/mentor/sessions',
+      url: '/api/v1/profile/mentor/sessions',
       body: session,
       mediaType: 'application/json',
     });
   }
 
   /**
-   * Update an Existing Mentor Session
-   * @param sessionId - Numeric ID of the session
-   * @param updates - Partial data to update
-   * @returns MentorSessionPublic - Updated session
-   * @throws ApiError
-   */
+ * Update an Existing Mentor Session
+ * @param sessionId - Numeric ID of the session
+ * @param updates - Partial data to update
+ * @returns MentorSessionPublic - Updated session
+ * @throws ApiError
+ */
   public static updateSession(
     sessionId: number,
     updates: MentorSessionUpdate
   ): CancelablePromise<MentorSessionPublic> {
     return __request(OpenAPI, {
       method: 'PATCH',
-      url: `/api/v1/mentor/sessions/${sessionId}`,
+      url: `/api/v1/profile/mentor/sessions/${sessionId}`,
       body: updates,
       mediaType: 'application/json',
     });
@@ -91,9 +76,26 @@ export class MentorSessionService {
   public static deleteSession(sessionId: number): CancelablePromise<void> {
     return __request(OpenAPI, {
       method: 'DELETE',
-      url: `/api/v1/mentor/sessions/${sessionId}`,
+      url: `/api/v1/profile/mentor/sessions/${sessionId}`,
     });
   }
+
+
+  /**
+   * Get a Specific Mentor Session by ID
+   * @param sessionId - Numeric ID of the session
+   * @returns MentorSessionPublic - Session details
+   * @throws ApiError
+   */
+  public static getSessionById(
+    sessionId: number
+  ): CancelablePromise<MentorSessionPublic> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: `/api/v1/profile/mentor/sessions/${sessionId}`,
+    });
+  }
+
 }
 
 /**
@@ -110,7 +112,7 @@ export class MentorServiceService {
   public static getMyServices(): CancelablePromise<MentorServicePublic[]> {
     return __request(OpenAPI, {
       method: 'GET',
-      url: '/api/v1/mentor/services',
+      url: '/api/v1/profile/mentor/services',
     });
   }
 
@@ -125,7 +127,7 @@ export class MentorServiceService {
   ): CancelablePromise<MentorServicePublic> {
     return __request(OpenAPI, {
       method: 'GET',
-      url: `/api/v1/mentor/services/${serviceId}`,
+      url: `/api/v1/profile/mentor/services/${serviceId}`,
     });
   }
 
@@ -140,7 +142,7 @@ export class MentorServiceService {
   ): CancelablePromise<MentorServicePublic> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/v1/mentor/services',
+      url: '/api/v1/profile/mentor/services',
       body: service,
       mediaType: 'application/json',
     });
@@ -159,7 +161,7 @@ export class MentorServiceService {
   ): CancelablePromise<MentorServicePublic> {
     return __request(OpenAPI, {
       method: 'PATCH',
-      url: `/api/v1/mentor/services/${serviceId}`,
+      url: `/api/v1/profile/mentor/services/${serviceId}`,
       body: updates,
       mediaType: 'application/json',
     });
@@ -174,7 +176,7 @@ export class MentorServiceService {
   public static deleteService(serviceId: number): CancelablePromise<void> {
     return __request(OpenAPI, {
       method: 'DELETE',
-      url: `/api/v1/mentor/services/${serviceId}`,
+      url: `/api/v1/profile/mentor/services/${serviceId}`,
     });
   }
 }
@@ -193,7 +195,25 @@ export class MentorSettingsService {
   public static getMySettings(): CancelablePromise<MentorSettingsPublic> {
     return __request(OpenAPI, {
       method: 'GET',
-      url: '/api/v1/mentor/settings',
+      url: '/api/v1/profile/mentor/settings',
+    });
+  }
+
+  /**
+ * Update Mentor Settings
+ * Updates existing mentor settings (partial updates allowed).
+ * @param updates - Partial data to update
+ * @returns MentorSettingsPublic - Updated mentor settings
+ * @throws ApiError
+ */
+  public static updateSettings(
+    updates: MentorSettingsUpdate
+  ): CancelablePromise<MentorSettingsPublic> {
+    return __request(OpenAPI, {
+      method: 'PATCH',
+      url: '/api/v1/profile/mentor/settings',
+      body: updates,
+      mediaType: 'application/json',
     });
   }
 
@@ -209,40 +229,9 @@ export class MentorSettingsService {
   ): CancelablePromise<MentorSettingsPublic> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/v1/mentor/settings',
+      url: '/api/v1/profile/mentor/settings',
       body: settings,
       mediaType: 'application/json',
-    });
-  }
-
-  /**
-   * Update Mentor Settings
-   * Updates existing mentor settings (partial updates allowed).
-   * @param updates - Partial data to update
-   * @returns MentorSettingsPublic - Updated mentor settings
-   * @throws ApiError
-   */
-  public static updateSettings(
-    updates: MentorSettingsUpdate
-  ): CancelablePromise<MentorSettingsPublic> {
-    return __request(OpenAPI, {
-      method: 'PATCH',
-      url: '/api/v1/mentor/settings',
-      body: updates,
-      mediaType: 'application/json',
-    });
-  }
-
-  /**
-   * Toggle Mentor Availability
-   * Quick toggle to open/close mentor availability for mentees.
-   * @returns MentorSettingsPublic - Updated settings with toggled availability
-   * @throws ApiError
-   */
-  public static toggleAvailability(): CancelablePromise<MentorSettingsPublic> {
-    return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/mentor/settings/toggle-availability',
     });
   }
 
@@ -255,7 +244,7 @@ export class MentorSettingsService {
   public static resetWeeklySchedule(): CancelablePromise<MentorSettingsPublic> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/v1/mentor/settings/reset-schedule',
+      url: '/api/v1/profile/mentor/settings/reset-schedule',
     });
   }
 }
