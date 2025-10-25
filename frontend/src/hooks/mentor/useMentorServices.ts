@@ -6,6 +6,7 @@ import {
   type MentorServiceBase,
   type MentorServiceCreate,
   type MentorServiceUpdate,
+  type MentorServicePublic,
 } from '@/client';
 import { toNativePromise } from '@/utils/toNativePromisse';
 import { getApiErrorMessage } from '@/utils/errorUtils';
@@ -21,7 +22,7 @@ export const useMentorServices = () => {
     isError,
     error,
     refetch,
-  } = useQuery<MentorServiceBase[], Error>({
+  } = useQuery<MentorServicePublic[], Error>({
     queryKey: ['mentorServices'],
     queryFn: () => toNativePromise(MentorServiceService.getMyServices()),
     staleTime: 1000 * 60 * 5,
@@ -94,8 +95,10 @@ export const useMentorServices = () => {
     setIsSubmitting(true);
     try {
       if (data.id) {
+        console.log("Founf the data.id", data.id)
         await updateService.mutateAsync({ id: data.id, data });
       } else {
+        console.log("Nop, its the backend")
         await createService.mutateAsync(data as MentorServiceCreate);
       }
       callbacks?.onSuccess?.();
@@ -113,12 +116,15 @@ export const useMentorServices = () => {
     isError,
     error,
     refetch,
+
     isSubmitting,
     setIsSubmitting,
+
     createService: createService.mutate,
     updateService: updateService.mutate,
     deleteService: deleteService.mutate,
     saveService,
+    
     isCreating: createService.isPending,
     isUpdating: updateService.isPending,
     isDeleting: deleteService.isPending,
