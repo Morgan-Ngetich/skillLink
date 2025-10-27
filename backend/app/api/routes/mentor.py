@@ -1,28 +1,35 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
+from typing import Optional, List
 from app.api.deps import SessionDep, CurrentUser
 from sqlmodel import select
 from app.models.users import (
     Role,
     UserRole,
     RoleName,
+    MentorProfile,
     MentorProfileCreate,
     MentorProfilePublic,
     MentorProfileUpdate,
-    MentorSettingsCreate,
-    MentorSessionPublic,
-    MentorSessionCreate,
-    MentorSessionUpdate,
     MentorServicePublic,
     MentorServiceCreate,
     MentorServiceUpdate,
-    MentorSettingsPublic, 
+    MentorSessionPublic,
+    MentorSessionCreate,
+    MentorSessionUpdate,
+    MentorSettings,
+    MentorSettingsPublic,
+    MentorSettingsCreate,
     MentorSettingsUpdate,
-    MentorProfile,
-    MentorSettings
+    BookingStatus,
+    BookingStatusUpdate,
+    BookingPublic,
+    BookingCreateRequest,
+    MentorStatsPublic
 )
 from app import crud
 
 router = APIRouter()
+
 
 # ================= MENTOR PROFILE ==================
 @router.get("/profile", response_model=MentorProfilePublic)
@@ -35,34 +42,43 @@ def read_my_mentor_profile(current_user: CurrentUser, session: SessionDep):
 
 
 @router.post("/profile", response_model=MentorProfilePublic)
-def create_mentor_profile(profile_in: MentorProfileCreate, session: SessionDep, current_user: CurrentUser):
+def create_mentor_profile(
+    profile_in: MentorProfileCreate, session: SessionDep, current_user: CurrentUser
+):
     """
     Create mentor profile - 1-step onboarding
     This endpoint is called after user completes mentor setup
     """
     if profile_in.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Cannot create mentor profile for another user")
-    
+        raise HTTPException(
+            status_code=403, detail="Cannot create mentor profile for another user"
+        )
+
     # Check if user profile is complete
     user_profile = crud.get_user_profile_or_404(session, current_user.id)
     if not user_profile.is_profile_setup_complete:
-        raise HTTPException(status_code=400, detail="Complete user profile setup before creating mentor profile")
-    
+        raise HTTPException(
+            status_code=400,
+            detail="Complete user profile setup before creating mentor profile",
+        )
+
     # Create mentor profile
-    profile = crud.create_mentor_profile(session, profile_in)      
-    
+    profile = crud.create_mentor_profile(session, profile_in)
+
     # Create default mentor settings
     settings_in = MentorSettingsCreate(mentor_id=current_user.id)
     crud.create_mentor_settings(session, settings_in)
-    
+
     # Assign MENTOR role
-    crud.assign_role(session, current_user, RoleName.MENTOR)   
+    crud.assign_role(session, current_user, RoleName.MENTOR)
     return profile.to_public()
 
 
 @router.patch("/profile", response_model=MentorProfilePublic)
-def update_mentor_profile(profile_in: MentorProfileUpdate, session: SessionDep, current_user: CurrentUser):
-    """ Update CurrentUser's mentor profile """
+def update_mentor_profile(
+    profile_in: MentorProfileUpdate, session: SessionDep, current_user: CurrentUser
+):
+    """Update CurrentUser's mentor profile"""
     profile = crud.update_mentor_profile(session, current_user.id, profile_in)
     return profile.to_public()
 
@@ -70,16 +86,30 @@ def update_mentor_profile(profile_in: MentorProfileUpdate, session: SessionDep, 
 @router.get("/stats", response_model=dict)
 def get_mentor_stats(session: SessionDep, current_user: CurrentUser):
     """
-    Get mentor statistics
+    Get comprehensive mentor dashboard statistics  
+    Uses optimized SQL queries to avoid loading full relationships, thus saving memory.
     """
-    profile = crud.get_mentor_profile_or_404(session, current_user.id)
+    stats = crud.get_mentor_stats(session, current_user.id)
+    return MentorStatsPublic(**stats).model_dump()
+
+@router.post("/stats/refresh", response_model=dict, status_code=200)
+def refresh_mentor_cached_stats(session: SessionDep, current_user: CurrentUser):
+    """
+    Manually refresh cached stats (total_sessions, total_mentees)
+    
+    Useful for:
+    - Manual corrections
+    - After bulk operations
+    - Debugging inconsistencies
+    
+    Cached stats are automatically updated after normal CRUD operations
+    """
+    profile = crud.update_mentor_cached_stats(session, current_user.id)
     
     return {
+        "message": "Stats refreshed successfully",
         "total_sessions": profile.total_sessions,
         "total_mentees": profile.total_mentees,
-        "average_rating": profile.average_rating,
-        "completion_percentage": profile.completion_percentage,
-        "is_complete": profile.is_mentor_profile_complete,
     }
 
 
@@ -103,14 +133,14 @@ def toggle_mentor_availability(session: SessionDep, current_user: CurrentUser):
 # ================= MENTOR SESSIONS ==================
 @router.post("/sessions", response_model=MentorSessionPublic, status_code=201)
 def create_mentor_session(
-    session_in: MentorSessionCreate,
-    session: SessionDep,
-    current_user: CurrentUser
+    session_in: MentorSessionCreate, session: SessionDep, current_user: CurrentUser
 ):
     """Create a new bookable session type"""
     if session_in.mentor_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Cannot create session for another mentor")
-    
+        raise HTTPException(
+            status_code=403, detail="Cannot create session for another mentor"
+        )
+
     crud.get_mentor_profile_or_404(session, current_user.id)
     mentor_session = crud.create_mentor_session(session, session_in)
     return mentor_session.to_public()
@@ -128,12 +158,14 @@ def update_mentor_session(
     session_id: int,
     session_in: MentorSessionUpdate,
     session: SessionDep,
-    current_user: CurrentUser
+    current_user: CurrentUser,
 ):
     """Update a mentor session"""
     mentor_session = crud.get_mentor_session_or_404(session, session_id)
     if mentor_session.mentor_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized to update this session")
+        raise HTTPException(
+            status_code=403, detail="Not authorized to update this session"
+        )
 
     updated = crud.update_mentor_session(session, session_id, session_in)
     return updated.to_public()
@@ -141,14 +173,14 @@ def update_mentor_session(
 
 @router.delete("/sessions/{session_id}", status_code=204)
 def delete_mentor_session(
-    session_id: int,
-    session: SessionDep,
-    current_user: CurrentUser
+    session_id: int, session: SessionDep, current_user: CurrentUser
 ):
     """Delete a mentor session"""
     mentor_session = crud.get_mentor_session_or_404(session, session_id)
     if mentor_session.mentor_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized to delete this session")
+        raise HTTPException(
+            status_code=403, detail="Not authorized to delete this session"
+        )
 
     crud.delete_mentor_session(session, session_id)
     return None
@@ -157,13 +189,13 @@ def delete_mentor_session(
 # ================= MENTOR SERVICES ==================
 @router.post("/services", response_model=MentorServicePublic, status_code=201)
 def create_mentor_service(
-    service_in: MentorServiceCreate,
-    session: SessionDep,
-    current_user: CurrentUser
+    service_in: MentorServiceCreate, session: SessionDep, current_user: CurrentUser
 ):
     """Create a new service showcase card"""
     if service_in.mentor_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Cannot create service for another mentor")
+        raise HTTPException(
+            status_code=403, detail="Cannot create service for another mentor"
+        )
 
     crud.get_mentor_profile_or_404(session, current_user.id)
     service = crud.create_mentor_service(session, service_in)
@@ -182,12 +214,14 @@ def update_mentor_service(
     service_id: int,
     service_in: MentorServiceUpdate,
     session: SessionDep,
-    current_user: CurrentUser
+    current_user: CurrentUser,
 ):
     """Update a mentor service"""
     service = crud.get_mentor_service_or_404(session, service_id)
     if service.mentor_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized to update this service")
+        raise HTTPException(
+            status_code=403, detail="Not authorized to update this service"
+        )
 
     updated = crud.update_mentor_service(session, service_id, service_in)
     return updated.to_public()
@@ -195,14 +229,14 @@ def update_mentor_service(
 
 @router.delete("/services/{service_id}", status_code=204)
 def delete_mentor_service(
-    service_id: int,
-    session: SessionDep,
-    current_user: CurrentUser
+    service_id: int, session: SessionDep, current_user: CurrentUser
 ):
     """Delete a mentor service"""
     service = crud.get_mentor_service_or_404(session, service_id)
     if service.mentor_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized to delete this service")
+        raise HTTPException(
+            status_code=403, detail="Not authorized to delete this service"
+        )
 
     crud.delete_mentor_service(session, service_id)
     return None
@@ -218,13 +252,128 @@ def get_my_mentor_settings(session: SessionDep, current_user: CurrentUser):
 
 @router.patch("/settings", response_model=MentorSettingsPublic)
 def update_my_mentor_settings(
-    settings_in: MentorSettingsUpdate,
-    session: SessionDep,
-    current_user: CurrentUser
+    settings_in: MentorSettingsUpdate, session: SessionDep, current_user: CurrentUser
 ):
     """Update current mentor's settings"""
     settings = crud.update_mentor_settings(session, current_user.id, settings_in)
     return settings.to_public()
+
+
+# TODO: Prevent cancel if session already started
+# TODO: Notify mentor + mentee on booking status change
+# TODO: Add pagination/filter for bookings list
+# TODO: Hide session join link until CONFIRMED
+# TODO: Mentor can disable new bookings per session
+
+# TODO (Visibility Controls Roadmap)
+# -------------------------------------------------------
+# Future improvements for mentor session visibility rules:
+#
+# ✅ Phase 1 (current):
+# - Hide exact start/end time if mentor setting disabled
+# - Hide meeting link / physical address until booking confirmed
+#
+# 🔜 Phase 2 (short-term):
+# - Show “availability windows” (e.g. “Wed afternoon”) instead of exact time
+# - Allow mentors to choose visibility per session (override global settings)
+# - Include timezone in visibility rules
+#
+# 🛠️ Phase 3 (advanced):
+# - Allow mentors to mark sessions as "private invite only"
+# - Add visibility tiering (e.g., followers-only exposure)
+# - Add reporting to detect unauthorized booking link exposures
+#
+# 🎯 Phase 4 (growth & monetization):
+# - Promote “premium visibility unlocks”
+# - Integrate calendar sync (Google/Outlook) for verified mentors
+# - Add location verification for physical sessions
+#
+# NOTE: Ensure changes maintain:
+# - Privacy protection by default
+# - Low risk of link scraping/spam
+# - Clean UX difference between "Public Preview" and "Booked Access"
+# -------------------------------------------------------
+
+
+# ================= SESSION BOOKINGS ==================
+@router.post(
+    "/sessions/{session_id}/book", response_model=BookingPublic, status_code=201
+)
+def book_mentor_session(
+    session_id: int,
+    booking_data: BookingCreateRequest,
+    session: SessionDep,
+    current_user: CurrentUser,
+):
+    """
+    Book a mentor session as a mentee
+
+    All business rules enforced in crud.create_session_booking():
+    - Session must be active, not expired, not cancelled
+    - Cannot book own session
+    - Max bookings not exceeded
+    - Respects mentor's require_intro_message setting
+    - Checks mentor availability
+    """
+    booking = crud.create_session_booking(
+        session=session,
+        session_id=session_id,
+        mentee_id=current_user.id,
+        message=booking_data.message,
+    )
+
+    return booking.to_public()
+
+
+@router.get("/bookings", response_model=List[BookingPublic])
+def list_my_bookings(
+    session: SessionDep,
+    current_user: CurrentUser,
+    status: Optional[BookingStatus] = Query(None),
+):
+    """
+    List all bookings for the current user
+    """
+    bookings = crud.get_user_bookings(
+        session=session,
+        user_id=current_user.id,
+        status=status,
+    )
+
+    return [b.to_public() for b in bookings]
+
+
+@router.patch("/bookings/{booking_id}/status", response_model=BookingPublic)
+def update_booking_status(
+    booking_id: int,
+    status_update: BookingStatusUpdate,
+    session: SessionDep,
+    current_user: CurrentUser,
+):
+    """
+    Update booking status
+    - Mentors can confirm/cancel bookings for their sessions
+    - Mentees can only cancel their own bookings
+    """
+    bookings = crud.update_booking_status(
+        session=session,
+        booking_id=booking_id,
+        new_status=status_update.status,
+        user_id=current_user.id,
+    )
+
+    return bookings.to_public()
+
+
+@router.delete("/bookings/{booking_id}", status_code=204)
+def delete_booking(booking_id: int, session: SessionDep, current_user: CurrentUser):
+    """
+    Delete a booking
+    - Mentees can delete their own bookings
+    - Mentors can delete bookings for their sessions
+    """
+    crud.delete_booking(session=session, booking_id=booking_id, user_id=current_user.id)
+    return None
 
 
 # ================= PUBLIC/ADMIN ROUTES (must be last) ==================
@@ -251,7 +400,9 @@ def delete_mentor_profile(
     """
     # Check permission
     if not current_user.is_superuser and current_user.id != user_id:
-        raise HTTPException(status_code=403, detail="Not authorized to delete this mentor profile")
+        raise HTTPException(
+            status_code=403, detail="Not authorized to delete this mentor profile"
+        )
 
     # Check if mentor profile exists
     mentor_profile = session.exec(
@@ -279,8 +430,7 @@ def delete_mentor_profile(
     if mentor_role:
         user_role = session.exec(
             select(UserRole).where(
-                UserRole.user_id == user_id,
-                UserRole.role_id == mentor_role.id
+                UserRole.user_id == user_id, UserRole.role_id == mentor_role.id
             )
         ).first()
         if user_role:
