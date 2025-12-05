@@ -15,7 +15,13 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
       <Flex direction="column" flex="1" overflow="hidden">
         <Header />
-        <Box as="main" flex="1" overflowY="auto">
+        <Box
+          as="main"
+          flex="1"
+          mb={{ base: '64px', md: 0 }}
+          transition="margin-left 0.3s ease"
+          overflowY="auto"
+        >
           {children}
         </Box>
       </Flex>
