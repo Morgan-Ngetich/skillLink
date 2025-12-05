@@ -48,6 +48,7 @@ export default defineConfig((configEnv: ConfigEnv): UserConfig => {
           '/api': {
             target: 'http://localhost:8000',
             changeOrigin: true,
+            secure: true,
             rewrite: (path) => path,
           },
         },
