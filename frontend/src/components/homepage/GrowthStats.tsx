@@ -1,19 +1,16 @@
 import {
   Box,
   Text,
-  Button,
   HStack,
   VStack,
   Badge,
   useBreakpointValue,
-  Flex
 } from "@chakra-ui/react";
-import { Stat, Progress, Avatar } from "../ui";
+import { Avatar } from "../ui";
 import { FaEye, FaCalendarAlt } from "react-icons/fa";
-import { FaArrowTrendUp, FaBookmark, FaClock } from "react-icons/fa6";
+import { FaArrowTrendUp, FaClock } from "react-icons/fa6";
 
 const GrowthStats = () => {
-  const isMobile = useBreakpointValue({ base: true, md: false });
   const cardPadding = useBreakpointValue({ base: 3, md: 4 });
   const fontSize = useBreakpointValue({ base: "sm", md: "md" });
 
@@ -24,8 +21,6 @@ const GrowthStats = () => {
       border="1px solid"
       borderColor={"gray"}
       shadow="sm"
-      // bg={{ base: 'white', _dark: 'gray.800' }}
-      // maxW={{ base: "100%", md: "320px" }}
       w="100%"
       h={{base: "100%", md: "fit"}}
     >
@@ -88,30 +83,11 @@ const GrowthStats = () => {
         </VStack>
       </HStack>
 
-      {/* Progress Bar - Compact */}
-      {/* <Box mb={3}>
-        <Flex justify="space-between" align="center" mb={1}>
-          <Text fontSize="xs" fontWeight="medium">
-            Monthly Goal
-          </Text>
-          <Text fontSize="xs" color="gray.500">
-            12/20
-          </Text>
-        </Flex>
-        <Progress 
-          value={60} 
-          colorPalette="purple" 
-          size="xs"
-          borderRadius="full"
-        />
-      </Box> */}
-
       <Box
         bg={"bg.emphasized"}
         borderRadius="lg"
         border="1px solid"
         borderColor={"gray"}
-        mb={3}
         p={4}
       >
         <HStack gap={3} mb={3}>
@@ -130,7 +106,7 @@ const GrowthStats = () => {
               Starting in 2 hours
             </Text>
           </VStack>
-          <Badge colorPalette="purple" variant="surface" fontSize="xs">
+          <Badge colorPalette="purple" variant="surface" fontSize={{base: "2xs", md: "xs"}}>
             Confirmed
           </Badge>
         </HStack>
@@ -139,7 +115,7 @@ const GrowthStats = () => {
           w="full"
           mx="auto"
         >
-          <Box>
+          <Box textAlign="center">
             <Text fontSize="sm" fontWeight="semibold">
               Breaking into Tech Career
             </Text>
@@ -160,26 +136,6 @@ const GrowthStats = () => {
         </VStack>
       </Box>
 
-
-
-      {/* Single Action Button */}
-      <Flex mx="auto" mt={{base: 6, md: 2}}>
-        <Button
-          width="80%"
-          size="sm"
-          mx="auto"
-          borderRadius="lg"
-          fontWeight="medium"
-          fontSize="xs"
-          _hover={{
-            transform: 'translateY(-1px)',
-            shadow: 'md',
-          }}
-          transition="all 0.2s ease"
-        >
-          View Details
-        </Button>
-      </Flex>
     </Box>
   );
 };

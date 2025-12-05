@@ -1,6 +1,5 @@
 import { Box, Flex, Text, Image, Badge, VStack, HStack, Button } from "@chakra-ui/react";
-import { FaMapMarkerAlt } from "react-icons/fa";
-import { FaStar, FaEye, FaBookmark } from "react-icons/fa6";
+import { FaStar, FaEye } from "react-icons/fa6";
 import { useRef, useEffect, useState } from "react";
 
 const mentors = [
@@ -95,7 +94,7 @@ const PeopleAlsoViewed = () => {
     if (!scrollContainer) return;
 
     const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
+      const { scrollTop } = scrollContainer;
 
       // Show button when user has scrolled down (not at top)
       // You can adjust this threshold as needed
