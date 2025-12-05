@@ -11,8 +11,8 @@ import {
   Flex,
 } from '@chakra-ui/react';
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '../hooks/auth/useAuth';
-import useToaster from '../hooks/useToaster';
+import { useAuth } from '@/hooks/auth/useAuth';
+import useToaster from '@/hooks/public/useToaster';
 import { Fade } from '../components/ui/fade';
 import { IoMdClock } from "react-icons/io";
 

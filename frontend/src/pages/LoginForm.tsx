@@ -15,7 +15,7 @@ import { FormControl, FormLabel } from '@chakra-ui/form-control';
 import { FcGoogle } from 'react-icons/fc';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '@/hooks/auth/useAuth';
-import useToaster from '@/hooks/useToaster';
+import useToaster from '@/hooks/public/useToaster';
 import { Link } from '@tanstack/react-router';
 import { PasswordInput } from '@/components/ui/password-input';
 import { isValidEmail } from '@/utils/validator';

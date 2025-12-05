@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useEffect } from 'react';
-import { supabase } from '../../hooks/supabaseClient';
-import useToaster from '../../hooks/useToaster';
+import { supabase } from '@/hooks/supabase/supabaseClient';
+import useToaster from '@/hooks/public/useToaster';
 import { Flex } from '@chakra-ui/react';
 import { useNavigate } from '@tanstack/react-router';
 import { queryClient } from '@/hooks/lib/queryClient';

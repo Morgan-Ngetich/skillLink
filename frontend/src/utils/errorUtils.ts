@@ -1,5 +1,5 @@
 import { ApiError } from '@/client'
-import { type ToastOptions } from '@/hooks/useToaster'
+import { type ToastOptions } from '@/hooks/public/useToaster'
 
 interface ApiErrorBody {
   detail?: string | Array<{ loc?: string[]; msg?: string }>
