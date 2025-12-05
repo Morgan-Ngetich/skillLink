@@ -14,8 +14,7 @@
     "dev": "npm run generate && npm run build:search && vite",
     "build:client": "vite build --outDir dist/client",
     "build:server": "vite build --ssr src/seo/entry-server.tsx --outDir dist/server",
-    "build": "npm run generate && npm run build:search && npm run build:client && npm run build:server",
-    "__comment": "TODO: // npm run check to build: 👆",
+    "build": "npm run generate && npm run check && npm run build:search && npm run build:client && npm run build:server",
     "preview": "NODE_ENV=production node scripts/server.js",
     "serve": "NODE_ENV=production node scripts/server.js"
   },
