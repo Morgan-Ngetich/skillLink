@@ -48,7 +48,7 @@ def get_current_user(
     except Exception as e:
         raise HTTPException(status_code=403, detail=f"Invalid credentials: {e}")
 
-    user = crud.get_user_by_id(session, user_id)
+    user = crud.get_user_by_identifier(session, user_id)
 
     if not user and email:
         print(f"➕ Creating new user: {email}")

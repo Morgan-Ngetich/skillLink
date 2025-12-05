@@ -40,6 +40,13 @@ def get_me(current_user: CurrentUser) -> UserPublic:
     """
     return current_user.to_public()
 
+    #TODO: Consider Re-fetch with eager loading to get all relations
+    # user = crud.get_user_by_id(session=session, user_id=current_user.id)
+    # if not user:
+    #     raise HTTPException(status_code=404, detail="User not found")
+    # return user.to_public()
+
+
 @router.post("/sync", response_model=UserPublic)
 async def sync_user_from_supabase_to_db(
     # request = Request,
@@ -95,16 +102,41 @@ async def sync_user_from_supabase_to_db(
     return current_user.to_public()
 
 
-@router.get("/{user_id}", response_model=UserPublic)
-def read_user(session: SessionDep, user_id: int) -> UserPublic:
+# NOTE: read_user_by_identifier replaces this
+# @router.get("/{user_id}", response_model=UserPublic)
+# def read_user(session: SessionDep, user_id: int) -> UserPublic:
+#     """
+#     Retrieve a user by ID.
+#     """
+#     user = crud.get_user_by_id(session=session, user_id=user_id)
+#     if not user:
+#         raise HTTPException(status_code=404, detail="User not found")
+#     return user.to_public()
+
+@router.get("/{identifier}", response_model=UserPublic)
+def read_user_by_identifier(
+    identifier: str,
+    session: SessionDep,
+) -> UserPublic:
     """
-    Retrieve a user by ID.
+    Retrieve a user by ID or UUID with all related data (public view).
+
+    Args:
+        identifier: Can be numeric user_id or UUID string
+
+    Returns:
+        Complete user object with profile containing mentor_profile if applicable
+
+    Examples:
+        - GET /api/v1/users/123           # By user ID
+        - GET /api/v1/users/550e8400-...  # By UUID
     """
-    user = crud.get_user_by_id(session=session, user_id=user_id)
+    user = crud.get_user_by_identifier(session, identifier)
+    
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+    
     return user.to_public()
-
 
 @router.post("/", response_model=UserPublic, dependencies=[Depends(require_role(RoleName.SUPERUSER))])
 def create_user(session: SessionDep, user_in: UserCreate) -> Any:
@@ -135,7 +167,7 @@ def update_user(session: SessionDep, current_user: CurrentUser, user_in: UserUpd
     """
     For admins (superusers) to update any user by ID.
     """
-    user = crud.get_user_by_id(session, user_id)
+    user = crud.get_user_by_identifier(session, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -151,7 +183,7 @@ def delete_user(session: SessionDep, user_id: int) -> Any:
     """
     Delete a user
     """
-    user = crud.get_user_by_id(session=session, user_id=user_id)
+    user = crud.get_user_by_identifier(session=session, user_id=user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
