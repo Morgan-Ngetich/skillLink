@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabase/supabaseClient';
 import { UserService } from '../../client';
-import { useSupabaseSessionReady } from '../useSupabaseSession';
+import { useSupabaseSessionReady } from '../supabase/useSupabaseSession';
 
 export const fetchCurrentUser = async () => {
   const {

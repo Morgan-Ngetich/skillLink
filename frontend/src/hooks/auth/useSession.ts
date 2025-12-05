@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabase/supabaseClient';
 import { type Session } from '@supabase/supabase-js';
 import { storage } from '@/utils/localstorage';
 import { getCookie, deleteCookie } from '@/utils/cookies/cookies';

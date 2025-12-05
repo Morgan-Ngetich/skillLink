@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabase/supabaseClient';
 import { OpenAPI, type GoogleUserInfo } from '@/client';
 import { type SupabaseUser, UserService } from '@/client';
 import { useNavigate, useRouterState } from '@tanstack/react-router';
