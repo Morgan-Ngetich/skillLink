@@ -6,6 +6,18 @@ export interface UserSyncIn {
   avatar_url?: string;
 }
 
+interface UserMinimal {
+  id: number;
+  uuid: string;
+  full_name: string;
+  email: string;
+  avatar_url?: string;
+  cover_image?: string;
+  is_superuser: boolean;
+  is_mentor: boolean;
+  is_mentee: boolean;
+}
+
 export interface UserCreate {
   full_name: string;
   email: string;
@@ -16,6 +28,7 @@ export interface UserCreate {
 export interface UserUpdate {
   full_name?: string;
   avatar_url?: string;
+  cover_image?: string;
   is_active?: boolean;
   email?: string;
 }
@@ -56,6 +69,7 @@ export interface UserProfilePublic {
   is_profile_complete?: boolean;
   created_at?: string;
   updated_at?: string;
+  mentor_profile?: MentorProfilePublic;
 }
 
 export interface UserProfileCreate {
@@ -97,7 +111,6 @@ export interface UserPublic {
   is_mentor: boolean;
   is_mentee: boolean;
   profile?: UserProfilePublic;
-  mentor_profile?: MentorProfilePublic;
   created_at?: string;
   updated_at?: string;
 }
@@ -191,40 +204,84 @@ export interface MentorProfilePublic extends MentorProfileBase {
   created_at: string;
   updated_at: string;
 
-  sessions: MentorSessionPublic[]
-  services: MentorServicePublic[]
-  settings?: MentorSettingsPublic[]
+  user: UserMinimal;
+  sessions: MentorSessionPublic[];
+  services: MentorServicePublic[];
+  settings?: MentorSettingsPublic;
 }
 
 // Mentor Session Types
+export type LocationType = "online" | "physical";
+
+export interface PreparationMaterial {
+  title: string;
+  description?: string;
+  url: string;
+  type?: string; // pdf, video, article, etc.
+}
+
 export interface MentorSessionBase {
   mentor_id: number;
   title: string;
   description?: string;
+  cover_image?: string;
   session_type: SessionType | string;
   duration_minutes: number;
   price_usd?: number;
   tags?: string[];
-}
 
+  start_time: string; // ISO string from backend
+  end_time: string;
+  timezone: string;
+
+  is_public: boolean;
+  is_cancelled: boolean;
+  is_active: boolean;
+  max_bookings?: number | null;
+  user_has_booked: boolean; 
+
+  location_type: LocationType;
+  meeting_link?: string;
+  physical_address?: string;
+  preparation_materials?: PreparationMaterial[];
+}
 
 
 export interface MentorSessionUpdate {
   title?: string;
   description?: string;
+  cover_image?: string;
   session_type?: SessionType | string;
   duration_minutes?: number;
   price_usd?: number;
+  is_public?: boolean; 
   is_active?: boolean;
-  max_bookings_per_week?: number;
+  max_bookings?: number | null;
   tags?: string[];
+
+  location_type?: LocationType;
+  meeting_link?: string;
+  physical_address?: string;
+  preparation_materials?: PreparationMaterial[];
+
+  start_time?: string;
+  end_time?: string;
 }
+
 
 export interface MentorSessionPublic extends MentorSessionBase {
   id: number;
   uuid: string;
-  is_active: boolean;
-  max_bookings_per_week?: number;
+
+  total_bookings: number;
+  confirmed_bookings: number;
+  pending_bookings: number
+  is_full: boolean;
+  available_spots?: number;
+  user_has_booked: boolean;
+  // mentor: UserProfilePublic
+  bookings: BookingPublic[];
+
   created_at: string;
   updated_at: string;
 }
@@ -267,6 +324,7 @@ export interface MentorSettingsBase {
   profile_visibility: boolean;
   auto_accept_bookings: boolean;
   require_intro_message: boolean;
+  allow_public_availability_view: boolean;
   timezone?: string;
   available_times?: string[];
   weekly_schedule?: WeeklySchedule;
@@ -285,6 +343,7 @@ export interface MentorSettingsUpdate {
   profile_visibility?: boolean;
   auto_accept_bookings?: boolean;
   require_intro_message?: boolean;
+  allow_public_availability_view?: boolean;
   timezone?: string;
   available_times?: string[];
   weekly_schedule?: WeeklySchedule;
@@ -318,11 +377,27 @@ export interface ProfileCompletionStatus {
 }
 
 export interface MentorStats {
-  total_sessions: number;
-  total_mentees: number;
-  average_rating?: number | null;
+  // Profile completion
   completion_percentage: number;
   is_complete: boolean;
+  
+  // Session stats
+  total_sessions: number;
+  active_sessions: number;
+  upcoming_sessions: number;
+  
+  // Booking stats
+  total_bookings: number;
+  confirmed_bookings: number;
+  pending_bookings: number;
+  completed_bookings: number;
+  cancelled_bookings: number;
+  
+  // Mentee stats
+  total_mentees: number;
+  
+  // Rating
+  average_rating?: number | null;
 }
 
 
@@ -339,3 +414,42 @@ export interface MentorSettingsCreate extends MentorSettingsBase { }
 import type { User, UserIdentity } from '@supabase/supabase-js';
 export type SupabaseUser = User;
 export type Identity = UserIdentity;
+
+
+
+
+// Bookings
+export const BookingsStatus = {
+  PENDING: 'pending',
+  CONFIRMED: 'confirmed',
+  CANCELLED: 'cancelled',
+  COMPLETED: 'completed',
+  CANCELLED_BY_MENTEE: 'cancelled_by_mentee',
+  CANCELLED_BY_MENTOR: 'cancelled_by_mentor',
+  NO_SHOW_MENTEE: 'no_show_mentee',
+  NO_SHOW_MENTOR: 'no_show_mentor',
+  EXPIRED: 'expired',
+
+}
+
+export type BookingStatusType = typeof BookingsStatus[keyof typeof BookingsStatus];
+
+export interface BookingPublic {
+  id: number;
+  uuid: string;
+  session_id: number;
+  // mentee_id: number;
+  mentee?: UserMinimal;
+  status: BookingStatusType;
+  message?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BookingCreateRequest {
+  message?: string;
+}
+
+export interface BookingsStatusUpdate {
+  status: BookingStatusType;
+}

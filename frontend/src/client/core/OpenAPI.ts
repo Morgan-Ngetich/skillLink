@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 import type { ApiRequestOptions } from './ApiRequestOptions';
-import { supabase } from "../../hooks/supabaseClient"
+import { supabase } from "../../hooks/supabase/supabaseClient"
 
 type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
 type Headers = Record<string, string>;

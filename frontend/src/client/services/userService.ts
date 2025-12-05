@@ -86,6 +86,27 @@ export class UserService {
   }
 
   /**
+   * Get user by ID or UUID
+   * 
+   * Automatically detects whether identifier is numeric ID or UUID
+   * Returns complete user with nested mentor profile
+   * 
+   * @param identifier - User ID (123) or UUID (550e8400-...)
+   */
+  public static getUserByIdentifier(
+    identifier: string | number
+  ): CancelablePromise<UserPublic> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: `/api/v1/users/${identifier}`,
+      errors: {
+        400: "Invalid identifier format",
+        404: "User not found",
+      },
+    });
+  }
+
+  /**
    * Update User by ID (Admin Only)
    * Allows admin to update a user's details by their ID.
    * @param userId - Numeric ID of the user

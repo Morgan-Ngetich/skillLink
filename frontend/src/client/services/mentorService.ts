@@ -32,11 +32,41 @@ export class MentorSessionService {
   }
 
   /**
- * Create a New Mentor Session
- * @param session - Session data (title, duration, price_usd, etc.)
- * @returns MentorSessionPublic - Created session
- * @throws ApiError
- */
+   * Get all sessions for a specific mentor
+   * @param mentorId - Numeric ID of the mentor
+   * @returns MentorSessionPublic[]
+   * @throws ApiError
+   */
+  public static getMentorSessions(
+    mentorId: number
+  ): CancelablePromise<MentorSessionPublic[]> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: `/api/v1/mentor/${mentorId}/sessions`,
+    });
+  }
+
+  /**
+   * Get a Specific Mentor Session by uuid
+   * @param sessionUuid - Uuid of the session
+   * @returns MentorSessionPublic - Session details
+   * @throws ApiError
+   */
+  public static getSessionByUuid(
+    sessionUuid: string
+  ): CancelablePromise<MentorSessionPublic> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: `/api/v1/profile/mentor/sessions/${sessionUuid}`,
+    });
+  }
+
+  /**
+   * Create a New Mentor Session
+   * @param session - Session data (title, duration, price_usd, etc.)
+   * @returns MentorSessionPublic - Created session
+   * @throws ApiError
+   */
   public static createSession(
     session: MentorSessionCreate
   ): CancelablePromise<MentorSessionPublic> {
@@ -49,12 +79,12 @@ export class MentorSessionService {
   }
 
   /**
- * Update an Existing Mentor Session
- * @param sessionId - Numeric ID of the session
- * @param updates - Partial data to update
- * @returns MentorSessionPublic - Updated session
- * @throws ApiError
- */
+   * Update an Existing Mentor Session
+   * @param sessionId - Numeric ID of the session
+   * @param updates - Partial data to update
+   * @returns MentorSessionPublic - Updated session
+   * @throws ApiError
+   */
   public static updateSession(
     sessionId: number,
     updates: MentorSessionUpdate
@@ -68,7 +98,22 @@ export class MentorSessionService {
   }
 
   /**
-   * Delete a Mentor Session
+   * Toggle Session Public Visibility
+   * @param sessionId - Numeric ID of the session
+   * @returns MentorSessionPublic - Updated session
+   * @throws ApiError
+   */
+  public static toggleSessionPublic(
+    sessionId: number
+  ): CancelablePromise<MentorSessionPublic> {
+    return __request(OpenAPI, {
+      method: 'PATCH',
+      url: `/api/v1/profile/mentor/sessions/${sessionId}/toggle-public`,
+    });
+  }
+
+  /**
+   * Cancel a Mentor Session (soft delete)
    * @param sessionId - Numeric ID of the session
    * @returns void
    * @throws ApiError
@@ -79,23 +124,6 @@ export class MentorSessionService {
       url: `/api/v1/profile/mentor/sessions/${sessionId}`,
     });
   }
-
-
-  /**
-   * Get a Specific Mentor Session by ID
-   * @param sessionId - Numeric ID of the session
-   * @returns MentorSessionPublic - Session details
-   * @throws ApiError
-   */
-  public static getSessionById(
-    sessionId: number
-  ): CancelablePromise<MentorSessionPublic> {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: `/api/v1/profile/mentor/sessions/${sessionId}`,
-    });
-  }
-
 }
 
 /**
@@ -192,7 +220,7 @@ export class MentorSettingsService {
    * @returns MentorSettingsPublic - Current mentor settings
    * @throws ApiError
    */
-  public static getMySettings(): CancelablePromise<MentorSettingsPublic> {
+  public static getMyMentorSettings(): CancelablePromise<MentorSettingsPublic> {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/v1/profile/mentor/settings',
@@ -206,7 +234,7 @@ export class MentorSettingsService {
  * @returns MentorSettingsPublic - Updated mentor settings
  * @throws ApiError
  */
-  public static updateSettings(
+  public static updateMyMentorSettings(
     updates: MentorSettingsUpdate
   ): CancelablePromise<MentorSettingsPublic> {
     return __request(OpenAPI, {
@@ -232,6 +260,19 @@ export class MentorSettingsService {
       url: '/api/v1/profile/mentor/settings',
       body: settings,
       mediaType: 'application/json',
+    });
+  }
+
+  /**
+ * Toggle Mentor Availability
+ * Quick toggle to open/close mentor availability for mentees.
+ * @returns MentorProfilePublic - Updated mentor profile with toggled availability
+ * @throws ApiError
+ */
+  public static toggleMentorAvailability(): CancelablePromise<MentorSettingsPublic> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/v1/profile/mentor/toggle-availability',
     });
   }
 

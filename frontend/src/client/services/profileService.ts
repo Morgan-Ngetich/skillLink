@@ -188,19 +188,6 @@ export class ProfileService {
 
 
   /**
-   * Toggle Mentor Availability
-   * Quick toggle to open/close mentor availability for mentees.
-   * @returns MentorProfilePublic - Updated mentor profile with toggled availability
-   * @throws ApiError
-   */
-  public static toggleMentorAvailability(): CancelablePromise<MentorProfilePublic> {
-    return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/profile/mentor/toggle-availability',
-    });
-  }
-
-  /**
    * Get Mentor Services by User ID
    * Returns all active services offered by a specific mentor (public usage).
    * @param userId - Numeric ID of the mentor
