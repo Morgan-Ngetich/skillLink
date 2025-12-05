@@ -18,11 +18,9 @@ import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as CrackmodeDocsRouteImport } from './routes/crackmode/docs'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as LayoutProfileSetupRouteImport } from './routes/_layout/profile-setup'
-import { Route as LayoutMentorRouteImport } from './routes/_layout/mentor'
 import { Route as LayoutExploreRouteImport } from './routes/_layout/explore'
 import { Route as CrackmodeDocsIndexRouteImport } from './routes/crackmode/docs/index'
-import { Route as LayoutDashboardIndexRouteImport } from './routes/_layout/dashboard/index'
-import { Route as LayoutDashboardProfileRouteImport } from './routes/_layout/dashboard/profile'
+import { Route as LayoutProfileUuidRouteImport } from './routes/_layout/profile/$uuid'
 import { Route as CrackmodeDocsLeetcode75IndexRouteImport } from './routes/crackmode/docs/leetcode75/index'
 import { Route as CrackmodeDocsIntroductionIndexRouteImport } from './routes/crackmode/docs/introduction/index'
 import { Route as CrackmodeDocsProblemsValidParenthesesRouteImport } from './routes/crackmode/docs/problems/valid-parentheses'
@@ -99,11 +97,6 @@ const LayoutProfileSetupRoute = LayoutProfileSetupRouteImport.update({
   path: '/profile-setup',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutMentorRoute = LayoutMentorRouteImport.update({
-  id: '/mentor',
-  path: '/mentor',
-  getParentRoute: () => LayoutRoute,
-} as any)
 const LayoutExploreRoute = LayoutExploreRouteImport.update({
   id: '/explore',
   path: '/explore',
@@ -114,14 +107,9 @@ const CrackmodeDocsIndexRoute = CrackmodeDocsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => CrackmodeDocsRoute,
 } as any)
-const LayoutDashboardIndexRoute = LayoutDashboardIndexRouteImport.update({
-  id: '/dashboard/',
-  path: '/dashboard/',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutDashboardProfileRoute = LayoutDashboardProfileRouteImport.update({
-  id: '/dashboard/profile',
-  path: '/dashboard/profile',
+const LayoutProfileUuidRoute = LayoutProfileUuidRouteImport.update({
+  id: '/profile/$uuid',
+  path: '/profile/$uuid',
   getParentRoute: () => LayoutRoute,
 } as any)
 const CrackmodeDocsLeetcode75IndexRoute =
@@ -326,14 +314,12 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
   '/explore': typeof LayoutExploreRoute
-  '/mentor': typeof LayoutMentorRoute
   '/profile-setup': typeof LayoutProfileSetupRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/crackmode/docs': typeof CrackmodeDocsRouteWithChildren
   '/': typeof LayoutIndexRoute
   '/crackmode': typeof CrackmodeIndexRoute
-  '/dashboard/profile': typeof LayoutDashboardProfileRoute
-  '/dashboard': typeof LayoutDashboardIndexRoute
+  '/profile/$uuid': typeof LayoutProfileUuidRoute
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
   '/crackmode/docs/problems/asteroid-collision': typeof CrackmodeDocsProblemsAsteroidCollisionRoute
   '/crackmode/docs/problems/best-time-to-buy-and-sell-stock': typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
@@ -372,13 +358,11 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
   '/explore': typeof LayoutExploreRoute
-  '/mentor': typeof LayoutMentorRoute
   '/profile-setup': typeof LayoutProfileSetupRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/': typeof LayoutIndexRoute
   '/crackmode': typeof CrackmodeIndexRoute
-  '/dashboard/profile': typeof LayoutDashboardProfileRoute
-  '/dashboard': typeof LayoutDashboardIndexRoute
+  '/profile/$uuid': typeof LayoutProfileUuidRoute
   '/crackmode/docs': typeof CrackmodeDocsIndexRoute
   '/crackmode/docs/problems/asteroid-collision': typeof CrackmodeDocsProblemsAsteroidCollisionRoute
   '/crackmode/docs/problems/best-time-to-buy-and-sell-stock': typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
@@ -419,14 +403,12 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
   '/_layout/explore': typeof LayoutExploreRoute
-  '/_layout/mentor': typeof LayoutMentorRoute
   '/_layout/profile-setup': typeof LayoutProfileSetupRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/crackmode/docs': typeof CrackmodeDocsRouteWithChildren
   '/_layout/': typeof LayoutIndexRoute
   '/crackmode/': typeof CrackmodeIndexRoute
-  '/_layout/dashboard/profile': typeof LayoutDashboardProfileRoute
-  '/_layout/dashboard/': typeof LayoutDashboardIndexRoute
+  '/_layout/profile/$uuid': typeof LayoutProfileUuidRoute
   '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
   '/crackmode/docs/problems/asteroid-collision': typeof CrackmodeDocsProblemsAsteroidCollisionRoute
   '/crackmode/docs/problems/best-time-to-buy-and-sell-stock': typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
@@ -467,14 +449,12 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify-email'
     | '/explore'
-    | '/mentor'
     | '/profile-setup'
     | '/auth/callback'
     | '/crackmode/docs'
     | '/'
     | '/crackmode'
-    | '/dashboard/profile'
-    | '/dashboard'
+    | '/profile/$uuid'
     | '/crackmode/docs/'
     | '/crackmode/docs/problems/asteroid-collision'
     | '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
@@ -513,13 +493,11 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify-email'
     | '/explore'
-    | '/mentor'
     | '/profile-setup'
     | '/auth/callback'
     | '/'
     | '/crackmode'
-    | '/dashboard/profile'
-    | '/dashboard'
+    | '/profile/$uuid'
     | '/crackmode/docs'
     | '/crackmode/docs/problems/asteroid-collision'
     | '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
@@ -559,14 +537,12 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify-email'
     | '/_layout/explore'
-    | '/_layout/mentor'
     | '/_layout/profile-setup'
     | '/auth/callback'
     | '/crackmode/docs'
     | '/_layout/'
     | '/crackmode/'
-    | '/_layout/dashboard/profile'
-    | '/_layout/dashboard/'
+    | '/_layout/profile/$uuid'
     | '/crackmode/docs/'
     | '/crackmode/docs/problems/asteroid-collision'
     | '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
@@ -676,13 +652,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutProfileSetupRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/mentor': {
-      id: '/_layout/mentor'
-      path: '/mentor'
-      fullPath: '/mentor'
-      preLoaderRoute: typeof LayoutMentorRouteImport
-      parentRoute: typeof LayoutRoute
-    }
     '/_layout/explore': {
       id: '/_layout/explore'
       path: '/explore'
@@ -697,18 +666,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrackmodeDocsIndexRouteImport
       parentRoute: typeof CrackmodeDocsRoute
     }
-    '/_layout/dashboard/': {
-      id: '/_layout/dashboard/'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof LayoutDashboardIndexRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/dashboard/profile': {
-      id: '/_layout/dashboard/profile'
-      path: '/dashboard/profile'
-      fullPath: '/dashboard/profile'
-      preLoaderRoute: typeof LayoutDashboardProfileRouteImport
+    '/_layout/profile/$uuid': {
+      id: '/_layout/profile/$uuid'
+      path: '/profile/$uuid'
+      fullPath: '/profile/$uuid'
+      preLoaderRoute: typeof LayoutProfileUuidRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/crackmode/docs/leetcode75/': {
@@ -933,20 +895,16 @@ declare module '@tanstack/react-router' {
 
 interface LayoutRouteChildren {
   LayoutExploreRoute: typeof LayoutExploreRoute
-  LayoutMentorRoute: typeof LayoutMentorRoute
   LayoutProfileSetupRoute: typeof LayoutProfileSetupRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
-  LayoutDashboardProfileRoute: typeof LayoutDashboardProfileRoute
-  LayoutDashboardIndexRoute: typeof LayoutDashboardIndexRoute
+  LayoutProfileUuidRoute: typeof LayoutProfileUuidRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutExploreRoute: LayoutExploreRoute,
-  LayoutMentorRoute: LayoutMentorRoute,
   LayoutProfileSetupRoute: LayoutProfileSetupRoute,
   LayoutIndexRoute: LayoutIndexRoute,
-  LayoutDashboardProfileRoute: LayoutDashboardProfileRoute,
-  LayoutDashboardIndexRoute: LayoutDashboardIndexRoute,
+  LayoutProfileUuidRoute: LayoutProfileUuidRoute,
 }
 
 const LayoutRouteWithChildren =
