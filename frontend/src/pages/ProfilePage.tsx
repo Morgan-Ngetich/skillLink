@@ -1,220 +1,213 @@
-import { Box, Flex, VStack, Container } from "@chakra-ui/react"
-import { useBreakpointValue } from "@chakra-ui/react"
-import { LuCalendar, LuClock4 } from "react-icons/lu"
-import { useRouter, useSearch } from "@tanstack/react-router"
+import { Box, Flex, Container, Spinner } from "@chakra-ui/react";
+import { useBreakpointValue } from "@chakra-ui/react";
+import { useParams, useRouter, useSearch } from "@tanstack/react-router";
+import { useState } from "react";
 
-import { useAuthRouteGuard } from "@/hooks/auth/useAuthRouteGuard"
-import { useProfile } from "@/hooks/useProfile"
-import { useAuth } from "@/hooks/auth/useAuth"
+import { useAuthRouteGuard } from "@/hooks/auth/useAuthRouteGuard";
+import { useAuth } from "@/hooks/auth/useAuth";
+import { useMentorSessions } from "@/hooks/mentor/useMentorSessions";
+import { useUserByUuid } from "@/hooks/public/useProfile";
+import { useMentorSettings } from "@/hooks/mentor/useMentorSettings";
+import { useProfilePageHandlers } from "@/hooks/public/useProfilePageHandlers";
 
-import ProfileCard from "@/components/dashboard/menteeProfile/menteeProfileCard/Index"
-import ProfileEditModal from "@/components/dashboard/menteeProfile/menteeProfileCard/editProfileCard/ProfileEditModal"
-import ProfileCompletionCard from "@/components/dashboard/menteeProfile/menteeProfileCard/ProfileCardCompletion"
-import MentorProfileSetupModal from "@/components/dashboard/mentorProfile/mentorProfileSetup/MentorProfileSetupModal"
-import PeopleAlsoViewed from "@/components/homepage/TopMentors"
-import HeroCard from "@/components/homepage/herocard/HeroCard"
-import MentorshipCalendarContent from "@/components/dashboard/menteeProfile/calendar/MentorshipCalendarContent "
-import { SessionExploreCardExample } from "@/components/explore/SessionExploreCard"
-import { FaServicestack } from "react-icons/fa6"
-import MentorServices from "@/components/dashboard/mentorProfile/mentorServices/MentorServices"
-import { Tabs } from "@chakra-ui/react"
+import type { MentorSessionPublic, MentorServicePublic } from "@/client";
+
+import DeleteSessionDialog from "@/components/dashboard/mentor/sessions/DeleteSessionDialog";
+import DeleteServiceDialog from "@/components/dashboard/mentor/services/DeleteServiceDialog";
+import MobileSidebar from "@/components/profile/profilePage/MobileSidebar";
+import DesktopSidebar from "@/components/profile/profilePage/DesktopSidebar";
+import ProfileEditModal from "@/components/dashboard/profileCard/editProfileCard/ProfileEditModal";
+import MentorProfileSetupModal from "@/components/dashboard/mentor/mentorProfileSetup/MentorProfileSetupModal";
+import MentorSettingsDialog from "@/components/dashboard/mentor/settings/mentorSettingsDialog.tsx/Index";
+import SessionDetailModal from "@/components/dashboard/mentor/sessions/sessionDetails/Index";
+import ProfileCard from "@/components/dashboard/profileCard/Index";
+
+import { useMentorServices } from "@/hooks/mentor/useMentorServices";
+import ProfilePageLoadingState from "@/components/profile/profilePage/loadingSkeletons/ProfilePageLoadingState";
+import DesktopSidebarLoadingState from "@/components/profile/profilePage/loadingSkeletons/DesktopSidebarLoadingState";
 
 const ProfilePage = () => {
-  const { isBlocked, isLoading } = useAuthRouteGuard()
-  const isMobile = useBreakpointValue({ base: true, md: false })
-  const { profile } = useProfile()
-  const { user } = useAuth()
-  const router = useRouter()
-  const search = useSearch({ from: "/_layout/dashboard/profile" })
+  const router = useRouter();
+  const params = useParams({ strict: false });
+  const search = useSearch({ strict: false });
+  const { uuid } = params;
 
-  // MODAL HANDLERS 
-  const openModal = (drawer: string, step?: string) => {
-    router.navigate({
-      to: "/dashboard/profile",
-      search: { ...search, drawer, step },
-      replace: false,
-    })
-  }
+  const { isBlocked, isLoading: isAuthLoading } = useAuthRouteGuard();
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
-  const closeModal = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { drawer, step, ...rest } = search
-    router.navigate({
-      to: "/dashboard/profile",
-      search: rest,
-      replace: true,
-    })
-  }
+  const { user } = useAuth();
+  const isOwnProfile = user?.uuid === uuid;
 
-  // SERVICE MODAL HANDLERS 
-  const openServiceModal = (mode: "create" | "edit", serviceId?: string) => {
-    router.navigate({
-      to: "/dashboard/profile",
-      search: {
-        ...search,
-        serviceModal: mode,
-        ...(serviceId && { serviceId })
-      },
-      replace: false,
-    })
-  }
+  const { data: publicUser, isLoading: isPublicUserLoading } = useUserByUuid(uuid);
+  const { deleteSession } = useMentorSessions();
+  const { deleteService } = useMentorServices();
 
-  const closeServiceModal = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { serviceModal, serviceId, ...rest } = search
-    router.navigate({
-      to: "/dashboard/profile",
-      search: rest,
-      replace: true,
-    })
-  }
+  // states for session and service deletion dialogs
+  const [isDeleteSessionDialogOpen, setIsDeleteSessionDialogOpen] = useState(false);
+  const [sessionToDelete, setSessionToDelete] = useState<MentorSessionPublic | null>(null);
 
-  // TAB HANDLERS 
-  // Profile card tabs (works on both mobile and desktop)
-  const handleProfileTabChange = (profileTab: string) => {
-    router.navigate({
-      to: "/dashboard/profile",
-      search: { ...search, profileTab },
-      replace: false,
-    })
-  }
+  const [isDeleteServiceDialogOpen, setIsDeleteServiceDialogOpen] = useState(false);
+  const [serviceToDelete, setServiceToDelete] = useState<MentorServicePublic | null>(null);
 
-  // Sidebar tabs (desktop only)
-  const handleSidebarTabChange = (sidebarTab: string) => {
-    router.navigate({
-      to: "/dashboard/profile",
-      search: { ...search, sidebarTab },
-      replace: false,
-    })
-  }
+  // Profile data
+  const personalProfile = isOwnProfile ? user?.profile : publicUser?.profile;
+  const mentorData = isOwnProfile
+    ? user?.profile?.mentor_profile
+    : publicUser?.profile?.mentor_profile;
 
-  // LOADING STATE 
-  if (isLoading || isBlocked) return null
+  // Settings
+  const mentorSettingsHook = useMentorSettings();
+  const settings = isOwnProfile ? mentorSettingsHook.settings : mentorData?.settings;
+  const updateSettingsAsync = isOwnProfile ? mentorSettingsHook.updateSettingsAsync : undefined;
+  const isUpdating = isOwnProfile ? mentorSettingsHook.isUpdating : false;
 
-  const SidebarTabs = () => {
-    const tabs = [
-      {
-        value: 'services',
-        label: 'Services',
-        icon: FaServicestack,
-        content: (
-          <MentorServices
-            serviceModal={search.serviceModal}
-            serviceId={search.serviceId}
-            onOpenServiceModal={openServiceModal}
-            onCloseServiceModal={closeServiceModal}
-          />
-        )
-      },
-      {
-        value: 'sessions',
-        label: 'Sessions',
-        icon: LuClock4,
-        content: (
-          <VStack gap={4} align="stretch">
-            <HeroCard variant="card" />
-            <SessionExploreCardExample />
-          </VStack>
-        )
-      },
-      {
-        value: 'availability',
-        label: 'Availability',
-        icon: LuCalendar,
-        content: <MentorshipCalendarContent />
-      },
-    ]
+  const readOnly = !isOwnProfile;
 
+  // All handlers in one custom hook
+  const handlers = useProfilePageHandlers({
+    router,
+    search,
+    // Session delete handlers
+    setIsDeleteSessionDialogOpen,
+    sessionToDelete,
+    setSessionToDelete,
+    deleteSession,
+    // Service delete handlers
+    setIsDeleteServiceDialogOpen,
+    serviceToDelete,
+    setServiceToDelete,
+    deleteService,
+    // Settings
+    updateSettingsAsync,
+  });
+
+  // Find selected session from URL
+  const selectedSessionFromUrl = search.sessionDetailId
+    ? mentorData?.sessions?.find((s) => s.uuid === search.sessionDetailId)
+    : null;
+
+  // Loading state
+  if (isAuthLoading || isPublicUserLoading || isBlocked) {
     return (
-      <Tabs.Root
-        value={search.sidebarTab || 'services'}
-        onValueChange={(e) => handleSidebarTabChange(e.value)}
-        variant="enclosed"
-        w="full"
-      >
-        <Tabs.List justifyContent="space-between" w="full" bg="cardbg">
-          {tabs.map(({ value, label, icon: Icon }) => (
-            <Tabs.Trigger
-              key={value}
-              value={value}
-              flex="1"
-              justifyContent="center"
-              fontWeight="medium"
-            >
-              <Icon size={16} />
-              {label}
-            </Tabs.Trigger>
-          ))}
-          <Tabs.Indicator />
-        </Tabs.List>
+      <Container h="full" p={{ base: 2, md: 5 }} maxW="breakpoint-xl">
+        <Flex justify="space-between" gap={5} direction={{ base: "column", md: "row" }}>
+          <Box flex={{ base: "none", lg: "0 0 60%" }} w={{ base: "100%", lg: "60%" }}>
+            <ProfilePageLoadingState />
+          </Box>
 
-        {tabs.map(({ value, content }) => (
-          <Tabs.Content key={value} value={value} pt={4}>
-            {content}
-          </Tabs.Content>
-        ))}
-      </Tabs.Root>
-    )
+          {isMobile ? (
+            <Flex justify="center" align="center" h="30vh" bg={"bg"} borderRadius={"xl"}>
+              <Spinner size="lg" />
+            </Flex>
+          ) : (
+            <DesktopSidebarLoadingState />
+          )}
+        </Flex>
+      </Container>
+    );
   }
 
-  // MOBILE SIDEBAR 
-  const MobileSidebar = () => (
-    <VStack w="full" gap={6}>
-      {!profile?.is_profile_complete && (
-        <ProfileCompletionCard onEditProfile={() => openModal('setup-profile', 'basic')} />
-      )}
-      <SessionExploreCardExample />
-      <PeopleAlsoViewed />
-    </VStack>
-  )
-
-  // DESKTOP SIDEBAR 
-  const DesktopSidebar = () => (
-    <VStack gap={6} align="start" flex="0 0 36%" w="36%">
-      <SidebarTabs />
-      <PeopleAlsoViewed />
-    </VStack>
-  )
-
-  // RENDER 
   return (
     <>
       {/* Modals */}
-      <ProfileEditModal
-        isOpen={search.drawer === "setup-profile"}
-        onClose={closeModal}
-        initialStep={search.step || "basic"}
+      {isOwnProfile && (
+        <>
+          <ProfileEditModal
+            isOpen={search.drawer === "setup-profile"}
+            onClose={handlers.closeModal}
+            initialStep={search.step || "basic"}
+          />
+
+          <MentorProfileSetupModal
+            isOpen={search.drawer === "mentor-setup"}
+            onClose={handlers.closeModal}
+          />
+
+          <MentorSettingsDialog
+            isOpen={search.settings === "open"}
+            onClose={handlers.handleCloseSettings}
+            settings={settings}
+            onSave={handlers.handleSaveSettings}
+            isUpdating={isUpdating}
+          />
+        </>
+      )}
+
+      {/* Delete Session Confirmation Dialog */}
+      <DeleteSessionDialog
+        isOpen={isDeleteSessionDialogOpen}
+        session={sessionToDelete}
+        onClose={handlers.cancelSessionDelete}
+        onConfirm={handlers.confirmSessionDelete}
       />
 
-      <MentorProfileSetupModal
-        isOpen={search.drawer === "mentor-setup"}
-        onClose={closeModal}
+      {/* Delete Service Confirmation Dialog  */}
+      <DeleteServiceDialog
+        isOpen={isDeleteServiceDialogOpen}
+        service={serviceToDelete}
+        onClose={handlers.cancelServiceDelete}
+        onConfirm={handlers.confirmServiceDelete}
+      />
+
+      {/* Session Detail Modal */}
+      <SessionDetailModal
+        session={selectedSessionFromUrl || null}
+        isOpen={!!search.sessionDetailId}
+        onClose={handlers.closeSessionDetailModal}
       />
 
       {/* Main Content */}
       <Container h="full" p={{ base: 2, md: 5 }} maxW="breakpoint-xl">
-        <Flex
-          justify="space-between"
-          gap={5}
-          direction={{ base: "column", md: "row" }}
-        >
-          {/* Profile Card */}
+        <Flex justify="space-between" gap={5} direction={{ base: "column", md: "row" }}>
           <Box flex={{ base: "none", lg: "0 0 60%" }} w={{ base: "100%", lg: "60%" }}>
             <ProfileCard
-              user={user || undefined}
-              profile={profile}
-              onEditClick={() => openModal('setup-profile', 'basic')}
-              activeTab={search.profileTab || 'about'}
-              onTabChange={handleProfileTabChange}
+              user={isOwnProfile ? user || undefined : publicUser}
+              isOwnProfile={isOwnProfile}
+              profile={personalProfile || undefined}
+              mentorProfile={mentorData || undefined}
+              readOnly={readOnly}
+              onEditClick={isOwnProfile ? () => handlers.openModal("setup-profile", "basic") : undefined}
+              activeTab={search.pt || "about"}
+              onTabChange={handlers.handleProfileTabChange}
+              // services
+              serviceModal={search.serviceModal}
+              serviceId={search.serviceId}
+              onOpenServiceModal={isOwnProfile ? handlers.openServiceModal : undefined}
+              onCloseServiceModal={isOwnProfile ? handlers.closeServiceModal : undefined}
+              handleServiceEdit={handlers.handleServiceEdit}
+              handleServiceDelete={handlers.handleServiceDelete}
+              // sessions
+              sessionModal={search.sessionModal}
+              sessionId={search.sessionId}
+              onOpenSessionModal={isOwnProfile ? handlers.openSessionModal : undefined}
+              onCloseSessionModal={isOwnProfile ? handlers.closeSessionModal : undefined}
+              handleSessionEdit={handlers.handleSessionEdit}
+              handleSessionDelete={handlers.handleSessionDelete}
+              handleSessionViewDetails={handlers.handleSessionViewDetails}
+              // settings
+              onOpenSettings={handlers.handleOpenSettings}
             />
           </Box>
 
-          {/* Sidebar */}
-          {isMobile ? <MobileSidebar /> : <DesktopSidebar />}
+          {isMobile ? (
+            <MobileSidebar
+              isOwnProfile={isOwnProfile}
+              personalProfile={personalProfile}
+              onEditProfile={(step) => handlers.openModal("setup-profile", step || "basic")}
+            />
+          ) : (
+            <DesktopSidebar
+              search={search}
+              mentorData={mentorData}
+              readOnly={readOnly}
+              isOwnProfile={isOwnProfile}
+              handlers={handlers}
+            />
+          )}
         </Flex>
       </Container>
     </>
-  )
-}
+  );
+};
 
-export default ProfilePage
+export default ProfilePage;
