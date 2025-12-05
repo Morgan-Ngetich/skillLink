@@ -12,7 +12,6 @@ import {
 } from '@chakra-ui/react';
 import Search from './Search';
 import { Avatar } from '@/components/ui/avatar';
-import { useEffect } from 'react';
 import { FaChevronDown } from 'react-icons/fa6';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useNavigate } from '@tanstack/react-router';
@@ -25,21 +24,13 @@ const Header = () => {
   const { user: authUser, isLoggingOut, signOut } = useAuth();
   const { user, isLoading } = useSession();
   const navigate = useNavigate();
-
-
-
-  useEffect(() => {
-    console.log('UserME:', user);
-    console.log('UserAvatar_url:', user?.user_metadata?.avatar_url);
-  }, [user]);
-
   const navigateWithRedirect = useNavigateWithRedirect();
 
   const handleBecomeMentorClick = () => {
     if (authUser) {
-      navigateWithRedirect('/mentor-application', "/dashboard/profile");
+      navigateWithRedirect(`/profile/${authUser.uuid}?drawer=mentor-setup&step=expertise`, `/profile/${authUser?.uuid}`);
     } else {
-      navigateWithRedirect('/login', '/mentor-application');
+      navigateWithRedirect('/login', "/");
     }
   };
 
@@ -181,7 +172,7 @@ const Header = () => {
                   <Box py={1}>
                     <Menu.Item
                       value="profile"
-                      onSelect={() => navigate({ to: '/dashboard/profile' })}
+                      onSelect={() => navigate({ to: `/profile/${authUser?.uuid}` })}
                       _hover={{ bg: "bg.muted" }}
                       disabled={isLoggingOut}
                       cursor="pointer"
@@ -191,7 +182,7 @@ const Header = () => {
                       <Text fontSize="sm">Profile</Text>
                     </Menu.Item>
 
-{/* 
+                    {/* 
                     <Menu.Item
                       value="dashboard"
                       onSelect={() => navigate({ to: '/dashboard' })}
@@ -203,7 +194,7 @@ const Header = () => {
                     >
                       <Text fontSize="sm">Dashboard</Text>
                     </Menu.Item> */}
-                    
+
                   </Box>
 
                   <Box borderTop="1px solid" borderColor="border.subtle" pt={1}>
