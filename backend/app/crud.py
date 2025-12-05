@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 from fastapi import HTTPException
 from typing import List, Dict, Optional, Union, Tuple, Any
-from sqlmodel import Session, select
+from sqlmodel import Session, select, col
 from datetime import datetime, timezone
 from sqlalchemy.orm import selectinload
 from app.models.users import (
@@ -19,6 +19,7 @@ from app.models.users import (
     MentorProfileUpdate,
     MentorSettings,
     MentorSettingsCreate,
+    MentorSettingsUpdate,
     MentorSession,
     MentorSessionCreate,
     MentorSessionUpdate,
@@ -54,15 +55,84 @@ def get_user_by_email(session: Session, email: str) -> User | None:
     return session.exec(statement).first()
 
 
-# Gets users by ID, First checks for the UUID, => Supabase Users
-def get_user_by_id(session: Session, user_id: str | int) -> User | None:
-    try:
-        # Tries UUID parsing first
-        user_uuid = UUID(str(user_id))
-        return session.exec(select(User).where(User.uuid == user_uuid)).first()
-    except ValueError:
-        return session.get(User, int(user_id))  # Fallback to integer local ID
+# # Gets users by ID, First checks for the UUID, => Supabase Users
+# def get_user_by_id(session: Session, user_id: str | int) -> User | None:
+#     try:
+#         # Tries UUID parsing first
+#         user_uuid = UUID(str(user_id))
+#         return session.exec(select(User).where(User.uuid == user_uuid)).first()
+#     except ValueError:
+#         return session.get(User, int(user_id))  # Fallback to integer local ID
 
+
+def base_user_query():
+    return (
+        select(User)
+        .options(
+            selectinload(User.profile),
+            selectinload(User.mentor_profile).selectinload(MentorProfile.sessions).selectinload(MentorSession.bookings),
+            selectinload(User.mentor_profile).selectinload(MentorProfile.services),
+            selectinload(User.mentor_profile).selectinload(MentorProfile.settings),
+            selectinload(User.boards),
+            selectinload(User.roadmaps),
+            selectinload(User.goals),
+            selectinload(User.assigned_cards),
+            selectinload(User.created_cards),
+            selectinload(User.roles).selectinload(UserRole.role),
+        )
+    )
+
+
+def get_user_by_id(session: Session, user_id: int) -> User | None:
+    """
+    Get user by ID with all related data eager-loaded
+    
+    Loads:
+    - User profile
+    - Mentor profile (if exists)
+      - Sessions with bookings
+      - Services
+      - Settings
+    - Boards, roadmaps, goals, cards
+    """
+    query = base_user_query().where(User.id == user_id)
+    return session.exec(query).first()
+
+
+def get_user_by_uuid(session: Session, user_uuid: UUID) -> User | None:
+    """
+    Get user by UUID with all related data eager-loaded
+    
+    Same as get_user_by_id but uses UUID for lookup
+    """
+    query = base_user_query().where(User.uuid == user_uuid)
+    return session.exec(query).first()
+
+
+def get_user_by_identifier(session: Session, identifier: str) -> User | None:
+    """
+    Get user by ID or UUID with automatic detection
+    
+    Args:
+        identifier: Can be numeric user_id or UUID string
+    
+    Returns:
+        User with all related data eager-loaded
+    """
+    # Try to parse as integer (user_id)
+    try:
+        user_id = int(identifier)
+        return get_user_by_id(session, user_id)
+    except ValueError:
+        # Not numeric, try as UUID
+        try:
+            user_uuid = UUID(identifier)
+            return get_user_by_uuid(session, user_uuid)
+        except ValueError:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid identifier format. Must be numeric ID or valid UUID"
+            )
 
 def create_user(session: Session, user_in: UserCreate) -> User:
     hashed_password = get_password_hash(user_in.password)
@@ -294,6 +364,7 @@ def update_user_profile(session: Session, user_id: int, profile_in: UserProfileU
 
 
 # MENTOR PROFILE
+
 def get_mentor_profile(session: Session, user_id: int) -> MentorProfile | None:
     return session.get(MentorProfile, user_id)
 
@@ -303,6 +374,124 @@ def get_mentor_profile_or_404(session: Session, user_id: int) -> MentorProfile:
     if not profile:
         raise HTTPException(status_code=404, detail="MentorProfile not found")
     return profile
+
+
+# TODO: Consider removing this. Already the UserPublic has all the data, so a single users/{id or uuid}, does the job
+# def get_public_mentor_profile_with_relations(
+#     session: Session,
+#     identifier: str  # can be a numeric user_id or a UUID string
+# ) -> MentorProfile:
+#     """
+#     Get a mentor profile with all related data eager-loaded.
+#     Automatically detects numeric user_id vs UUID.
+
+#     Single query loads:
+#     - User details
+#     - All sessions with bookings
+#     - All services
+#     - Settings
+#     """
+#     query = select(MentorProfile).options(
+#         selectinload(MentorProfile.user),
+#         selectinload(MentorProfile.sessions).selectinload(MentorSession.bookings),
+#         selectinload(MentorProfile.services),
+#         selectinload(MentorProfile.settings),
+#     )
+
+#     # Detect numeric user_id or UUID
+#     try:
+#         # Try numeric user_id
+#         user_id = int(identifier)
+#         query = query.where(MentorProfile.user_id == user_id)
+#     except ValueError:
+#         # Not numeric, treat as UUID
+#         try:
+#             UUID(identifier)  # validate UUID format
+#         except ValueError:
+#             raise HTTPException(status_code=400, detail="Invalid UUID format")
+#         query = query.where(
+#             MentorProfile.user.has(User.uuid == UUID(identifier))
+#         )
+
+#     profile = session.exec(query).first()
+
+#     if not profile:
+#         raise HTTPException(status_code=404, detail="Mentor profile not found")
+
+#     return profile
+
+
+def list_public_mentors(
+    session: Session,
+    expertise: Optional[str] = None,
+    available: Optional[bool] = None,
+    limit: int = 20,
+    offset: int = 0,
+) -> List[User]:
+    """
+    List mentors with filters and pagination
+    Eager loads all relationships for efficient serialization
+    
+    Args:
+        session: Database session
+        expertise: Filter by expertise (case-insensitive, partial match)
+        available: Filter by availability status
+        limit: Max mentors to return (1-100)
+        offset: Pagination offset
+    
+    Returns:
+        List of MentorProfile with all relations loaded
+    """
+    query = (
+        select(User)
+        .join(User.mentor_profile)  # ensures only mentors are returned
+        .options(
+            selectinload(User.mentor_profile)
+                .selectinload(MentorProfile.sessions)
+                .selectinload(MentorSession.bookings),
+            selectinload(User.mentor_profile).selectinload(MentorProfile.services),
+            selectinload(User.mentor_profile).selectinload(MentorProfile.settings),
+            selectinload(User.profile),  # basic user profile
+        )
+    )
+    
+    # Filter by expertise (case-insensitive, partial match)
+    if expertise:
+        query = query.where(
+            sa.func.lower(expertise).ilike(
+                sa.func.any(sa.func.lower(MentorProfile.expertise))
+            )
+        )
+    
+    # Filter by availability
+    if available is not None:
+        query = query.where(
+            MentorProfile.settings.has(
+                MentorSettings.currently_open_to_mentees == available
+            )
+        )
+
+    query = query.offset(offset).limit(limit)
+
+    return session.exec(query).all()
+
+
+def get_featured_mentors(session: Session, limit: int = 20) -> List[MentorProfile]:
+    """
+    Get featured mentors (earliest sign-ups)    
+    TODO:// Replace with explicit 'is_featured' flag or rating-based sorting
+    """
+    return list(session.exec(
+        select(MentorProfile)
+        .options(
+            selectinload(MentorProfile.user),
+            selectinload(MentorProfile.sessions).selectinload(MentorSession.bookings),
+            selectinload(MentorProfile.services),
+            selectinload(MentorProfile.settings),
+        )
+        .order_by(MentorProfile.created_at.asc())
+        .limit(limit)
+    ).all())
 
 
 def create_mentor_profile(
@@ -366,16 +555,13 @@ def create_mentor_settings(
 
 
 def update_mentor_settings(
-    session: Session, mentor_id: int, settings_in: dict | MentorSettingsCreate
+    session: Session, mentor_id: int, settings_in: MentorSettingsUpdate
 ) -> MentorSettings:
     settings = get_mentor_settings_or_404(session, mentor_id)
 
-    update_data = (
-        settings_in.dict(exclude_unset=True)
-        if hasattr(settings_in, "dict")
-        else settings_in
-    )
-
+    # Ensure boolean False values are preserved
+    update_data = settings_in.model_dump(exclude_unset=True)
+    
     for key, value in update_data.items():
         setattr(settings, key, value)
 
@@ -388,12 +574,15 @@ def update_mentor_settings(
 # MENTOR START. Moved up, for function calling
 def get_mentor_stats(session: Session, mentor_id: int) -> Dict[str, Any]:
     """
-        Get comprehensive mentor statistics including bookings, sessions, and mentees
-        Uses SQL queries for performance - avoids loading relationships into memory
+    Get comprehensive mentor statistics including bookings, sessions, and mentees
+    Uses SQL queries for performance - avoids loading relationships into memory
     """
     profile = get_mentor_profile_or_404(session, mentor_id)
     
+    # MENTEE STATS
+    
     # Get unique mentees count (users who have confirmed/completed bookings)
+    # Only count mentees who actually attended or have confirmed bookings
     unique_mentees = session.exec(
         select(sa.func.count(sa.distinct(MentorSessionBooking.mentee_id)))
         .join(MentorSession)
@@ -405,6 +594,9 @@ def get_mentor_stats(session: Session, mentor_id: int) -> Dict[str, Any]:
             ])
         )
     ).one()
+    
+    
+    # BOOKINGS STATS by STATUS
     
     # Get total bookings by status
     booking_stats = session.exec(
@@ -419,16 +611,23 @@ def get_mentor_stats(session: Session, mentor_id: int) -> Dict[str, Any]:
 
 
     # Convert to dict for easy access
+    # Initialize all possible statuses with 0
     bookings_by_status = {
         BookingStatus.PENDING: 0,
         BookingStatus.CONFIRMED: 0,
         BookingStatus.COMPLETED: 0,
-        BookingStatus.CANCELLED: 0,
+        BookingStatus.CANCELLED_BY_MENTEE: 0,
+        BookingStatus.CANCELLED_BY_MENTOR: 0,
+        BookingStatus.NO_SHOW_MENTEE: 0,
+        BookingStatus.NO_SHOW_MENTOR: 0,
+        BookingStatus.EXPIRED: 0,
     }
     for status, count in booking_stats:
         bookings_by_status[status] = count
         
-    # Get active sessions count
+        
+    # SESSION STATS
+    # Get active sessions count (not cancelled, is_active=True)
     now = datetime.now(timezone.utc)
     
     active_sessions = session.exec(
@@ -440,7 +639,7 @@ def get_mentor_stats(session: Session, mentor_id: int) -> Dict[str, Any]:
         )
     ).one()
     
-    # Get upcoming sessions count (future sessions)
+    # Get upcoming sessions count (future sessions that are active)
     upcoming_sessions = session.exec(
         select(sa.func.count(MentorSession.id))
         .where(
@@ -451,14 +650,60 @@ def get_mentor_stats(session: Session, mentor_id: int) -> Dict[str, Any]:
         )
     ).one()
     
+    past_sessions = session.exec(
+        select(sa.func.count(MentorSession.id))
+        .where(
+            MentorSession.mentor_id == mentor_id,
+            MentorSession.end_time <= now
+        )
+    ).one()
     
-     # Get total sessions (all time - from cached field)
+    
+    # Get total sessions (all time - from cached field)
     # This is the cached value, updated via update_mentor_cached_stats
     total_sessions_created = profile.total_sessions
     
     # Calculate totals
     total_bookings = sum(bookings_by_status.values())
+ 
+    # Active bookings (taking up capacity)
+    active_bookings = (
+        # bookings_by_status[BookingStatus.PENDING] +
+        bookings_by_status[BookingStatus.CONFIRMED]
+    )
     
+    # All cancellations combined
+    total_cancelled = (
+        bookings_by_status[BookingStatus.CANCELLED_BY_MENTEE] +
+        bookings_by_status[BookingStatus.CANCELLED_BY_MENTOR] +
+        bookings_by_status[BookingStatus.EXPIRED]
+    )
+    
+    # All no-shows combined
+    total_no_shows = (
+        bookings_by_status[BookingStatus.NO_SHOW_MENTEE] +
+        bookings_by_status[BookingStatus.NO_SHOW_MENTOR]
+    )
+    
+    # Calculate rates (avoid division by zero)
+    completion_rate = 0.0
+    cancellation_rate = 0.0
+    no_show_rate = 0.0
+    
+    if total_bookings > 0:
+        completion_rate = round(
+            (bookings_by_status[BookingStatus.COMPLETED] / total_bookings) * 100, 
+            2
+        )
+        cancellation_rate = round(
+            (total_cancelled / total_bookings) * 100, 
+            2
+        )
+        no_show_rate = round(
+            (total_no_shows / total_bookings) * 100, 
+            2
+        )
+  
     return {
         # Profile completion
         "completion_percentage": profile.completion_percentage,
@@ -468,13 +713,32 @@ def get_mentor_stats(session: Session, mentor_id: int) -> Dict[str, Any]:
         "total_sessions": total_sessions_created,
         "active_sessions": active_sessions or 0,
         "upcoming_sessions": upcoming_sessions or 0,
+        "past_sessions": past_sessions or 0,
         
-        # Booking stats
+        # Booking stats - totals
         "total_bookings": total_bookings,
-        "confirmed_bookings": bookings_by_status[BookingStatus.CONFIRMED],
+        "active_bookings": active_bookings,
+        
+        # Booking stats - by status (detailed)
         "pending_bookings": bookings_by_status[BookingStatus.PENDING],
+        "confirmed_bookings": bookings_by_status[BookingStatus.CONFIRMED],
         "completed_bookings": bookings_by_status[BookingStatus.COMPLETED],
-        "cancelled_bookings": bookings_by_status[BookingStatus.CANCELLED],
+        
+        # Cancellation stats (grouped)
+        "total_cancelled": total_cancelled,
+        "cancelled_by_mentee": bookings_by_status[BookingStatus.CANCELLED_BY_MENTEE],
+        "cancelled_by_mentor": bookings_by_status[BookingStatus.CANCELLED_BY_MENTOR],
+        "expired_bookings": bookings_by_status[BookingStatus.EXPIRED],
+        
+        # No-show stats (grouped)
+        "total_no_shows": total_no_shows,
+        "no_show_mentee": bookings_by_status[BookingStatus.NO_SHOW_MENTEE],
+        "no_show_mentor": bookings_by_status[BookingStatus.NO_SHOW_MENTOR],
+        
+        # Calculated metrics
+        "completion_rate": completion_rate,
+        "cancellation_rate": cancellation_rate,
+        "no_show_rate": no_show_rate,
         
         # Mentee stats
         "total_mentees": unique_mentees or 0,
@@ -482,6 +746,7 @@ def get_mentor_stats(session: Session, mentor_id: int) -> Dict[str, Any]:
         # Rating
         "average_rating": profile.average_rating,
     }
+
     
 
 def update_mentor_cached_stats(session: Session, mentor_id: int) -> MentorProfile:
@@ -528,10 +793,10 @@ def update_mentor_cached_stats(session: Session, mentor_id: int) -> MentorProfil
     return profile
 
 
-
 # MENTOR SESSIONS
 def get_mentor_session(session: Session, session_id: int) -> MentorSession | None:
     return session.get(MentorSession, session_id)
+
 
 
 def get_mentor_session_or_404(session: Session, session_id: int) -> MentorSession:
@@ -540,20 +805,127 @@ def get_mentor_session_or_404(session: Session, session_id: int) -> MentorSessio
         raise HTTPException(status_code=404, detail="Mentor session not found")
     return session_obj
 
+def get_mentor_session_or_404_by_uuid(session: Session, session_uuid: UUID) -> MentorSession:
+    mentor_session = session.exec(
+        select(MentorSession).where(MentorSession.uuid == session_uuid)
+    ).first()
+    
+    if not mentor_session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    
+    return mentor_session
+
+def get_mentor_sessions(
+    session: Session,
+    mentor_id: int,
+    current_user_id: Optional[int] = None
+) -> list[MentorSession]:
+    """
+    Get sessions for a specific mentor:
+    - Mentor sees all their sessions
+    - Others see public sessions or private sessions they booked
+    Only active and non-cancelled sessions are returned.
+    """
+    query = select(MentorSession).options(selectinload(MentorSession.bookings))
+    query = query.where(MentorSession.mentor_id == mentor_id)
+
+    if current_user_id != mentor_id:
+        query = query.where(
+            sa.or_(
+                MentorSession.is_public,
+                MentorSession.bookings.any(MentorSessionBooking.mentee_id == current_user_id)
+            )
+        )
+
+    query = query.where(
+        MentorSession.is_active,
+        not MentorSession.is_cancelled
+    )
+
+    return list(session.exec(query).all())
+
+
+def get_public_sessions(
+    session: Session,
+    current_user_id: Optional[int] = None,
+    skip: int = 0,
+    limit: int = 100
+) -> List[MentorSession]:
+    """
+    Get sessions visible to the user:
+    - Public sessions
+    - Private sessions booked by the user
+    - User's own sessions
+    Only active and non-cancelled sessions are returned.
+    """
+    query = select(MentorSession).options(selectinload(MentorSession.bookings))
+
+    # Privacy filters
+    if current_user_id:
+        query = query.where(
+            sa.or_(
+                MentorSession.is_public,
+                MentorSession.mentor_id == current_user_id,
+                MentorSession.bookings.any(MentorSessionBooking.mentee_id == current_user_id)
+            )
+        )
+    else:
+        query = query.where(MentorSession.is_public)
+
+    # Only active and non-cancelled sessions
+    query = query.where(
+        MentorSession.is_active,
+        not MentorSession.is_cancelled
+    )
+
+    return list(session.exec(query.offset(skip).limit(limit)).all())
 
 def get_all_mentor_sessions(
     session: Session, mentor_id: int, active_only: bool = False
 ) -> List[MentorSession]:
-    query = session.query(MentorSession).filter(MentorSession.mentor_id == mentor_id)
+    """Eager load the bookings"""
+    query = (
+        select(MentorSession)
+        .where(MentorSession.mentor_id == mentor_id)
+        .options(
+            selectinload(MentorSession.bookings)
+        )
+    )
+    
     if active_only:
-        query = query.filter(MentorSession.is_active)
-    return query.all()
+        query = query.where(MentorSession.is_active)
+    
+    return list(session.exec(query).all())
 
+def get_featrued_sessions(session: Session, limit: int = 20) -> List[MentorSession]:
+    """Get featured mentor sessions (earliest created, active only)"""
+    # TODO: Later replace with popularity mentrics or eplicit featured flag
+    return list(session.exec(
+        select(MentorSession)
+        .where(MentorSession.is_active and MentorSession.is_public)
+        .options(
+            selectinload(MentorSession.bookings)
+        )
+        .order_by(MentorSession.created_at.asc())
+        .limit(limit)
+    ).all())
 
 def create_mentor_session(
     session: Session, session_in: MentorSessionCreate
 ) -> MentorSession:
-    session_obj = MentorSession.model_validate(session_in)
+    session_data = session_in.model_dump()
+    # Ensure the DB gest the value string
+    session_data["session_type"] = session_data["session_type"].value()
+    
+    if hasattr(session_data["session_type"], "value"):
+        # It's an enum, get the value
+        session_data["session_type"] = session_data["session_type"].value
+    else:
+        # It's already a string, use as-is
+        session_data["session_type"] = session_data["session_type"]
+        
+    session_obj = MentorSession(**session_data)
+    
     session.add(session_obj)
     session.commit()
     session.refresh(session_obj)
@@ -568,22 +940,45 @@ def update_mentor_session(
     session: Session, session_id: int, session_in: MentorSessionUpdate
 ) -> MentorSession:
     session_obj = get_mentor_session_or_404(session, session_id)
-    for key, value in session_in.dict(exclude_unset=True).items():
+    
+    update_data = session_in.model_dump(exclude_unset=True)
+    if "session_type" in update_data:
+        if hasattr(update_data["session_type"], "value"):
+            # It's an enum, get the value
+            update_data["session_type"] = update_data["session_type"].value
+        else:
+            # It's already a string, use as-is
+            update_data["session_type"] = update_data["session_type"]
+        
+    for key, value in update_data.items():
         setattr(session_obj, key, value)
         
     now = datetime.now(timezone.utc)
     
-    # Cannot reschedule past sessions
-    if session_obj.start_time <= now:
+    if session_obj.end_time <= now or session_obj.is_cancelled:
         raise HTTPException(
             status_code=400, detail="Cannot modify a past session"
         )
-    # TODO: notify mentees for anyUpdates.
-
+    
+    # TODO: Send Notification to mentees for any updates
     session.add(session_obj)
     session.commit()
     session.refresh(session_obj)
     return session_obj
+
+
+def cancel_mentor_sessions(session: Session, session_id: int) -> None:
+    session_obj = get_mentor_session_or_404(session, session_id)
+    
+    session_obj.is_cancelled = True
+    session_obj.is_active = False
+    session_obj.updated_at = datetime.now(timezone.utc)
+    
+    session.add(session_obj)
+    session.commit()
+    
+    # update the cached stats
+    update_mentor_cached_stats(session, session_obj.mentor_id)
 
 
 def delete_mentor_session(session: Session, session_id: int) -> None:
@@ -614,8 +1009,19 @@ def get_all_mentor_services(
 ) -> List[MentorService]:
     query = session.query(MentorService).filter(MentorService.mentor_id == mentor_id)
     if active_only:
-        query = query.filter(MentorService.is_active)
-    return query.all()
+        query = query.where(MentorService.is_active)
+    return list(query.all())
+
+
+def get_featured_services(session: Session, limit: int = 20) -> List[MentorService]:
+    """ Get Features mentor services (earliest created, active only)"""
+    # TODO: Later replace with popularity metrwics or explicit 'featured' flag
+    return list(session.exec(
+        select(MentorService)
+        .where(MentorService.is_active)
+        .order_by(MentorService.created_at.asc())
+        .limit(limit)
+    ).all())
 
 
 def create_mentor_service(
@@ -727,11 +1133,96 @@ def validate_session_booking(
             detail="This mentor is not currently accepting new bookings"
         )
         
+
+        
         
           
 
 
 # BOOKINGS
+
+# BOOKING STATE TRANSITIONS
+ALLOWED_STATUS_TRANSITIONS = {
+    BookingStatus.PENDING: [
+        BookingStatus.CONFIRMED,
+        BookingStatus.CANCELLED_BY_MENTEE,
+        BookingStatus.CANCELLED_BY_MENTOR,
+        BookingStatus.EXPIRED,
+    ],
+    BookingStatus.CONFIRMED: [
+        BookingStatus.COMPLETED,
+        BookingStatus.CANCELLED_BY_MENTEE,
+        BookingStatus.CANCELLED_BY_MENTOR,
+        BookingStatus.NO_SHOW_MENTEE,
+        BookingStatus.NO_SHOW_MENTOR,
+    ],
+    BookingStatus.COMPLETED: [],  # Final state
+    BookingStatus.CANCELLED_BY_MENTEE: [],  # Final state
+    BookingStatus.CANCELLED_BY_MENTOR: [],  # Final state
+    BookingStatus.NO_SHOW_MENTEE: [],  # Final state
+    BookingStatus.NO_SHOW_MENTOR: [],  # Final state
+    BookingStatus.EXPIRED: [],  # Final state
+}
+
+# Statuses that count toward session capacity
+ACTIVE_BOOKING_STATUSES = [BookingStatus.PENDING, BookingStatus.CONFIRMED]
+
+# Statuses that count as "attended" for analytics
+ATTENDED_STATUSES = [BookingStatus.COMPLETED]
+
+# Statuses that are cancellations
+CANCELLED_STATUSES = [
+    BookingStatus.CANCELLED_BY_MENTEE,
+    BookingStatus.CANCELLED_BY_MENTOR,
+    BookingStatus.EXPIRED,
+]
+
+
+def validate_status_transition(
+    current_status: BookingStatus,
+    new_status: BookingStatus,
+    is_mentor: bool,
+    is_mentee: bool
+) -> None:
+    """
+    Validate if a status transition is allowed based on current status and user role
+    Raises HTTPException if not allowed
+    """
+    allowed_transitions = ALLOWED_STATUS_TRANSITIONS.get(current_status, [])
+    
+    if new_status not in allowed_transitions:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot change status from {current_status} to {new_status.value}"
+        )
+    # Permission checks
+    
+    if new_status == BookingStatus.CONFIRMED and not is_mentor:
+        raise HTTPException(
+            status_code=403,
+            detail="Only mentors can confirm bookings"
+        )
+    
+    if new_status == BookingStatus.CANCELLED_BY_MENTOR and not is_mentor:
+        raise HTTPException(
+            status_code=403,
+            detail="Only mentors can cancel bookings on their behalf"
+        )
+    
+    if new_status == BookingStatus.CANCELLED_BY_MENTEE and not is_mentee:
+        raise HTTPException(
+            status_code=403,
+            detail="Only mentees can cancel their own bookings"
+        )
+    
+    if new_status in [BookingStatus.NO_SHOW_MENTEE, BookingStatus.NO_SHOW_MENTOR] and not is_mentor:
+        raise HTTPException(
+            status_code=403,
+            detail="Only mentors can mark no-shows"
+        )
+    
+
+
 def create_session_booking(
     session: Session, session_id: int, mentee_id: int, message: Optional[str] = None
 ) -> MentorSessionBooking:
@@ -787,20 +1278,42 @@ def get_booking_or_404(session: Session, booking_id: int) -> MentorSessionBookin
     return booking
 
 
+
 def get_user_bookings(
     session: Session,
     user_id: int,
     status: Optional[BookingStatus] = None
 ) -> list[MentorSessionBooking]:
     """
-    Get bookings for a user
+    Get bookings where this user is the mentee.
+    - Mentees can see their own bookings
+    """
+    query = (
+        select(MentorSessionBooking)
+        .join(MentorSession)
+        .where(MentorSessionBooking.mentee_id == user_id)
+    )
+
+    if status:
+        query = query.where(MentorSessionBooking.status == status)
+
+    return list(session.exec(query).all())
+
+
+def get_all_mentor_bookings(
+    session: Session,
+    user_id: int,
+    status: Optional[BookingStatus] = None
+) -> list[MentorSessionBooking]:
+    """
+    Get bookings for a mentor's sessions
+    - Mentor can see all bookings for their sessions
     """
     query = (
         select(MentorSessionBooking)
         .join(MentorSession)
         .where(
             sa.or_(
-                MentorSessionBooking.mentee_id == user_id,
                 MentorSession.mentor_id == user_id
             )
         )
@@ -819,13 +1332,32 @@ def update_booking_status(
     user_id: int
 ) -> MentorSessionBooking:
     """
-    Update booking status with permission checks
+    Update booking status with permission checks:
+    - Validates state transitions
+    - Enforces permission checks
+    - Updates cached stats appropriately
+    - Keeps all bookings in DB for audit trail
+    - Records cancellation reasons
     - Mentors can confirm/cancel bookings for their sessions
     - Mentees can only cancel their own bookings
-    Updates cached stats when status changes to CONFIRMED or COMPLETED
+    - Updates cached stats when status changes to CONFIRMED or COMPLETED
     """
     booking = get_booking_or_404(session, booking_id)
     old_status = booking.status
+    
+    # Don't allow updates to final states
+    if old_status in [
+        BookingStatus.COMPLETED,
+        BookingStatus.CANCELLED_BY_MENTEE,
+        BookingStatus.CANCELLED_BY_MENTOR,
+        BookingStatus.NO_SHOW_MENTEE,
+        BookingStatus.NO_SHOW_MENTOR,
+        BookingStatus.EXPIRED,
+    ]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot modify bookings in {old_status} state"
+        )
     
     # Get the session to check ownership
     mentor_session = get_mentor_session_or_404(session, booking.session_id)
@@ -841,14 +1373,10 @@ def update_booking_status(
             detail="Not authorized to update this booking"
         )
     
-    # Mentor permissions: cannot revert completed/expired sessions
-    if is_mentee and not is_mentor and new_status != BookingStatus.CANCELLED:
-        raise HTTPException(
-            status_code=403,
-            detail="You can only cancel your own bookings"
-        )
-        
-    # Update status
+    # Validate status transition
+    validate_status_transition(old_status, new_status, is_mentor, is_mentee)
+            
+    # Update booking's status
     booking.status = new_status
     booking.updated_at = datetime.now(timezone.utc)
     
@@ -856,15 +1384,18 @@ def update_booking_status(
     session.commit()
     session.refresh(booking)
     
-    # Update cached stats if status changed to/from CONFIRMED or COMPLETED
-    status_changed_to_active = new_status in [BookingStatus.CONFIRMED, BookingStatus.COMPLETED]
-    status_changed_from_active = old_status in [BookingStatus.CONFIRMED, BookingStatus.COMPLETED]
-    
-    if status_changed_to_active or status_changed_from_active:
+    # Update cached stats only for active status changes
+    old_was_active = old_status in ACTIVE_BOOKING_STATUSES
+    new_is_active = new_status in ACTIVE_BOOKING_STATUSES\
+        
+    if old_was_active != new_is_active:
         update_mentor_cached_stats(session, mentor_session.mentor_id)
-    
-    return booking
 
+    # TODO: Send notifications
+    # - Notify mentee when mentor confirms/denies
+    # - Notify mentor when mentee cancels
+    # - Send reminder emails before session
+    return booking
 
 
 def delete_booking(
@@ -900,6 +1431,36 @@ def delete_booking(
     
     if was_active:
         update_mentor_cached_stats(session, mentor_id)
+        
+
+# TODO:// Run this as a daily cron job
+def cancel_expired_pending_bookings(session: Session) -> int:
+    """
+    Immediately cancel all PENDING bookings for sessions that have ended.
+    """
+    now = datetime.now(timezone.utc)
+
+    pending = session.exec(
+        select(MentorSessionBooking)
+        .join(MentorSession)
+        .where(MentorSessionBooking.status == BookingStatus.PENDING)
+        .where(MentorSession.end_time < now)
+    ).all()
+
+    count = 0
+    for booking in pending:
+        booking.status = BookingStatus.CANCELLED_BY_SYSTEM
+        booking.updated_at = now
+        session.add(booking)
+
+        mentor_session = get_mentor_session_or_404(session, booking.session_id)
+        update_mentor_cached_stats(session, mentor_session.mentor_id)
+
+        count += 1
+
+    session.commit()
+    return count
+
     
     
 
