@@ -19,7 +19,7 @@ class TestModelRelationships:
         UserRole(user=user, role=mentee_role)
 
         # Create profiles
-        profile = UserProfile(user=user, bio="Bio")
+        profile = UserProfile(user=user, about="About")
         mentor_profile = MentorProfile(user=user, title="Mentor")
 
         session.add_all([user, mentor_role, mentee_role, profile, mentor_profile])

@@ -134,7 +134,7 @@ class TestUserProfileModel:
         )
         profile = UserProfile(
             user=user,
-            bio="Test bio",
+            about="Test about section",
             location="Test Location",
             area_of_focus=["Tech", "Education"],
             goals=["Learn Python", "Become mentor"],
@@ -145,7 +145,7 @@ class TestUserProfileModel:
         session.commit()
 
         assert profile.user_id == user.id
-        assert profile.bio == "Test bio"
+        assert profile.about == "Test about section"
         assert profile.area_of_focus == ["Tech", "Education"]
         assert profile.is_profile_setup_complete is True
         assert profile.is_profile_complete is False  # Because social_links is missing
@@ -153,7 +153,7 @@ class TestUserProfileModel:
     def test_profile_completion_flags(self, session):
         # Test with minimal data
         user = User(email="minimal@example.com", hashed_password="pwd")
-        profile = UserProfile(user=user, bio="just bio")
+        profile = UserProfile(user=user, about="just about")
         session.add_all([user, profile])
         session.commit()
 
@@ -169,7 +169,7 @@ class TestUserProfileModel:
         )
         profile = UserProfile(
             user=user,
-            bio="Test bio",
+            about="Test about",
             location="Test Location",
             social_links={"twitter": "testuser"},
         )
@@ -179,7 +179,7 @@ class TestUserProfileModel:
         # Test
         public_profile = profile.to_public()
         assert public_profile.user_id == user.id
-        assert public_profile.bio == "Test bio"
+        assert public_profile.about == "Test about"
         assert public_profile.social_links == {"twitter": "testuser"}
         assert public_profile.is_profile_complete is False
 
@@ -258,13 +258,13 @@ class TestModelValidation:
     def test_user_profile_validation(self):
         # Test array fields can accept JSON strings
         profile_data = {
-            "bio": "Test bio",
+            "about": "Test about",
             "goals": '["goal1", "goal2"]',
             "interests": '["interest1", "interest2"]',
         }
         profile = UserProfileBaseModel(**profile_data)
 
-        assert profile.bio == "Test bio"
+        assert profile.about == "Test about"
         assert profile.goals == ["goal1", "goal2"]
         assert profile.interests == ["interest1", "interest2"]
 
