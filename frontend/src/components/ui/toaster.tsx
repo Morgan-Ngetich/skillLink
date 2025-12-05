@@ -8,7 +8,7 @@ import {
   Toast,
   createToaster,
 } from "@chakra-ui/react";
-import { activeToasts } from "@/hooks/useToaster"; // <-- import the Set
+import { activeToasts } from "@/hooks/public/useToaster";
 
 export const toaster = createToaster({
   placement: "bottom-end",
