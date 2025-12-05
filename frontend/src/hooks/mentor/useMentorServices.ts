@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import useToaster from '../../hooks/useToaster';
+import useToaster from '../public/useToaster'
 import {
   MentorServiceService,
   type MentorServiceBase,
@@ -36,6 +36,7 @@ export const useMentorServices = () => {
         title: 'Service created',
         status: 'success',
       });
+      queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
       queryClient.invalidateQueries({ queryKey: ['mentorServices'] });
     },
     onError: (error) => {
@@ -56,6 +57,7 @@ export const useMentorServices = () => {
         title: 'Service updated',
         status: 'success',
       });
+      queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
       queryClient.invalidateQueries({ queryKey: ['mentorServices'] });
     },
     onError: (error) => {
@@ -76,6 +78,7 @@ export const useMentorServices = () => {
         title: 'Service deleted',
         status: 'success',
       });
+            queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
       queryClient.invalidateQueries({ queryKey: ['mentorServices'] });
     },
     onError: (error) => {

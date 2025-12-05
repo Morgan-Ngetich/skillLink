@@ -1,14 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import useToaster from '../../hooks/useToaster';
+import useToaster from '../public/useToaster';
 import {
   ProfileService,
   type MentorProfilePublic,
   type MentorProfileCreate,
   type MentorProfileUpdate,
   type MentorStats,
-  type MentorSettingsPublic,
-  MentorSettingsService,
 } from '@/client';
 import { toNativePromise } from '@/utils/toNativePromisse';
 import { getApiErrorMessage } from '@/utils/errorUtils';
@@ -60,8 +58,8 @@ export const useMentorProfile = () => {
         description: 'Welcome to the mentor community!',
         status: 'success',
       });
+      queryClient.invalidateQueries({ queryKey: ['auth', 'user'] }); // Update user roles
       queryClient.invalidateQueries({ queryKey: ['mentorProfile', 'me'] });
-      queryClient.invalidateQueries({ queryKey: ['user', 'me'] }); // Update user roles
     },
     onError: (error: unknown) => {
       toast({
@@ -87,6 +85,7 @@ export const useMentorProfile = () => {
         title: 'Mentor profile updated',
         status: 'success',
       });
+      queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
       queryClient.invalidateQueries({ queryKey: ['mentorProfile', 'me'] });
       queryClient.invalidateQueries({ queryKey: ['mentorStats', 'me'] });
     },
@@ -94,30 +93,6 @@ export const useMentorProfile = () => {
       toast({
         id: 'update-mentor-profile-error',
         title: 'Failed to update mentor profile',
-        description: getApiErrorMessage(error),
-        status: 'error',
-      });
-    },
-  });
-
-  // ToggleMentorAvailability mutation
-  // Points to => `currently_open_to_mentees` on the backend
-  const toggleAvailability = useMutation<MentorSettingsPublic, Error>({
-    mutationFn: () =>
-      toNativePromise(MentorSettingsService.toggleAvailability()),
-    onSuccess: (data) => {
-      const status = data.currently_open_to_mentees ? 'open' : 'closed';
-      toast({
-        id: 'toggle-availability-success',
-        title: `You're now ${status} to new mentees`,
-        status: 'success',
-      });
-      queryClient.invalidateQueries({ queryKey: ['mentorProfile', 'me'] });
-    },
-    onError: (error: unknown) => {
-      toast({
-        id: 'toggle-availability-error',
-        title: 'Failed to update availability',
         description: getApiErrorMessage(error),
         status: 'error',
       });
@@ -167,7 +142,6 @@ export const useMentorProfile = () => {
     // Mutations
     createMentorProfile: createMentorProfile.mutate,
     updateMentorProfile: updateMentorProfile.mutate,
-    toggleAvailability: toggleAvailability.mutate,
 
     // Smart update
     updateMentorProfileAll,
@@ -175,6 +149,5 @@ export const useMentorProfile = () => {
     // Loading states
     isCreating: createMentorProfile.isPending,
     isUpdating: updateMentorProfile.isPending,
-    isToggling: toggleAvailability.isPending,
   };
 };
