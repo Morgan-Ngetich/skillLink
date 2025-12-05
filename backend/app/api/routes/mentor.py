@@ -1,11 +1,12 @@
 from fastapi import APIRouter, HTTPException, Query
 from typing import Optional, List
 from app.api.deps import SessionDep, CurrentUser
-from sqlmodel import select
+from sqlmodel import select, col
 from app.models.users import (
     Role,
     UserRole,
     RoleName,
+    UserPublic,
     MentorProfile,
     MentorProfileCreate,
     MentorProfilePublic,
@@ -14,8 +15,10 @@ from app.models.users import (
     MentorServiceCreate,
     MentorServiceUpdate,
     MentorSessionPublic,
+    MentorSession,
     MentorSessionCreate,
     MentorSessionUpdate,
+    MentorSessionBooking,
     MentorSettings,
     MentorSettingsPublic,
     MentorSettingsCreate,
@@ -27,6 +30,7 @@ from app.models.users import (
     MentorStatsPublic
 )
 from app import crud
+from uuid import UUID
 
 router = APIRouter()
 
@@ -146,11 +150,77 @@ def create_mentor_session(
     return mentor_session.to_public()
 
 
-@router.get("/sessions", response_model=list[MentorSessionPublic])
-def list_my_mentor_sessions(session: SessionDep, current_user: CurrentUser):
-    """List all sessions for current mentor"""
-    sessions = crud.get_all_mentor_sessions(session, current_user.id)
+@router.get("/sessions", response_model=List[MentorSessionPublic])
+def list_public_sessions(
+    session: SessionDep,
+    current_user: Optional[CurrentUser] = None,
+    skip: int = 0,
+    limit: int = 100,
+):
+    """
+    List sessions visible to the current user.
+    
+    Returns:
+    - Public sessions for everyone
+    - Private sessions where current user has booked
+    - Current user's own sessions
+    """
+    current_user_id = current_user.id if current_user else None
+    sessions = crud.get_public_sessions(
+        session, current_user_id=current_user_id, skip=skip, limit=limit
+    )
+    return [s.to_public(current_user_id=current_user_id) for s in sessions]
+
+# TODO: move this to public routes
+@router.get("/sessions/featured", response_model=List[MentorSessionPublic])
+def get_featured_sessions(session: SessionDep):
+    """
+    Public: Get featured mentor sessions (first 20 created, active only).
+    Can be used to showcase popular or trending session types on explore page.
+    """
+    sessions = crud.get_featrued_sessions(session=session, limit=20)
+    
     return [s.to_public() for s in sessions]
+
+
+# TODO: Get the sessions created by mentor, and the sessions, booked by mentees.
+# TODO: Right now, we are getting the sessions, created by a mentor. When a mentee books a session, throught the session_id, i get to display the session
+@router.get("/sessions/{session_uuid}", response_model=MentorSessionPublic)
+def get_session_details(
+    session_uuid: UUID,
+    session: SessionDep,
+    current_user: Optional[CurrentUser] = None,
+):
+    """
+    Get a single session by UUID with privacy checks.
+    """
+    mentor_session: MentorSession = crud.get_mentor_session_or_404_by_uuid(session, session_uuid)
+    current_user_id = current_user.id if current_user else None
+
+    if not mentor_session.is_public:
+        if not current_user_id or not mentor_session.can_user_access(current_user_id):
+            raise HTTPException(
+                status_code=403,
+                detail="You don't have access to this private session"
+            )
+
+    return mentor_session.to_public(current_user_id=current_user_id)
+
+
+@router.get("/mentor/{mentor_id}/sessions", response_model=List[MentorSessionPublic])
+def get_mentor_sessions_route(
+    mentor_id: int,
+    session: SessionDep,
+    current_user: Optional[CurrentUser] = None,
+):
+    """
+    Get all sessions for a mentor with privacy enforcement.
+    """
+    current_user_id = current_user.id if current_user else None
+    sessions = crud.get_mentor_sessions(
+        session, mentor_id=mentor_id, current_user_id=current_user_id
+    )
+    return [s.to_public(current_user_id=current_user_id) for s in sessions]
 
 
 @router.patch("/sessions/{session_id}", response_model=MentorSessionPublic)
@@ -170,19 +240,42 @@ def update_mentor_session(
     updated = crud.update_mentor_session(session, session_id, session_in)
     return updated.to_public()
 
+@router.patch("/sessions/{session_id}/toggle-public", response_model=MentorSessionPublic)
+def toggle_session_public(
+    session_id: int,
+    session: SessionDep,
+    current_user: CurrentUser,
+):
+    """Toggle session public/private visibility"""
+    mentor_session = crud.get_mentor_session_or_404(session, session_id)
+    
+    if mentor_session.mentor_id != current_user.id:
+        raise HTTPException(
+            status_code=403, detail="Not authorized to update this session"
+        )
+    
+    # Toggle the is_public field
+    mentor_session.is_public = not mentor_session.is_public
+    
+    session.add(mentor_session)
+    session.commit()
+    session.refresh(mentor_session)
+    
+    return mentor_session.to_public()
+
 
 @router.delete("/sessions/{session_id}", status_code=204)
 def delete_mentor_session(
     session_id: int, session: SessionDep, current_user: CurrentUser
 ):
-    """Delete a mentor session"""
+    """ Cancel a mentor session (soft delete) """
     mentor_session = crud.get_mentor_session_or_404(session, session_id)
     if mentor_session.mentor_id != current_user.id:
         raise HTTPException(
             status_code=403, detail="Not authorized to delete this session"
         )
 
-    crud.delete_mentor_session(session, session_id)
+    crud.cancel_mentor_sessions(session, session_id)
     return None
 
 
@@ -354,6 +447,15 @@ def update_booking_status(
     Update booking status
     - Mentors can confirm/cancel bookings for their sessions
     - Mentees can only cancel their own bookings
+    
+    Allowed transitions:
+    - PENDING -> CONFIRMED (mentor only)
+    - PENDING -> CANCELLED_BY_MENTOR (mentor only, with reason)
+    - PENDING -> CANCELLED_BY_MENTEE (mentee only)
+    - CONFIRMED -> COMPLETED (mentor only)
+    - CONFIRMED -> CANCELLED_BY_MENTOR (mentor only, with reason)
+    - CONFIRMED -> CANCELLED_BY_MENTEE (mentee only, with reason)
+    - CONFIRMED -> NO_SHOW_MENTEE/NO_SHOW_MENTOR (mentor only)
     """
     bookings = crud.update_booking_status(
         session=session,
@@ -363,6 +465,60 @@ def update_booking_status(
     )
 
     return bookings.to_public()
+
+@router.post("/bookings/{booking_id}/confirm", response_model=BookingPublic)
+def confirm_booking(
+    booking_id: int,
+    session: SessionDep,
+    current_user: CurrentUser,
+):
+    """Mentor confirms a pending booking (shortcut endpoint)"""
+    return crud.update_booking_status(
+        session=session,
+        booking_id=booking_id,
+        new_status=BookingStatus.CONFIRMED,
+        user_id=current_user.id,
+    ).to_public()
+
+
+@router.post("/bookings/{booking_id}/deny", response_model=BookingPublic)
+def deny_booking(
+    booking_id: int,
+    reason: str,
+    session: SessionDep,
+    current_user: CurrentUser,
+):
+    """Mentor denies a pending booking with reason"""
+    return crud.update_booking_status(
+        session=session,
+        booking_id=booking_id,
+        new_status=BookingStatus.CANCELLED_BY_MENTOR,
+        user_id=current_user.id,
+    ).to_public()
+
+
+@router.get("/bookings/history", response_model=List[BookingPublic])
+def get_booking_history(
+    session: SessionDep,
+    current_user: CurrentUser,
+    include_cancelled: bool = Query(True),
+):
+    """
+    Get booking history including cancelled/completed bookings
+    For showing users their past activity
+    """
+    query = (
+        select(MentorSessionBooking)
+        .where(MentorSessionBooking.mentee_id == current_user.id)
+    )
+    
+    if not include_cancelled:
+        query = query.where(
+            ~MentorSessionBooking.status.in_(crud.CANCELLED_STATUSES)
+        )
+    
+    bookings = session.exec(query).all()
+    return [b.to_public() for b in bookings]
 
 
 @router.delete("/bookings/{booking_id}", status_code=204)
@@ -376,14 +532,79 @@ def delete_booking(booking_id: int, session: SessionDep, current_user: CurrentUs
     return None
 
 
+
+
+# ================= PUBLIC MENTOR LISTING ==================
+@router.get("/mentors", response_model=List[UserPublic])
+def list_mentors(
+    session: SessionDep,
+    expertise: Optional[str] = Query(None, description="Filter by area of expertise"),
+    available: Optional[bool] = Query(None, description="Only mentors currently open to mentees"),
+    limit: int = Query(20, ge=1, le=100, description="Number of mentors per page"),
+    offset: int = Query(0, ge=0, description="Pagination offset"),
+):
+    """
+    Public: List mentors with optional filters and pagination.
+    Used in the Explore page to browse all available mentors.
+    """
+    mentors = crud.list_public_mentors(
+        session=session,
+        expertise=expertise,
+        available=available,
+        limit=limit,
+        offset=offset,
+    )
+    
+    return [m.to_public() for m in mentors]
+
+@router.get("/mentors/featured", response_model=List[UserPublic])
+def get_featured_mentors(session: SessionDep):
+    """
+    Public: Get the featured mentors (currently first 20 to sign up).
+    Later this logic can be replaced with an explicit 'featured' flag.
+    Displayed prominently on homepage/explore page.
+    """
+    mentors = crud.get_featured_mentors(session=session, limit=20)
+    
+    return [m.user.to_public() for m in mentors if m.user]
+
+
+@router.get("/services/featured", response_model=List[MentorServicePublic])
+def get_featured_services(session: SessionDep):
+    """
+    Public: Get featured mentor services (first 20 created, active only).
+    Useful for highlighting popular service offerings on homepage.
+    """
+    services = crud.get_featured_services(session=session, limit=20)
+    
+    return [s.to_public() for s in services]
+
+
 # ================= PUBLIC/ADMIN ROUTES (must be last) ==================
-@router.get("/{user_id}/profile", response_model=MentorProfilePublic)
-def read_user_mentor_profile(user_id: int, session: SessionDep):
-    """
-    Retrieve a user's mentor profile by user_id (admin/public usage)
-    """
-    profile = crud.get_mentor_profile_or_404(session, user_id)
-    return profile.to_public()
+
+# TODO: Consider removing this. Already the UserPublic has all the data, a single users/{id or uuid}, does the job
+# @router.get("/{identifier}/profile", response_model=MentorProfilePublic)
+# def read_user_mentor_profile(identifier: str, session: SessionDep):
+#     """
+#     Retrieve a user's mentor profile by user_id (admin/public usage)
+#     """
+#     profile = crud.get_public_mentor_profile_with_relations(session, identifier)
+#     return profile.to_public()
+
+
+@router.get("/{user_id}/sessions", response_model=List[MentorSessionPublic])
+def list_user_mentor_sessions(user_id: int, session: SessionDep):
+    """Public: list all active sessions for a specific mentor"""
+    sessions = crud.get_all_mentor_sessions(session, user_id, active_only=True)
+    return [s.to_public() for s in sessions]
+
+
+@router.get("/{user_id}/services", response_model=list[MentorServicePublic])
+def list_user_mentor_services(user_id: int, session: SessionDep):
+    """Public: list all active services for a specific mentor"""
+    services = crud.get_all_mentor_services(session, user_id, active_only=True)
+    return [s.to_public() for s in services]
+
 
 
 @router.delete("/{user_id}/profile", status_code=204)
