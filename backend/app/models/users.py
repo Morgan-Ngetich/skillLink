@@ -20,7 +20,55 @@ from app.utils.validation import is_valid
 from app.utils.helper import ProgressService
 
 
-# ================== PUBLIC MODELS ==================
+# ================== ENUMS (Must be first) ==================
+class ExperienceLevel(str, Enum):
+    JUNIOR = "junior"
+    MID = "mid"
+    SENIOR = "senior"
+    LEAD = "lead"
+
+
+class MentorType(str, Enum):
+    CAREER_COACH = "career_coach"
+    TECHNICAL_MENTOR = "technical_mentor"
+    INDUSTRY_EXPERT = "industry_expert"
+    LEADERSHIP_COACH = "leadership_coach"
+    ENTREPRENEUR = "entrepreneur"
+
+
+class SessionType(str, Enum):
+    ONE_ON_ONE = "1-on-1 Video Call"
+    CODE_REVIEW = "Code Review"
+    RESUME_REVIEW = "Resume Review"
+    MOCK_INTERVIEW = "Mock Interview"
+    CAREER_ADVICE = "Career Advice"
+    PORTFOLIO_REVIEW = "Portfolio Review"
+
+
+class LocationType(str, Enum):
+    ONLINE = "online"
+    PHYSICAL = "physical"
+
+
+class BookingStatus(str, Enum):
+    """Enhanced booking statuses with clear state transitions"""
+    PENDING = "pending"           # Awaiting mentor confirmation
+    CONFIRMED = "confirmed"       # Mentor accepted, session will happen
+    COMPLETED = "completed"       # Session finished successfully
+    CANCELLED_BY_MENTEE = "cancelled_by_mentee"  # Mentee cancelled
+    CANCELLED_BY_MENTOR = "cancelled_by_mentor"  # Mentor cancelled/denied
+    NO_SHOW_MENTEE = "no_show_mentee"   # Mentee didn't attend
+    NO_SHOW_MENTOR = "no_show_mentor"   # Mentor didn't attend
+    EXPIRED = "expired"           # Pending booking expired (e.g., after 24h) upon session completion
+
+
+class RoleName(str, Enum):
+    SUPERUSER = "superuser"
+    MENTOR = "mentor"
+    MENTEE = "mentee"
+
+
+# ================== BASE MODELS & MIXINS ==================
 class CleanStrFieldsMixin(BaseModel):
     """Converts empty strings to None for all fields in inheriting models."""
 
@@ -50,6 +98,29 @@ class Experience(CleanStrFieldsMixin):
     end_date: Optional[datetime] = None
 
 
+class PreparationMaterial(BaseModel):
+    title: str
+    description: Optional[str] = None
+    url: str
+    type: Optional[str] = None  # e.g. "pdf", "video", "article"
+
+
+# ================== PUBLIC MODELS (No forward refs) ==================
+class UserMinimal(SQLModel):
+    """Minimal user info for nested responses - NO profile/mentor_profile"""
+    id: int
+    uuid: str
+    full_name: str
+    email: str
+    avatar_url: Optional[str] = None
+    cover_image: Optional[str] = None
+    is_superuser: bool
+    is_mentor: bool
+    is_mentee: bool
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+
 class UserProfilePublic(SQLModel):
     user_id: int
     uuid: str
@@ -68,24 +139,146 @@ class UserProfilePublic(SQLModel):
     is_profile_setup_complete: Optional[bool] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+    mentor_profile: Optional["MentorProfilePublic"] = None
+    
+    
 
 
-class CardPublic(SQLModel):
+class BookingPublic(SQLModel):
+    """Booking without nested session/mentee to avoid recursion"""
     id: int
-    title: str
-    description: Optional[str] = None
-    status: str  # CardStatus as string
-    priority: str  # CardPriority as string
-    position: int = 0
-    tags: Optional[List[str]] = None
-    due_date: Optional[datetime] = None
-    estimated_duration: Optional[int] = None
-    is_archived: bool = False
+    uuid: UUID
+    session_id: int
+    mentee: UserMinimal | None
+    status: BookingStatus
+    message: Optional[str]
     created_at: datetime
     updated_at: datetime
-    assignee: Optional["UserPublic"] = None
-    created_by: Optional["UserPublic"] = None
-    goal: Optional["GoalPublic"] = None
+
+    model_config = {"from_attributes": True}
+
+
+class MentorServicePublic(SQLModel):
+    """Service without nested mentor"""
+    id: int
+    uuid: UUID
+    mentor_id: int
+    title: str
+    description: Optional[str] = None
+    banner_url: Optional[str] = None
+    price_usd: Optional[float] = None
+    estimated_duration_minutes: Optional[int] = None
+    category: Optional[str] = None
+    highlights: Optional[List[str]] = None
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+
+
+class MentorSessionPublic(SQLModel):
+    """Session without nested mentor profile"""
+    id: int
+    uuid: UUID
+    mentor_id: int
+    
+    # Session Details
+    title: str
+    description: Optional[str] = None
+    cover_image: Optional[str] = None
+    # NOTE: session_type -> str. This is because the SessionType.value which is a str, is stored in the DB.
+    session_type: str
+    duration_minutes: int
+    price_usd: Optional[float] = None
+    tags: Optional[List[str]] = None
+    
+    start_time: datetime
+    end_time: datetime
+    timezone: str
+    
+    is_public: bool
+    is_cancelled: bool
+    is_active: bool
+    max_bookings: Optional[int] = None
+    
+    # ONly shown if user has access
+    location_type: LocationType
+    meeting_link: Optional[str] = None
+    physical_address: Optional[str] = None
+    preparation_materials: Optional[List[PreparationMaterial]] = None
+    
+    # Computed properties
+    total_bookings: int
+    confirmed_bookings: int
+    pending_bookings: int
+    is_full: bool
+    available_spots: Optional[int]
+    
+    bookings: List[BookingPublic] = Field(default_factory=list)
+    
+    created_at: datetime
+    updated_at: datetime
+    
+    model_config = {"from_attributes": True}
+
+
+class MentorSettingsPublic(SQLModel):
+    """Public mentor settings - no circular refs"""
+    id: int
+    mentor_id: int
+    
+    currently_open_to_mentees: bool
+    profile_visibility: bool
+    auto_accept_bookings: bool
+    require_intro_message: bool
+    allow_public_availability_view: bool
+    
+    timezone: Optional[str] = None
+    available_times: Optional[List[str]] = None
+    weekly_schedule: Optional[Dict[str, Any]] = None
+    booking_buffer_hours: int
+    session_gap_minutes: int
+    
+    max_mentees: Optional[int] = None
+    
+    mentorship_philosophy: Optional[str] = None
+    ideal_mentee_description: Optional[str] = None
+    communication_style: Optional[List[str]] = None
+    response_time_hours: int
+    
+    created_at: datetime
+    updated_at: datetime
+
+
+class MentorProfilePublic(SQLModel):
+    """
+    Complete public mentor profile with all nested data
+    This is the TOP-LEVEL response model
+    """
+    user_id: int
+    
+    # Core Identity
+    title: str
+    industries: Optional[List[str]] = None
+    expertise: List[str]
+    experience_level: ExperienceLevel
+    mentor_type: Optional[List[MentorType]] = None
+    tags: Optional[List[str]] = None
+    badges: Optional[List[str]] = None
+    
+    # Stats
+    total_sessions: int
+    total_mentees: int
+    average_rating: Optional[float]
+    
+    # Timestamps
+    created_at: datetime
+    updated_at: datetime
+    
+    # Nested data (NO circular references)
+    user: Optional[UserMinimal] = None
+    sessions: List[MentorSessionPublic] = Field(default_factory=list)
+    services: List[MentorServicePublic] = Field(default_factory=list)
+    settings: Optional[MentorSettingsPublic] = None
 
 
 class UserPublic(SQLModel):
@@ -98,8 +291,7 @@ class UserPublic(SQLModel):
     is_superuser: bool
     is_mentor: bool
     is_mentee: bool
-    profile: Optional["UserProfilePublic"] = None
-    # mentor_profile: Optional["MentorProfilePublic"] = None
+    profile: Optional[UserProfilePublic] = None
 
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
@@ -118,49 +310,264 @@ class UsersPublic(BaseModel):
     count: int
 
 
-class ExperienceLevel(str, Enum):
-    JUNIOR = "junior"
-    MID = "mid"
-    SENIOR = "senior"
-    LEAD = "lead"
+class CardPublic(SQLModel):
+    id: int
+    title: str
+    description: Optional[str] = None
+    status: str
+    priority: str
+    position: int = 0
+    tags: Optional[List[str]] = None
+    due_date: Optional[datetime] = None
+    estimated_duration: Optional[int] = None
+    is_archived: bool = False
+    created_at: datetime
+    updated_at: datetime
+    assignee: Optional[UserPublic] = None
+    created_by: Optional[UserPublic] = None
+    goal: Optional["GoalPublic"] = None
 
 
-class MentorType(str, Enum):
-    CAREER_COACH = "career_coach"
-    TECHNICAL_MENTOR = "technical_mentor"
-    INDUSTRY_EXPERT = "industry_expert"
-    LEADERSHIP_COACH = "leadership_coach"
-    ENTREPRENEUR = "entrepreneur"
+class MentorStatsPublic(BaseModel):
+    """Comprehensive mentor statistics for dashboard"""
+    completion_percentage: int
+    is_complete: bool
+
+    total_sessions: int
+    active_sessions: int
+    upcoming_sessions: int
+    past_sessions: int
+
+    total_bookings: int
+    active_bookings: int
+    confirmed_bookings: int
+    pending_bookings: int
+    completed_bookings: int
+
+    total_cancelled: int
+    cancelled_by_mentee: int
+    cancelled_by_mentor: int
+    expired_bookings: int
+
+    total_no_shows: int
+    no_show_mentee: int
+    no_show_mentor: int
+
+    completion_rate: float
+    cancellation_rate: float
+    no_show_rate: float
+
+    total_mentees: int
+    average_rating: Optional[float]
+
+    model_config = ConfigDict(from_attributes=True)
 
 
-class SessionType(str, Enum):
-    ONE_ON_ONE = "1-on-1 Video Call"
-    CODE_REVIEW = "Code Review"
 
-
-# ================== ROLES AND PERMISSIONS ==================
-class RoleName(str, Enum):
-    SUPERUSER = "superuser"
-    MENTOR = "mentor"
-    MENTEE = "mentee"
-
-
-# use BaseModel to avoid kwargs mismatch bt FastAPI
+# ================== REQUEST/UPDATE MODELS ==================
 class RoleAssignRequest(BaseModel):
     user_id: int
     role_name: RoleName
 
 
+class BookingCreateRequest(BaseModel):
+    message: Optional[str] = Field(None, max_length=1000)
+
+
+class BookingStatusUpdate(BaseModel):
+    status: BookingStatus
+
+
+class UserCreate(BaseModel):
+    full_name: str | None = None
+    email: str
+    password: str
+    is_active: bool = True
+
+
+class UserUpdate(BaseModel):
+    full_name: Optional[str] = None
+    avatar_url: Optional[str] = None
+    cover_image: Optional[str] = None
+    is_active: Optional[bool] = None
+    email: Optional[str] = None
+
+
+class UserSyncIn(BaseModel):
+    user_id: UUID
+    email: str
+    full_name: str | None = None
+    avatar_url: str | None = None
+
+
+class UserProfileBaseModel(BaseModel):
+    title: Optional[str] = None
+    about: Optional[str] = None
+    location: Optional[str] = None
+    area_of_focus: Optional[List[str]] = None
+    goals: Optional[List[str]] = None
+    interests: Optional[List[str]] = None
+    skills: Optional[List[str]] = None
+    social_links: Optional[Dict[str, str]] = None
+    contact_details: Optional[Dict[str, str]] = None
+    education: Optional[List[Education]] = None
+    experience: Optional[List[Experience]] = None
+
+    @field_validator("goals", "interests", "area_of_focus", "skills", mode="before")
+    @classmethod
+    def parse_list_fields(cls, v):
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except json.JSONDecodeError:
+                return [v]
+        return v
+
+    @field_validator("education", "experience", mode="before")
+    @classmethod
+    def remove_empty_entries(cls, v):
+        if not v:
+            return []
+        cleaned = []
+        for entry in v:
+            if not isinstance(entry, dict):
+                continue
+            if any(value not in (None, [], {}) for value in entry.values()):
+                cleaned.append(entry)
+        return cleaned if cleaned else []
+
+
+class UserProfileCreate(UserProfileBaseModel):
+    pass
+
+
+class UserProfileUpdate(UserProfileBaseModel):
+    pass
+
+
+class MentorProfileCreate(BaseModel):
+    user_id: int
+    title: str
+    industries: Optional[List[str]] = None
+    expertise: List[str]
+    experience_level: ExperienceLevel
+    mentor_type: Optional[List[MentorType]] = None
+    tags: Optional[List[str]] = None
+    badges: Optional[List[str]] = None
+
+
+class MentorProfileUpdate(SQLModel):
+    title: Optional[str] = None
+    industries: Optional[List[str]] = None
+    expertise: Optional[List[str]] = None
+    experience_level: Optional[ExperienceLevel] = None
+    mentor_type: Optional[List[MentorType]] = None
+    tags: Optional[List[str]] = None
+    badges: Optional[List[str]] = None
+
+
+class MentorSessionCreate(BaseModel):
+    mentor_id: int
+    title: str
+    description: Optional[str] = None
+    cover_image: Optional[str] = None
+    session_type: SessionType
+    duration_minutes: int = 60
+    price_usd: Optional[float] = None
+    tags: Optional[List[str]] = None
+    start_time: datetime
+    end_time: datetime
+    timezone: str = "UTC"
+    is_public: Optional[float] = None
+    is_active: bool = True
+    max_bookings: Optional[int] = None
+    location_type: LocationType = LocationType.ONLINE
+    meeting_link: Optional[str] = None
+    physical_address: Optional[str] = None
+    preparation_materials: Optional[List[PreparationMaterial]] = None
+
+
+class MentorSessionUpdate(SQLModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    cover_image: Optional[str] = None
+    session_type: Optional[SessionType] = None
+    duration_minutes: Optional[int] = None
+    price_usd: Optional[float] = None
+    is_public: Optional[float] = None
+    is_active: Optional[bool] = None
+    max_bookings: Optional[int] = None
+    tags: Optional[List[str]] = None
+    location_type: Optional[LocationType] = None
+    meeting_link: Optional[str] = None
+    physical_address: Optional[str] = None
+    preparation_materials: Optional[List[PreparationMaterial]] = None
+    start_time: Optional[datetime] = None
+    end_time: Optional[datetime] = None
+
+
+class MentorServiceCreate(BaseModel):
+    mentor_id: int
+    title: str
+    description: Optional[str] = None
+    banner_url: Optional[str] = None
+    price_usd: Optional[float] = None
+    estimated_duration_minutes: Optional[int] = None
+    category: Optional[str] = None
+    highlights: Optional[List[str]] = None
+
+
+class MentorServiceUpdate(SQLModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    banner_url: Optional[str] = None
+    price_usd: Optional[float] = None
+    estimated_duration_minutes: Optional[int] = None
+    category: Optional[str] = None
+    highlights: Optional[List[str]] = None
+    is_active: Optional[bool] = None
+
+
+class MentorSettingsCreate(BaseModel):
+    mentor_id: int
+    currently_open_to_mentees: bool = True
+    profile_visibility: bool = True
+    auto_accept_bookings: bool = False
+    require_intro_message: bool = True
+    allow_public_availability_view: Optional[bool] = True
+    timezone: Optional[str] = None
+    available_times: Optional[List[str]] = None
+    weekly_schedule: Optional[Dict[str, Any]] = None
+    booking_buffer_hours: int = 24
+    session_gap_minutes: int = 15
+    max_mentees: Optional[int] = 5
+    mentorship_philosophy: Optional[str] = None
+    ideal_mentee_description: Optional[str] = None
+    communication_style: Optional[List[str]] = None
+    response_time_hours: int = 48
+
+
+class MentorSettingsUpdate(SQLModel):
+    currently_open_to_mentees: Optional[bool] = None
+    profile_visibility: Optional[bool] = None
+    auto_accept_bookings: Optional[bool] = None
+    require_intro_message: Optional[bool] = None
+    allow_public_availability_view: Optional[bool] = None
+    timezone: Optional[str] = None
+    available_times: Optional[List[str]] = None
+    weekly_schedule: Optional[Dict[str, Any]] = None
+    booking_buffer_hours: Optional[int] = None
+    session_gap_minutes: Optional[int] = None
+    max_mentees: Optional[int] = None
+    mentorship_philosophy: Optional[str] = None
+    ideal_mentee_description: Optional[str] = None
+    communication_style: Optional[List[str]] = None
+    response_time_hours: Optional[int] = None
+
+
+# ================== DATABASE TABLE MODELS ==================
 class RoleBase(SQLModel):
     name: str = Field(unique=True, index=True)
-
-
-class RoleCreate(RoleBase):
-    pass
-
-
-class RoleUpdate(RoleBase):
-    pass
 
 
 class Role(RoleBase, table=True):
@@ -169,16 +576,9 @@ class Role(RoleBase, table=True):
     permissions: list["RolePermission"] = Relationship(back_populates="role")
 
 
-class PermissionBase(SQLModel):
-    name: str = Field(unique=True, index=True)
-
-
-class PermissionCreate(PermissionBase):
-    pass
-
-
-class Permission(PermissionBase, table=True):
+class Permission(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
+    name: str = Field(unique=True, index=True)
     roles: list["RolePermission"] = Relationship(
         back_populates="permission", cascade_delete=True
     )
@@ -186,10 +586,10 @@ class Permission(PermissionBase, table=True):
 
 class RolePermission(SQLModel, table=True):
     role_id: int = Field(
-        foreign_key="role.id", primary_key=True, **{"ondelete": "CASCADE"}
+        foreign_key="role.id", primary_key=True, ondelete="CASCADE"
     )
     permission_id: int = Field(
-        foreign_key="permission.id", primary_key=True, **{"ondelete": "CASCADE"}
+        foreign_key="permission.id", primary_key=True, ondelete="CASCADE"
     )
     role: Role = Relationship(back_populates="permissions")
     permission: Permission = Relationship(back_populates="roles")
@@ -197,31 +597,23 @@ class RolePermission(SQLModel, table=True):
 
 class UserRole(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    user_id: int = Field(foreign_key="users.id", index=True, **{"ondelete": "CASCADE"})
-    role_id: int = Field(foreign_key="role.id", index=True, **{"ondelete": "CASCADE"})
+    user_id: int = Field(foreign_key="users.id", index=True, ondelete="CASCADE")
+    role_id: int = Field(foreign_key="role.id", index=True, ondelete="CASCADE")
     user: "User" = Relationship(back_populates="roles")
     role: Role = Relationship(back_populates="users")
 
 
-# ================== USER ==================
-class UserBase(SQLModel):
+class User(SQLModel, table=True):
+    __tablename__ = "users"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    uuid: UUID = Field(default_factory=uuid4, index=True, unique=True)
     full_name: str | None = None
     email: str = Field(unique=True, index=True)
-    is_active: bool = True
-
-
-class User(UserBase, table=True):
-    __tablename__ = "users"  # ✅ prevent Postgres reserved word issues
-
-    id: Optional[int] = Field(
-        default=None,
-        primary_key=True,
-    )  # Auto-incrementing ID for supabase users. Superuser have UUIDs only
-    uuid: UUID = Field(default_factory=uuid4, index=True, unique=True)
-    # TODO: Consider moving the avatar_url to UserProfile to keep User table clean and focused on authentication
     avatar_url: str | None = None
     cover_image: str | None = None
     hashed_password: str = Field(repr=False)
+    is_active: bool = True
     created_at: Optional[datetime] = Field(
         default_factory=lambda: datetime.now(timezone.utc)
     )
@@ -230,7 +622,7 @@ class User(UserBase, table=True):
     )
 
     # Relationships
-    roles: List["UserRole"] = Relationship(back_populates="user", cascade_delete=True)
+    roles: List[UserRole] = Relationship(back_populates="user", cascade_delete=True)
     profile: Optional["UserProfile"] = Relationship(
         back_populates="user", sa_relationship_kwargs={"uselist": False}
     )
@@ -266,6 +658,11 @@ class User(UserBase, table=True):
         return self.has_role(RoleName.MENTEE)
 
     def to_public(self):
+        #TODO from app.models.roadmap import GoalStatus  # Import here to avoid circular
+        
+        # Build profile with nested mentor_profile
+        profile_public = self.profile.to_public() if self.profile else None
+        
         return UserPublic(
             id=self.id,
             uuid=str(self.uuid),
@@ -276,10 +673,7 @@ class User(UserBase, table=True):
             is_superuser=self.is_superuser,
             is_mentor=self.is_mentor,
             is_mentee=self.is_mentee,
-            profile=self.profile.to_public() if self.profile else None,
-            mentor_profile=self.mentor_profile.to_public()
-            if self.mentor_profile
-            else None,
+            profile=profile_public, # Contains mentor_profile inside
             created_at=self.created_at,
             updated_at=self.updated_at,
             boards=self.boards,
@@ -293,29 +687,26 @@ class User(UserBase, table=True):
             created_cards=self.created_cards,
         )
 
-
-class UserCreate(UserBase):
-    password: str
-
-
-class UserUpdate(BaseModel):
-    full_name: Optional[str] = None
-    avatar_url: Optional[str] = None
-    is_active: Optional[bool] = None
-    email: Optional[str] = None  # Add this
-
-
-# ================== USER PROFILE ==================
-class UserSyncIn(BaseModel):
-    user_id: UUID  # UUID from Supabase
-    email: str
-    full_name: str | None = None
-    avatar_url: str | None = None  # Optional, can be set later in UserProfile
+    def to_minimal(self):
+        """Minimal user data for nested responses"""
+        return UserMinimal(
+            id=self.id,
+            uuid=str(self.uuid),
+            full_name=self.full_name,
+            email=self.email,
+            avatar_url=self.avatar_url or settings.DEFAULT_AVATAR_URL,
+            cover_image=self.cover_image or settings.DEFAULT_COVER_IMAGE_URL,
+            is_superuser=self.is_superuser,
+            is_mentor=self.is_mentor,
+            is_mentee=self.is_mentee,
+            created_at=self.created_at,
+            updated_at=self.updated_at,
+        )
 
 
-class UserProfileBase(SQLModel):
+class UserProfile(SQLModel, table=True):
     user_id: int = Field(
-        foreign_key="users.id", index=True, primary_key=True, **{"ondelete": "CASCADE"}
+        foreign_key="users.id", index=True, primary_key=True, ondelete="CASCADE"
     )
     title: Optional[str] = Field(default=None, nullable=True)
     about: Optional[str] = Field(default=None, nullable=True)
@@ -330,8 +721,6 @@ class UserProfileBase(SQLModel):
     interests: Optional[List[str]] = Field(
         sa_column=Column(ARRAY(String), nullable=True), default=None
     )
-
-    # Later
     skills: Optional[List[str]] = Field(
         sa_column=Column(ARRAY(String), nullable=True), default=None
     )
@@ -354,8 +743,6 @@ class UserProfileBase(SQLModel):
         default_factory=lambda: datetime.now(timezone.utc)
     )
 
-
-class UserProfile(UserProfileBase, table=True):
     user: User = Relationship(back_populates="profile")
 
     @computed_field(return_type=bool)
@@ -381,7 +768,6 @@ class UserProfile(UserProfileBase, table=True):
     @computed_field(return_type=bool)
     @property
     def is_profile_setup_complete(self) -> bool:
-        """Partial profile completion check — used to gate initial onboarding steps (no social_links required)."""
         return all(
             is_valid(field)
             for field in [
@@ -396,6 +782,11 @@ class UserProfile(UserProfileBase, table=True):
         )
 
     def to_public(self):
+        # Get mentor profile if user is a mentor
+        mentor_profile_public = None
+        if self.user and self.user.mentor_profile:
+            mentor_profile_public = self.user.mentor_profile.to_public()
+            
         return UserProfilePublic(
             user_id=self.user_id,
             uuid=str(self.user.uuid),
@@ -414,209 +805,46 @@ class UserProfile(UserProfileBase, table=True):
             is_profile_setup_complete=self.is_profile_setup_complete,
             created_at=self.created_at,
             updated_at=self.updated_at,
+            mentor_profile=mentor_profile_public,
         )
 
 
-class UserProfileBaseModel(BaseModel):
-    title: Optional[str] = None
-    about: Optional[str] = None
-    location: Optional[str] = None
+class MentorProfile(SQLModel, table=True):
+    user_id: int = Field(foreign_key="users.id", primary_key=True, index=True)
 
-    area_of_focus: Optional[List[str]] = None
-    goals: Optional[List[str]] = None
-    interests: Optional[List[str]] = None
-    skills: Optional[List[str]] = None
-
-    social_links: Optional[Dict[str, str]] = None
-    contact_details: Optional[Dict[str, str]] = None
-
-    education: Optional[List[Education]] = None
-    experience: Optional[List[Experience]] = None
-
-    @field_validator("goals", "interests", "area_of_focus", "skills", mode="before")
-    @classmethod
-    def parse_list_fields(cls, v):
-        if isinstance(v, str):
-            try:
-                return json.loads(v)
-            except json.JSONDecodeError:
-                return [v]
-        return v
-
-    @field_validator("education", "experience", mode="before")
-    @classmethod
-    def remove_empty_entries(cls, v):
-        if not v:
-            return []
-
-        # Keep only the entries that have atleast non-empty field
-        cleaned = None
-        for entry in v:
-            if not isinstance(entry, dict):
-                continue
-
-            # Filter out entries where all empty, null, or blank strings
-            if any(value not in (None, [], {}) for value in entry.values()):
-                cleaned = []
-                cleaned.append(entry)
-
-        return cleaned
-
-    model_config = ConfigDict(
-        json_schema_extra={
-            "examples": [
-                {
-                    "title": "Software enginerr at Microsoft",
-                    "about": "I am a Software engineer at Microsoft",
-                    "location": "Berlin, Germany",
-                    "area_of_focus": ["AI", "EdTech", "Open Source"],
-                    "goals": ["Build an online course", "Contribute to open source"],
-                    "interests": ["Machine Learning", "Startups", "Hackathons"],
-                    "skills": ["Python", "FastAPI", "Docker"],
-                    "social_links": {
-                        "linkedin": "https://linkedin.com/in/morgan",
-                        "github": "https://github.com/morgan",
-                    },
-                    "contact_details": {
-                        "email": "user@example.com",
-                        "phone": "+1234567890",
-                    },
-                    "education": [
-                        {
-                            "institution": "MIT",
-                            "degree": "BSc Computer Science",
-                            "field_of_study": "Computer Science",
-                            "start_date": "2015-09-01T00:00:00",
-                            "end_date": "2019-06-01T00:00:00",
-                        }
-                    ],
-                    "experience": [
-                        {
-                            "company": "Google",
-                            "position": "Software Engineer",
-                            "description": "Worked on internal tools",
-                            "start_date": "2020-01-01T00:00:00",
-                            "end_date": "2023-07-01T00:00:00",
-                        }
-                    ],
-                }
-            ]
-        }
-    )
-
-
-class UserProfileCreate(UserProfileBaseModel):
-    pass
-
-
-class UserProfileUpdate(UserProfileBaseModel):
-    pass
-
-
-class MentorProfileBase(SQLModel):
-    user_id: int = Field(foreign_key="users.id", index=True)
-
-    # Core Identity (Required for onboarding)
-    title: str  # "Senior Software Engineer at Google"
+    # Core Identity
+    title: str
     industries: Optional[List[str]] = Field(
         sa_column=Column(ARRAY(String), nullable=True), default=None
     )
-    expertise: List[str] = Field(
-        sa_column=Column(ARRAY(String), nullable=False)
-    )  # ["Career Transitions", "System Design"]
+    expertise: List[str] = Field(sa_column=Column(ARRAY(String), nullable=False))
     experience_level: ExperienceLevel = Field(sa_column=Column(String, nullable=False))
-
-    # Optional Identity Enhancements
     mentor_type: Optional[List[MentorType]] = Field(
         sa_column=Column(ARRAY(String), nullable=True), default=None
     )
-
-    # Display Tags & Badges
     tags: Optional[List[str]] = Field(
         sa_column=Column(ARRAY(String), nullable=True), default=None
-    )  # e.g., ["Hiring Manager", "Open Source Contributor"]
+    )
     badges: Optional[List[str]] = Field(
         sa_column=Column(ARRAY(String), nullable=True), default=None
-    )  # e.g., ["Top Mentor", "5-Star Rated"]
+    )
 
-    @field_validator("experience_level")
-    def validate_experience_level(cls, v):
-        if v is not None and v not in [level.value for level in ExperienceLevel]:
-            raise ValueError(
-                f"Invalid experience_level '{v}'. Must be one of: {[e.value for e in ExperienceLevel]}"
-            )
-        return v
-
-
-class MentorSettingsBase(SQLModel):
-    """All preferences, availability, and operational settings"""
-
-    mentor_id: int = Field(foreign_key="mentorprofile.user_id")
-
-    # Availability Flags
-    currently_open_to_mentees: bool = Field(default=True)
-    profile_visibility: bool = Field(default=True)
-    auto_accept_bookings: bool = Field(default=False)
-    require_intro_message: bool = Field(default=True)
-
-    # Scheduling
-    timezone: Optional[str] = None  # e.g., "America/New_York"
-    available_times: Optional[List[str]] = Field(
-        sa_column=Column(ARRAY(String), nullable=True), default=None
-    )  # e.g., ["Mon-Fri 6-9pm"]
-    weekly_schedule: Optional[Dict[str, Any]] = Field(
-        sa_column=Column(JSON, nullable=True), default=None
-    )  # Detailed weekly schedule
-    booking_buffer_hours: int = Field(default=24)
-    session_gap_minutes: int = Field(default=15)
-
-    # Capacity
-    max_mentees: Optional[int] = Field(default=5)
-
-    # Mentorship Style
-    mentorship_philosophy: Optional[str] = Field(default=None, max_length=500)
-    ideal_mentee_description: Optional[str] = Field(default=None, max_length=300)
-    communication_style: Optional[List[str]] = Field(
-        sa_column=Column(ARRAY(String), nullable=True), default=None
-    )  # e.g., ["Supportive", "Direct"]
-    response_time_hours: int = Field(default=48)
-
-
-class MentorSettings(MentorSettingsBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    mentor: "MentorProfile" = Relationship(back_populates="settings")
-
-
-class MentorProfilePublic(MentorProfileBase):
-    """Public-facing profile data"""
-    total_sessions: int
-    total_mentees: int
-    average_rating: Optional[float]
-    created_at: datetime
-    updated_at: datetime
-
-
-class MentorProfile(MentorProfileBase, table=True):
-    user_id: int = Field(foreign_key="users.id", primary_key=True, index=True)
-
-    # Stats (computed/cached) (updated via update_mentor_cached_stats after CRUD operations)
+    # Stats (cached)
     total_sessions: int = Field(default=0)
     total_mentees: int = Field(default=0)
     average_rating: Optional[float] = Field(default=None)
 
-    # Timestamps
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     # Relationships
-    user: Optional["User"] = Relationship(back_populates="mentor_profile")
+    user: Optional[User] = Relationship(back_populates="mentor_profile")
     sessions: List["MentorSession"] = Relationship(back_populates="mentor")
     services: List["MentorService"] = Relationship(back_populates="mentor")
     settings: Optional["MentorSettings"] = Relationship(back_populates="mentor")
 
     @property
     def is_mentor_profile_complete(self) -> bool:
-        """Profile is complete if all required fields are filled"""
         return bool(
             self.title
             and self.industries
@@ -627,7 +855,6 @@ class MentorProfile(MentorProfileBase, table=True):
 
     @property
     def completion_percentage(self) -> int:
-        """Calculate profile completion percentage"""
         fields = [
             bool(self.title),
             bool(self.industries),
@@ -652,247 +879,283 @@ class MentorProfile(MentorProfileBase, table=True):
             average_rating=self.average_rating,
             created_at=self.created_at,
             updated_at=self.updated_at,
+            user=self.user.to_minimal() if self.user else None,
+            sessions=[s.to_public() for s in self.sessions],
+            services=[s.to_public() for s in self.services],
+            settings=self.settings.to_public() if self.settings else None,
         )
 
 
-class MentorProfileCreate(MentorProfileBase):
-    pass
+class MentorSettings(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    mentor_id: int = Field(foreign_key="mentorprofile.user_id")
+
+    currently_open_to_mentees: bool = Field(default=True)
+    profile_visibility: bool = Field(default=True)
+    auto_accept_bookings: bool = Field(default=True)
+    require_intro_message: bool = Field(default=True)
+    allow_public_availability_view: bool = Field(default=True)
+
+    timezone: Optional[str] = None
+    available_times: Optional[List[str]] = Field(
+        sa_column=Column(ARRAY(String), nullable=True), default=None
+    )
+    weekly_schedule: Optional[Dict[str, Any]] = Field(
+        sa_column=Column(JSON, nullable=True), default=None
+    )
+    booking_buffer_hours: int = Field(default=24)
+    session_gap_minutes: int = Field(default=15)
+
+    max_mentees: Optional[int] = Field(default=5)
+
+    mentorship_philosophy: Optional[str] = Field(default=None, max_length=500)
+    ideal_mentee_description: Optional[str] = Field(default=None, max_length=300)
+    communication_style: Optional[List[str]] = Field(
+        sa_column=Column(ARRAY(String), nullable=True), default=None
+    )
+    response_time_hours: int = Field(default=48)
+
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    mentor: MentorProfile = Relationship(back_populates="settings")
+
+    def to_public(self) -> MentorSettingsPublic:
+        return MentorSettingsPublic(
+            id=self.id,
+            mentor_id=self.mentor_id,
+            currently_open_to_mentees=self.currently_open_to_mentees,
+            profile_visibility=self.profile_visibility,
+            auto_accept_bookings=self.auto_accept_bookings,
+            require_intro_message=self.require_intro_message,
+            allow_public_availability_view=self.allow_public_availability_view,
+            timezone=self.timezone,
+            available_times=self.available_times,
+            weekly_schedule=self.weekly_schedule,
+            booking_buffer_hours=self.booking_buffer_hours,
+            session_gap_minutes=self.session_gap_minutes,
+            max_mentees=self.max_mentees,
+            mentorship_philosophy=self.mentorship_philosophy,
+            ideal_mentee_description=self.ideal_mentee_description,
+            communication_style=self.communication_style,
+            response_time_hours=self.response_time_hours,
+            created_at=self.created_at,
+            updated_at=self.updated_at,
+        )
 
 
-class MentorProfileUpdate(SQLModel):
-    """All fields optional for updates"""
-
-    title: Optional[str] = None
-    industries: Optional[List[str]] = None
-    expertise: Optional[List[str]] = None
-    experience_level: Optional[ExperienceLevel] = None
-    mentor_type: Optional[List[MentorType]] = None
-    tags: Optional[List[str]] = None
-    badges: Optional[List[str]] = None
-
-
-class LocationType(str, Enum):
-    ONLINE = "online"
-    PHYSICAL = "physical"
-
-
-class MentorSessionBase(SQLModel):
+class MentorSession(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    uuid: UUID = Field(default_factory=uuid4, index=True, unique=True)
     mentor_id: int = Field(foreign_key="mentorprofile.user_id")
 
     # Session Details
     title: str
     description: Optional[str] = None
-    session_type: SessionType
+    cover_image: Optional[str] = None
+    session_type: SessionType = Field(sa_column=Column(String, nullable=False))
     duration_minutes: int = 60
     price_usd: Optional[float] = None
 
     tags: Optional[List[str]] = Field(
-        sa_column=Column(ARRAY(String), nullable=True),
-        default=None,
+        sa_column=Column(ARRAY(String), nullable=True), default=None
     )
 
-    start_time: datetime = Field(
-        sa_column=Column(DateTime(timezone=True), nullable=False)
-    )
-    end_time: datetime = Field(
-        sa_column=Column(DateTime(timezone=True), nullable=False)
-    )
+    start_time: datetime = Field(sa_column=Column(DateTime(timezone=True), nullable=False))
+    end_time: datetime = Field(sa_column=Column(DateTime(timezone=True), nullable=False))
     timezone: str = Field(default="UTC")
 
     # Availability & booking rules
+    is_public: bool = Field(default=True) # Controls visibility
     is_cancelled: bool = Field(default=False)
     is_active: bool = Field(default=True)
     max_bookings: Optional[int] = None
 
-    # Location
+    # Sensitive data only shown to authorized users
     location_type: LocationType = Field(
-        sa_column=Column(String, nullable=False),
-        default=LocationType.ONLINE
+        sa_column=Column(String, nullable=False), default=LocationType.ONLINE
     )
-
     meeting_link: Optional[str] = None
     physical_address: Optional[str] = None
-
-
-class MentorSession(MentorSessionBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    uuid: UUID = Field(default_factory=uuid4, index=True, unique=True)
+    preparation_materials: Optional[List[PreparationMaterial]] = Field(
+        sa_column=Column(JSON, nullable=True), default=None
+    )
 
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+    # Relationships
     mentor: MentorProfile = Relationship(back_populates="sessions")
     bookings: List["MentorSessionBooking"] = Relationship(back_populates="session")
-
 
     @property
     def total_bookings(self) -> int:
         """Total number of bookings for this session"""
         return len(self.bookings)
-    
+
     @property
     def confirmed_bookings(self) -> int:
         """Number of confirmed bookings"""
         return len([b for b in self.bookings if b.status == BookingStatus.CONFIRMED])
-    
+
     @property
     def pending_bookings(self) -> int:
         """Number of pending bookings"""
         return len([b for b in self.bookings if b.status == BookingStatus.PENDING])
-    
+
     @property
     def is_full(self) -> bool:
         """Check if session has reached max bookings"""
         if self.max_bookings is None:
             return False
         active_bookings = len([
-            b for b in self.bookings 
-            if b.status in [BookingStatus.PENDING, BookingStatus.CONFIRMED]
+            b for b in self.bookings
+            if b.status == BookingStatus.CONFIRMED
         ])
         return active_bookings >= self.max_bookings
-    
+
     @property
     def available_spots(self) -> Optional[int]:
         """Number of available booking spots"""
         if self.max_bookings is None:
             return None
         active_bookings = len([
-            b for b in self.bookings 
-            if b.status in [BookingStatus.PENDING, BookingStatus.CONFIRMED]
+            b for b in self.bookings
+            if b.status == BookingStatus.CONFIRMED
         ])
         return max(0, self.max_bookings - active_bookings)
     
-    
-    def to_public(self) -> "MentorSessionPublic":
-        return MentorSessionPublic.model_validate(self)
+    def user_has_booked(self, user_id: int) -> bool:
+        """ 
+        Check if user has an active booking (confirmed or pending)
+        This is computed per-request to avoid n+1 queries        
+        """
+        return any(
+            b.mentee_id == user_id and b.status in [
+                BookingStatus.CONFIRMED,
+                BookingStatus.PENDING
+            ]
+            for b in self.bookings
+        )
+        
+    def can_user_access(self, user_id: int) -> bool:
+        """
+        Determine if user can see sensitive session details
+        
+        Returns True if:
+        - User is mentor (owner)
+        - Session is public AND user has booked
+        - Session is private AND user has booked
+        """
+        is_owner = self.mentor_id == user_id
+        has_booking = self.user_has_booked(user_id)
+        
+        return is_owner or (has_booking and (self.is_public or not self.is_public))
+
+    def to_public(self, current_user_id: Optional[int] = None) -> MentorSessionPublic:
+        is_owner = current_user_id and self.mentor_id == current_user_id
+        user_has_booked = current_user_id and self.user_has_booked(current_user_id)
+        can_access = current_user_id and self.can_user_access(current_user_id)
+        
+        # Hide sensitive data if user doesn't have access
+        meeting_link = self.meeting_link if can_access else None
+        physical_address = self.physical_address if can_access else None
+        
+        return MentorSessionPublic(
+            id=self.id,
+            uuid=self.uuid,
+            mentor_id=self.mentor_id,
+            title=self.title,
+            description=self.description,
+            cover_image=self.cover_image,
+            session_type=self.session_type,
+            duration_minutes=self.duration_minutes,
+            price_usd=self.price_usd,
+            tags=self.tags,
+            start_time=self.start_time,
+            end_time=self.end_time,
+            timezone=self.timezone,
+            is_public=self.is_public,
+            is_cancelled=self.is_cancelled,
+            is_active=self.is_active,
+            max_bookings=self.max_bookings,
+            location_type=self.location_type,
+            meeting_link=meeting_link, # Hidden unless authorized
+            physical_address=physical_address, # Hidden unless authorized
+            preparation_materials=self.preparation_materials,
+            total_bookings=self.total_bookings,
+            confirmed_bookings=self.confirmed_bookings,
+            pending_bookings=self.pending_bookings,
+            is_full=self.is_full,
+            available_spots=self.available_spots,
+            user_has_booked=bool(user_has_booked), # Computed for current user
+            bookings=[b.to_public() for b in self.bookings] if is_owner else [],
+            created_at=self.created_at,
+            updated_at=self.updated_at,
+        )
 
 
-class MentorSessionCreate(MentorSessionBase):
-    pass
-
-
-class MentorSessionUpdate(SQLModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
-    session_type: Optional[SessionType] = None
-    duration_minutes: Optional[int] = None
-    price_usd: Optional[float] = None
-    is_active: Optional[bool] = None
-    max_bookings: Optional[int] = None
-    tags: Optional[List[str]] = None
-    location_type: Optional[LocationType] = None
-    meeting_link: Optional[str] = None
-    physical_address: Optional[str] = None
-    
-    start_time: Optional[datetime] = None
-    end_time: Optional[datetime] = None
-
-
-class BookingStatus(str, Enum):
-    PENDING = "pending"
-    CONFIRMED = "confirmed"
-    CANCELLED = "cancelled"
-    COMPLETED = "completed"
-    
-class BookingPublic(SQLModel):
-    id: int
-    uuid: UUID
-    session_id: int
-    mentee_id: int
-    status: BookingStatus
-    message: Optional[str]
-    created_at: datetime
-    updated_at: datetime
-
-    model_config = {
-        "from_attributes": True
-    }
-
-
-class MentorSessionPublic(MentorSessionBase):
-    id: int
-    uuid: UUID
-    
-    total_bookings: int
-    confirmed_bookings: int
-    pending_bookings: int
-    is_full: bool
-    available_spots: Optional[int]
-    
-    mentor: MentorProfilePublic
-    bookings: List[BookingPublic] = Field(default_factory=list)
-    
-    created_at: datetime
-    updated_at: datetime
-    
-    model_config = {
-        "from_attributes": True
-    }
-
-
-# BOOKINGS
 class MentorSessionBooking(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     uuid: UUID = Field(default_factory=uuid4, index=True, unique=True)
 
-    session_id: int = Field(
-        foreign_key="mentorsession.id", index=True, ondelete="CASCADE"
-    )
+    session_id: int = Field(foreign_key="mentorsession.id", index=True, ondelete="CASCADE")
     mentee_id: int = Field(foreign_key="users.id", index=True, ondelete="CASCADE")
 
-    status: BookingStatus = Field(
-        default=BookingStatus.PENDING, sa_column=Column(String)
-    )
-    message: Optional[str] = Field(default=None, max_length=1000)  # Message to mentor
+    status: BookingStatus = Field(default=BookingStatus.PENDING, sa_column=Column(String))
+    message: Optional[str] = Field(default=None, max_length=1000)
 
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     # Relationships
     session: MentorSession = Relationship(back_populates="bookings")
-    mentee: "User" = Relationship()
+    mentee: User = Relationship()
 
-    def to_public(self) -> "BookingPublic":
-        return BookingPublic.model_validate(self)
-
-
-
-
-# class BookingWithDetails(BookingPublic):
-#     """Extended booking with session and mentee details"""
-#     session: Optional[MentorSessionPublic] = None
-#     mentee: Optional[UserPublic] = None
-
-
-class BookingCreateRequest(BaseModel):
-    message: Optional[str] = Field(None, max_length=1000)
+    def to_public(self) -> BookingPublic:
+        return BookingPublic(
+            id=self.id,
+            uuid=self.uuid,
+            session_id=self.session_id,
+            # mentee_id=self.mentee_id,
+            mentee=self.mentee.to_minimal(),
+            status=self.status,
+            message=self.message,
+            created_at=self.created_at,
+            updated_at=self.updated_at,
+        )
 
 
-class BookingStatusUpdate(BaseModel):
-    status: BookingStatus
-
-
-# Mentor Service
-class MentorServiceBase(SQLModel):
+class MentorService(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    uuid: UUID = Field(default_factory=uuid4, index=True, unique=True)
     mentor_id: int = Field(foreign_key="mentorprofile.user_id")
 
     # Display info
-    title: str  # "Portfolio FeedBack"
+    title: str
     description: Optional[str] = Field(default=None, max_length=500)
     banner_url: Optional[str] = Field(default=None, max_length=500)
     price_usd: Optional[float] = None
     estimated_duration_minutes: Optional[int] = None
 
     # Categorization
-    category: Optional[str] = None  # "Career", "Tech Review"
+    category: Optional[str] = None
     highlights: Optional[List[str]] = Field(
         sa_column=Column(ARRAY(String), nullable=True), default=None
-    )  # e.g., ["@4hr turnaround", "Detailed Feedback"]
+    )
 
-    def to_public(self) -> "MentorServicePublic":
+    is_active: bool = Field(default=True)
+
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    # Relationships
+    mentor: MentorProfile = Relationship(back_populates="services")
+
+    def to_public(self) -> MentorServicePublic:
         return MentorServicePublic(
-            id=getattr(self, "id", None),
-            uuid=getattr(self, "uuid", None),
+            id=self.id,
+            uuid=self.uuid,
             mentor_id=self.mentor_id,
             title=self.title,
             description=self.description,
@@ -901,113 +1164,10 @@ class MentorServiceBase(SQLModel):
             estimated_duration_minutes=self.estimated_duration_minutes,
             category=self.category,
             highlights=self.highlights,
-            is_active=getattr(self, "is_active", True),
-            created_at=getattr(self, "created_at", None),
-            updated_at=getattr(self, "updated_at", None),
+            is_active=self.is_active,
+            created_at=self.created_at,
+            updated_at=self.updated_at,
         )
-
-
-class MentorService(MentorServiceBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    uuid: UUID = Field(default_factory=uuid4, index=True, unique=True)
-
-    is_active: bool = Field(default=True)
-
-    # Timestamps
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
-
-    # Relationships
-    mentor: MentorProfile = Relationship(back_populates="services")
-
-
-class MentorServiceCreate(MentorServiceBase):
-    pass
-
-
-class MentorServiceUpdate(SQLModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
-    banner_url: Optional[str] = None
-    price_usd: Optional[float] = None
-    estimated_duration_minutes: Optional[int] = None
-    category: Optional[str] = None
-    highlights: Optional[List[str]] = None
-    is_active: Optional[bool] = None
-
-
-class MentorServicePublic(MentorServiceBase):
-    id: int
-    uuid: UUID
-    is_active: bool
-    created_at: datetime
-    updated_at: datetime
-
-
-# MENTOR SETTINGS
-class MentorSettingsCreate(MentorSettingsBase):
-    """Create with defaults"""
-    pass
-
-
-class MentorSettingsUpdate(SQLModel):
-    """All fields optional for updates"""
-    currently_open_to_mentees: Optional[bool] = None
-    profile_visibility: Optional[bool] = None
-    auto_accept_bookings: Optional[bool] = None
-    require_intro_message: Optional[bool] = None
-    timezone: Optional[str] = None
-    available_times: Optional[List[str]] = None
-    weekly_schedule: Optional[Dict[str, Any]] = None
-    booking_buffer_hours: Optional[int] = None
-    session_gap_minutes: Optional[int] = None
-    max_mentees: Optional[int] = None
-    mentorship_philosophy: Optional[str] = None
-    ideal_mentee_description: Optional[str] = None
-    communication_style: Optional[List[str]] = None
-    response_time_hours: Optional[int] = None
-
-
-class MentorSettingsPublic(MentorSettingsBase):
-    created_at: datetime
-    updated_at: datetime
-
-
-
-
-
-# MENTOR STATS
-class MentorStatsPublic(BaseModel):
-    """
-    Comprehensive mentor statistics for dashboard
-    All counts are computed via SQL queries for performance
-    """
-    # Profile completion
-    completion_percentage: int
-    is_complete: bool
-    
-    # Session stats
-    total_sessions: int  # Total sessions ever created (cached in DB)
-    active_sessions: int  # Currently active sessions
-    upcoming_sessions: int  # Future sessions
-    
-    # Booking stats (all computed via SQL)
-    total_bookings: int  # All bookings
-    confirmed_bookings: int
-    pending_bookings: int
-    completed_bookings: int
-    cancelled_bookings: int
-    
-    # Mentee stats
-    total_mentees: int  # Unique mentees who booked (cached in DB)
-    
-    # Rating
-    average_rating: Optional[float]
-    
-    model_config = ConfigDict(from_attributes=True)
-
-
-
 
 
 # ====================== ROADMAP SCHEMA =======================
