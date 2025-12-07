@@ -5,7 +5,7 @@ from typing import Annotated
 from app.core.db import get_session
 from app.core import security
 from app.core.config import settings
-from app.models.users import User, RoleName
+from app.models import User, RoleName
 from app import crud
 from datetime import datetime
 

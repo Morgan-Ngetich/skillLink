@@ -1,6 +1,6 @@
 import pytest
 from uuid import UUID
-from app.models.users import (
+from app.models import (
     User,
     UserPublic,
     UserProfile,

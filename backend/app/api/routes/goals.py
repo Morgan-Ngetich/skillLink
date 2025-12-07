@@ -6,10 +6,9 @@ from sqlalchemy.orm import selectinload
 from typing import List, Optional
 from app.api.deps import CurrentUser, SessionDep
 from app.core.celery import celery_app
-from app.models.users import (
+from app.models import (
     Card,
     Goal,
-    GoalCreate,
     GoalUpdate,
     LLMGenerationRequest,
     LLMGenerationResponse,
@@ -29,7 +28,6 @@ from app.models.users import (
 from app.tasks.llm_tasks import (
     process_llm_generation,
     process_progressive_update,
-    process_goal_completion,
 )
 from app.utils.llm_service import build_goal_context
 

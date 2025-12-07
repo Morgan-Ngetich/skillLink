@@ -111,7 +111,7 @@ def validate_enum(value, enum_class, default=None):
         return default.value if default else value
     
 def validate_goal(goal_data: Union[dict, BaseModel]) -> dict:
-    from app.models.users import GoalDifficulty, GoalType
+    from app.models import GoalDifficulty, GoalType
     """Validate goal data, handling both dicts and Pydantic models"""
     # Convert to dict if it's a model
     if hasattr(goal_data, 'model_dump'):
@@ -154,7 +154,7 @@ def validate_goal(goal_data: Union[dict, BaseModel]) -> dict:
 
 def validate_roadmap(roadmap_data: Union[dict, BaseModel]) -> dict:
     """Validate roadmap data, handling both dicts and Pydantic models"""
-    from app.models.users import RoadmapVisibility, RoadmapStatus
+    from app.models import RoadmapVisibility, RoadmapStatus
     # Convert to dict if it's a model
     if hasattr(roadmap_data, 'model_dump'):
         roadmap_data = roadmap_data.model_dump()
@@ -195,7 +195,7 @@ def validate_roadmap(roadmap_data: Union[dict, BaseModel]) -> dict:
 
 def validate_card(card_data: Union[dict, BaseModel]) -> dict:
     """Validate card data, handling both dicts and Pydantic models"""
-    from app.models.users import CardStatus, CardPriority
+    from app.models import CardStatus, CardPriority
     # Convert to dict if it's a model
     if hasattr(card_data, 'model_dump'):
         card_data = card_data.model_dump()

@@ -25,7 +25,7 @@ def process_goal_completion(
     """Automatically generate roadmap and tasks for a new goal"""
     from app.utils.llm_service import call_llm_service, build_goal_context
     from app.utils.logger_config import llm_logger
-    from app.models.users import (
+    from app.models import (
         LLMGenerationRequest,
         LLMTargetEntity,
         LLMStructuredOutput,
@@ -180,7 +180,7 @@ def process_llm_generation(
         check_goal_update_safety,
         suggest_progressive_steps,
     )
-    from app.models.users import (
+    from app.models import (
         User,
         LLMGenerationRequest,
         LLMActionType,
@@ -265,7 +265,7 @@ def process_progressive_update(
     session: Session,
 ) -> Dict[str, Any]:
     """Celery task for processing progressive goal updates"""
-    from app.models.users import User, ProgressiveUpdateProposal, Goal
+    from app.models import User, ProgressiveUpdateProposal, Goal
     from app.utils.logger_config import llm_logger
 
     try:

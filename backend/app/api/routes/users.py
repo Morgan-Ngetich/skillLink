@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from typing import Any
 from sqlmodel import select
 from sqlalchemy import func
-from app.models.users import (
+from app.models import (
     User, 
     UserPublic, 
     UsersPublic,
@@ -92,7 +92,7 @@ async def sync_user_from_supabase_to_db(
     # Pass UUID as str for Celery serialization
     # TODO add the `delay` once celery(railway) is up.
     sync_user_from_supabase_task(
-        # user_id is uuid from supabase
+        #NOTE user_id is uuid from supabase
         user_id=str(user_sync_in.user_id),
         email=user_sync_in.email,
         full_name=user_sync_in.full_name,
@@ -190,9 +190,3 @@ def delete_user(session: SessionDep, user_id: int) -> Any:
     session.delete(user)
     session.commit()
     return {"status": "success", "detail": "User deleted successfully"}
-
-
-# ================ PROFILES ================
-
-
-

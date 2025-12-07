@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, Query
 from typing import Optional, List
 from app.api.deps import SessionDep, CurrentUser
-from sqlmodel import select, col
-from app.models.users import (
+from sqlmodel import select
+from app.models import (
     Role,
     UserRole,
     RoleName,
@@ -530,8 +530,6 @@ def delete_booking(booking_id: int, session: SessionDep, current_user: CurrentUs
     """
     crud.delete_booking(session=session, booking_id=booking_id, user_id=current_user.id)
     return None
-
-
 
 
 # ================= PUBLIC MENTOR LISTING ==================

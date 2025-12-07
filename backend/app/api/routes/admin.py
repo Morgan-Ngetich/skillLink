@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Body
+from fastapi import APIRouter, HTTPException, Body
 from sqlmodel import select
 from sqlalchemy.orm import selectinload
 from app.api.deps import SessionDep
-from app.models.users import User, RoleAssignRequest,  UserPublic, UserRole
+from app.models import User, RoleAssignRequest, UserRole
 from app import crud
 
 router = APIRouter()

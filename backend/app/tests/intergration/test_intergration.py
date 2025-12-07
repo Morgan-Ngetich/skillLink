@@ -1,4 +1,4 @@
-from app.models.users import User, Role, RoleName, UserRole, UserProfile, MentorProfile
+from app.models import User, Role, RoleName, UserRole, UserProfile, MentorProfile
 
 # Intergration tests.
 class TestModelRelationships:

@@ -3,7 +3,6 @@ from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 from app.core import security
 from app.core.config import settings
-from app.models.users import User
 from app import crud
 from app.api.deps import SessionDep
 from app.models.auth import Token

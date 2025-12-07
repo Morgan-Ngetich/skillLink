@@ -13,7 +13,7 @@ class ProgressService:
     
     def for_roadmap(self, roadmap_id: int) -> Dict[str, object]:
         """Enhanced roadmap progress with multiple metrics"""
-        from app.models.users import Roadmap
+        from app.models import Roadmap
         roadmap = self.session.get(Roadmap, roadmap_id)
         if not roadmap:
             raise ValueError("Roadmap not found")
@@ -40,7 +40,7 @@ class ProgressService:
     
     def for_goal(self, goal_id: int) -> Dict[str, object]:
         """Detailed goal progress"""
-        from app.models.users import Roadmap, Goal, GoalStatus, CardStatus
+        from app.models import Roadmap, Goal, GoalStatus, CardStatus
         goal = self.session.get(Goal, goal_id, options=[
             selectinload(Goal.sub_goals),
             selectinload(Goal.cards)
@@ -61,7 +61,7 @@ class ProgressService:
     @staticmethod
     def calculate_goal_progress(goal) -> float:
         """Weighted progress calculation"""
-        from app.models.users import Roadmap, Goal, GoalStatus, CardStatus
+        from app.models import Roadmap, Goal, GoalStatus, CardStatus
         # Subgoals contribute 40%
         subgoal_progress = (
             sum(1 for sg in goal.sub_goals if sg.status == GoalStatus.COMPLETED) / 
@@ -102,7 +102,7 @@ class ProgressService:
     
     def _calculate_roadmap_goal_stats(self, roadmap_id: int) -> Dict[str, object]:
         """Optimized goal statistics for roadmap"""
-        from app.models.users import Goal, GoalStatus
+        from app.models import Goal, GoalStatus
         # Batch load all goals with their subgoals
         goals = self.session.exec(
             select(Goal)

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.api.deps import SessionDep, CurrentUser
-from app.models.users import (
+from app.models import (
     UserProfilePublic,
     UserProfileCreate,
     UserProfileUpdate,

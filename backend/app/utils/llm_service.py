@@ -2,10 +2,9 @@ import httpx
 import threading
 from sqlmodel import Session
 from typing import List, Dict, Any, Union, Optional, Literal
-from app.models.users import (
+from app.models import (
     BoardCreate,
     RoadCreate,
-    BoardCreate,
     RoadmapVisibility,
     RoadmapStatus,
     CardCreate,
@@ -31,7 +30,7 @@ from app.utils.validation import (
     validate_goal,
     validate_roadmap,
     extract_json_from_markdown,
-    clean_malformed_json,
+    # clean_malformed_json,
 )
 from app.utils.helper import ProgressService
 from app.crud import get_user_skills
@@ -43,7 +42,7 @@ from app.utils.logger_config import llm_logger, app_logger
 from fastapi import status, HTTPException
 from datetime import datetime, timezone
 from tenacity import retry, stop_after_attempt, wait_exponential
-from functools import lru_cache
+# from functools import lru_cache
 from app.core.llm.llm_executor import get_llm_executor
 # from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM, BitsAndBytesConfig
 from groq import Groq

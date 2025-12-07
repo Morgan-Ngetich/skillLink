@@ -1,10 +1,10 @@
 import sqlalchemy as sa
 from fastapi import HTTPException
 from typing import List, Dict, Optional, Union, Tuple, Any
-from sqlmodel import Session, select, col
+from sqlmodel import Session, select
 from datetime import datetime, timezone
 from sqlalchemy.orm import selectinload
-from app.models.users import (
+from app.models import (
     User,
     UserCreate,
     UserUpdate,
@@ -33,7 +33,6 @@ from app.models.users import (
     BoardCreate,
     Goal,
     GoalCreate,
-    GoalStatus,
     GoalType,
     GoalDifficulty,
     CardCreate,
@@ -41,7 +40,6 @@ from app.models.users import (
     CardStatus,
     CardPriority,
     Roadmap,
-    RoadmapStatus,
     RoadCreate,
 )
 from app.core.security import get_password_hash, verify_password
