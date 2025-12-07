@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabase/supabaseClient';
 import { type Session } from '@supabase/supabase-js';
-import { storage } from '@/utils/localstorage';
-import { getCookie, deleteCookie } from '@/utils/cookies/cookies';
-import { setAuthSession, clearAuthSession, getCachedSession } from '@/utils/cookies/sessionCookies';
+import { getCookie, deleteCookie } from '@/hooks/auth/cookies/cookies';
+import { setAuthSession, clearAuthSession, getCachedSession, getCachedUserMetadata } from '@/hooks/auth/cookies/sessionCookies';
 
 const SESSION_COOKIE_KEY = 'sb_session';
 const GOOGLE_USER_KEY = 'googleUser';
 
 // Global cache to share across hook instances
 let globalSessionCache: Session | null | undefined = undefined;
+let globalUserMetadataCache: { is_mentor?: boolean; uuid?: string } | null = null;
 let initPromise: Promise<Session | null> | null = null;
 
 // Validate the session structure
@@ -36,6 +36,13 @@ export function useSessionState() {
         const parsedSession = JSON.parse(decodeURIComponent(sessionCookie));
         if (isValidSession(parsedSession)) {
           globalSessionCache = parsedSession;
+          // Also cache user metadata from cookie
+          if (parsedSession.user?.user_metadata) {
+            globalUserMetadataCache = {
+              is_mentor: parsedSession.user.user_metadata.is_mentor,
+              uuid: parsedSession.user.user_metadata.uuid
+            };
+          }
           return parsedSession;
         } else {
           // Invalid session in cookie, clear it
@@ -51,14 +58,20 @@ export function useSessionState() {
     const cachedSession = getCachedSession();
     if (cachedSession) {
       globalSessionCache = cachedSession;
+      // Try to get cached user metadata
+      const cachedMetadata = getCachedUserMetadata();
+      if (cachedMetadata) {
+        globalUserMetadataCache = cachedMetadata;
+      }
       return cachedSession;
     }
 
     // 4. Quick check: if no Google user, likely not authenticated
     if (typeof window !== "undefined") {
-      const googleUser = storage.get(GOOGLE_USER_KEY);
+      const googleUser = sessionStorage.getItem(GOOGLE_USER_KEY);
       if (!googleUser) {
         globalSessionCache = null;
+        globalUserMetadataCache = null;
         return null;
       }
     }
@@ -86,11 +99,11 @@ export function useSessionState() {
         // Update global cache
         globalSessionCache = sessionData;
 
-        // ✅ USE SHARED UTILITY INSTEAD OF MANUAL COOKIE HANDLING
         if (sessionData && isValidSession(sessionData)) {
-          setAuthSession(sessionData); // ← This handles both cookie and localStorage
+          // Cache with existing metadata if available
+          setAuthSession(sessionData, globalUserMetadataCache || undefined);
         } else {
-          clearAuthSession(); // ← This clears both cookie and localStorage
+          clearAuthSession();
         }
 
         initPromise = null;
@@ -119,9 +132,10 @@ export function useSessionState() {
       setSession(newSession);
 
       if (newSession && isValidSession(newSession)) {
-        setAuthSession(newSession);
+        setAuthSession(newSession, globalUserMetadataCache || undefined);
       } else {
         clearAuthSession();
+        globalUserMetadataCache = null;
       }
     });
     
@@ -137,10 +151,25 @@ export function useSession() {
   const isLoading = session === undefined && typeof window !== 'undefined';
   const user = session?.user ?? null;
 
+  // Return cached metadata for instant UI decisions
+  const cachedMetadata = globalUserMetadataCache || getCachedUserMetadata();
+
   return {
     session,
     user,
     isLoading,
     isAuthenticated: Boolean(user),
+    // Expose cached user metadata
+    cachedUserMetadata: cachedMetadata,
   };
+}
+
+// Function to update user metadata cache (call this when you fetch user data)
+export function updateUserMetadataCache(metadata: { is_mentor?: boolean; uuid?: string }) {
+  globalUserMetadataCache = metadata;
+  
+  // Update the session cache with new metadata
+  if (globalSessionCache) {
+    setAuthSession(globalSessionCache, metadata);
+  }
 }

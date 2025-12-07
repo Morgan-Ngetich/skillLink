@@ -10,7 +10,6 @@ import {
   Spinner,
   IconButton,
 } from '@chakra-ui/react';
-import Search from './Search';
 import { Avatar } from '@/components/ui/avatar';
 import { FaChevronDown } from 'react-icons/fa6';
 import { useAuth } from '@/hooks/auth/useAuth';
@@ -19,18 +18,34 @@ import { ColorModeButton } from '@/components/ui/color-mode';
 import { useNavigateWithRedirect } from '@/hooks/auth/authState';
 import { useSession } from '@/hooks/auth/useSession';
 import { HiMenuAlt3 } from 'react-icons/hi';
+import Search from './search/IndexSearch';
 
 const Header = () => {
   const { user: authUser, isLoggingOut, signOut } = useAuth();
-  const { user, isLoading } = useSession();
+  const { user, isLoading, cachedUserMetadata } = useSession();
   const navigate = useNavigate();
   const navigateWithRedirect = useNavigateWithRedirect();
 
+  // Gate UI decisions until we know auth state
+  const showUserUI = !isLoading && user;
+  const showSignInButton = !isLoading && !user;
+
+  // Use cached metadata for instant mentor status check
+  // Priority: authUser (live data) > cachedUserMetadata (cached) > hide during loading
+  const isMentor = authUser?.is_mentor ?? cachedUserMetadata?.is_mentor;
+  const showBecomeMentorButton = !isLoading && !isMentor;
+
   const handleBecomeMentorClick = () => {
-    if (authUser) {
-      navigateWithRedirect(`/profile/${authUser.uuid}?drawer=mentor-setup&step=expertise`, `/profile/${authUser?.uuid}`);
+    // Use cached or live UUID
+    const userUuid = authUser?.uuid ?? cachedUserMetadata?.uuid;
+    
+    if (userUuid) {
+      navigateWithRedirect(
+        `/profile/${userUuid}?drawer=mentor-setup&step=expertise`,
+        `/profile/${userUuid}`
+      );
     } else {
-      navigateWithRedirect('/login', "/");
+      navigateWithRedirect('/login', '/');
     }
   };
 
@@ -48,7 +63,7 @@ const Header = () => {
     >
       <Flex align="center" gap={{ base: 2, md: 4 }} justify="space-between">
         {/* Left Section - Logo + Menu (Mobile) */}
-        <HStack gap={{ base: 2, md: 3 }} flex={{ base: "0 0 auto", md: "0 0 200px" }}>
+        <HStack gap={{ base: 2, md: 3 }} flex={{ base: '0 0 auto', md: '0 0 200px' }}>
           <IconButton
             display={{ base: 'flex', md: 'none' }}
             aria-label="Menu"
@@ -62,7 +77,6 @@ const Header = () => {
           <Text
             fontSize={{ base: 'xl', md: '2xl' }}
             fontWeight="bold"
-            // color="teal.500"
             letterSpacing="-0.5px"
             cursor="pointer"
             onClick={() => navigate({ to: '/' })}
@@ -75,7 +89,7 @@ const Header = () => {
         {/* Center Section - Search */}
         <Box
           flex="1"
-          maxW={{ base: "100%", md: "650px" }}
+          maxW={{ base: '100%', md: '650px' }}
           display={{ base: 'none', md: 'block' }}
           mx={4}
         >
@@ -83,7 +97,11 @@ const Header = () => {
         </Box>
 
         {/* Right Section - User Actions */}
-        <HStack gap={{ base: 1, md: 2 }} flex={{ base: "0 0 auto", md: "0 0 auto" }} justify="flex-end">
+        <HStack
+          gap={{ base: 1, md: 2 }}
+          flex={{ base: '0 0 auto', md: '0 0 auto' }}
+          justify="flex-end"
+        >
           {/* Mobile Search Icon */}
           <Box display={{ base: 'block', md: 'none' }}>
             <Search />
@@ -92,19 +110,29 @@ const Header = () => {
           {/* Color Mode Toggle */}
           <ColorModeButton variant="ghost" size="sm" />
 
-          {!authUser?.is_mentor && (
-            <Button onClick={handleBecomeMentorClick}>
+          {/* Become a Mentor Button - Shows only when NOT mentor and NOT loading */}
+          {showBecomeMentorButton && (
+            <Button 
+              onClick={handleBecomeMentorClick}
+              display={{ base: 'none', md: 'inline-flex' }}
+            >
               Become a Mentor
             </Button>
           )}
 
-          {/* User Menu / Auth Buttons */}
+          {/* Auth UI - Three states: Loading, Authenticated, Unauthenticated */}
           {isLoading ? (
-            <HStack gap={2} display={{ base: 'none', md: 'flex' }}>
+            // LOADING STATE: Show skeleton until session is confirmed
+            <HStack gap={2}>
               <SkeletonCircle size="8" />
-              <SkeletonText noOfLines={1} width="80px" display={{ base: 'none', lg: 'block' }} />
+              <SkeletonText
+                noOfLines={1}
+                width="80px"
+                display={{ base: 'none', lg: 'block' }}
+              />
             </HStack>
-          ) : user ? (
+          ) : showUserUI ? (
+            // AUTHENTICATED STATE: User menu
             <Menu.Root>
               <Menu.Trigger asChild>
                 <Button
@@ -112,7 +140,7 @@ const Header = () => {
                   size="sm"
                   disabled={isLoggingOut}
                   px={{ base: 1, md: 2 }}
-                  h={{ base: "36px", md: "40px" }}
+                  h={{ base: '36px', md: '40px' }}
                 >
                   {isLoggingOut ? (
                     <HStack gap={2}>
@@ -126,7 +154,7 @@ const Header = () => {
                         name={user.user_metadata?.full_name}
                         src={user.user_metadata?.avatar_url}
                       />
-                      {authUser?.is_mentor && (
+                      {isMentor && (
                         <Text
                           display={{ base: 'none', lg: 'inline' }}
                           fontWeight="medium"
@@ -172,8 +200,13 @@ const Header = () => {
                   <Box py={1}>
                     <Menu.Item
                       value="profile"
-                      onSelect={() => navigate({ to: `/profile/${authUser?.uuid}` })}
-                      _hover={{ bg: "bg.muted" }}
+                      onSelect={() => {
+                        const userUuid = authUser?.uuid ?? cachedUserMetadata?.uuid;
+                        if (userUuid) {
+                          navigate({ to: `/profile/${userUuid}` });
+                        }
+                      }}
+                      _hover={{ bg: 'bg.muted' }}
                       disabled={isLoggingOut}
                       cursor="pointer"
                       px={4}
@@ -181,20 +214,6 @@ const Header = () => {
                     >
                       <Text fontSize="sm">Profile</Text>
                     </Menu.Item>
-
-                    {/* 
-                    <Menu.Item
-                      value="dashboard"
-                      onSelect={() => navigate({ to: '/dashboard' })}
-                      _hover={{ bg: "bg.muted" }}
-                      disabled={isLoggingOut}
-                      cursor="pointer"
-                      px={4}
-                      py={2}
-                    >
-                      <Text fontSize="sm">Dashboard</Text>
-                    </Menu.Item> */}
-
                   </Box>
 
                   <Box borderTop="1px solid" borderColor="border.subtle" pt={1}>
@@ -203,7 +222,7 @@ const Header = () => {
                       onSelect={() => {
                         if (!isLoggingOut) signOut();
                       }}
-                      _hover={{ bg: "bg.muted" }}
+                      _hover={{ bg: 'bg.muted' }}
                       disabled={isLoggingOut}
                       cursor="pointer"
                       px={4}
@@ -224,20 +243,18 @@ const Header = () => {
                 </Menu.Content>
               </Menu.Positioner>
             </Menu.Root>
-          ) : (
+          ) : showSignInButton ? (
+            // UNAUTHENTICATED STATE: Sign In button
             <Button
               size={{ base: 'xs', md: 'sm' }}
               onClick={() => navigateWithRedirect('/login')}
-              // bg="teal.500"
-              // color="white"
-              // _hover={{ bg: 'teal.600' }}
               fontWeight="semibold"
               px={{ base: 3, md: 4 }}
               fontSize={{ base: 'xs', md: 'sm' }}
             >
               Sign In
             </Button>
-          )}
+          ) : null}
         </HStack>
       </Flex>
     </Box>

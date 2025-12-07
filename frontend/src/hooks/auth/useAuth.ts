@@ -3,14 +3,13 @@ import { useAuthQuery } from './useAuthQuery';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../supabase/supabaseClient';
 import { useNavigate } from '@tanstack/react-router';
-import { storage } from "@/utils/localstorage";
 import { invalidateTokenCache } from "@/client/core/OpenAPI";
-import { clearAuthSession, setAuthSession } from "@/utils/cookies/sessionCookies";
+import { clearAuthSession, setAuthSession } from "@/hooks/auth/cookies/sessionCookies";
+import { updateUserMetadataCache } from "@/hooks/auth/useSession"; // ← ADD THIS
 import { UserService, type UserPublic, type UserUpdate } from "@/client";
 import { toNativePromise } from "@/utils/toNativePromisse";
 import { getApiErrorMessage } from "@/utils/errorUtils";
 import useToaster from '../public/useToaster';
-// import { setApiToken } from './authState';
 
 export function useAuth() {
   const navigate = useNavigate();
@@ -18,6 +17,7 @@ export function useAuth() {
   const { data: user, isLoading } = useAuthQuery();
   const toast = useToaster()
 
+  // Cache is updated automatically in useAuthQuery
 
   // Update the current authenticated user
   /**
@@ -26,12 +26,21 @@ export function useAuth() {
    */
   const updateCurrentAuthUser = useMutation<UserPublic, Error, UserUpdate>({
     mutationFn: (data) => toNativePromise(UserService.updateMe(data)),
-    onSuccess: () => {
+    onSuccess: (updatedUser) => {
       toast({
         id: 'update-user-success',
         title: 'User updated',
         status: 'success',
       });
+      
+      // UPDATE CACHE WITH NEW USER DATA
+      if (updatedUser?.uuid && updatedUser?.is_mentor !== undefined) {
+        updateUserMetadataCache({
+          is_mentor: updatedUser.is_mentor,
+          uuid: updatedUser.uuid
+        });
+      }
+      
       queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
     },
     onError: (error: unknown) => {
@@ -44,13 +53,8 @@ export function useAuth() {
     },
   });
 
-
   // When a user signs up, i need to sync them with the database.
   const signUp = async (email: string, password: string, fullName: string) => {
-    // TODO : Enable email redirect after signup
-    // const redirectUrl = `${window.location.origin}/auth/callback?email=${encodeURIComponent(email)}`;
-    // console.log('Redirect URL:', redirectUrl);
-
     const urlParams = new URLSearchParams(window.location.search);
     const redirectToParam = urlParams.get("redirectTo") || `/profile/${user?.uuid}`;
 
@@ -72,14 +76,15 @@ export function useAuth() {
 
     // SET COOKIE FOR SSR
     if (data?.session) {
-      setAuthSession(data.session);
+      // PASS INITIAL METADATA (is_mentor defaults to false for new users)
+      setAuthSession(data.session, { is_mentor: false, uuid: data.user.id });
 
       // Also cache in localStorage for client-side
       const cacheData = {
         session: data.session,
         timestamp: Date.now()
       };
-      storage.set("supabase_session_cache", JSON.stringify(cacheData));
+      sessionStorage.setItem("supabase_session_cache", JSON.stringify(cacheData));
     }
 
     // Fetch backend user again
@@ -112,6 +117,7 @@ export function useAuth() {
     }
 
     if (data.session) {
+      // SET SESSION (metadata will be fetched and cached by useAuthQuery)
       setAuthSession(data.session);
 
       // Also cache in localStorage for client-side
@@ -119,14 +125,13 @@ export function useAuth() {
         session: data.session,
         timestamp: Date.now()
       };
-      storage.set("supabase_session_cache", JSON.stringify(cacheData));
+      sessionStorage.setItem("supabase_session_cache", JSON.stringify(cacheData));
     }
 
     await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
 
     return { data };
   };
-
 
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const signOut = async () => {
@@ -135,7 +140,7 @@ export function useAuth() {
       const { error } = await supabase.auth.signOut();
       if (error) return { error };
 
-      // Clear Cookies
+      // CLEAR BOTH SESSION AND METADATA CACHE
       clearAuthSession()
 
       await queryClient.removeQueries({ queryKey: ['auth', 'user'] });
@@ -144,7 +149,6 @@ export function useAuth() {
       // Redirect to home page after sign out
       navigate({ to: '/login' });
     } catch (error) {
-      // TODO { toast }
       console.error(error);
     } finally {
       setIsLoggingOut(false)
@@ -160,7 +164,6 @@ export function useAuth() {
     return { error };
   };
 
-
   const signInWithGoogle = async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const redirectToParam = urlParams.get("redirectTo") || `/profile/${user?.uuid}`;
@@ -174,7 +177,6 @@ export function useAuth() {
 
     return { error };
   };
-
 
   return {
     user,

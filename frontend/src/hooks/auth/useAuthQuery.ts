@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../supabase/supabaseClient';
 import { UserService } from '../../client';
 import { useSupabaseSessionReady } from '../supabase/useSupabaseSession';
+import { updateUserMetadataCache } from './useSession';
 
 export const fetchCurrentUser = async () => {
   const {
@@ -11,35 +12,42 @@ export const fetchCurrentUser = async () => {
   const token = session?.access_token;
 
   if (!token) {
-    // TODO throw new error. Efficiently handle session resadiness.
-    // throw new Error('No session token');
-    return null // gracefully handle unauthenticated state
+    return null; // gracefully handle unauthenticated state
   }
+  
   try {
     const user = await UserService.getCurrentUser();
+    
+    // UPDATE CACHE IMMEDIATELY AFTER SUCCESSFUL FETCH
+    if (user?.uuid && user?.is_mentor !== undefined) {
+      updateUserMetadataCache({
+        is_mentor: user.is_mentor,
+        uuid: user.uuid
+      });
+    }
+    
     return user;
   } catch (err: unknown) {    
     console.error('Failed to fetch user:', err);
-    return null // as a fallbase
+    return null; // as a fallback
   }
 }
 
+// Use Auth query for hardCore, e.g setting/profiles
+export const useAuthQuery = () => {
+  const ready = useSupabaseSessionReady();
 
-  // Use Auth query for hardCore, e.g setting/profiles
-  export const useAuthQuery = () => {
-    const ready = useSupabaseSessionReady();
+  const query = useQuery({
+    queryKey: ['auth', 'user'],
+    queryFn: fetchCurrentUser,
+    enabled: ready, // Don't run until Supabase session is ready
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: false,
+  });
 
-    const query = useQuery({
-      queryKey: ['auth', 'user'],
-      queryFn: fetchCurrentUser,
-      enabled: ready, // Don't run until Supabase session is ready
-      staleTime: 1000 * 60 * 5,
-      retry: false,
-    });
-
-    return {
-      ...query,
-      isLoading: !ready || query.isLoading,
-      data: query.data || null,
-    };
+  return {
+    ...query,
+    isLoading: !ready || query.isLoading,
+    data: query.data || null,
   };
+};
