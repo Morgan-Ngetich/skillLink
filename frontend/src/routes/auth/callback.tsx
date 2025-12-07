@@ -7,10 +7,9 @@ import { useNavigate } from '@tanstack/react-router';
 import { queryClient } from '@/hooks/lib/queryClient';
 import { syncUserToBackend, useCleanRedirect } from '@/hooks/auth/authState';
 import { AuthCallbackLoader } from '@/components/common/AuthCallBackLoader';
-import { storage } from '@/utils/localstorage';
 import { type GoogleUserInfo, type Identity, type SupabaseUser } from '@/client';
 import { getApiErrorMessage } from '@/utils/errorUtils';
-import { setAuthSession, clearAuthSession } from "@/utils/cookies/sessionCookies"
+import { setAuthSession, clearAuthSession } from "@/hooks/auth/cookies/sessionCookies"
 
 const LOCAL_STORAGE_KEY = 'googleUser';
 
@@ -59,10 +58,10 @@ function AuthCallbackPage() {
 
           const googleUser: GoogleUserInfo = { name, email, avatar_url };
           console.log(' Saving Google user to localStorage:', googleUser);
-          storage.set(LOCAL_STORAGE_KEY, JSON.stringify(googleUser));
+          sessionStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(googleUser));
         } else {
           // Clear if not a Google user
-          storage.remove(LOCAL_STORAGE_KEY);
+          sessionStorage.removeItem(LOCAL_STORAGE_KEY);
         }
 
         redirect()

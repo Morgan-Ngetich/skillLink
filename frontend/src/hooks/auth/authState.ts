@@ -3,7 +3,6 @@ import { supabase } from '../supabase/supabaseClient';
 import { OpenAPI, type GoogleUserInfo } from '@/client';
 import { type SupabaseUser, UserService } from '@/client';
 import { useNavigate, useRouterState } from '@tanstack/react-router';
-import { storage } from "@/utils/localstorage"
 
 export async function isLoggedIn() {
   const {
@@ -117,13 +116,13 @@ export function useGoogleUser(): GoogleUserInfo | null {
   const [googleUser, setGoogleUser] = useState<GoogleUserInfo | null>(null);
 
   useEffect(() => {
-    const stored = storage.get(LOCAL_STORAGE_KEY);
+    const stored = sessionStorage.getItem(LOCAL_STORAGE_KEY);
     if (stored) {
       try {
         const parsed = JSON.parse(stored) as GoogleUserInfo;
         setGoogleUser(parsed);
       } catch {
-        storage.remove(LOCAL_STORAGE_KEY);
+        sessionStorage.removeItem(LOCAL_STORAGE_KEY);
         setGoogleUser(null);
       }
     }
