@@ -1,3 +1,5 @@
+import os
+import bcrypt
 from fastapi.security import OAuth2PasswordBearer, HTTPBearer
 from fastapi.security import HTTPAuthorizationCredentials
 from jose import jwt, JWTError
@@ -27,13 +29,23 @@ def create_access_token(subject: str | Any, expires_delta: timedelta) -> str:
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
-
+# def verify_password(plain_password: str, hashed_password: str) -> bool:
+#     return pwd_context.verify(plain_password, hashed_password)
 
 def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
+    # Truncate password if it's too long (bcrypt has 72-byte limit)
+    password_bytes = password.encode('utf-8')
+    if len(password_bytes) > 72:
+        password_bytes = password_bytes[:72]
+    hashed_bytes = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
+    return hashed_bytes.decode('utf-8')
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    plain_bytes = plain_password.encode('utf-8')
+    if len(plain_bytes) > 72:
+        plain_bytes = plain_bytes[:72]
+    hashed_bytes = hashed_password.encode('utf-8')
+    return bcrypt.checkpw(plain_bytes, hashed_bytes)
 
 @lru_cache(maxsize=1)
 def get_supabase_jwks():

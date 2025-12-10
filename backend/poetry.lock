@@ -82,6 +82,18 @@ optional = false
 python-versions = ">=3.8"
 
 [[package]]
+name = "bcrypt"
+version = "5.0.0"
+description = "Modern password hashing for your software and your servers"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[package.extras]
+tests = ["pytest (>=3.2.1,!=3.3.0)"]
+typecheck = ["mypy"]
+
+[[package]]
 name = "billiard"
 version = "4.2.1"
 description = "Python multiprocessing fork with improvements and bugfixes"
@@ -253,11 +265,11 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7
 
 [[package]]
 name = "coverage"
-version = "7.10.6"
+version = "7.13.0"
 description = "Code coverage measurement for Python"
 category = "dev"
 optional = false
-python-versions = ">=3.9"
+python-versions = ">=3.10"
 
 [package.dependencies]
 tomli = {version = "*", optional = true, markers = "python_full_version <= \"3.11.0a6\" and extra == \"toml\""}
@@ -1133,7 +1145,7 @@ python-versions = ">=3.9"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.10,<3.12"
-content-hash = "5c0b7ffeee177ab193fe90d0511dc7a8827b742c741555b1aadb3f833383a1dc"
+content-hash = "ccc7057c2dffc2b66948cb914f0797c9edd17565b4d079e73f3ab18b70226f01"
 
 [metadata.files]
 alembic = []
@@ -1142,6 +1154,7 @@ annotated-types = []
 anthropic = []
 anyio = []
 async-timeout = []
+bcrypt = []
 billiard = []
 black = []
 celery = []

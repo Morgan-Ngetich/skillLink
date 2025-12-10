@@ -33,6 +33,7 @@ replicate = "^1.0.7"
 groq = "^0.31.0"
 pillow = "^11.3.0"
 imgkit = "^1.2.3"
+bcrypt = "^5.0.0"
 
 [tool.poetry.dev-dependencies]
 black = "^25.1.0"
