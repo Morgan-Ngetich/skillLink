@@ -1,4 +1,4 @@
-from pydantic import computed_field, model_validator
+from pydantic import computed_field, model_validator, ConfigDict
 from functools import lru_cache
 from pydantic_settings import BaseSettings
 import secrets
@@ -108,9 +108,10 @@ class Settings(BaseSettings):
                 raise ValueError("DATABASE_URL must be set in production environment")
         return values
 
-    class Config:
-        env_file = ".env"
+    model_config = ConfigDict(
+        env_file = ".env",
         extra = "ignore"
+    )
 
 
 @lru_cache
