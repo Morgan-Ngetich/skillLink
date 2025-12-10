@@ -79,6 +79,7 @@ jobs:
       RABBITMQ_DEFAULT_PASS: guest
       RABBITMQ_HOST: localhost
       RABBITMQ_PORT: 5672
+      PROJECT_NAME: "SkillLink"
       # llms
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY  }}
       HUGGINGFACE_API_KEY: ${{ secrets.HUGGINGFACE_API_KEY }}
