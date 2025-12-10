@@ -5,7 +5,7 @@ import { ColorModeScript } from '@chakra-ui/system';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { routeTree } from './routeTree.gen';
-import { ColorModeProvider } from '@/components/ui/color-mode';
+import { ColorModeProvider } from '@/components/ui/colormode/color-mode';
 import themeSystem from './theme';
 import { Toaster } from '@/components/ui/toaster';
 import { GlobalStyles } from './components/ui/GlobalStyles';

@@ -4,7 +4,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ChakraProvider } from '@chakra-ui/react';
 import { ColorModeScript } from '@chakra-ui/system';
-import { ColorModeProvider } from '@/components/ui/color-mode';
+import { ColorModeProvider } from '@/components/ui/colormode/color-mode';
 import { MDXProvider } from '@mdx-js/react';
 import {
   createMemoryHistory,

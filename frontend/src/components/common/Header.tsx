@@ -14,7 +14,7 @@ import { Avatar } from '@/components/ui/avatar';
 import { FaChevronDown } from 'react-icons/fa6';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useNavigate } from '@tanstack/react-router';
-import { ColorModeButton } from '@/components/ui/color-mode';
+import { ColorModeButton } from '@/components/ui/colormode/color-mode';
 import { useNavigateWithRedirect } from '@/hooks/auth/authState';
 import { useSession } from '@/hooks/auth/useSession';
 import { HiMenuAlt3 } from 'react-icons/hi';

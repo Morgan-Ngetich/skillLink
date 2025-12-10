@@ -1,6 +1,7 @@
 export * from './avatar'
 export * from './checkbox-card'
 export * from './colormode/color-mode'
+export * from './colormode/useColorMode'
 export * from './fade'
 export * from './password-input'
 export * from './provider'

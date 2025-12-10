@@ -1,5 +1,5 @@
 import { Global, css } from '@emotion/react';
-import { useColorMode } from './color-mode';
+import { useColorMode } from './colormode/useColorMode';
 
 export function GlobalStyles() {
   const { colorMode } = useColorMode();
