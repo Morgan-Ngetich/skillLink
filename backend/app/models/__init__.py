@@ -146,6 +146,7 @@ ListWithCards.model_rebuild()
 BoardWithLists.model_rebuild()
 
 LLMGenerationResponse.model_rebuild()
+LLMStructuredOutput.model_rebuild()
 TaskStatus.model_rebuild()
 
 __all__ = [
