@@ -30,10 +30,9 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      # TODO: // Uncomment this after fixing the errors
-      # - name: Run lint
-      #   working-directory: frontend
-      #   run: npm run lint
+      - name: Run lint
+        working-directory: frontend
+        run: npm run lint
 
   frontend-build:
     runs-on: ubuntu-latest
@@ -80,6 +79,11 @@ jobs:
       RABBITMQ_DEFAULT_PASS: guest
       RABBITMQ_HOST: localhost
       RABBITMQ_PORT: 5672
+      # llms
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY  }}
+      HUGGINGFACE_API_KEY: ${{ secrets.HUGGINGFACE_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
     steps:
       - uses: actions/checkout@v4
@@ -109,6 +113,14 @@ jobs:
           RABBITMQ_DEFAULT_PASS: ${{ env.RABBITMQ_DEFAULT_PASS }}
           RABBITMQ_HOST: ${{ env.RABBITMQ_HOST }}
           RABBITMQ_PORT: ${{ env.RABBITMQ_PORT }}
+          # Pass all API keys to the test environment
+          GROQ_API_KEY: ${{ env.GROQ_API_KEY }}
+          HUGGINGFACE_API_KEY: ${{ env.HUGGINGFACE_API_KEY }}
+          OPENAI_API_KEY: ${{ env.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ env.ANTHROPIC_API_KEY }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          SUPABASE_JWT_SECRET: ${{ secrets.SUPABASE_JWT_SECRET }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: poetry run pytest app/tests --cov=app --cov-report=xml --junitxml=test-results.xml
 
       - name: Upload coverage
