@@ -1,6 +1,7 @@
 import sqlalchemy as sa
 from fastapi import HTTPException
 from typing import List, Dict, Optional, Union, Tuple, Any
+from enum import Enum
 from sqlmodel import Session, select
 from datetime import datetime, timezone
 from sqlalchemy.orm import selectinload
@@ -31,16 +32,20 @@ from app.models import (
     Board,
     BoardList,
     BoardCreate,
+    BoardUpdate,
     Goal,
     GoalCreate,
+    GoalUpdate,
     GoalType,
     GoalDifficulty,
     CardCreate,
+    CardUpdate,
     Card,
     CardStatus,
     CardPriority,
     Roadmap,
     RoadCreate,
+    RoadmapUpdate,
 )
 from app.core.security import get_password_hash, verify_password
 from uuid import UUID
@@ -133,6 +138,9 @@ def get_user_by_identifier(session: Session, identifier: str) -> User | None:
             )
 
 def create_user(session: Session, user_in: UserCreate) -> User:
+    print(f"DEBUG crud.py: user_in.password type: {type(user_in.password)}")
+    print(f"DEBUG crud.py: user_in.password length: {len(user_in.password)}")
+    print(f"DEBUG crud.py: user_in.password value: {user_in.password}")
     hashed_password = get_password_hash(user_in.password)
     db_user = User.model_validate(user_in, update={"hashed_password": hashed_password})
     session.add(db_user)
@@ -142,7 +150,7 @@ def create_user(session: Session, user_in: UserCreate) -> User:
 
 
 def update_user(session: Session, user: User, user_in: UserUpdate) -> User:
-    for key, value in user_in.dict(exclude_unset=True).items():
+    for key, value in user_in.model_dump(exclude_unset=True).items():
         setattr(user, key, value)
 
     session.add(user)
@@ -512,7 +520,7 @@ def update_mentor_profile(
     session: Session, user_id: int, profile_in: MentorProfileUpdate
 ) -> MentorProfile:
     profile = get_mentor_profile_or_404(session, user_id)
-    for key, value in profile_in.dict(exclude_unset=True).items():
+    for key, value in profile_in.model_dump(exclude_unset=True).items():
         setattr(profile, key, value)
     session.add(profile)
     session.commit()
@@ -522,11 +530,10 @@ def update_mentor_profile(
 
 # MENTOR Settings:
 def get_mentor_settings(session: Session, mentor_id: int) -> MentorSettings | None:
-    return (
-        session.query(MentorSettings)
-        .filter(MentorSettings.mentor_id == mentor_id)
-        .first()
-    )
+    return session.exec(
+        select(MentorSettings)
+        .where(MentorSettings.mentor_id == mentor_id)
+    ).first()
 
 
 def get_mentor_settings_or_404(session: Session, mentor_id: int) -> MentorSettings:
@@ -911,17 +918,16 @@ def get_featrued_sessions(session: Session, limit: int = 20) -> List[MentorSessi
 def create_mentor_session(
     session: Session, session_in: MentorSessionCreate
 ) -> MentorSession:
+    # Convert the Pydantic model to dictionary
     session_data = session_in.model_dump()
-    # Ensure the DB gest the value string
-    session_data["session_type"] = session_data["session_type"].value()
     
-    if hasattr(session_data["session_type"], "value"):
-        # It's an enum, get the value
-        session_data["session_type"] = session_data["session_type"].value
+    # Convert session_type to string if it's an enum
+    session_type = session_data.get("session_type")
+    if isinstance(session_type, Enum):
+        session_data["session_type"] = session_type.value
     else:
-        # It's already a string, use as-is
-        session_data["session_type"] = session_data["session_type"]
-        
+        session_data["session_type"] = str(session_type)
+    
     session_obj = MentorSession(**session_data)
     
     session.add(session_obj)
@@ -932,6 +938,7 @@ def create_mentor_session(
     update_mentor_cached_stats(session, session_in.mentor_id)
     
     return session_obj
+
 
 
 def update_mentor_session(
@@ -1106,7 +1113,7 @@ def validate_session_booking(
         select(MentorSessionBooking).where(
             MentorSessionBooking.session_id == mentor_session.id,
             MentorSessionBooking.mentee_id == mentee_id,
-            MentorSessionBooking.status != BookingStatus.CANCELLED
+            MentorSessionBooking.status != BookingStatus.CANCELLED_BY_MENTEE,
         )
     ).first()
     
@@ -1740,3 +1747,235 @@ def get_llm_generated_entities(
     ).all()
 
     return {"roadmaps": roadmaps, "goals": goals, "cards": cards}
+
+
+# ==================== GOAL CRUD FUNCTIONS ====================
+
+def update_goal(session: Session, goal_id: int, goal_in: GoalUpdate) -> Goal:
+    """Update a goal"""
+    goal = session.get(Goal, goal_id)
+    if not goal:
+        raise HTTPException(status_code=404, detail="Goal not found")
+    
+    update_data = goal_in.model_dump(exclude_unset=True)
+    
+    # Handle enum conversion for status
+    if "status" in update_data:
+        from app.models.enums import GoalStatus
+        if isinstance(update_data["status"], str):
+            update_data["status"] = GoalStatus(update_data["status"])
+    
+    # Handle enum conversion for difficulty
+    if "difficulty" in update_data:
+        if isinstance(update_data["difficulty"], str):
+            update_data["difficulty"] = GoalDifficulty(update_data["difficulty"])
+    
+    for key, value in update_data.items():
+        setattr(goal, key, value)
+    
+    goal.updated_at = datetime.now(timezone.utc)
+    session.add(goal)
+    session.commit()
+    session.refresh(goal)
+    return goal
+
+
+def get_goal(session: Session, goal_id: int) -> Goal | None:
+    """Get a goal by ID"""
+    return session.get(Goal, goal_id)
+
+
+def get_goal_or_404(session: Session, goal_id: int) -> Goal:
+    """Get a goal by ID or raise 404"""
+    goal = get_goal(session, goal_id)
+    if not goal:
+        raise HTTPException(status_code=404, detail="Goal not found")
+    return goal
+
+
+# ==================== ROADMAP CRUD FUNCTIONS ====================
+
+def update_roadmap(session: Session, roadmap_id: int, roadmap_in: RoadmapUpdate) -> Roadmap:
+    """Update a roadmap"""
+    roadmap = session.get(Roadmap, roadmap_id)
+    if not roadmap:
+        raise HTTPException(status_code=404, detail="Roadmap not found")
+    
+    update_data = roadmap_in.model_dump(exclude_unset=True)
+    
+    # Handle enum conversions
+    if "visibility" in update_data:
+        from app.models.enums import RoadmapVisibility
+        if isinstance(update_data["visibility"], str):
+            update_data["visibility"] = RoadmapVisibility(update_data["visibility"])
+    
+    if "status" in update_data:
+        from app.models.enums import RoadmapStatus
+        if isinstance(update_data["status"], str):
+            update_data["status"] = RoadmapStatus(update_data["status"])
+    
+    for key, value in update_data.items():
+        setattr(roadmap, key, value)
+    
+    roadmap.updated_at = datetime.now(timezone.utc)
+    session.add(roadmap)
+    session.commit()
+    session.refresh(roadmap)
+    return roadmap
+
+
+def get_roadmap(session: Session, roadmap_id: int) -> Roadmap | None:
+    """Get a roadmap by ID"""
+    return session.get(Roadmap, roadmap_id)
+
+
+def get_roadmap_or_404(session: Session, roadmap_id: int) -> Roadmap:
+    """Get a roadmap by ID or raise 404"""
+    roadmap = get_roadmap(session, roadmap_id)
+    if not roadmap:
+        raise HTTPException(status_code=404, detail="Roadmap not found")
+    return roadmap
+
+
+# ==================== BOARD CRUD FUNCTIONS ====================
+
+def update_board(session: Session, board_id: int, board_in: BoardUpdate) -> Board:
+    """Update a board"""
+    board = session.get(Board, board_id)
+    if not board:
+        raise HTTPException(status_code=404, detail="Board not found")
+    
+    update_data = board_in.model_dump(exclude_unset=True)
+    
+    for key, value in update_data.items():
+        setattr(board, key, value)
+    
+    board.updated_at = datetime.now(timezone.utc)
+    session.add(board)
+    session.commit()
+    session.refresh(board)
+    return board
+
+
+def get_board(session: Session, board_id: int) -> Board | None:
+    """Get a board by ID"""
+    return session.get(Board, board_id)
+
+
+def get_board_or_404(session: Session, board_id: int) -> Board:
+    """Get a board by ID or raise 404"""
+    board = get_board(session, board_id)
+    if not board:
+        raise HTTPException(status_code=404, detail="Board not found")
+    return board
+
+
+# ==================== CARD CRUD FUNCTIONS ====================
+
+def update_card(session: Session, card_id: int, card_in: CardUpdate) -> Card:
+    """Update a card"""
+    card = session.get(Card, card_id)
+    if not card:
+        raise HTTPException(status_code=404, detail="Card not found")
+    
+    update_data = card_in.model_dump(exclude_unset=True)
+    
+    # Handle enum conversions
+    if "status" in update_data:
+        if isinstance(update_data["status"], str):
+            update_data["status"] = CardStatus(update_data["status"])
+    
+    if "priority" in update_data:
+        if isinstance(update_data["priority"], str):
+            update_data["priority"] = CardPriority(update_data["priority"])
+    
+    for key, value in update_data.items():
+        setattr(card, key, value)
+    
+    card.updated_at = datetime.now(timezone.utc)
+    session.add(card)
+    session.commit()
+    session.refresh(card)
+    return card
+
+
+def get_card(session: Session, card_id: int) -> Card | None:
+    """Get a card by ID"""
+    return session.get(Card, card_id)
+
+
+def get_card_or_404(session: Session, card_id: int) -> Card:
+    """Get a card by ID or raise 404"""
+    card = get_card(session, card_id)
+    if not card:
+        raise HTTPException(status_code=404, detail="Card not found")
+    return card
+
+
+def link_card_to_goal(session: Session, card_id: int, goal_id: int) -> Card:
+    """Link a card to a goal"""
+    card = get_card_or_404(session, card_id)
+    goal = get_goal_or_404(session, goal_id)
+    
+    card.goal_id = goal_id
+    card.updated_at = datetime.now(timezone.utc)
+    
+    session.add(card)
+    session.commit()
+    session.refresh(card)
+    return card
+
+
+def assign_card_to_user(session: Session, card_id: int, user_id: int) -> Card:
+    """Assign a card to a user"""
+    card = get_card_or_404(session, card_id)
+    user = get_user_by_id(session, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    card.assignee_id = user_id
+    card.updated_at = datetime.now(timezone.utc)
+    
+    session.add(card)
+    session.commit()
+    session.refresh(card)
+    return card
+
+
+def move_card_to_list(session: Session, card_id: int, list_id: int) -> Card:
+    """Move a card to a different list"""
+    card = get_card_or_404(session, card_id)
+    board_list = session.get(BoardList, list_id)
+    if not board_list:
+        raise HTTPException(status_code=404, detail="Board list not found")
+    
+    card.list_id = list_id
+    # Update status to match the list's status if it has one
+    if board_list.status:
+        card.status = board_list.status
+    card.updated_at = datetime.now(timezone.utc)
+    
+    session.add(card)
+    session.commit()
+    session.refresh(card)
+    return card
+
+
+# ==================== BOARD LIST CRUD FUNCTIONS ====================
+
+def get_board_lists(session: Session, board_id: int) -> List[BoardList]:
+    """Get all lists for a board"""
+    return list(session.exec(
+        select(BoardList)
+        .where(BoardList.board_id == board_id)
+        .order_by(BoardList.position)
+    ).all())
+
+
+def get_roadmap_goals(session: Session, roadmap_id: int) -> List[Goal]:
+    """Get all goals for a roadmap"""
+    return list(session.exec(
+        select(Goal)
+        .where(Goal.roadmap_id == roadmap_id)
+        .order_by(Goal.created_at)
+    ).all())
