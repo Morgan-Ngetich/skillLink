@@ -89,6 +89,11 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def check_required_fields(cls, values):
         env = values.ENVIRONMENT
+        
+            # Skip validation for tests
+        if env == "test" or "test" in values.TEST_DATABASE_URL:
+            return values
+    
         if env == "local":
             required = {
                 "PROJECT_NAME",
@@ -112,6 +117,10 @@ class Settings(BaseSettings):
         env_file = ".env",
         extra = "ignore"
     )
+    
+    # class Config:
+    #     env_file = ".env"
+    #     extra = "ignore"
 
 
 @lru_cache
