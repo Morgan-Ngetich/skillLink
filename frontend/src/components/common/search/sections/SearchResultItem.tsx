@@ -3,7 +3,7 @@ import { MentorResultItem } from "./results/MentorResultItem";
 import { SessionResultItem } from "./results/SessionResultItem";
 import { ServiceResultItem } from "./results/ServiceResultItem";
 import type { UnifiedSearchResult } from "../types";
-import type { UserPublic, MentorSessionPublic, MentorServicePublic } from "@/client";
+import type { MentorSessionPublic, MentorServicePublic, MentorExplorePublic } from "@/client";
 
 interface SearchResultItemProps {
   result: UnifiedSearchResult;
@@ -23,7 +23,7 @@ export const SearchResultItem = ({ result, onClick }: SearchResultItemProps) => 
   if (result.type === "mentor") {
     return (
       <Box {...commonProps}>
-        <MentorResultItem mentor={result.data as UserPublic} />
+        <MentorResultItem mentor={result.data as MentorExplorePublic} />
       </Box>
     );
   }

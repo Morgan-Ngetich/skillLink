@@ -1,16 +1,16 @@
 import { Box, VStack, Text, HStack, Badge } from "@chakra-ui/react";
 import { LuUser } from "react-icons/lu";
 import { Avatar } from "@/components/ui";
-import type { UserPublic } from "@/client";
+import type { MentorExplorePublic } from "@/client";
 
 interface MentorResultItemProps {
-  mentor: UserPublic;
+  mentor: MentorExplorePublic;
 }
 
 export const MentorResultItem = ({ mentor }: MentorResultItemProps) => {
   return (
     <Box px={4} py={3} display="flex" alignItems="center" gap={3}>
-      <Avatar boxSize="12" src={mentor.avatar_url} name={mentor.full_name} />
+      <Avatar boxSize="12" src={mentor.avatar_url ?? "/fallback.jpg"} name={mentor.full_name ?? undefined} />
       <VStack align="start" gap={1} flex="1">
         <HStack gap={2}>
           <Text fontWeight="medium" fontSize="md">
@@ -25,11 +25,11 @@ export const MentorResultItem = ({ mentor }: MentorResultItemProps) => {
           </HStack>
         </HStack>
         <Text fontSize="sm" color="fg.muted" lineClamp={1}>
-          {mentor.profile?.title}
+          {mentor?.title}
         </Text>
-        {mentor.profile?.skills && mentor.profile.skills.length > 0 && (
+        {mentor?.skills && mentor.skills.length > 0 && (
           <HStack gap={1.5} wrap="wrap" mt={1}>
-            {mentor.profile.skills.slice(0, 3).map((skill) => (
+            {mentor.skills.slice(0, 3).map((skill) => (
               <Badge key={skill} size="sm" colorPalette="purple" variant="subtle">
                 {skill}
               </Badge>

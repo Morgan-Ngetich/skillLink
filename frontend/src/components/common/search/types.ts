@@ -1,10 +1,10 @@
-import type { UserPublic, MentorSessionPublic, MentorServicePublic } from "@/client";
+import type { MentorSessionPublic, MentorServicePublic, MentorExplorePublic } from "@/client";
 
 export type SearchResultType = "mentor" | "session" | "service";
 
 export interface UnifiedSearchResult {
   type: SearchResultType;
-  data: UserPublic | MentorSessionPublic | MentorServicePublic;
+  data: MentorExplorePublic | MentorSessionPublic | MentorServicePublic;
   score: number;
 }
 
