@@ -157,3 +157,28 @@ class MentorStatsPublic(BaseModel):
     average_rating: Optional[float] = None
     
     model_config = ConfigDict(from_attributes=True)
+    
+
+class MentorExplorePublic(SQLModel):
+    user_id: int
+    uuid: str
+    full_name: Optional[str]
+    avatar_url: Optional[str]
+    cover_image: Optional[str]
+
+    title: str
+    about: Optional[str]
+    skills: Optional[list[str]]
+    location: str
+    expertise: List[str]
+    area_of_focus: Optional[list[str]]
+    experience_level: ExperienceLevel
+
+    average_rating: Optional[float]
+    total_sessions: int
+    total_mentees: int
+    is_available: bool
+
+    min_session_price: Optional[float]
+    max_session_price: Optional[float]
+    avg_session_price: Optional[float]

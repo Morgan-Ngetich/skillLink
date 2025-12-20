@@ -39,9 +39,7 @@ class Permission(SQLModel, table=True):
 
 
 class RolePermission(SQLModel, table=True):
-    role_id: int = Field(
-        foreign_key="role.id", primary_key=True, ondelete="CASCADE"
-    )
+    role_id: int = Field(foreign_key="role.id", primary_key=True, ondelete="CASCADE")
     permission_id: int = Field(
         foreign_key="permission.id", primary_key=True, ondelete="CASCADE"
     )
@@ -117,9 +115,9 @@ class User(SQLModel, table=True):
         """Convert to UserPublic (imported to avoid circular imports)"""
         from .public.user_public import UserPublic
         from .enums import GoalStatus
-        
+
         profile_public = self.profile.to_public() if self.profile else None
-        
+
         return UserPublic(
             id=self.id,
             uuid=str(self.uuid),
@@ -147,7 +145,7 @@ class User(SQLModel, table=True):
     def to_minimal(self):
         """Minimal user data for nested responses"""
         from .public.user_public import UserMinimal
-        
+
         return UserMinimal(
             id=self.id,
             uuid=str(self.uuid),
@@ -160,6 +158,50 @@ class User(SQLModel, table=True):
             is_mentee=self.is_mentee,
             created_at=self.created_at,
             updated_at=self.updated_at,
+        )
+
+    # TODO: Add/remove fields as needed to match the expected data on the frontend.
+    def to_explore_mentor_public(self):
+        """Convert to explore mentor public. Returns None if user is not a mentor or profile incomplete."""
+        from .public.mentor_public import MentorExplorePublic
+        from .mentor import MentorSettings
+
+        # Only for users with mentor profile
+        if not self.is_mentor or not self.mentor_profile:
+            return None
+        
+        mentor_profile: "MentorProfile" = self.mentor_profile
+        profile: "UserProfile" = self.profile
+        settings: "MentorSettings" = mentor_profile.settings
+        
+        public_sessions = [
+            s for s in mentor_profile.sessions
+            if s.is_public and s.is_active
+        ]
+
+        prices = [s.price_usd for s in public_sessions if s.price_usd is not None]
+
+        return MentorExplorePublic(
+            user_id=self.id,
+            uuid=str(self.uuid),
+            full_name=self.full_name,
+            avatar_url=self.avatar_url,
+            cover_image=self.cover_image,
+            title=mentor_profile.title,
+            about=profile.about,
+            skills=profile.skills,
+            location=profile.location,
+            expertise=mentor_profile.expertise,
+            area_of_focus=profile.area_of_focus,
+            experience_level=mentor_profile.experience_level,
+            average_rating=mentor_profile.average_rating,
+            total_sessions=mentor_profile.total_sessions,
+            total_mentees=mentor_profile.total_mentees,
+            is_available=settings.currently_open_to_mentees if settings else False,
+            # NOTE: Needed for filtering
+            min_session_price=min(prices) if prices else None,
+            max_session_price=max(prices) if prices else None,
+            avg_session_price=(sum(prices) / len(prices)) if prices else None,
         )
 
 
@@ -244,11 +286,11 @@ class UserProfile(SQLModel, table=True):
     def to_public(self):
         """Convert to UserProfilePublic"""
         from .public.user_public import UserProfilePublic
-        
+
         mentor_profile_public = None
         if self.user and self.user.mentor_profile:
             mentor_profile_public = self.user.mentor_profile.to_public()
-            
+
         return UserProfilePublic(
             user_id=self.user_id,
             uuid=str(self.user.uuid),

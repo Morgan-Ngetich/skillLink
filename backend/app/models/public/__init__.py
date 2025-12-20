@@ -19,6 +19,7 @@ from .mentor_public import (
     MentorSettingsPublic,
     MentorProfilePublic,
     MentorStatsPublic,
+    MentorExplorePublic,
 )
 
 from .roadmap_public import (
@@ -52,6 +53,7 @@ __all__ = [
     "MentorServicePublic",
     "MentorSettingsPublic",
     "MentorStatsPublic",
+    "MentorExplorePublic",
     # Roadmap
     "RoadmapPublic",
     "GoalPublic",

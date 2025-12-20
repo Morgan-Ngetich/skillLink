@@ -110,6 +110,7 @@ from .public import (
     MentorServicePublic,
     MentorSettingsPublic,
     MentorStatsPublic,
+    MentorExplorePublic,
     BookingPublic,
     RoadmapPublic,
     GoalPublic,
