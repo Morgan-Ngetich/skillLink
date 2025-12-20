@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../supabase/supabaseClient';
-import { UserService } from '../../client';
+import { UsersService } from '@/client';
 import { useSupabaseSessionReady } from '../supabase/useSupabaseSession';
 import { updateUserMetadataCache } from './useSession';
 
@@ -14,10 +14,10 @@ export const fetchCurrentUser = async () => {
   if (!token) {
     return null; // gracefully handle unauthenticated state
   }
-  
+
   try {
-    const user = await UserService.getCurrentUser();
-    
+    const user = await UsersService.getMeApiV1UsersMeGet();
+
     // UPDATE CACHE IMMEDIATELY AFTER SUCCESSFUL FETCH
     if (user?.uuid && user?.is_mentor !== undefined) {
       updateUserMetadataCache({
@@ -25,9 +25,9 @@ export const fetchCurrentUser = async () => {
         uuid: user.uuid
       });
     }
-    
+
     return user;
-  } catch (err: unknown) {    
+  } catch (err: unknown) {
     console.error('Failed to fetch user:', err);
     return null; // as a fallback
   }

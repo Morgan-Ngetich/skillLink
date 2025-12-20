@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MentorSessionService, type MentorSessionPublic } from "@/client";
+import { MentorsService, type MentorSessionPublic } from "@/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toNativePromise } from "@/utils/toNativePromisse";
 import useToaster from '../public/useToaster';
@@ -17,7 +17,9 @@ export const useToggleSessionPublic = () => {
   const toggleMutation = useMutation({
     mutationFn: async (sessionId: number) => {
       return await toNativePromise(
-        MentorSessionService.toggleSessionPublic(sessionId)
+        MentorsService.toggleSessionVisibilityApiV1MentorsSessionsSessionIdTogglePublicPatch({ 
+          sessionId 
+        })
       );
     },
     onSuccess: (data) => {

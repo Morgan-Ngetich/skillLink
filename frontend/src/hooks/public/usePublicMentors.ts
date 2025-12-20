@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import {
-  PublicMentorService,
-  type MentorProfilePublic,
+  PublicService,
+  MentorsService,
+  type MentorExplorePublic,
   type MentorSessionPublic,
   type MentorServicePublic,
-  type UserPublic,
+  type LocationType,
 } from '@/client';
 import { toNativePromise } from '@/utils/toNativePromisse';
 
@@ -16,10 +17,37 @@ interface UseMentorsParams {
   enabled?: boolean;
 }
 
+interface UseSessionsParams {
+  sessionType?: string;
+  locationType?: LocationType;
+  tag?: string;
+  mentorExpertise?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  minDuration?: number;
+  maxDuration?: number;
+  fromTime?: string;
+  toTime?: string;
+  onlyAvailable?: boolean;
+  limit?: number;
+  offset?: number;
+  enabled?: boolean;
+}
+
+interface UseServicesParams {
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  limit?: number;
+  offset?: number;
+  enabled?: boolean;
+}
+
 /**
- * Hook for public mentor discovery and exploration
+ * Hook for browsing mentors (explore page)
+ * Returns lightweight public info optimized for listing
  */
-export const usePublicMentors = (params?: UseMentorsParams) => {
+export const useBrowseMentors = (params?: UseMentorsParams) => {
   const {
     expertise,
     available,
@@ -28,24 +56,121 @@ export const usePublicMentors = (params?: UseMentorsParams) => {
     enabled = true,
   } = params || {};
 
-  // List all mentors with filters
-  const {
-    data: mentors,
-    isLoading: isLoadingMentors,
-    isError: isMentorsError,
-    error: mentorsError,
-    refetch: refetchMentors,
-  } = useQuery<UserPublic[], Error>({
-    queryKey: ['publicMentors', expertise, available, limit, offset],
+  return useQuery<MentorExplorePublic[], Error>({
+    queryKey: ['browseMentors', expertise, available, limit, offset],
     queryFn: () =>
       toNativePromise(
-        PublicMentorService.listMentors(expertise, available, limit, offset)
+        PublicService.browseMentorsApiV1PublicMentorsGet({
+          expertise,
+          available,
+          limit,
+          offset,
+        })
       ),
     staleTime: 1000 * 60 * 5, // 5 minutes - public data doesn't change often
     retry: 2,
     enabled,
   });
+};
 
+/**
+ * Hook for browsing sessions with advanced filtering
+ */
+export const useBrowseSessions = (params?: UseSessionsParams) => {
+  const {
+    sessionType,
+    locationType,
+    tag,
+    mentorExpertise,
+    minPrice,
+    maxPrice,
+    minDuration,
+    maxDuration,
+    fromTime,
+    toTime,
+    onlyAvailable = false,
+    limit = 20,
+    offset = 0,
+    enabled = true,
+  } = params || {};
+
+  return useQuery<MentorSessionPublic[], Error>({
+    queryKey: [
+      'browseSessions',
+      sessionType,
+      locationType,
+      tag,
+      mentorExpertise,
+      minPrice,
+      maxPrice,
+      minDuration,
+      maxDuration,
+      fromTime,
+      toTime,
+      onlyAvailable,
+      limit,
+      offset,
+    ],
+    queryFn: () =>
+      toNativePromise(
+        PublicService.browseSessionsApiV1PublicSessionsGet({
+          sessionType,
+          locationType,
+          tag,
+          mentorExpertise,
+          minPrice,
+          maxPrice,
+          minDuration,
+          maxDuration,
+          fromTime,
+          toTime,
+          onlyAvailable,
+          limit,
+          offset,
+        })
+      ),
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: 2,
+    enabled,
+  });
+};
+
+/**
+ * Hook for browsing services with filtering
+ */
+export const useBrowseServices = (params?: UseServicesParams) => {
+  const {
+    category,
+    minPrice,
+    maxPrice,
+    limit = 20,
+    offset = 0,
+    enabled = true,
+  } = params || {};
+
+  return useQuery<MentorServicePublic[], Error>({
+    queryKey: ['browseServices', category, minPrice, maxPrice, limit, offset],
+    queryFn: () =>
+      toNativePromise(
+        PublicService.browseServicesApiV1PublicServicesGet({
+          category,
+          minPrice,
+          maxPrice,
+          limit,
+          offset,
+        })
+      ),
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: 2,
+    enabled,
+  });
+};
+
+/**
+ * Hook for public mentor discovery and exploration
+ * Fetches featured content for homepage
+ */
+export const usePublicMentors = (enabled: boolean = true) => {
   // Featured mentors (homepage)
   const {
     data: featuredMentors,
@@ -53,9 +178,11 @@ export const usePublicMentors = (params?: UseMentorsParams) => {
     isError: isFeaturedError,
     error: featuredError,
     refetch: refetchFeatured,
-  } = useQuery<UserPublic[], Error>({
+  } = useQuery<MentorExplorePublic[], Error>({
     queryKey: ['featuredMentors'],
-    queryFn: () => toNativePromise(PublicMentorService.getFeaturedMentors()),
+    queryFn: () => toNativePromise(
+      PublicService.getFeaturedMentorsApiV1PublicFeaturedMentorsGet()
+    ),
     staleTime: 1000 * 60 * 10, // 10 minutes - featured list changes rarely
     retry: 2,
     enabled,
@@ -70,7 +197,9 @@ export const usePublicMentors = (params?: UseMentorsParams) => {
     refetch: refetchFeaturedSessions,
   } = useQuery<MentorSessionPublic[], Error>({
     queryKey: ['featuredSessions'],
-    queryFn: () => toNativePromise(PublicMentorService.getFeaturedSessions()),
+    queryFn: () => toNativePromise(
+      PublicService.getFeaturedSessionsApiV1PublicFeaturedSessionsGet()
+    ),
     staleTime: 1000 * 60 * 10, // 10 minutes
     retry: 2,
     enabled,
@@ -85,20 +214,15 @@ export const usePublicMentors = (params?: UseMentorsParams) => {
     refetch: refetchFeaturedServices,
   } = useQuery<MentorServicePublic[], Error>({
     queryKey: ['featuredServices'],
-    queryFn: () => toNativePromise(PublicMentorService.getFeaturedServices()),
+    queryFn: () => toNativePromise(
+      PublicService.getFeaturedServicesApiV1PublicFeaturedServicesGet()
+    ),
     staleTime: 1000 * 60 * 10, // 10 minutes
     retry: 2,
     enabled,
   });
 
   return {
-    // Mentor listing
-    mentors,
-    isLoadingMentors,
-    isMentorsError,
-    mentorsError,
-    refetchMentors,
-
     // Featured mentors
     featuredMentors,
     isLoadingFeaturedMentors,
@@ -122,7 +246,6 @@ export const usePublicMentors = (params?: UseMentorsParams) => {
 
     // Combined loading state
     isLoading:
-      isLoadingMentors ||
       isLoadingFeaturedMentors ||
       isLoadingFeaturedSessions ||
       isLoadingFeaturedServices,
@@ -130,36 +253,10 @@ export const usePublicMentors = (params?: UseMentorsParams) => {
 };
 
 /**
- * Hook for fetching a specific mentor's details
+ * Hook for fetching a specific mentor's sessions (public)
+ * Uses MentorsService for public access to mentor sessions
  */
-export const usePublicMentorProfile = (uuid: string, enabled = true) => {
-  const {
-    data: mentorProfile,
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = useQuery<MentorProfilePublic, Error>({
-    queryKey: ['publicMentorProfile', uuid],
-    queryFn: () => toNativePromise(PublicMentorService.getMentorProfileByUuid(uuid)),
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    retry: 2,
-    enabled: enabled && !!uuid,
-  });
-
-  return {
-    mentorProfile,
-    isLoading,
-    isError,
-    error,
-    refetch,
-  };
-};
-
-/**
- * Hook for fetching a specific mentor's sessions
- */
-export const usePublicMentorSessions = (userId: number, enabled = true) => {
+export const usePublicMentorSessions = (mentorId: number, enabled = true) => {
   const {
     data: sessions,
     isLoading,
@@ -167,11 +264,13 @@ export const usePublicMentorSessions = (userId: number, enabled = true) => {
     error,
     refetch,
   } = useQuery<MentorSessionPublic[], Error>({
-    queryKey: ['publicMentorSessions', userId],
-    queryFn: () => toNativePromise(PublicMentorService.getMentorSessions(userId)),
+    queryKey: ['publicMentorSessions', mentorId],
+    queryFn: () => toNativePromise(
+      MentorsService.getMentorSessionsApiV1MentorsMentorIdSessionsGet({ mentorId })
+    ),
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 2,
-    enabled: enabled && !!userId,
+    enabled: enabled && !!mentorId,
   });
 
   return {
@@ -184,9 +283,10 @@ export const usePublicMentorSessions = (userId: number, enabled = true) => {
 };
 
 /**
- * Hook for fetching a specific mentor's services
+ * Hook for fetching a specific mentor's services (public)
+ * Uses MentorsService for public access to mentor services
  */
-export const usePublicMentorServices = (userId: number, enabled = true) => {
+export const usePublicMentorServices = (mentorId: number, enabled = true) => {
   const {
     data: services,
     isLoading,
@@ -194,11 +294,13 @@ export const usePublicMentorServices = (userId: number, enabled = true) => {
     error,
     refetch,
   } = useQuery<MentorServicePublic[], Error>({
-    queryKey: ['publicMentorServices', userId],
-    queryFn: () => toNativePromise(PublicMentorService.getMentorServices(userId)),
+    queryKey: ['publicMentorServices', mentorId],
+    queryFn: () => toNativePromise(
+      MentorsService.getMentorServicesApiV1MentorsMentorIdServicesGet({ mentorId })
+    ),
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 2,
-    enabled: enabled && !!userId,
+    enabled: enabled && !!mentorId,
   });
 
   return {
@@ -208,4 +310,23 @@ export const usePublicMentorServices = (userId: number, enabled = true) => {
     error,
     refetch,
   };
+};
+
+/**
+ * Hook for fetching a specific session by UUID (public)
+ * Uses MentorsService for public access to session details
+ */
+export const usePublicSessionByUuid = (
+  sessionUuid: string,
+  enabled: boolean = true
+) => {
+  return useQuery<MentorSessionPublic, Error>({
+    queryKey: ['publicSession', sessionUuid],
+    queryFn: () => toNativePromise(
+      MentorsService.getSessionApiV1MentorsSessionsSessionUuidGet({ sessionUuid })
+    ),
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: 2,
+    enabled: enabled && !!sessionUuid,
+  });
 };

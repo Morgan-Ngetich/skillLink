@@ -2,35 +2,42 @@ import { useMemo } from "react";
 import { useFuseSearch } from "@/hooks/search/useFuseSearch";
 import { PRICE_RANGES } from "@/components/explore/types";
 import type { UseExploreFiltersReturn } from "./useExploreFilters";
-import type { MentorServicePublic, MentorSessionPublic, UserPublic } from "@/client";
+import type { MentorExplorePublic, MentorServicePublic, MentorSessionPublic } from "@/client";
 
 interface UseExploreSearchParams {
-  mentors: UserPublic[];
-  featuredSessions: MentorSessionPublic[];
-  featuredServices: MentorServicePublic[];
+  mentors: MentorExplorePublic[];
+  sessions: MentorSessionPublic[];
+  services: MentorServicePublic[];
   searchQuery: string;
   filters: UseExploreFiltersReturn;
 }
 
 export const useExploreSearch = ({
   mentors,
-  featuredSessions,
-  featuredServices,
+  sessions,
+  services,
   searchQuery,
   filters,
 }: UseExploreSearchParams) => {
-  // Search with Fuse
+  // Search with Fuse - using MentorExplorePublic structure
   const mentorFuseResults = useFuseSearch(mentors, searchQuery, {
-    keys: ["full_name", "profile.title", "profile.skills", "profile.about", "profile.area_of_focus"],
+    keys: [
+      "full_name",
+      "title",
+      "about",
+      "skills",
+      "expertise",
+      "area_of_focus"
+    ],
     threshold: 0.3,
   });
 
-  const sessionFuseResults = useFuseSearch(featuredSessions, searchQuery, {
+  const sessionFuseResults = useFuseSearch(sessions, searchQuery, {
     keys: ["title", "description", "tags", "session_type"],
     threshold: 0.3,
   });
 
-  const serviceFuseResults = useFuseSearch(featuredServices, searchQuery, {
+  const serviceFuseResults = useFuseSearch(services, searchQuery, {
     keys: ["title", "description", "category", "highlights"],
     threshold: 0.3,
   });
@@ -39,29 +46,35 @@ export const useExploreSearch = ({
   const filteredMentors = useMemo(() => {
     let filtered = mentorFuseResults.map((r) => r.item);
 
+    // Filter by expertise (multi-select)
     if (filters.selectedExpertise.length > 0) {
       filtered = filtered.filter((mentor) =>
-        mentor.profile?.area_of_focus?.some((area: string) => 
+        mentor.area_of_focus?.some((area: string) => 
           filters.selectedExpertise.includes(area)
+        ) || mentor.expertise?.some((exp: string) =>
+          filters.selectedExpertise.includes(exp)
         )
       );
     }
 
+    // Filter by experience level (multi-select)
     if (filters.selectedExperience.length > 0) {
       filtered = filtered.filter((mentor) =>
-        filters.selectedExperience.includes(
-          mentor.profile?.mentor_profile?.experience_level || ""
-        )
+        filters.selectedExperience.includes(mentor.experience_level)
       );
     }
 
+    // Filter by availability
+    if (filters.availableOnly) {
+      filtered = filtered.filter((mentor) => mentor.is_available === true);
+    }
+
+    // Filter by price range (multi-select) - using avg_session_price
     if (filters.mentorPriceRange.length > 0) {
       filtered = filtered.filter((mentor) => {
-        const sessions = mentor.profile?.mentor_profile?.sessions || [];
-        if (sessions.length === 0) return false;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const prices = sessions.map((s: any) => s.price_usd || 0);
-        const avgPrice = prices.reduce((a: number, b: number) => a + b, 0) / prices.length;
+        const avgPrice = mentor.avg_session_price;
+        if (!avgPrice) return false;
+        
         return filters.mentorPriceRange.some((rangeValue) => {
           const range = PRICE_RANGES.find((r) => r.value === rangeValue);
           if (!range) return false;
@@ -70,19 +83,50 @@ export const useExploreSearch = ({
       });
     }
 
+    // Filter by direct min/max price
+    if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
+      filtered = filtered.filter((mentor) => {
+        const avgPrice = mentor.avg_session_price;
+        if (!avgPrice && filters.minPrice) return false;
+        if (!avgPrice) return true;
+        
+        const meetsMin = filters.minPrice === undefined || avgPrice >= filters.minPrice;
+        const meetsMax = filters.maxPrice === undefined || avgPrice <= filters.maxPrice;
+        
+        return meetsMin && meetsMax;
+      });
+    }
+
     return filtered;
-  }, [mentorFuseResults, filters.selectedExpertise, filters.selectedExperience, filters.mentorPriceRange]);
+  }, [
+    mentorFuseResults, 
+    filters.selectedExpertise, 
+    filters.selectedExperience, 
+    filters.availableOnly,
+    filters.mentorPriceRange,
+    filters.minPrice,
+    filters.maxPrice
+  ]);
 
   // Filter sessions
   const filteredSessions = useMemo(() => {
     let filtered = sessionFuseResults.map((r) => r.item);
 
+    // Filter by session type (multi-select)
     if (filters.selectedSessionTypes.length > 0) {
       filtered = filtered.filter((session) =>
         filters.selectedSessionTypes.includes(session.session_type)
       );
     }
 
+    // Filter by location type
+    if (filters.locationType) {
+      filtered = filtered.filter((session) =>
+        session.location_type === filters.locationType
+      );
+    }
+
+    // Filter by price range (multi-select)
     if (filters.sessionPriceRange.length > 0) {
       filtered = filtered.filter((session) => {
         const price = session.price_usd || 0;
@@ -94,19 +138,38 @@ export const useExploreSearch = ({
       });
     }
 
+    // Filter by direct min/max price
+    if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
+      filtered = filtered.filter((session) => {
+        const price = session.price_usd || 0;
+        const meetsMin = filters.minPrice === undefined || price >= filters.minPrice;
+        const meetsMax = filters.maxPrice === undefined || price <= filters.maxPrice;
+        return meetsMin && meetsMax;
+      });
+    }
+
     return filtered;
-  }, [sessionFuseResults, filters.selectedSessionTypes, filters.sessionPriceRange]);
+  }, [
+    sessionFuseResults, 
+    filters.selectedSessionTypes, 
+    filters.locationType,
+    filters.sessionPriceRange,
+    filters.minPrice,
+    filters.maxPrice
+  ]);
 
   // Filter services
   const filteredServices = useMemo(() => {
     let filtered = serviceFuseResults.map((r) => r.item);
 
+    // Filter by category (multi-select)
     if (filters.selectedServiceCategories.length > 0) {
       filtered = filtered.filter((service) =>
         filters.selectedServiceCategories.includes(service.category || "")
       );
     }
 
+    // Filter by price range (multi-select)
     if (filters.servicePriceRange.length > 0) {
       filtered = filtered.filter((service) => {
         const price = service.price_usd || 0;
@@ -118,8 +181,24 @@ export const useExploreSearch = ({
       });
     }
 
+    // Filter by direct min/max price
+    if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
+      filtered = filtered.filter((service) => {
+        const price = service.price_usd || 0;
+        const meetsMin = filters.minPrice === undefined || price >= filters.minPrice;
+        const meetsMax = filters.maxPrice === undefined || price <= filters.maxPrice;
+        return meetsMin && meetsMax;
+      });
+    }
+
     return filtered;
-  }, [serviceFuseResults, filters.selectedServiceCategories, filters.servicePriceRange]);
+  }, [
+    serviceFuseResults, 
+    filters.selectedServiceCategories,
+    filters.servicePriceRange,
+    filters.minPrice,
+    filters.maxPrice
+  ]);
 
   return {
     filteredMentors,

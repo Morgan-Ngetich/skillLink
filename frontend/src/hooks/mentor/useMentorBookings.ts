@@ -2,10 +2,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import useToaster from '../../hooks/public/useToaster';
 import {
-  MentorBookingService,
+  MentorsService,
   type BookingPublic,
-  type BookingsStatusUpdate,
-  type BookingStatusType,
+  type BookingStatusUpdate,
+  type BookingStatus,
   type BookingCreateRequest,
 } from '@/client';
 import { toNativePromise } from '@/utils/toNativePromisse';
@@ -29,7 +29,7 @@ interface BookingCallbacks {
  * 
  * @param statusFilter - Optional filter for initial bookings query
  */
-export const useMentorBookings = (statusFilter?: BookingStatusType) => {
+export const useMentorBookings = (statusFilter?: BookingStatus) => {
   const toast = useToaster();
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,7 +47,9 @@ export const useMentorBookings = (statusFilter?: BookingStatusType) => {
     refetch,
   } = useQuery<BookingPublic[], Error>({
     queryKey: ['mentorBookings', statusFilter],
-    queryFn: () => toNativePromise(MentorBookingService.getMyBookings(statusFilter)),
+    queryFn: () => toNativePromise(
+      MentorsService.listMyBookingsApiV1MentorsBookingsGet({ status: statusFilter })
+    ),
     staleTime: 1000 * 60 * 2, // 2 minutes - bookings change frequently
     retry: 1,
   });
@@ -61,7 +63,9 @@ export const useMentorBookings = (statusFilter?: BookingStatusType) => {
     refetch: refetchHistory,
   } = useQuery<BookingPublic[], Error>({
     queryKey: ['mentorBookings', 'history'],
-    queryFn: () => toNativePromise(MentorBookingService.getBookingHistory(true)),
+    queryFn: () => toNativePromise(
+      MentorsService.getBookingHistoryApiV1MentorsBookingsHistoryGet({ includeCancelled: true })
+    ),
     staleTime: 1000 * 60 * 5, // 5 minutes - history changes less frequently
     enabled: false, // Only fetch when explicitly requested
   });
@@ -99,7 +103,12 @@ export const useMentorBookings = (statusFilter?: BookingStatusType) => {
     { sessionId: number; data: BookingCreateRequest }
   >({
     mutationFn: ({ sessionId, data }) =>
-      toNativePromise(MentorBookingService.bookSession(sessionId, data)),
+      toNativePromise(
+        MentorsService.bookSessionApiV1MentorsSessionsSessionIdBookPost({ 
+          sessionId, 
+          requestBody: data 
+        })
+      ),
     onSuccess: (booking) => {
       const statusMessage =
         booking.status === 'confirmed'
@@ -134,10 +143,15 @@ export const useMentorBookings = (statusFilter?: BookingStatusType) => {
   const updateBookingStatus = useMutation<
     BookingPublic,
     Error,
-    { bookingId: number; data: BookingsStatusUpdate }
+    { bookingId: number; data: BookingStatusUpdate }
   >({
     mutationFn: ({ bookingId, data }) =>
-      toNativePromise(MentorBookingService.updateBookingStatus(bookingId, data)),
+      toNativePromise(
+        MentorsService.updateBookingStatusApiV1MentorsBookingsBookingIdStatusPatch({ 
+          bookingId, 
+          requestBody: data 
+        })
+      ),
     onSuccess: (data) => {
       const statusMessages: Record<string, string> = {
         confirmed: 'Booking confirmed',
@@ -175,7 +189,9 @@ export const useMentorBookings = (statusFilter?: BookingStatusType) => {
    */
   const confirmBookingMutation = useMutation<BookingPublic, Error, number>({
     mutationFn: (bookingId) =>
-      toNativePromise(MentorBookingService.confirmBooking(bookingId)),
+      toNativePromise(
+        MentorsService.confirmBookingApiV1MentorsBookingsBookingIdConfirmPost({ bookingId })
+      ),
     onSuccess: () => {
       toast({
         id: 'confirm-booking-success',
@@ -202,9 +218,18 @@ export const useMentorBookings = (statusFilter?: BookingStatusType) => {
    * 
    * Transitions: PENDING → CANCELLED_BY_MENTOR
    */
-  const denyBookingMutation = useMutation<BookingPublic, Error, number>({
-    mutationFn: (bookingId) =>
-      toNativePromise(MentorBookingService.denyBooking(bookingId)),
+  const denyBookingMutation = useMutation<
+    BookingPublic, 
+    Error, 
+    { bookingId: number; reason: string }
+  >({
+    mutationFn: ({ bookingId, reason }) =>
+      toNativePromise(
+        MentorsService.denyBookingApiV1MentorsBookingsBookingIdDenyPost({ 
+          bookingId, 
+          reason 
+        })
+      ),
     onSuccess: () => {
       toast({
         id: 'deny-booking-success',
@@ -214,7 +239,7 @@ export const useMentorBookings = (statusFilter?: BookingStatusType) => {
       });
 
       // Invalidate all related queries
-      invalidateAllQueries()
+      invalidateAllQueries();
     },
     onError: (error) => {
       toast({
@@ -233,7 +258,9 @@ export const useMentorBookings = (statusFilter?: BookingStatusType) => {
    */
   const deleteBooking = useMutation<void, Error, number>({
     mutationFn: (bookingId) =>
-      toNativePromise(MentorBookingService.deleteBooking(bookingId)),
+      toNativePromise(
+        MentorsService.deleteBookingApiV1MentorsBookingsBookingIdDelete({ bookingId })
+      ),
     onSuccess: () => {
       toast({
         id: 'delete-booking-success',
@@ -279,10 +306,14 @@ export const useMentorBookings = (statusFilter?: BookingStatusType) => {
    * 
    * Wrapper with callbacks for UI integration
    */
-  const denyBooking = async (bookingId: number, callbacks?: BookingCallbacks) => {
+  const denyBooking = async (
+    bookingId: number, 
+    reason: string, 
+    callbacks?: BookingCallbacks
+  ) => {
     setIsSubmitting(true);
     try {
-      await denyBookingMutation.mutateAsync(bookingId);
+      await denyBookingMutation.mutateAsync({ bookingId, reason });
       callbacks?.onSuccess?.();
     } catch (error) {
       callbacks?.onError?.(error);

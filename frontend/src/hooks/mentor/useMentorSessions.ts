@@ -2,8 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import useToaster from '../public/useToaster';
 import {
-  MentorSessionService,
-  type MentorSessionBase,
+  MentorsService,
   type MentorSessionPublic,
   type MentorSessionCreate,
   type MentorSessionUpdate,
@@ -30,14 +29,20 @@ export const useMentorSessions = () => {
     refetch,
   } = useQuery<MentorSessionPublic[], Error>({
     queryKey: ['mentorSessions'],
-    queryFn: () => toNativePromise(MentorSessionService.getMySessions()),
+    queryFn: () => toNativePromise(
+      MentorsService.listSessionsApiV1MentorsSessionsGet({})
+    ),
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 1,
   });
 
   // Create session
-  const createSession = useMutation<MentorSessionBase, Error, MentorSessionCreate>({
-    mutationFn: (data) => toNativePromise(MentorSessionService.createSession(data)),
+  const createSession = useMutation<MentorSessionPublic, Error, MentorSessionCreate>({
+    mutationFn: (data) => toNativePromise(
+      MentorsService.createSessionApiV1MentorsSessionsPost({ 
+        requestBody: data 
+      })
+    ),
     onSuccess: () => {
       toast({
         id: 'create-session-success',
@@ -59,12 +64,17 @@ export const useMentorSessions = () => {
 
   // Update session
   const updateSession = useMutation<
-    MentorSessionBase,
+    MentorSessionPublic,
     Error,
     { id: number; data: MentorSessionUpdate }
   >({
     mutationFn: ({ id, data }) =>
-      toNativePromise(MentorSessionService.updateSession(id, data)),
+      toNativePromise(
+        MentorsService.updateSessionApiV1MentorsSessionsSessionIdPatch({ 
+          sessionId: id, 
+          requestBody: data 
+        })
+      ),
     onSuccess: () => {
       toast({
         id: 'update-session-success',
@@ -86,7 +96,11 @@ export const useMentorSessions = () => {
 
   // Delete session (soft delete - marks as cancelled)
   const deleteSession = useMutation<void, Error, number>({
-    mutationFn: (id) => toNativePromise(MentorSessionService.deleteSession(id)),
+    mutationFn: (id) => toNativePromise(
+      MentorsService.cancelSessionApiV1MentorsSessionsSessionIdDelete({ 
+        sessionId: id 
+      })
+    ),
     onSuccess: () => {
       toast({
         id: 'delete-session-success',
@@ -101,6 +115,33 @@ export const useMentorSessions = () => {
       toast({
         id: 'delete-session-error',
         title: 'Failed to cancel session',
+        description: getApiErrorMessage(error),
+        status: 'error',
+      });
+    },
+  });
+
+  // Toggle session visibility
+  const toggleVisibility = useMutation<MentorSessionPublic, Error, number>({
+    mutationFn: (id) => toNativePromise(
+      MentorsService.toggleSessionVisibilityApiV1MentorsSessionsSessionIdTogglePublicPatch({ 
+        sessionId: id 
+      })
+    ),
+    onSuccess: (data) => {
+      toast({
+        id: 'toggle-visibility-success',
+        title: 'Session visibility updated',
+        description: `Session is now ${data.is_public ? 'public' : 'private'}`,
+        status: 'success',
+      });
+      queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
+      queryClient.invalidateQueries({ queryKey: ['mentorSessions'] });
+    },
+    onError: (error) => {
+      toast({
+        id: 'toggle-visibility-error',
+        title: 'Failed to update visibility',
         description: getApiErrorMessage(error),
         status: 'error',
       });
@@ -151,12 +192,15 @@ export const useMentorSessions = () => {
     updateSessionAsync: updateSession.mutateAsync,
     deleteSession: deleteSession.mutate,
     deleteSessionAsync: deleteSession.mutateAsync,
+    toggleVisibility: toggleVisibility.mutate,
+    toggleVisibilityAsync: toggleVisibility.mutateAsync,
     saveSession,
 
     // Loading states
     isCreating: createSession.isPending,
     isUpdating: updateSession.isPending,
     isDeleting: deleteSession.isPending,
+    isTogglingVisibility: toggleVisibility.isPending,
   };
 };
 
@@ -175,7 +219,9 @@ export const useMentorSessionsByMentorId = (
 ) => {
   return useQuery<MentorSessionPublic[], Error>({
     queryKey: ['mentorSessions', 'byMentor', mentorId],
-    queryFn: () => toNativePromise(MentorSessionService.getMentorSessions(mentorId)),
+    queryFn: () => toNativePromise(
+      MentorsService.getMentorSessionsApiV1MentorsMentorIdSessionsGet({ mentorId })
+    ),
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 1,
     enabled: enabled && !!mentorId,
@@ -195,7 +241,9 @@ export const useSessionByUuid = (
 ) => {
   return useQuery<MentorSessionPublic, Error>({
     queryKey: ['mentorSession', sessionUuid],
-    queryFn: () => toNativePromise(MentorSessionService.getSessionByUuid(sessionUuid)),
+    queryFn: () => toNativePromise(
+      MentorsService.getSessionApiV1MentorsSessionsSessionUuidGet({ sessionUuid })
+    ),
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 1,
     enabled: enabled && !!sessionUuid,

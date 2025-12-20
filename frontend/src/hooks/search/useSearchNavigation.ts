@@ -1,13 +1,13 @@
 import { useNavigate } from "@tanstack/react-router";
 import type { UnifiedSearchResult } from "@/components/common/search/types";
-import type { UserPublic, MentorSessionPublic, MentorServicePublic } from "@/client";
+import type { MentorSessionPublic, MentorServicePublic, MentorExplorePublic } from "@/client";
 
 export const useSearchNavigation = (urlQuery: string) => {
   const navigate = useNavigate();
 
   const handleResultClick = (result: UnifiedSearchResult) => {
     if (result.type === "mentor") {
-      const mentor = result.data as UserPublic;
+      const mentor = result.data as MentorExplorePublic;
       navigate({ to: `/profile/${mentor.uuid}` });
     } else if (result.type === "session") {
       const session = result.data as MentorSessionPublic;

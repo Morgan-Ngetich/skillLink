@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabase/supabaseClient';
-import { OpenAPI, type GoogleUserInfo } from '@/client';
-import { type SupabaseUser, UserService } from '@/client';
+import { OpenAPI, UsersService } from '@/client';
 import { useNavigate, useRouterState } from '@tanstack/react-router';
+import type { GoogleUserInfo, SupabaseUser } from './types';
 
 export async function isLoggedIn() {
   const {
@@ -28,7 +28,7 @@ export function useCleanRedirect(paramKey = 'redirectTo') {
     const fallbackUrl = document.referrer.includes('https://frontend-production-a85f.up.railway.app/')
       ? '/'
       : '/crackmode';
-      
+
     if (redirectTo) {
       // Remove the redirectTo param from search
       const { [paramKey]: _discard, ...rest } = search;
@@ -88,11 +88,13 @@ export const syncUserToBackend = async (user: SupabaseUser, maxRetries = 3) => {
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      await UserService.syncUserFromSupabase({
-        user_id,
-        email,
-        full_name,
-        avatar_url,
+      await UsersService.syncUserApiV1UsersSyncPost({
+        requestBody: {
+          user_id,
+          email,
+          full_name,
+          avatar_url,
+        }
       });
       console.log(`Sync successful on attempt ${attempt}`);
       return; // Success!

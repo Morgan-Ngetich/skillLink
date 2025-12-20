@@ -6,7 +6,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { invalidateTokenCache } from "@/client/core/OpenAPI";
 import { clearAuthSession, setAuthSession } from "@/hooks/auth/cookies/sessionCookies";
 import { updateUserMetadataCache } from "@/hooks/auth/useSession"; // ← ADD THIS
-import { UserService, type UserPublic, type UserUpdate } from "@/client";
+import { UsersService, type UserPublic, type UserUpdate } from "@/client";
 import { toNativePromise } from "@/utils/toNativePromisse";
 import { getApiErrorMessage } from "@/utils/errorUtils";
 import useToaster from '../public/useToaster';
@@ -25,7 +25,7 @@ export function useAuth() {
    * - Email, name, avatar
    */
   const updateCurrentAuthUser = useMutation<UserPublic, Error, UserUpdate>({
-    mutationFn: (data) => toNativePromise(UserService.updateMe(data)),
+    mutationFn: (data) => toNativePromise(UsersService.updateMeApiV1UsersMePatch({ requestBody: data })),
     onSuccess: (updatedUser) => {
       toast({
         id: 'update-user-success',
