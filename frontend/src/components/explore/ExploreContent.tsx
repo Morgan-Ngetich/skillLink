@@ -5,7 +5,7 @@ import SessionCard from "@/components/dashboard/mentor/sessions/SessionCard";
 import ServiceCard from "@/components/dashboard/mentor/services/ServiceCard";
 import { EmptyState } from "./EmptyState";
 import type { ViewType } from "./types";
-import type { MentorServicePublic, MentorSessionPublic, UserPublic } from "@/client";
+import type { MentorExplorePublic, MentorServicePublic, MentorSessionPublic } from "@/client";
 import { SessionCardSkeleton } from "../dashboard/mentor/sessions/SessionCardSkeleton";
 import { ServiceCardSkeleton } from "../dashboard/mentor/services/ServiceCardSkeleton";
 
@@ -14,7 +14,7 @@ interface ExploreContentProps {
   isLoadingMentors: boolean;
   isLoadingFeaturedSessions: boolean;
   isLoadingFeaturedServices: boolean;
-  filteredMentors: UserPublic[];
+  filteredMentors: MentorExplorePublic[];
   filteredSessions: MentorSessionPublic[];
   filteredServices: MentorServicePublic[];
   searchQuery: string;
@@ -65,7 +65,7 @@ export const ExploreContent = ({
           ) : filteredMentors.length > 0 ? (
             <SimpleGrid columns={{ base: 1, sm: 2, lg: 3, xl: 4 }} gap={{ base: 4, md: 6 }}>
               {filteredMentors.map((mentor) => (
-                <MentorCard key={mentor.id} mentor={mentor} />
+                <MentorCard key={mentor.user_id} mentor={mentor} />
               ))}
             </SimpleGrid>
           ) : (

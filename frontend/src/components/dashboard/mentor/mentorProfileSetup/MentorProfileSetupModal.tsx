@@ -21,7 +21,7 @@ import { useAuth } from '@/hooks/auth/useAuth'
 import { useRouter } from '@tanstack/react-router'
 import {
   type MentorProfileCreate,
-  ExperienceLevel,
+  type ExperienceLevel,
 } from '@/client'
 import { useMentorProfile } from '@/hooks/mentor/useMentorProfile'
 import { Tag, Alert } from '@/components/ui'
@@ -33,7 +33,7 @@ interface MentorSetupModalProps {
   onClose: () => void
 }
 
-const EXPERIENCE_LEVELS = Object.values(ExperienceLevel)
+const EXPERIENCE_LEVELS: ExperienceLevel[] = ['junior', 'mid', 'senior'] as ExperienceLevel[]
 
 export default function MentorProfileSetupModal({
   isOpen,
@@ -72,21 +72,39 @@ export default function MentorProfileSetupModal({
       .join(' ')
 
   const addIndustry = () => {
-    const value = toTitleCase(newIndustry.trim())
-    if (!value) return
-    if (formData.industries.includes(value)) return // prevent duplicates
+    const value = toTitleCase(newIndustry.trim());
+    if (!value) return;
+
+    // Handle null/undefined with nullish coalescing operator
+    const currentIndustries = formData.industries ?? [];
+
+    // Check for duplicates
+    if (currentIndustries.includes(value)) return;
+
     setFormData({
       ...formData,
-      industries: [...formData.industries, value]
-    })
-    setNewIndustry('')
-  }
+      industries: [...currentIndustries, value]
+    });
+
+    setNewIndustry('');
+  };
 
   const removeIndustry = (index: number) => {
-    const updated = [...formData.industries]
-    updated.splice(index, 1)
-    setFormData({ ...formData, industries: updated })
-  }
+    // Handle null/undefined by providing a default empty array
+    const currentIndustries = formData.industries ?? [];
+
+    // Create a copy of the array
+    const updated = [...currentIndustries];
+
+    // Remove the item at the specified index
+    updated.splice(index, 1);
+
+    // Update form data
+    setFormData({
+      ...formData,
+      industries: updated
+    });
+  };
 
   const addExpertise = () => {
     const value = toTitleCase(newExpertise.trim())
@@ -110,9 +128,9 @@ export default function MentorProfileSetupModal({
   const isValid = () => {
     return (
       formData.title.trim() !== '' &&
-      formData.industries.length >= 1 &&
-      formData.expertise.length >= 1 &&
-      formData.experience_level !== ''
+      formData.industries && formData.industries.length >= 1 &&
+      formData.expertise && formData.expertise.length >= 1 &&
+      formData.experience_level
     )
   }
 
@@ -231,7 +249,7 @@ export default function MentorProfileSetupModal({
                     </IconButton>
                   </HStack>
 
-                  {formData.industries.length > 0 && (
+                  {formData.industries && formData.industries.length > 0 && (
                     <Flex gap={2} flexWrap="wrap">
                       {formData.industries.map((item, i) => (
                         <Tag
