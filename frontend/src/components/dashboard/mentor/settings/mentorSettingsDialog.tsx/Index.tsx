@@ -19,7 +19,7 @@ import CommunicationTab from "./tabs/CommunicationTab";
 interface MentorSettingsDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  settings?: MentorSettingsPublic;
+  settings?: MentorSettingsPublic | null | undefined;
   onSave?: (settings: MentorSettingsUpdate) => void;
   isUpdating: boolean;
 }

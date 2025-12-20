@@ -30,7 +30,7 @@ const ParticipantsTab = ({ bookings, isOwner }: ParticipantsTabProps) => {
               <HStack gap={3}>
                 <Avatar
                   size={{ base: "sm", md: "md" }}
-                  src={booking.mentee?.avatar_url}
+                  src={booking.mentee?.avatar_url ?? "/fallback.jpg"}
                   name={booking.mentee?.full_name || `Participant ${booking.id}`}
                 />
                 <Box>

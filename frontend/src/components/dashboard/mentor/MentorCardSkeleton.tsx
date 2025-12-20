@@ -14,7 +14,8 @@ export const MentorCardSkeleton = () => {
       boxShadow="xl"
       borderWidth="2px"
       borderColor={{ base: 'gray.200', _dark: 'gray.700' }}
-      minW={{ base: "250px", md: "300px" }}
+      minW={"250px"}
+      maxW={"290px"}
     >
       {/* Cover Image Section */}
       <Box position="relative" borderRadius="xl">
@@ -66,7 +67,7 @@ export const MentorCardSkeleton = () => {
         </VStack>
 
         {/* Skills skeleton */}
-        <HStack gap={2} mt={4}>
+        <HStack gap={2} mt={4} overflowX={"auto"} scrollbar={"hidden"}>
           <Skeleton height="24px" width="70px" borderRadius="lg" />
           <Skeleton height="24px" width="90px" borderRadius="lg" />
           <Skeleton height="24px" width="80px" borderRadius="lg" />

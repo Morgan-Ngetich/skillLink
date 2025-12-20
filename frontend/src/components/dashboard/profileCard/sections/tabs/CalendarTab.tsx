@@ -4,7 +4,7 @@ import MentorshipCalendarContent from '../../../calendar/MentorshipCalendarConte
 interface CalendarTabProps {
   isOwnProfile?: boolean;
   mentorSessions?: MentorSessionPublic[];
-  mentorSettings?: MentorSettingsPublic;
+  mentorSettings?: MentorSettingsPublic | undefined | null;
   onEdit?: (session: MentorSessionPublic) => void;
   onDelete?: (session: MentorSessionPublic) => void;
   onViewDetails?: (session: MentorSessionPublic) => void;

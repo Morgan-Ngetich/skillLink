@@ -76,7 +76,11 @@ const SessionDateTime = ({ session }: SessionDateTimeProps) => {
                 <Button
                   size="sm"
                   colorPalette="blue"
-                  onClick={() => window.open(session.meeting_link, "_blank")}
+                  onClick={() => {
+                    if (session.meeting_link) {
+                      window.open(session.meeting_link, "_blank");
+                    }
+                  }}
                 >
                   <FaVideo />
                   Join Session

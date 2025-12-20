@@ -91,7 +91,7 @@ const MentorSessionInfo: React.FC<MentorSessionInfoProps> = ({
                   {confirmedBookings.slice(0, 3).map((booking, idx) => (
                     <Avatar
                       key={idx}
-                      src={booking.mentee?.avatar_url}
+                      src={booking.mentee?.avatar_url ?? "/fallbacl.jpg"}
                       name={booking.mentee?.full_name || `Participant ${booking.id}`}
                       border="1px solid white"
                     />
@@ -149,7 +149,7 @@ const MentorSessionInfo: React.FC<MentorSessionInfoProps> = ({
             <Box mb={{ base: 3, md: 4 }}>
               <Link to={`/profile/${mentorData?.uuid}`}>
                 <HStack gap={2} align="start" mb={{ base: 2, md: 3 }}>
-                  <Avatar src={mentorData?.avatar_url} name={mentorData?.full_name} size={{ base: 'sm', md: 'md' }} />
+                  <Avatar src={mentorData?.avatar_url ?? "/fallback.jpg"} name={mentorData?.full_name} size={{ base: 'sm', md: 'md' }} />
                   <VStack align="start" gap={0}>
                     <Text fontSize={{ base: 'sm', md: 'lg' }} fontWeight="bold" color="white" truncate>
                       {mentorData?.full_name}

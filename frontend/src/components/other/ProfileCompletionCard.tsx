@@ -73,7 +73,8 @@ export default function ProfileCompletionCard({ onEditProfile }: ProfileCompleti
         </Box>
 
         <VStack align="stretch" gap={2} mt={2}>
-          {profileCompletionStatus?.missing_fields.slice(0, 3).map((item, id: number) => (
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          {profileCompletionStatus?.missing_fields.slice(0, 3).map((item: any, id: number) => (
             <Flex key={id} align="center" gap={2}>
               <Box color="fg.subtle">
                 <LuCircle size={16} />

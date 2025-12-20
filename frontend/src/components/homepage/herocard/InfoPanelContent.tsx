@@ -134,7 +134,7 @@ const InfoPanelContent: React.FC<InfoPanelContentProps> = ({
             {/* Mentor Info */}
             <HStack justify="space-between" w="full" p={{ base: 2, md: 4 }} bg={avs} rounded="md">
               <HStack>
-                <Avatar size="sm" src={mentorData?.avatar_url} name={mentorData?.full_name} />
+                <Avatar size="sm" src={mentorData?.avatar_url ?? "/fallback.jpg"} name={mentorData?.full_name} />
                 <Box>
                   <Text fontSize="sm" fontWeight="semibold">{mentorData?.full_name}</Text>
                   <Text fontSize="xs" color="fg.muted">{mentorData?.profile?.title}</Text>
@@ -162,7 +162,7 @@ const InfoPanelContent: React.FC<InfoPanelContentProps> = ({
                   borderBottom="1px solid"
                   borderColor="border.subtle"
                 >
-                  <Avatar size="sm" src={booking.mentee?.avatar_url} name={booking.mentee?.full_name || `Participant ${booking.id}`} mr={3} />
+                  <Avatar size="sm" src={booking.mentee?.avatar_url ?? "/fallback.jpg"} name={booking.mentee?.full_name || `Participant ${booking.id}`} mr={3} />
                   <Box flex={1}>
                     <Text fontWeight="medium" fontSize="sm">{booking.mentee?.full_name || 'Anonymous'}</Text>
                     <Text fontSize="xs" color="fg.muted">{booking.mentee?.email}</Text>

@@ -151,7 +151,7 @@ const SessionCard: React.FC<SessionCardProps> = ({
   const content = (
     <HStack gap={2} align="start" mb={2}>
       <Avatar
-        src={mentorProfileData?.avatar_url}
+        src={mentorProfileData?.avatar_url ?? "/fallback.jpg"}
         name={mentorProfileData?.full_name}
         size={{ base: "sm", md: "md" }}
       />

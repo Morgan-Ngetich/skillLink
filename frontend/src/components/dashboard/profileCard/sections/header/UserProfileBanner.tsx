@@ -51,8 +51,6 @@ const UserProfileBanner = ({
     triggerFileInput: triggerCoverInput,
   } = useProfileImageUpload({ type: 'cover' });
 
-  const isProcessing = isAvatarProcessing || isCoverProcessing;
-
   // Use preview if uploading, otherwise use actual user data
   const currentAvatar = avatarPreview || user?.avatar_url;
   const currentCover = coverPreview || user?.cover_image || user?.avatar_url;
@@ -66,7 +64,7 @@ const UserProfileBanner = ({
     >
       <Box h={bannerHeight} position="relative">
         <Image
-          src={currentCover || '/fallback-banner.jpg'}
+          src={currentCover || '/fallback.jpg'}
           alt="Banner"
           objectFit="cover"
           w="full"
@@ -86,8 +84,8 @@ const UserProfileBanner = ({
               boxShadow="md"
               colorPalette="blue"
               onClick={triggerCoverInput}
-              loading={isProcessing}
-              disabled={isProcessing}
+              loading={isCoverProcessing}
+              disabled={isCoverProcessing}
               border="2px solid"
               borderColor="bg"
             >
@@ -101,7 +99,7 @@ const UserProfileBanner = ({
               accept="image/*"
               hidden
               onChange={handleCoverChange}
-              disabled={isProcessing}
+              disabled={isCoverProcessing}
             />
 
             {/* Edit Profile Button */}
@@ -164,7 +162,7 @@ const UserProfileBanner = ({
           <Box position="relative">
             <Avatar
               boxSize={avatarSize}
-              src={currentAvatar}
+              src={currentAvatar ?? undefined}
               name={user?.full_name}
               border="2px solid"
               boxShadow="md"
@@ -182,8 +180,8 @@ const UserProfileBanner = ({
                   borderRadius="full"
                   colorPalette="blue"
                   onClick={triggerAvatarInput}
-                  loading={isProcessing}
-                  disabled={isProcessing}
+                  loading={isAvatarProcessing}
+                  disabled={isAvatarProcessing}
                   border="2px solid"
                   borderColor="bg"
                 >
@@ -197,7 +195,7 @@ const UserProfileBanner = ({
                   accept="image/*"
                   hidden
                   onChange={handleAvatarChange}
-                  disabled={isProcessing}
+                  disabled={isAvatarProcessing}
                 />
               </>
             )}

@@ -43,7 +43,7 @@ const PendingBookingsTab = ({
             <HStack align="start" gap={3} mb={3}>
               <Avatar
                 size={{ base: "md", md: "lg" }}
-                src={booking.mentee?.avatar_url}
+                src={booking.mentee?.avatar_url ?? "/fallback.jpg"}
                 name={booking.mentee?.full_name || `Participant ${booking.id}`}
               />
               <Box flex="1">

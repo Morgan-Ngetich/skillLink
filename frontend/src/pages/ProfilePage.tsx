@@ -14,7 +14,7 @@ import type { MentorSessionPublic, MentorServicePublic } from "@/client";
 
 import DeleteSessionDialog from "@/components/dashboard/mentor/sessions/DeleteSessionDialog";
 import DeleteServiceDialog from "@/components/dashboard/mentor/services/DeleteServiceDialog";
-import MobileSidebar from "@/components/profile/profilePage/MobileSidebar";
+import MenteeSidebar from "@/components/profile/profilePage/MenteeSidebar";
 import DesktopSidebar from "@/components/profile/profilePage/DesktopSidebar";
 import ProfileEditModal from "@/components/dashboard/profileCard/editProfileCard/ProfileEditModal";
 import MentorProfileSetupModal from "@/components/dashboard/mentor/mentorProfileSetup/MentorProfileSetupModal";
@@ -28,8 +28,8 @@ import DesktopSidebarLoadingState from "@/components/profile/profilePage/loading
 
 const ProfilePage = () => {
   const router = useRouter();
-  const params = useParams({ strict: false });
   const search = useSearch({ strict: false });
+  const params = useParams({ strict: false });
   const { uuid } = params;
 
   const { isBlocked, isLoading: isAuthLoading } = useAuthRouteGuard();
@@ -62,6 +62,9 @@ const ProfilePage = () => {
   const isUpdating = isOwnProfile ? mentorSettingsHook.isUpdating : false;
 
   const readOnly = !isOwnProfile;
+
+  // Determine if the profile being viewed belongs to a mentor
+  const profileUserIsMentor = isOwnProfile ? user?.is_mentor : publicUser?.is_mentor;
 
   // All handlers in one custom hook
   const handlers = useProfilePageHandlers({
@@ -106,6 +109,10 @@ const ProfilePage = () => {
       </Container>
     );
   }
+
+  // Determine which sidebar to show
+  const shouldShowMobileSidebar = isMobile || !profileUserIsMentor;
+  const shouldShowDesktopSidebar = !isMobile && profileUserIsMentor;
 
   return (
     <>
@@ -166,6 +173,9 @@ const ProfilePage = () => {
               profile={personalProfile || undefined}
               mentorProfile={mentorData || undefined}
               readOnly={readOnly}
+              onOpenProfileSection={(section) =>
+                handlers.openModal("setup-profile", section)
+              }
               onEditClick={isOwnProfile ? () => handlers.openModal("setup-profile", "basic") : undefined}
               activeTab={search.pt || "about"}
               onTabChange={handlers.handleProfileTabChange}
@@ -189,13 +199,17 @@ const ProfilePage = () => {
             />
           </Box>
 
-          {isMobile ? (
-            <MobileSidebar
+          {/* Sidebar Logic:
+              - MobileSidebar: Show on mobile OR when viewing a non-mentor profile
+              - DesktopSidebar: Show on desktop AND when viewing a mentor profile
+          */}
+          {shouldShowMobileSidebar ? (
+            <MenteeSidebar
               isOwnProfile={isOwnProfile}
               personalProfile={personalProfile}
               onEditProfile={(step) => handlers.openModal("setup-profile", step || "basic")}
             />
-          ) : (
+          ) : shouldShowDesktopSidebar ? (
             <DesktopSidebar
               search={search}
               mentorData={mentorData}
@@ -203,7 +217,7 @@ const ProfilePage = () => {
               isOwnProfile={isOwnProfile}
               handlers={handlers}
             />
-          )}
+          ) : null}
         </Flex>
       </Container>
     </>

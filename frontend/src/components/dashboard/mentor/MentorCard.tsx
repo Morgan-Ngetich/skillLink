@@ -12,17 +12,17 @@ import {
 import { Avatar, Tooltip } from '@/components/ui';
 import { FaStar, FaMapMarkerAlt } from 'react-icons/fa';
 import { Link, useNavigate } from '@tanstack/react-router';
-import type { UserPublic } from '@/client';
+import type { MentorExplorePublic } from '@/client';
 
 
 interface MentorCardProps {
-  mentor: UserPublic;
+  mentor: MentorExplorePublic;
   onCollapse?: () => void;
   //* e.g on FeaturedMentors maxW="300px", on Explore page its full.
   maxW?: string;
 }
 
-export const MentorCard: React.FC<MentorCardProps> = ({ mentor, maxW="full" }) => {
+export const MentorCard: React.FC<MentorCardProps> = ({ mentor, maxW = "full" }) => {
   const navigate = useNavigate()
   const isMobile = useBreakpointValue({ base: true, md: false })
 
@@ -33,7 +33,7 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor, maxW="full" }) =
       bg="cardbg"
       borderWidth="2px"
       borderColor={{ base: 'gray.200', _dark: 'gray.700' }}
-      minW={{ base: "250px", md: "300px" }}
+      minW={"250px"}
       maxW={maxW}
       h="full"
       display="flex"
@@ -47,20 +47,21 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor, maxW="full" }) =
           <Box position="relative">
             <Box overflow="hidden" aspectRatio={4 / 1} borderTopRadius="xl">
               <Image
-                src={mentor.cover_image || '/fallback-banner.jpg'}
+                src={mentor?.cover_image || '/fallback.jpg'}
                 alt={`${mentor.full_name}'s cover`}
                 objectFit="cover"
                 w="100%"
                 h="100%"
               />
 
+              {/* This acts as dark bg, instead ther is no image. */}
               <Box
                 position="absolute"
                 bottom="0"
                 left="0"
                 right="0"
                 height="100%"
-                bg="blackAlpha.600"
+              // bg="blackAlpha.600"
               />
             </Box>
 
@@ -76,7 +77,7 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor, maxW="full" }) =
               alignItems="flex-end"
               scrollbar="hidden"
             >
-              {mentor.profile?.area_of_focus?.map((badge: string) => (
+              {mentor?.area_of_focus?.map((badge: string) => (
                 <Badge
                   key={badge}
                   bg="blackAlpha.600"
@@ -99,12 +100,12 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor, maxW="full" }) =
             <Box position="absolute" bottom="-6" left="5">
               <Avatar
                 boxSize={{ base: "12", md: "15" }}
-                src={mentor.avatar_url}
-                name={mentor.full_name}
+                src={mentor?.avatar_url ?? undefined}
+                name={mentor.full_name ?? undefined}
                 border="2px solid white"
               />
 
-              {mentor.profile?.mentor_profile?.sessions && mentor.profile?.mentor_profile?.sessions.length > 0 && (
+              {mentor.total_sessions > 0 && (
                 <Box
                   position="absolute"
                   bottom="0.5"
@@ -134,21 +135,21 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor, maxW="full" }) =
           </HStack>
 
           <Text fontSize="sm" fontWeight="medium" lineClamp={1}>
-            {mentor.profile?.title}
+            {mentor?.title}
           </Text>
         </VStack>
 
         {/* Bio */}
-        <Tooltip content={mentor?.profile?.about} showArrow portalled={false} disabled={!mentor?.profile?.about}>
+        <Tooltip content={mentor?.about} showArrow portalled={false} disabled={!mentor?.about}>
           <Text mt={1} fontSize="sm" lineClamp={2} color="fg.muted" minH="40px">
-            {mentor?.profile?.about}
+            {mentor?.about}
           </Text>
         </Tooltip>
 
         {/* Skills */}
-        {mentor?.profile?.skills && (
+        {mentor?.skills && (
           <HStack gap={2} mt={4} overflowX="auto" scrollbar="hidden">
-            {mentor?.profile?.skills.map((skill: string) => (
+            {mentor?.skills.map((skill: string) => (
               <Badge
                 key={skill}
                 variant="surface"
@@ -175,7 +176,7 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor, maxW="full" }) =
           </HStack>
           <HStack minW={0} flex={1} justify={"end"}>
             <Icon as={FaMapMarkerAlt} flexShrink={0} />
-            <Text color="fg.muted" lineClamp={1}>{mentor?.profile?.location}</Text>
+            <Text color="fg.muted" lineClamp={1}>{mentor?.location}</Text>
           </HStack>
         </HStack>
 

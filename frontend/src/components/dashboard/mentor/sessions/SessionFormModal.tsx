@@ -28,11 +28,21 @@ import {
 } from "@/components/ui";
 import { useMentorSessions } from "@/hooks/mentor/useMentorSessions";
 import { useAuth } from "@/hooks/auth/useAuth";
-import type { MentorSessionPublic, PreparationMaterial } from "@/client";
-import { SessionApproach, type LocationType } from "@/client";
+import type { MentorSessionPublic, PreparationMaterial, SessionType } from "@/client";
+import { type LocationType } from "@/client";
 import { useSupabaseStorage } from "@/hooks/supabase/useSupabaseStorage";
 import { LuTrash2, LuUpload, LuPlus, LuX, LuFileText } from "react-icons/lu";
 import { formatDuration } from "@/utils/calendarDataTransformer";
+
+
+const SessionApproach = {
+  ONE_ON_ONE: '1-on-1 Video Call',
+  CODE_REVIEW: 'Code Review',
+  RESUME_REVIEW: 'Resume Review',
+  MOCK_INTERVIEW: 'Mock Interview',
+  CAREER_ADVICE: 'Career Advice',
+  PORTFOLIO_REVIEW: 'Portfolio Review',
+}
 
 interface SessionFormModalProps {
   isOpen: boolean;
@@ -219,61 +229,66 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
   };
 
   // Form submission
-  const onSubmit = async (data: SessionFormData) => {
-    let cover_image = data.cover_image;
-
-    // Upload cover image if new file is selected
-    if (coverImageFile && user?.uuid) {
-      try {
-        const result = await new Promise<{ url: string }>((resolve, reject) => {
-          uploadFile(
-            {
-              bucket: "mentor_sessions",
-              file: coverImageFile,
-              options: {
-                userUuid: user.uuid,
-                sessionUuid: session?.uuid || crypto.randomUUID(),
+    const onSubmit = async (data: SessionFormData) => {
+      let cover_image = data.cover_image;
+  
+      // Upload cover image if new file is selected
+      if (coverImageFile && user?.uuid) {
+        try {
+          const result = await new Promise<{ url: string }>((resolve, reject) => {
+            uploadFile(
+              {
+                bucket: "mentor_sessions",
+                file: coverImageFile,
+                options: {
+                  userUuid: user.uuid,
+                  sessionUuid: session?.uuid || crypto.randomUUID(),
+                },
               },
-            },
-            {
-              onSuccess: (uploadData) => resolve(uploadData as { url: string }),
-              onError: reject,
-            }
-          );
-        });
-        cover_image = result.url;
-      } catch (error) {
-        console.error("Cover image upload failed:", error);
-        return;
+              {
+                onSuccess: (uploadData) => resolve(uploadData as { url: string }),
+                onError: reject,
+              }
+            );
+          });
+          cover_image = result.url;
+        } catch (error) {
+          console.error("Cover image upload failed:", error);
+          return;
+        }
       }
-    }
-
-    const payload = {
-      ...(session && { id: session.id }),
-      mentor_id: user?.id || 0,
-      title: data.title,
-      description: data.description || undefined,
-      cover_image: cover_image || undefined,
-      session_type: data.session_type,
-      duration_minutes: calculatedDuration,
-      price_usd: data.price_usd ? parseFloat(data.price_usd) : undefined,
-      max_bookings: data.max_bookings ? parseInt(data.max_bookings) : undefined,
-      location_type: data.location_type,
-      meeting_link: data.meeting_link || undefined,
-      timezone: data.timezone,
-      start_time: new Date(data.start_time).toISOString(),
-      end_time: new Date(data.end_time).toISOString(),
-      is_public: data.is_public,
-      is_cancelled: false,
-      is_active: true,
-      tags: data.tags.length > 0 ? data.tags : undefined,
-      preparation_materials: data.preparation_materials.length > 0 ? data.preparation_materials : undefined,
+  
+      // Convert human-readable session type back to SessionType key used by the API
+      const sessionTypeKey = (Object.keys(SessionApproach) as Array<keyof typeof SessionApproach>).find(
+        (k) => SessionApproach[k] === data.session_type
+      ) as SessionType | undefined;
+  
+      const payload = {
+        ...(session && { id: session.id }),
+        mentor_id: user?.id || 0,
+        title: data.title,
+        description: data.description || undefined,
+        cover_image: cover_image || undefined,
+        session_type: sessionTypeKey,
+        duration_minutes: calculatedDuration,
+        price_usd: data.price_usd ? parseFloat(data.price_usd) : undefined,
+        max_bookings: data.max_bookings ? parseInt(data.max_bookings) : undefined,
+        location_type: data.location_type,
+        meeting_link: data.meeting_link || undefined,
+        timezone: data.timezone,
+        start_time: new Date(data.start_time).toISOString(),
+        end_time: new Date(data.end_time).toISOString(),
+        is_public: data.is_public,
+        is_cancelled: false,
+        is_active: true,
+        tags: data.tags.length > 0 ? data.tags : undefined,
+        preparation_materials: data.preparation_materials.length > 0 ? data.preparation_materials : undefined,
+      };
+  
+      await saveSession(payload, {
+        onSuccess: onClose,
+      });
     };
-
-    await saveSession(payload, {
-      onSuccess: onClose,
-    });
-  };
 
   const isValid = watch("title").trim().length > 0 && startTime && endTime && calculatedDuration > 0;
 
@@ -662,7 +677,7 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
 
                         <Field label="Description (Optional)">
                           <StyledTextarea
-                            value={newMaterial.description}
+                            value={newMaterial.description ?? ""}
                             onChange={(e) =>
                               setNewMaterial({ ...newMaterial, description: e.target.value })
                             }

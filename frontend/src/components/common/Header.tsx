@@ -9,6 +9,7 @@ import {
   SkeletonText,
   Spinner,
   IconButton,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import { Avatar } from '@/components/ui/avatar';
 import { FaChevronDown } from 'react-icons/fa6';
@@ -26,6 +27,8 @@ const Header = () => {
   const navigate = useNavigate();
   const navigateWithRedirect = useNavigateWithRedirect();
 
+  const isMobile = useBreakpointValue({ base: true, md: false });
+
   // Gate UI decisions until we know auth state
   const showUserUI = !isLoading && user;
   const showSignInButton = !isLoading && !user;
@@ -38,7 +41,7 @@ const Header = () => {
   const handleBecomeMentorClick = () => {
     // Use cached or live UUID
     const userUuid = authUser?.uuid ?? cachedUserMetadata?.uuid;
-    
+
     if (userUuid) {
       navigateWithRedirect(
         `/profile/${userUuid}?drawer=mentor-setup&step=expertise`,
@@ -87,14 +90,15 @@ const Header = () => {
         </HStack>
 
         {/* Center Section - Search */}
-        <Box
-          flex="1"
-          maxW={{ base: '100%', md: '650px' }}
-          display={{ base: 'none', md: 'block' }}
-          mx={4}
-        >
-          <Search />
-        </Box>
+        {!isMobile && (
+          <Box
+            flex="1"
+            maxW={{ base: '100%', md: '650px' }}
+            mx={4}
+          >
+            <Search />
+          </Box>
+        )}
 
         {/* Right Section - User Actions */}
         <HStack
@@ -102,17 +106,19 @@ const Header = () => {
           flex={{ base: '0 0 auto', md: '0 0 auto' }}
           justify="flex-end"
         >
-          {/* Mobile Search Icon */}
-          <Box display={{ base: 'block', md: 'none' }}>
-            <Search />
-          </Box>
+
+          {isMobile && (
+            <Box display={{ base: 'block', md: 'none' }}>
+              <Search />
+            </Box>
+          )}
 
           {/* Color Mode Toggle */}
           <ColorModeButton variant="ghost" size="sm" />
 
           {/* Become a Mentor Button - Shows only when NOT mentor and NOT loading */}
           {showBecomeMentorButton && (
-            <Button 
+            <Button
               onClick={handleBecomeMentorClick}
               display={{ base: 'none', md: 'inline-flex' }}
             >
@@ -257,7 +263,7 @@ const Header = () => {
           ) : null}
         </HStack>
       </Flex>
-    </Box>
+    </Box >
   );
 };
 

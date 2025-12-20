@@ -1,12 +1,12 @@
 import { Heading, Box, HStack, Button, useBreakpointValue, Flex } from "@chakra-ui/react";
 import { FaAngleRight } from "react-icons/fa6";
-import type { UserPublic } from "@/client";
+import type { MentorExplorePublic } from "@/client";
 import type React from "react";
 import { MentorCard } from "../dashboard/mentor/MentorCard";
 import { MentorCardSkeleton } from "../dashboard/mentor/MentorCardSkeleton";
 
 interface FeaturedMentorsProps {
-  featuredMentors: UserPublic[];
+  featuredMentors: MentorExplorePublic[];
   isLoading: boolean;
 }
 
@@ -46,7 +46,7 @@ const FeaturedMentors: React.FC<FeaturedMentorsProps> = ({ featuredMentors, isLo
           </HStack>
         ) : (
           <Flex wrap={"wrap"} gap={2}>
-            {[1, 2, 3, 4, 5, 6].map((i) => (
+            {[1, 2, 3].map((i) => (
               <MentorCardSkeleton key={i} />
             ))}
           </Flex>
@@ -56,13 +56,13 @@ const FeaturedMentors: React.FC<FeaturedMentorsProps> = ({ featuredMentors, isLo
         isMobile ? (
           <HStack direction="row" w="full" overflowX="auto" pr={4} gap={2}>
             {featuredMentors.map((mentor) => (
-              <MentorCard key={mentor.id} mentor={mentor} maxW="250px"/>
+              <MentorCard key={mentor.user_id} mentor={mentor} maxW="250px"/>
             ))}
           </HStack>
         ) : (
           <Flex wrap={"wrap"} gap={2}>
             {featuredMentors.map((mentor) => (
-              <MentorCard key={mentor.id} mentor={mentor} maxW="300px"/>
+              <MentorCard key={mentor.user_id} mentor={mentor} maxW="290px"/>
             ))}
           </Flex>
         )

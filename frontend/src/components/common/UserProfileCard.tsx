@@ -25,7 +25,6 @@ const UserProfileCard = () => {
     triggerFileInput: triggerCoverInput,
   } = useProfileImageUpload({ type: 'cover' });
 
-  const isProcessing = isAvatarProcessing || isCoverProcessing;
 
   if (isLoading || !user) {
     return (
@@ -75,7 +74,7 @@ const UserProfileCard = () => {
         <Image
           src={
             currentCover ||
-            'https://images.unsplash.com/photo-1557683316-973673baf926?w=800&h=200&fit=crop'
+            '/fallback.jpg'
           }
           alt="Profile Banner"
           objectFit="cover"
@@ -92,8 +91,8 @@ const UserProfileCard = () => {
           borderRadius="full"
           colorPalette="blue"
           onClick={triggerCoverInput}
-          loading={isProcessing}
-          disabled={isProcessing}
+          loading={isCoverProcessing}
+          disabled={isCoverProcessing}
           border="2px solid"
           borderColor="bg"
         >
@@ -105,7 +104,7 @@ const UserProfileCard = () => {
           accept="image/*"
           hidden
           onChange={handleCoverChange}
-          disabled={isProcessing}
+          disabled={isCoverProcessing}
         />
 
         {/* Avatar with upload button */}
@@ -127,8 +126,8 @@ const UserProfileCard = () => {
               borderRadius="full"
               colorPalette="blue"
               onClick={triggerAvatarInput}
-              loading={isProcessing}
-              disabled={isProcessing}
+              loading={isAvatarProcessing}
+              disabled={isAvatarProcessing}
               border="2px solid"
               borderColor="bg.emphasized"
             >
@@ -143,7 +142,7 @@ const UserProfileCard = () => {
           accept="image/*"
           hidden
           onChange={handleAvatarChange}
-          disabled={isProcessing}
+          disabled={isAvatarProcessing}
         />
       </Box>
 

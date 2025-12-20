@@ -7,7 +7,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { queryClient } from '@/hooks/lib/queryClient';
 import { syncUserToBackend, useCleanRedirect } from '@/hooks/auth/authState';
 import { AuthCallbackLoader } from '@/components/common/AuthCallBackLoader';
-import { type GoogleUserInfo, type Identity, type SupabaseUser } from '@/client';
+import { type GoogleUserInfo, type Identity, type SupabaseUser } from '@/hooks/auth/types';
 import { getApiErrorMessage } from '@/utils/errorUtils';
 import { setAuthSession, clearAuthSession } from "@/hooks/auth/cookies/sessionCookies"
 

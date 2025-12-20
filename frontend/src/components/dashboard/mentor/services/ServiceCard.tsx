@@ -167,7 +167,7 @@ const ServiceCard = ({
           flexShrink={0}
         >
           <Image
-            src={service.banner_url}
+            src={service.banner_url ?? "fallback.jpg"}
             alt={service.title}
             w="full"
             h="full"

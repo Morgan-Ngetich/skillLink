@@ -53,7 +53,7 @@ const HeaderProfileSection: React.FC<MenteeHeaderProfileSectionProps> = ({ user,
         <VStack gap={4}>
           {profile?.experience?.length ? (
             <Image
-              src={profile.experience[0]?.logo}
+              src={profile.experience[0]?.logo ?? "/falback.jpg"}
               alt="Experience"
               boxSize="40px"
               borderRadius="sm"
@@ -63,7 +63,7 @@ const HeaderProfileSection: React.FC<MenteeHeaderProfileSectionProps> = ({ user,
 
           {profile?.education?.length ? (
             <Image
-              src={profile.education[0]?.logo}
+              src={profile.education[0]?.logo ?? "/fallback.jpg"}
               alt="Education"
               boxSize="40px"
               borderRadius="sm"

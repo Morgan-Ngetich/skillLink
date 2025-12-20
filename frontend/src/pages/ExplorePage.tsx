@@ -1,7 +1,7 @@
 import { Box, Container, VStack } from "@chakra-ui/react";
 import { useState, useMemo, useEffect } from "react";
 import { useLocation, useNavigate } from "@tanstack/react-router";
-import { usePublicMentors } from "@/hooks/public/usePublicMentors";
+import { useBrowseMentors, useBrowseSessions, useBrowseServices } from "@/hooks/public/usePublicMentors";
 import { useAuth } from "@/hooks/auth/useAuth";
 import { ExploreHeader } from "@/components/explore/ExploreHeader";
 import { ExploreContent } from "@/components/explore/ExploreContent";
@@ -31,22 +31,43 @@ const Explore = () => {
     }
   }, [currentView, viewParam]);
 
-  const {
-    mentors = [],
-    isLoadingMentors,
-    featuredSessions = [],
-    isLoadingFeaturedSessions,
-    featuredServices = [],
-    isLoadingFeaturedServices,
-  } = usePublicMentors({
+  // Fetch data for browsing with filter parameters
+  // API only supports single values, so we pass the first selected item
+  const { 
+    data: mentors = [], 
+    isLoading: isLoadingMentors 
+  } = useBrowseMentors({
+    expertise: filters.selectedExpertise.length > 0 ? filters.selectedExpertise[0] : undefined,
+    available: filters.availableOnly,
     limit: 100,
-    available: filters.availableOnly || undefined,
   });
 
+  const { 
+    data: sessions = [], 
+    isLoading: isLoadingFeaturedSessions 
+  } = useBrowseSessions({
+    sessionType: filters.selectedSessionTypes.length > 0 ? filters.selectedSessionTypes[0] : undefined,
+    locationType: filters.locationType,
+    minPrice: filters.minPrice,
+    maxPrice: filters.maxPrice,
+    limit: 100,
+  });
+
+  const { 
+    data: services = [], 
+    isLoading: isLoadingFeaturedServices 
+  } = useBrowseServices({
+    category: filters.selectedServiceCategories.length > 0 ? filters.selectedServiceCategories[0] : undefined,
+    minPrice: filters.minPrice,
+    maxPrice: filters.maxPrice,
+    limit: 100,
+  });
+
+  // Apply client-side filtering for ALL selected filters (multi-select support)
   const { filteredMentors, filteredSessions, filteredServices } = useExploreSearch({
     mentors,
-    featuredSessions,
-    featuredServices,
+    sessions,
+    services,
     searchQuery,
     filters,
   });

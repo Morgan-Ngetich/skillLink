@@ -14,8 +14,8 @@ interface MentorshipCalendarContentProps {
   onDelete?: (session: MentorSessionPublic) => void;
   onViewDetails?: (session: MentorSessionPublic) => void;
   isOwnProfile?: boolean;
-  mentorSessions?: MentorSessionPublic[];
-  mentorSettings?: MentorSettingsPublic;
+  mentorSessions?: MentorSessionPublic[] | undefined | null;
+  mentorSettings?: MentorSettingsPublic | undefined | null;
 }
 
 const MentorshipCalendarContent: React.FC<MentorshipCalendarContentProps> = ({
