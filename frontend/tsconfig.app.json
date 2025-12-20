@@ -34,6 +34,5 @@
     "node_modules",
     "dist",
     "build",
-    "src/client"
   ]
 }
