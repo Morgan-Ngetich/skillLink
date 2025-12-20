@@ -11,6 +11,7 @@ interface ProfileCardProps {
   profile?: UserProfilePublic;
   mentorProfile?: MentorProfilePublic;
   readOnly?: boolean;
+  onOpenProfileSection?: (section: string) => void;
   onEditClick?: () => void;
   activeTab?: string;
   onTabChange?: (tab: string) => void;
@@ -46,6 +47,7 @@ export default function ProfileCard({
   profile,
   mentorProfile,
   readOnly = false,
+  onOpenProfileSection,
   onEditClick,
   activeTab = 'about',
   onTabChange,
@@ -72,6 +74,7 @@ export default function ProfileCard({
     profile,
     mentorProfile,
     readOnly,
+    onOpenProfileSection,
     isMobile,
     serviceModal,
     serviceId,

@@ -3,14 +3,18 @@ import {
   Text,
   Wrap,
   WrapItem,
+  HStack,
+  IconButton
 } from "@chakra-ui/react"
+import { FiEdit } from "react-icons/fi"
 
 interface SkillsSectionProps {
   skillsOrinterests?: string[]
   section: "skillsSection" | "interestSection"
+  onEditClick: () => void;
 }
 
-export default function SkillsOrInterests({ skillsOrinterests, section }: SkillsSectionProps) {
+export default function SkillsOrInterests({ skillsOrinterests, section, onEditClick }: SkillsSectionProps) {
   const bg = { base: 'gray.200', _dark: 'gray.700' }
 
   if (!skillsOrinterests?.length) return null
@@ -18,9 +22,22 @@ export default function SkillsOrInterests({ skillsOrinterests, section }: Skills
 
   return (
     <Box px={{ base: 3, md: "" }}>
-      <Text fontWeight="semibold" fontSize="md" mb={3}>
-        {title}
-      </Text>
+      <HStack w="100%" justify={"space-between"}>
+        <Text fontWeight="semibold" fontSize="md" mb={3}>
+          {title}
+        </Text>
+
+        {onEditClick && (
+          <IconButton
+            aria-label="Edit profile"
+            size="xs"
+            variant={"surface"}
+            onClick={onEditClick}
+          >
+            <FiEdit />
+          </IconButton>
+        )}
+      </HStack>
 
       <Wrap gap={3}>
         {skillsOrinterests.map((item) => (

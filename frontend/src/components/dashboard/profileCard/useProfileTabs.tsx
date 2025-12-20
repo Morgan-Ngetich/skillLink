@@ -17,6 +17,8 @@ interface UseProfileTabsProps {
   isMobile?: boolean;
   isOwnProfile?: boolean;
 
+  onOpenProfileSection?: (section: string) => void;
+
   // Service props
   serviceModal?: "create" | "edit";
   serviceId?: string;
@@ -37,11 +39,13 @@ interface UseProfileTabsProps {
   handleServiceDelete?: (service: MentorServicePublic) => void;
 }
 
+
 export const useProfileTabs = ({
   user,
   profile,
   mentorProfile,
   readOnly,
+  onOpenProfileSection,
   isMobile,
   isOwnProfile,
   serviceModal,
@@ -63,7 +67,31 @@ export const useProfileTabs = ({
       value: 'about',
       label: 'About',
       icon: LuUser,
-      content: <AboutTab profile={profile} />,
+      content: (
+        <AboutTab
+          profile={profile}
+          onEdit={{
+            basic: isOwnProfile
+              ? () => onOpenProfileSection?.("basic")
+              : undefined,
+            experience: isOwnProfile
+              ? () => onOpenProfileSection?.("experience")
+              : undefined,
+            education: isOwnProfile
+              ? () => onOpenProfileSection?.("education")
+              : undefined,
+            goals: isOwnProfile
+              ? () => onOpenProfileSection?.("goals")
+              : undefined,
+            skills: isOwnProfile
+              ? () => onOpenProfileSection?.("skills")
+              : undefined,
+            interests: isOwnProfile
+              ? () => onOpenProfileSection?.("skills")
+              : undefined,
+          }}
+        />
+      ),
     },
     {
       value: 'services',

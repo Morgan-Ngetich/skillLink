@@ -1,24 +1,41 @@
 import {
   Box,
+  HStack,
+  IconButton,
   Text,
   Wrap,
   WrapItem,
 } from "@chakra-ui/react"
+import { FiEdit } from "react-icons/fi"
 
 interface GoalsProps {
-  goals?: string[]
+  goals?: string[];
+  onEditClick: () => void;
 }
 
-export default function Goals({ goals }: GoalsProps) {
+export default function Goals({ goals, onEditClick }: GoalsProps) {
   const bg = { base: 'green.200', _dark: 'green.700' }
 
   if (!goals?.length) return null
 
   return (
     <Box px={{ base: 3, md: "" }}>
-      <Text fontWeight="semibold" fontSize="md" mb={3}>
-        Goals
-      </Text>
+      <HStack w="100%" justify={"space-between"}>
+        <Text fontWeight="semibold" fontSize="md" mb={3}>
+          Goals
+        </Text>
+
+        {onEditClick && (
+          <IconButton
+            aria-label="Edit profile"
+            size="xs"
+            variant={"surface"}
+            onClick={onEditClick}
+          >
+            <FiEdit />
+          </IconButton>
+        )}
+      </HStack>
 
       <Wrap gap={3}>
         {goals.map((item) => (

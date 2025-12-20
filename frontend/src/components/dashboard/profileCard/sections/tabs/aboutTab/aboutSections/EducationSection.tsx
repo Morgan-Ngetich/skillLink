@@ -5,22 +5,38 @@ import {
   HStack,
   Text,
   Image,
+  IconButton,
 } from "@chakra-ui/react"
+import { FiEdit } from "react-icons/fi"
 
 interface EducationSectionProps {
-  education: Education[]
+  education: Education[];
+  onEditClick: () => void;
 }
 
-const EducationSection: React.FC<EducationSectionProps> = ({ education }) => {
+const EducationSection: React.FC<EducationSectionProps> = ({ education, onEditClick }) => {
   return (
     <VStack align="start" gap={6} w="full" px={{ base: 3, md: "" }}>
-      <Text fontWeight="semibold" fontSize="md">Education</Text>
+      <HStack w="100%" justify={"space-between"}>
+        <Text fontWeight="semibold" fontSize="md">Education</Text>
+
+        {onEditClick && (
+          <IconButton
+            aria-label="Edit profile"
+            size="xs"
+            variant={"surface"}
+            onClick={onEditClick}
+          >
+            <FiEdit />
+          </IconButton>
+        )}
+      </HStack>
 
       {education.map((item, index) => (
         <HStack key={index} align="start" gap={4} w="full">
           {/* Logo */}
           <Image
-            src={item.logo}
+            src={item.logo ?? "/fallback.jpg"}
             alt={`${item.institution} logo`}
             boxSize="40px"
             borderRadius="md"

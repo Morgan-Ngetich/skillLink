@@ -8,27 +8,35 @@ import SkillsOrInterests from './aboutSections/SkillsOrInterests';
 
 interface AboutTabProps {
   profile?: UserProfilePublic;
+  onEdit?: {
+    basic?: () => void;
+    experience?: () => void;
+    education?: () => void;
+    goals?: () => void;
+    skills?: () => void;
+    interests?: () => void;
+  };
 }
 
-const AboutTab = ({ profile }: AboutTabProps) => {
+const AboutTab = ({ profile, onEdit }: AboutTabProps) => {
   if (!profile) return null;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const Section = ({ Component, ...props }: any) => (
+  const Section = ({ Component, editHandler, ...props }: any) => (
     <>
-      <Component {...props} />
+      <Component {...props} onEditClick={editHandler} />
       <Separator my={4} />
     </>
   );
 
   return (
     <Box>
-      {profile.about && <Section Component={About} about={profile.about} />}
-      {profile.experience && <Section Component={ExperienceSection} experience={profile.experience} />}
-      {profile.education && <Section Component={EducationSection} education={profile.education} />}
-      {profile.goals && <Section Component={Goals} goals={profile.goals} />}
-      {profile.skills && <Section Component={SkillsOrInterests} skillsOrinterests={profile.skills} section="skillsSection" />}
-      {profile.interests && <Section Component={SkillsOrInterests} skillsOrinterests={profile.interests} />}
+      {profile.about && <Section Component={About} editHandler={onEdit?.basic} about={profile.about} />}
+      {profile.experience && <Section Component={ExperienceSection} editHandler={onEdit?.experience} experience={profile.experience} />}
+      {profile.education && <Section Component={EducationSection} editHandler={onEdit?.education} education={profile.education} />}
+      {profile.goals && <Section Component={Goals} editHandler={onEdit?.goals} goals={profile.goals} />}
+      {profile.skills && <Section Component={SkillsOrInterests} editHandler={onEdit?.skills} skillsOrinterests={profile.skills} section="skillsSection" />}
+      {profile.interests && <Section Component={SkillsOrInterests} editHandler={onEdit?.interests} skillsOrinterests={profile.interests} />}
     </Box>
   );
 };

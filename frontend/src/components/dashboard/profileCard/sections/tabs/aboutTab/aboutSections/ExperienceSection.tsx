@@ -6,23 +6,39 @@ import {
   HStack,
   Text,
   Image,
+  IconButton,
 } from "@chakra-ui/react"
+import { FiEdit } from "react-icons/fi"
 
 
 interface ExperienceSection {
   experience: Experience[]
+  onEditClick: () => void;
 }
 
-const ExperienceSection: React.FC<ExperienceSection> = ({ experience }) => {
+const ExperienceSection: React.FC<ExperienceSection> = ({ experience, onEditClick }) => {
   return (
     <VStack align="start" gap={6} w="full" px={{ base: 3, md: "" }}>
-      <Text fontWeight="semibold">Experience</Text>
+      <HStack w="100%" justify={"space-between"}>
+        <Text fontWeight="semibold">Experience</Text>
+
+        {onEditClick && (
+          <IconButton
+            aria-label="Edit profile"
+            size="xs"
+            variant={"surface"}
+            onClick={onEditClick}
+          >
+            <FiEdit />
+          </IconButton>
+        )}
+      </HStack>
 
       {experience.map((item, index) => (
         <HStack key={index} align="start" gap={{ base: 3, md: 4 }} w="full">
           {/* Logo */}
           <Image
-            src={item.logo}
+            src={item.logo ?? "/fallback.jpg"}
             alt={`${item.company} logo`}
             boxSize="40px"
             borderRadius="sm"

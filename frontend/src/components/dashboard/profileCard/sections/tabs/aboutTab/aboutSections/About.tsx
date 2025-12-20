@@ -1,13 +1,14 @@
-import { VStack, Text, Box, Button } from "@chakra-ui/react"
+import { VStack, Text, Box, Button, HStack, IconButton } from "@chakra-ui/react"
 import { useState, useEffect, useRef } from "react"
-import { FiChevronDown, FiChevronUp } from "react-icons/fi"
+import { FiChevronDown, FiChevronUp, FiEdit } from "react-icons/fi"
 
 interface AboutProps {
   about: string
   maxLines?: number
+  onEditClick?: () => void
 }
 
-const About: React.FC<AboutProps> = ({ about, maxLines = 5 }) => {
+const About: React.FC<AboutProps> = ({ about, maxLines = 5, onEditClick }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [isOverflowing, setIsOverflowing] = useState(false)
   const textRef = useRef<HTMLDivElement>(null)
@@ -21,9 +22,23 @@ const About: React.FC<AboutProps> = ({ about, maxLines = 5 }) => {
 
   return (
     <VStack align="start" w="full" px={{ base: 3, md: 4 }} gap={3}>
-      <Text fontWeight="semibold" color="fg.emphasized">
-        About
-      </Text>
+      <HStack w="100%" justify={"space-between"}>
+        <Text fontWeight="semibold" color="fg.emphasized">
+          About
+        </Text>
+
+        {/* Edit Profile Button */}
+        {onEditClick && (
+          <IconButton
+            aria-label="Edit profile"
+            size="xs"
+            variant={"surface"}
+            onClick={onEditClick}
+          >
+            <FiEdit />
+          </IconButton>
+        )}
+      </HStack>
 
       <Box position="relative" w="full">
         <Box
