@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/auth/useAuth'
 import { useRouter } from '@tanstack/react-router'
 import useToaster from '@/hooks/public/useToaster'
 
-export default function BecomeMentorButton() {
+export default function BecomeMentorCard() {
   const { profile, profileCompletionStatus } = useProfile()
   const { user } = useAuth()
   const router = useRouter()
@@ -69,7 +69,7 @@ export default function BecomeMentorButton() {
       bgGradient="to-br"
       gradientFrom={{ base: "purple.200", _dark: "purple.950" }}
       gradientTo={{ base: "blue.200", _dark: "blue.900" }}
-      p={8}
+      p={6}
       borderRadius="2xl"
       border="2px solid"
       borderColor="purple.200"
