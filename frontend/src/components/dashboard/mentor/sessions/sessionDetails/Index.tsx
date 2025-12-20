@@ -87,9 +87,7 @@ const SessionDetailModal = ({ session, isOpen, onClose }: SessionDetailModalProp
   };
 
   const handleDenyBooking = async (bookingId: number) => {
-    await denyBooking(bookingId, {
-      onSuccess: () => console.log("Booking denied"),
-    });
+    await denyBooking(bookingId, "Denied by mentor")
   };
 
   return (
