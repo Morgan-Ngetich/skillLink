@@ -34,6 +34,7 @@ export async function requireProfileCompletion(location: { pathname: string; sea
 /**
  * Requires profile completion if viewing YOUR OWN profile
  * Use this for public-but-ownable routes like /profile/$uuid
+ * Returns requiresAuth: true if user is viewing their own profile
  */
 export async function requireOwnerProfileCompletion(
   profileUuid: string,
@@ -41,11 +42,11 @@ export async function requireOwnerProfileCompletion(
 ) {
   const user = await fetchCurrentUser();
   
-  // Not logged in → Allow public access
-  if (!user) return;
+  // Not logged in → Allow public access (not protected)
+  if (!user) return { requiresAuth: false };
   
-  // Logged in but viewing someone else's profile → Allow
-  if (user.uuid !== profileUuid) return;
+  // Logged in but viewing someone else's profile → Allow (not protected)
+  if (user.uuid !== profileUuid) return { requiresAuth: false };
   
   // Viewing own profile but setup incomplete → Redirect to setup
   if (!user?.profile?.is_profile_setup_complete) {
@@ -56,7 +57,11 @@ export async function requireOwnerProfileCompletion(
       },
     });
   }
+
+  // Viewing own profile with complete setup → Protected
+  return { requiresAuth: true };
 }
+
 
 /**
  * Helper for actions that require authentication AND profile completion.

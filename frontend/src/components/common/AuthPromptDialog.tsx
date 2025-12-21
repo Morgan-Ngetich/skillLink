@@ -4,10 +4,11 @@ import {
   Portal,
   Text,
   VStack,
-} from "@chakra-ui/react";
-import { useLocation } from "@tanstack/react-router";
-import { useNavigateWithRedirect } from "@/hooks/auth/authState";
-import { setPromptDismissed } from "@/utils/authPromptDismiss";
+} from '@chakra-ui/react';
+import { useLocation } from '@tanstack/react-router';
+import { useNavigateWithRedirect } from '@/hooks/auth/authState';
+import { setPromptDismissed } from '@/utils/authPromptDismiss';
+import { useAuthPromptStore } from '@/hooks/store/useAuthPromptStore';
 
 interface AuthPromptDialogProps {
   open: boolean;
@@ -15,19 +16,58 @@ interface AuthPromptDialogProps {
   onClose: () => void;
 }
 
-const AuthPromptDialog: React.FC<AuthPromptDialogProps> = ({ open, showStayLoggedOut, onClose }) => {
+const AuthPromptDialog: React.FC<AuthPromptDialogProps> = ({
+  open,
+  showStayLoggedOut,
+  onClose,
+}) => {
   const navigateWithRedirect = useNavigateWithRedirect();
   const location = useLocation();
+  const { setDismissedThisSession } = useAuthPromptStore();
+
+  const handleLogin = () => {
+    navigateWithRedirect('/login');
+    onClose();
+  };
+
+  const handleSignup = () => {
+    navigateWithRedirect('/signup');
+    onClose();
+  };
+
+  const handleStayLoggedOut = () => {
+    // Set permanent dismissal for this path
+    setPromptDismissed(location.pathname);
+    // Also set session dismissal
+    setDismissedThisSession(true);
+    onClose();
+  };
+
+  const handleGoBack = () => {
+    window.history.back();
+    onClose();
+  };
+
+  // Prevent closing on backdrop click for protected routes
+  const handleOpenChange = (details: { open: boolean }) => {
+    if (!details.open && !showStayLoggedOut) {
+      // Protected route - don't allow dismissal
+      return;
+    }
+    if (!details.open) {
+      onClose();
+    }
+  };
 
   return (
     <Dialog.Root
       open={open}
-      onOpenChange={(e) => {
-        if (!e.open) onClose();
-      }}
+      onOpenChange={handleOpenChange}
       size="sm"
       placement="center"
       motionPreset="slide-in-left"
+      closeOnInteractOutside={showStayLoggedOut} // Only allow backdrop close for non-protected routes
+      closeOnEscape={showStayLoggedOut} // Only allow ESC close for non-protected routes
     >
       <Portal>
         <Dialog.Backdrop />
@@ -36,35 +76,35 @@ const AuthPromptDialog: React.FC<AuthPromptDialogProps> = ({ open, showStayLogge
             <Dialog.Header>
               <Dialog.Title w="full">
                 <Text fontSize="2xl" textAlign="center">
-                  Enjoy MENTspace your way
+                  {showStayLoggedOut
+                    ? 'Enjoy MENTspace your way'
+                    : 'Authentication Required'}
                 </Text>
               </Dialog.Title>
             </Dialog.Header>
 
             <Dialog.Body>
               <Text fontSize="sm" color="fg.muted">
-                Log in or sign up for the full experience — <br />or continue as a guest.
+                {showStayLoggedOut ? (
+                  <>
+                    Log in or sign up for the full experience — <br />
+                    or continue as a guest.
+                  </>
+                ) : (
+                  'This page requires authentication. Please log in or sign up to continue.'
+                )}
               </Text>
             </Dialog.Body>
 
             <Dialog.Footer>
               <VStack w="full" align="stretch" gap={3}>
-                <Button
-                  onClick={() => {
-                    navigateWithRedirect("/login");
-                    onClose();
-                  }}
-                  borderRadius="lg"
-                >
+                <Button onClick={handleLogin} borderRadius="lg">
                   Log in
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => {
-                    navigateWithRedirect("/signup");
-                    onClose();
-                  }}
+                  onClick={handleSignup}
                   border="1px solid"
                   borderRadius="lg"
                 >
@@ -81,23 +121,13 @@ const AuthPromptDialog: React.FC<AuthPromptDialogProps> = ({ open, showStayLogge
                     textUnderlineOffset={5}
                     cursor="pointer"
                     transition="color 0.2s ease"
-                    _hover={{ textDecoration: "underline" }}
-                    onClick={() => {
-                      setPromptDismissed(location.pathname);
-                      onClose();
-                    }}
+                    _hover={{ textDecoration: 'underline' }}
+                    onClick={handleStayLoggedOut}
                   >
                     Stay logged out
                   </Text>
                 ) : (
-                  <Button
-                    variant="outline"
-                    size={'sm'}
-                    onClick={() => {
-                      window.history.back(); // fallback: go back to last page
-                      onClose();
-                    }}
-                  >
+                  <Button variant="outline" size="sm" onClick={handleGoBack}>
                     ← Go back
                   </Button>
                 )}
