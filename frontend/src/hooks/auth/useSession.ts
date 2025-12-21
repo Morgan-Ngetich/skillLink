@@ -3,6 +3,8 @@ import { supabase } from '../supabase/supabaseClient';
 import { type Session } from '@supabase/supabase-js';
 import { getCookie, deleteCookie } from '@/hooks/auth/cookies/cookies';
 import { setAuthSession, clearAuthSession, getCachedSession, getCachedUserMetadata } from '@/hooks/auth/cookies/sessionCookies';
+import { useQueryClient } from '@tanstack/react-query';
+import type { fetchCurrentUser } from '@/hooks/auth/useAuthQuery'; // Import the type
 
 const SESSION_COOKIE_KEY = 'sb_session';
 const GOOGLE_USER_KEY = 'googleUser';
@@ -138,7 +140,7 @@ export function useSessionState() {
         globalUserMetadataCache = null;
       }
     });
-    
+
     return () => listener?.subscription.unsubscribe();
   }, [session]);
 
@@ -148,6 +150,11 @@ export function useSessionState() {
 // Auth check hook
 export function useSession() {
   const session = useSessionState();
+  const queryClient = useQueryClient();
+
+  // Get the validated user from TanStack Query
+  const validatedUser = queryClient.getQueryData<Awaited<ReturnType<typeof fetchCurrentUser>>>(['auth', 'user']);
+
   const isLoading = session === undefined && typeof window !== 'undefined';
   const user = session?.user ?? null;
 
@@ -158,7 +165,11 @@ export function useSession() {
     session,
     user,
     isLoading,
-    isAuthenticated: Boolean(user),
+    // IMPORTANT: Only consider authenticated if backend validated OR validation is pending
+    // This prevents showing "not authenticated" during initial load
+    isAuthenticated: Boolean(user && (validatedUser !== null || validatedUser === undefined)),
+    // Flag to show if we have a session but haven't validated with backend yet
+    isPendingValidation: Boolean(user && validatedUser === undefined),
     // Expose cached user metadata
     cachedUserMetadata: cachedMetadata,
   };
@@ -167,7 +178,7 @@ export function useSession() {
 // Function to update user metadata cache (call this when you fetch user data)
 export function updateUserMetadataCache(metadata: { is_mentor?: boolean; uuid?: string }) {
   globalUserMetadataCache = metadata;
-  
+
   // Update the session cache with new metadata
   if (globalSessionCache) {
     setAuthSession(globalSessionCache, metadata);

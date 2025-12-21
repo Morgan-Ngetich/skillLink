@@ -21,8 +21,16 @@ export interface ProfileSearchParams {
 export const Route = createFileRoute("/_layout/profile/$uuid")({
   // Only check profile completion if the user is viewing their own profile
   beforeLoad: async ({ params, location }) => {
-    await requireOwnerProfileCompletion(params.uuid, location);
+    const result = await requireOwnerProfileCompletion(params.uuid, location);
+    return result;
   },
+  // This is what the AuthPromptController checks
+  loader: ({ context }) => {
+    return {
+      requiresAuth: context?.requiresAuth ?? false,
+    };
+  },
+
   validateSearch: (search: Record<string, unknown>): ProfileSearchParams => ({
     pt: (search.pt as string) ?? 'about',
     st: (search.st as string) ?? 'services',
@@ -35,7 +43,7 @@ export const Route = createFileRoute("/_layout/profile/$uuid")({
     // Session modal params
     sessionModal: search.sessionModal as "create" | "edit" | undefined,
     sessionId: search.sessionId as string | undefined,
-    sessionDetailId: search.sessionDetailId as string | undefined, 
+    sessionDetailId: search.sessionDetailId as string | undefined,
     // Settings dialog
     settings: search.settings as "open" | undefined,
   }),

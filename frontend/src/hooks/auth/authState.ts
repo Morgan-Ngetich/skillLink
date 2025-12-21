@@ -25,9 +25,10 @@ export function useCleanRedirect(paramKey = 'redirectTo') {
     const search = routerState.location.search;
     const redirectTo = search[paramKey] as string | undefined;
 
-    const fallbackUrl = document.referrer.includes('https://frontend-production-a85f.up.railway.app/')
-      ? '/'
-      : '/crackmode';
+    // Check if the user came from /crackmode
+    const cameFromCrackmode = document.referrer.includes('/crackmode') || routerState.location.pathname.includes('/crackmode');
+
+    const fallbackUrl = cameFromCrackmode ? '/crackmode' : '/';
 
     if (redirectTo) {
       // Remove the redirectTo param from search
@@ -40,7 +41,7 @@ export function useCleanRedirect(paramKey = 'redirectTo') {
         replace: true,     // replace current history entry
       });
     } else {
-      // No redirect param, just go to root
+      // No redirect param, use fallback based on where they came from
       navigate({ to: fallbackUrl, replace: true });
     }
   };

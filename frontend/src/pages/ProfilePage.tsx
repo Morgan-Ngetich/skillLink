@@ -32,10 +32,10 @@ const ProfilePage = () => {
   const params = useParams({ strict: false });
   const { uuid } = params;
 
-  const { isBlocked, isLoading: isAuthLoading } = useAuthRouteGuard();
+  const { isBlocked, isLoading: isAuthLoading, isValidated } = useAuthRouteGuard();
   const isMobile = useBreakpointValue({ base: true, md: false });
 
-  const { user } = useAuth();
+  const { user, isLoading: isUserLoading } = useAuth();
   const isOwnProfile = user?.uuid === uuid;
 
   const { data: publicUser, isLoading: isPublicUserLoading } = useUserByUuid(uuid);
@@ -100,8 +100,15 @@ const ProfilePage = () => {
     ? mentorData?.sessions?.find((s) => s.uuid === search.sessionDetailId)
     : null;
 
-  // Loading state
-  if (isAuthLoading || isPublicUserLoading || isBlocked) {
+  // Loading state - show loading if:
+  // 1. Auth is loading, OR
+  // 2. User is loading (checking if logged in), OR
+  // 3. Blocked by auth guard, OR
+  // 4. Loading public user data (when viewing someone else's profile)
+  const isLoadingProfile = !isValidated || isAuthLoading || isUserLoading || isBlocked || 
+    (!isOwnProfile && isPublicUserLoading);
+
+  if (isLoadingProfile) {
     return (
       <Container h="full" p={{ base: 2, md: 5 }} maxW="breakpoint-xl">
         <Flex justify="space-between" gap={5} direction={{ base: "column", md: "row" }}>
