@@ -15,7 +15,7 @@ import { getApiErrorMessage } from '@/utils/errorUtils';
  * 
  * For fetching another mentor's sessions, use `useMentorSessionsByMentorId` instead
  */
-export const useMentorSessions = () => {
+export const useMentorSessions = ({ enabled = true } = {}) => {
   const toast = useToaster();
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,6 +34,7 @@ export const useMentorSessions = () => {
     ),
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 1,
+    enabled,
   });
 
   // Create session

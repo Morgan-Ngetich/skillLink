@@ -9,12 +9,12 @@ interface UseProfilePageHandlersProps {
   setIsDeleteSessionDialogOpen: (open: boolean) => void;
   sessionToDelete: MentorSessionPublic | null;
   setSessionToDelete: (session: MentorSessionPublic | null) => void;
-  deleteSession: (id: number) => void;
+  deleteSession?: (id: number) => void;
   // Service delete
   setIsDeleteServiceDialogOpen: (open: boolean) => void;
   serviceToDelete: MentorServicePublic | null;
   setServiceToDelete: (service: MentorServicePublic | null) => void;
-  deleteService: (id: number) => void;
+  deleteService?: (id: number) => void;
   // Settings
   updateSettingsAsync?: (settings: MentorSettingsUpdate) => Promise<MentorSettingsPublic>;
 }
@@ -137,7 +137,7 @@ export const useProfilePageHandlers = ({
   };
 
   const confirmSessionDelete = () => {
-    if (sessionToDelete) {
+    if (sessionToDelete && deleteSession) {
       deleteSession(sessionToDelete.id);
       setIsDeleteSessionDialogOpen(false);
       setSessionToDelete(null);
@@ -160,7 +160,7 @@ export const useProfilePageHandlers = ({
   };
 
   const confirmServiceDelete = () => {
-    if (serviceToDelete) {
+    if (serviceToDelete && deleteService) {
       deleteService(serviceToDelete.id);
       setIsDeleteServiceDialogOpen(false);
       setServiceToDelete(null);

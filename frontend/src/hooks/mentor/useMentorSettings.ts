@@ -12,7 +12,7 @@ import { getApiErrorMessage } from '@/utils/errorUtils';
 /**
  * Hook for managing mentor settings
  */
-export const useMentorSettings = () => {
+export const useMentorSettings = ({ enabled = true } = {}) => {
   const toast = useToaster();
   const queryClient = useQueryClient();
 
@@ -30,6 +30,7 @@ export const useMentorSettings = () => {
     ),
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 1,
+    enabled
   });
 
   // Update settings

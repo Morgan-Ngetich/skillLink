@@ -13,7 +13,7 @@ import { getApiErrorMessage } from '@/utils/errorUtils';
 /**
  * Hook for managing mentor services (current user's services)
  */
-export const useMentorServices = () => {
+export const useMentorServices = ({ enabled = true } = {}) => {
   const toast = useToaster();
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -31,6 +31,7 @@ export const useMentorServices = () => {
       MentorsService.listMyServicesApiV1MentorsServicesGet()
     ),
     staleTime: 1000 * 60 * 5,
+    enabled,
   });
 
   // Create service

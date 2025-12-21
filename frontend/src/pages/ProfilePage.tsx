@@ -39,8 +39,14 @@ const ProfilePage = () => {
   const isOwnProfile = user?.uuid === uuid;
 
   const { data: publicUser, isLoading: isPublicUserLoading } = useUserByUuid(uuid);
-  const { deleteSession } = useMentorSessions();
-  const { deleteService } = useMentorServices();
+
+  // Determine if we need mentor-specific hooks BEFORE calling them
+  const shouldFetchMentorData = isOwnProfile && user?.is_mentor;
+
+  // Only call mentor hooks when needed
+  const mentorSessionsHook = useMentorSessions({ enabled: shouldFetchMentorData });
+  const mentorServicesHook = useMentorServices({ enabled: shouldFetchMentorData });
+  const mentorSettingsHook = useMentorSettings({ enabled: shouldFetchMentorData });
 
   // states for session and service deletion dialogs
   const [isDeleteSessionDialogOpen, setIsDeleteSessionDialogOpen] = useState(false);
@@ -55,11 +61,16 @@ const ProfilePage = () => {
     ? user?.profile?.mentor_profile
     : publicUser?.profile?.mentor_profile;
 
-  // Settings
-  const mentorSettingsHook = useMentorSettings();
-  const settings = isOwnProfile ? mentorSettingsHook.settings : mentorData?.settings;
-  const updateSettingsAsync = isOwnProfile ? mentorSettingsHook.updateSettingsAsync : undefined;
-  const isUpdating = isOwnProfile ? mentorSettingsHook.isUpdating : false;
+  // Settings - only use mentor settings hook data if we're viewing own mentor profile
+  const settings = shouldFetchMentorData 
+    ? mentorSettingsHook.settings 
+    : mentorData?.settings;
+  const updateSettingsAsync = shouldFetchMentorData 
+    ? mentorSettingsHook.updateSettingsAsync 
+    : undefined;
+  const isUpdating = shouldFetchMentorData 
+    ? mentorSettingsHook.isUpdating 
+    : false;
 
   const readOnly = !isOwnProfile;
 
@@ -70,16 +81,16 @@ const ProfilePage = () => {
   const handlers = useProfilePageHandlers({
     router,
     search,
-    // Session delete handlers
+    // Session delete handlers - only pass if we have mentor data
     setIsDeleteSessionDialogOpen,
     sessionToDelete,
     setSessionToDelete,
-    deleteSession,
-    // Service delete handlers
+    deleteSession: shouldFetchMentorData ? mentorSessionsHook.deleteSession : undefined,
+    // Service delete handlers - only pass if we have mentor data
     setIsDeleteServiceDialogOpen,
     serviceToDelete,
     setServiceToDelete,
-    deleteService,
+    deleteService: shouldFetchMentorData ? mentorServicesHook.deleteService : undefined,
     // Settings
     updateSettingsAsync,
   });
