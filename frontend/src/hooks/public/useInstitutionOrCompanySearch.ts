@@ -37,13 +37,16 @@ async function fetchUniversities(query: string): Promise<OrgSuggestion[]> {
   
   if (!response.ok) throw new Error('Failed to fetch universities')
   
+
+  // TODO: Make this private key on payments.
+  const LOGO_DEV_PUBLIC_KEY = 'pk_FsvjqVRCSg-41t83zMWRIw';
   const data = await response.json()
   //eslint-disable-next-line @typescript-eslint/no-explicit-any
   return data.slice(0, 5).map((u: any) => {
     const domain = u.domains?.[0]
     return {
       name: u.name,
-      logo: domain ? `https://logo.clearbit.com/${domain}` : null,
+      logo: domain ? `https://img.logo.dev/${domain}?token=${LOGO_DEV_PUBLIC_KEY}` : null,
       domain: domain,
       type: 'instituition' as const
     }
