@@ -31,7 +31,7 @@ async function fetchCompanies(query: string): Promise<OrgSuggestion[]> {
 // Fetch function for universities
 async function fetchUniversities(query: string): Promise<OrgSuggestion[]> {
   const response = await fetch(
-    `http://universities.hipolabs.com/search?name=${encodeURIComponent(query)}`,
+    `https://university-domains-list-api-g36q.onrender.com/search?name=${encodeURIComponent(query)}`,
     { signal: AbortSignal.timeout(3000) }
   )
   
