@@ -10,6 +10,7 @@ export interface OrgSuggestion {
 }
 
 // Fetch function for companies
+const LOGO_DEV_PUBLIC_KEY = 'pk_FsvjqVRCSg-41t83zMWRIw';
 async function fetchCompanies(query: string): Promise<OrgSuggestion[]> {
   const response = await fetch(
     `https://autocomplete.clearbit.com/v1/companies/suggest?query=${encodeURIComponent(query)}`,
@@ -22,7 +23,7 @@ async function fetchCompanies(query: string): Promise<OrgSuggestion[]> {
   //eslint-disable-next-line @typescript-eslint/no-explicit-any
   return data.map((c: any) => ({
     name: c.name,
-    logo: c.domain ? `https://logo.clearbit.com/${c.domain}` : null,
+    logo: c.domain ? `https://img.logo.dev/${c.domain}?token=${LOGO_DEV_PUBLIC_KEY}` : null,
     domain: c.domain,
     type: 'company' as const
   }))
@@ -39,7 +40,6 @@ async function fetchUniversities(query: string): Promise<OrgSuggestion[]> {
   
 
   // TODO: Make this private key on payments.
-  const LOGO_DEV_PUBLIC_KEY = 'pk_FsvjqVRCSg-41t83zMWRIw';
   const data = await response.json()
   //eslint-disable-next-line @typescript-eslint/no-explicit-any
   return data.slice(0, 5).map((u: any) => {
