@@ -36,7 +36,7 @@ export default function Step1AreaOfFocus() {
             };
 
             return (
-              <Box display="flex" flexWrap="wrap" gap={4} justifyContent="flex-start">
+              <Box display="flex" flexWrap="wrap" gap={{base: 3, md: 4}} justifyContent="flex-start">
                 {goalsFocusOptions.map((option) => {
                   const isSelected = selected.includes(option.value);
 
@@ -56,7 +56,7 @@ export default function Step1AreaOfFocus() {
                       transition="all 0.3s"
                       textAlign="left"
                     >
-                      <Flex align="center" gap={3}>
+                      <Flex align="center" gap={{base: 2, md: 3}}>
                         <Icon
                           as={isSelected ? FiCheck : option.icon}
                           boxSize={5}

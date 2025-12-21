@@ -102,7 +102,7 @@ export default function Step3Goals() {
               {allGoals.length > 0 ? (
                 <Flex
                   flexWrap="wrap"
-                  gap={4}
+                  gap={{base: 2, md: 4}}
                   maxH="400px"
                   overflowY="auto"
                   p={{base: 0, md: 2}}
@@ -118,7 +118,7 @@ export default function Step3Goals() {
                         onClick={() => toggleGoal(goal.label)}
                         borderWidth="1px"
                         borderRadius="xl"
-                        px={{base: 3, md: 4}}
+                        px={{base: 2, md: 4}}
                         py={{base: 2, md: 3}}
                         bg={isSelected ? selectedBg : 'transparent'}
                         borderColor={isSelected ? 'teal.400' : 'gray.200'}
@@ -133,7 +133,7 @@ export default function Step3Goals() {
                         userSelect="none"
                         position="relative"
                       >
-                        <Flex align="center" gap={3}>
+                        <Flex align="center" gap={{base: 2, md: 3}}>
                           <Icon
                             as={isSelected ? FiCheck : FiTarget}
                             boxSize={4}
