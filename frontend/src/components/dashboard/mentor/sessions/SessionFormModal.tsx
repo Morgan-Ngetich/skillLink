@@ -76,8 +76,6 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
   const { saveSession, isSubmitting } = useMentorSessions();
   const { uploadFile, isUploading } = useSupabaseStorage();
 
-  console.log("SESSION_TYPES", SESSION_TYPES[0])
-
   const defaultMaxBookings = user?.profile?.mentor_profile?.settings?.max_mentees?.toString() ?? "5";
 
   // React Hook Form setup
@@ -142,13 +140,12 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
       // Load existing session data
       const startDate = new Date(session.start_time);
       const endDate = new Date(session.end_time);
-      console.log("session_type", session.session_type)
 
       reset({
         title: session.title || "",
         description: session.description || "",
         cover_image: session.cover_image || "",
-        session_type: SessionApproach[session.session_type as keyof typeof SessionApproach] || SESSION_TYPES[0],
+        session_type: session.session_type || SESSION_TYPES[0], // Use the value directly
         price_usd: session.price_usd?.toString() || "",
         max_bookings: session.max_bookings?.toString() ?? defaultMaxBookings,
         location_type: session.location_type || "online",
@@ -229,66 +226,62 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
   };
 
   // Form submission
-    const onSubmit = async (data: SessionFormData) => {
-      let cover_image = data.cover_image;
-  
-      // Upload cover image if new file is selected
-      if (coverImageFile && user?.uuid) {
-        try {
-          const result = await new Promise<{ url: string }>((resolve, reject) => {
-            uploadFile(
-              {
-                bucket: "mentor_sessions",
-                file: coverImageFile,
-                options: {
-                  userUuid: user.uuid,
-                  sessionUuid: session?.uuid || crypto.randomUUID(),
-                },
+  const onSubmit = async (data: SessionFormData) => {
+    let cover_image = data.cover_image;
+
+    // Upload cover image if new file is selected
+    if (coverImageFile && user?.uuid) {
+      try {
+        const result = await new Promise<{ url: string }>((resolve, reject) => {
+          uploadFile(
+            {
+              bucket: "mentor_sessions",
+              file: coverImageFile,
+              options: {
+                userUuid: user.uuid,
+                sessionUuid: session?.uuid || crypto.randomUUID(),
               },
-              {
-                onSuccess: (uploadData) => resolve(uploadData as { url: string }),
-                onError: reject,
-              }
-            );
-          });
-          cover_image = result.url;
-        } catch (error) {
-          console.error("Cover image upload failed:", error);
-          return;
-        }
+            },
+            {
+              onSuccess: (uploadData) => resolve(uploadData as { url: string }),
+              onError: reject,
+            }
+          );
+        });
+        cover_image = result.url;
+      } catch (error) {
+        console.error("Cover image upload failed:", error);
+        return;
       }
-  
-      // Convert human-readable session type back to SessionType key used by the API
-      const sessionTypeKey = (Object.keys(SessionApproach) as Array<keyof typeof SessionApproach>).find(
-        (k) => SessionApproach[k] === data.session_type
-      ) as SessionType | undefined;
-  
-      const payload = {
-        ...(session && { id: session.id }),
-        mentor_id: user?.id || 0,
-        title: data.title,
-        description: data.description || undefined,
-        cover_image: cover_image || undefined,
-        session_type: sessionTypeKey,
-        duration_minutes: calculatedDuration,
-        price_usd: data.price_usd ? parseFloat(data.price_usd) : undefined,
-        max_bookings: data.max_bookings ? parseInt(data.max_bookings) : undefined,
-        location_type: data.location_type,
-        meeting_link: data.meeting_link || undefined,
-        timezone: data.timezone,
-        start_time: new Date(data.start_time).toISOString(),
-        end_time: new Date(data.end_time).toISOString(),
-        is_public: data.is_public,
-        is_cancelled: false,
-        is_active: true,
-        tags: data.tags.length > 0 ? data.tags : undefined,
-        preparation_materials: data.preparation_materials.length > 0 ? data.preparation_materials : undefined,
-      };
-  
-      await saveSession(payload, {
-        onSuccess: onClose,
-      });
+    }
+
+    // NOTE: Backend expects the human-readable session type value, not the key
+    const payload = {
+      ...(session && { id: session.id }),
+      mentor_id: user?.id || 0,
+      title: data.title,
+      description: data.description || undefined,
+      cover_image: cover_image || undefined,
+      session_type: data.session_type as SessionType, // Send the value directly (e.g., "1-on-1 Video Call")
+      duration_minutes: calculatedDuration,
+      price_usd: data.price_usd ? parseFloat(data.price_usd) : undefined,
+      max_bookings: data.max_bookings ? parseInt(data.max_bookings) : undefined,
+      location_type: data.location_type,
+      meeting_link: data.meeting_link || undefined,
+      timezone: data.timezone,
+      start_time: new Date(data.start_time).toISOString(),
+      end_time: new Date(data.end_time).toISOString(),
+      is_public: data.is_public,
+      is_cancelled: false,
+      is_active: true,
+      tags: data.tags.length > 0 ? data.tags : undefined,
+      preparation_materials: data.preparation_materials.length > 0 ? data.preparation_materials : undefined,
     };
+
+    await saveSession(payload, {
+      onSuccess: onClose,
+    });
+  };
 
   const isValid = watch("title").trim().length > 0 && startTime && endTime && calculatedDuration > 0;
 
@@ -612,11 +605,11 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
 
                   {/* Existing Materials */}
                   {preparationMaterials.length > 0 && (
-                    <VStack align="stretch" gap={2} mb={3}>
+                    <VStack gap={2} mb={3}>
                       {preparationMaterials.map((material, index) => (
                         <Box
                           key={index}
-                          p={3}
+                          p={{ base: 2, md: 3 }}
                           bg="bg.muted"
                           rounded="md"
                           borderWidth="1px"
