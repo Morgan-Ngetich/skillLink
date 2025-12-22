@@ -35,6 +35,7 @@ export default function InstitutionAutocomplete({
     })
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [focusedIndex, setFocusedIndex] = useState(-1)
+  const [failedLogos, setFailedLogos] = useState<Set<string>>(new Set())
   const inputRef = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -87,6 +88,14 @@ export default function InstitutionAutocomplete({
     }
   }
 
+  // Scroll focused item into view
+  useEffect(() => {
+    if (focusedIndex >= 0 && dropdownRef.current) {
+      const items = dropdownRef.current.querySelectorAll('[data-suggestion-item]')
+      items[focusedIndex]?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+    }
+  }, [focusedIndex])
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -102,6 +111,11 @@ export default function InstitutionAutocomplete({
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
+
+  // Clear failed logos when suggestions change
+  useEffect(() => {
+    setFailedLogos(new Set())
+  }, [suggestions])
 
   return (
     <Box position="relative" w="full">
@@ -138,6 +152,11 @@ export default function InstitutionAutocomplete({
       {showSuggestions && filteredSuggestions.length > 0 && (
         <Box
           ref={dropdownRef}
+          position="absolute"
+          top="calc(100% + 4px)"
+          left={0}
+          right={0}
+          zIndex={1000}
           bg="cardbg"
           border="1px solid"
           borderColor="gray.subtle"
@@ -149,7 +168,8 @@ export default function InstitutionAutocomplete({
           <VStack align="stretch" gap={0}>
             {filteredSuggestions.map((suggestion, index) => (
               <HStack
-                key={index}
+                key={suggestion.domain || `${suggestion.name}-${index}`}
+                data-suggestion-item
                 p={3}
                 cursor="pointer"
                 bg={focusedIndex === index ? 'blue.50' : 'transparent'}
@@ -170,27 +190,24 @@ export default function InstitutionAutocomplete({
                   bg={{ base: 'gray.300', _dark: 'gray' }}
                   borderRadius="md"
                   flexShrink={0}
-                  p={0}
+                  overflow="hidden"
                 >
-                  {suggestion.logo ? (
+                  {suggestion.logo && !failedLogos.has(suggestion.logo) ? (
                     <Image
                       src={suggestion.logo}
                       alt={suggestion.name}
                       boxSize="33px"
                       objectFit="contain"
-                      onError={(e) => {
-                        // Fallback to icon if logo fails to load
-                        e.currentTarget.style.display = 'none'
+                      onError={() => {
+                        setFailedLogos(prev => new Set(prev).add(suggestion.logo!))
                       }}
                     />
                   ) : (
-                    <Box>
-                      {suggestion.type === 'instituition' ? (
-                        <LuGraduationCap size={20} />
-                      ) : (
-                        <LuBuilding2 size={20} />
-                      )}
-                    </Box>
+                    suggestion.type === 'instituition' ? (
+                      <LuGraduationCap size={20} />
+                    ) : (
+                      <LuBuilding2 size={20} />
+                    )
                   )}
                 </Box>
 
@@ -220,37 +237,27 @@ export default function InstitutionAutocomplete({
                   {suggestion.type === 'instituition' ? 'University' : 'Company'}
                 </Box>
               </HStack>
-
             ))}
           </VStack>
-
-          {/* Footer hint */}
-          {/* <Box
-            px={3}
-            py={2}
-            bg="gray.50"
-            borderTop="1px solid"
-            borderTopColor="gray.200"
-          >
-            <Text fontSize="xs" color="gray.500" textAlign="center">
-              Use ↑↓ to navigate • Enter to select • Esc to close
-            </Text>
-          </Box> */}
 
           <Separator />
         </Box>
       )}
 
+      {/* Empty State */}
       {showSuggestions && !loading && query.length >= 2 && filteredSuggestions.length === 0 && (
         <Box
           ref={dropdownRef}
+          position="absolute"
+          top="calc(100% + 4px)"
+          left={0}
+          right={0}
+          zIndex={1000}
           bg="cardbg"
           border="1px solid"
           borderColor="gray.subtle"
           borderRadius="md"
           boxShadow="lg"
-          maxH="300px"
-          overflowY="auto"
           p={4}
         >
           <Text fontSize="sm" color="fg.subtle" textAlign="center">
@@ -258,6 +265,6 @@ export default function InstitutionAutocomplete({
           </Text>
         </Box>
       )}
-    </Box >
+    </Box>
   )
 }
