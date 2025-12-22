@@ -1,4 +1,4 @@
-import { Heading, Box, HStack, Button, useBreakpointValue, Flex } from "@chakra-ui/react";
+import { Heading, Box, HStack, Button, Flex } from "@chakra-ui/react";
 import { FaAngleRight } from "react-icons/fa6";
 import type { MentorExplorePublic } from "@/client";
 import type React from "react";
@@ -11,8 +11,6 @@ interface FeaturedMentorsProps {
 }
 
 const FeaturedMentors: React.FC<FeaturedMentorsProps> = ({ featuredMentors, isLoading }) => {
-  const isMobile = useBreakpointValue({ base: true, md: false });
-
   return (
     <Box>
       <HStack
@@ -38,34 +36,60 @@ const FeaturedMentors: React.FC<FeaturedMentorsProps> = ({ featuredMentors, isLo
 
       {isLoading ? (
         // Skeleton loading state
-        isMobile ? (
-          <HStack direction="row" w="100vw" overflowX="auto" pr={4} gap={2}>
+        <>
+          {/* Mobile skeleton - horizontal scroll */}
+          <HStack 
+            display={{ base: "flex", md: "none" }}
+            direction="row" 
+            w="100vw" 
+            overflowX="auto" 
+            pr={4} 
+            gap={2}
+          >
             {[1, 2, 3].map((i) => (
               <MentorCardSkeleton key={i} />
             ))}
           </HStack>
-        ) : (
-          <Flex wrap={"wrap"} gap={2}>
+
+          {/* Desktop skeleton - wrapped grid */}
+          <Flex 
+            display={{ base: "none", md: "flex" }}
+            wrap="wrap" 
+            gap={2}
+          >
             {[1, 2, 3].map((i) => (
               <MentorCardSkeleton key={i} />
             ))}
           </Flex>
-        )
+        </>
       ) : (
         // Actual content
-        isMobile ? (
-          <HStack direction="row" w="full" overflowX="auto" pr={4} gap={2}>
+        <>
+          {/* Mobile layout - horizontal scroll */}
+          <HStack 
+            display={{ base: "flex", md: "none" }}
+            direction="row" 
+            w="full" 
+            overflowX="auto" 
+            pr={4} 
+            gap={2}
+          >
             {featuredMentors.map((mentor) => (
               <MentorCard key={mentor.user_id} mentor={mentor} maxW="250px"/>
             ))}
           </HStack>
-        ) : (
-          <Flex wrap={"wrap"} gap={2}>
+
+          {/* Desktop layout - wrapped grid */}
+          <Flex 
+            display={{ base: "none", md: "flex" }}
+            wrap="wrap" 
+            gap={2}
+          >
             {featuredMentors.map((mentor) => (
               <MentorCard key={mentor.user_id} mentor={mentor} maxW="290px"/>
             ))}
           </Flex>
-        )
+        </>
       )}
     </Box>
   );
