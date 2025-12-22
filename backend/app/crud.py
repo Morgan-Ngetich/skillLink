@@ -450,6 +450,8 @@ def list_public_mentors(
             User.is_active,
             MentorSettings.profile_visibility
         )
+        # TODO: intead of order_by create a marketing logic that would base the mentors on return.
+        .order_by(User.created_at.desc())
         .options(
             selectinload(User.mentor_profile).selectinload(MentorProfile.services),
             selectinload(User.mentor_profile).selectinload(MentorProfile.sessions),
@@ -460,9 +462,7 @@ def list_public_mentors(
     # Expertise filter
     if expertise:
         query = query.where(
-            sa.func.lower(expertise).ilike(
-                sa.func.any(sa.func.lower(MentorProfile.expertise))
-            )
+            sa.literal(expertise).ilike(sa.any_(MentorProfile.expertise))
         )
 
     # Availability filter
@@ -632,7 +632,7 @@ def get_mentor_stats(session: Session, mentor_id: int) -> Dict[str, Any]:
         select(sa.func.count(MentorSession.id)).where(
             MentorSession.mentor_id == mentor_id,
             MentorSession.is_active,
-            not MentorSession.is_cancelled,
+            MentorSession.is_cancelled.is_(False),
         )
     ).one()
 
@@ -641,7 +641,7 @@ def get_mentor_stats(session: Session, mentor_id: int) -> Dict[str, Any]:
         select(sa.func.count(MentorSession.id)).where(
             MentorSession.mentor_id == mentor_id,
             MentorSession.is_active,
-            not MentorSession.is_cancelled,
+            MentorSession.is_cancelled.is_(False),
             MentorSession.start_time > now,
         )
     ).one()
@@ -817,7 +817,7 @@ def get_mentor_sessions(
             )
         )
 
-    query = query.where(MentorSession.is_active, not MentorSession.is_cancelled)
+    query = query.where(MentorSession.is_active, MentorSession.is_cancelled._is(False))
 
     return list(session.exec(query).all())
 
@@ -852,7 +852,7 @@ def get_public_sessions(
         query = query.where(MentorSession.is_public)
 
     # Only active and non-cancelled sessions
-    query = query.where(MentorSession.is_active, not MentorSession.is_cancelled)
+    query = query.where(MentorSession.is_active, MentorSession.is_cancelled.is_(False))
 
     return list(session.exec(query.offset(skip).limit(limit)).all())
 
@@ -910,8 +910,9 @@ def list_public_sessions(
         .join(MentorSettings, MentorSettings.mentor_id == MentorProfile.user_id)
         .where(
             MentorSession.is_public,
+            # 
             MentorSession.is_active,
-            MentorSession.is_cancelled,
+            MentorSession.is_cancelled.is_(False),
             MentorSettings.profile_visibility,
             MentorSettings.currently_open_to_mentees,
         )
