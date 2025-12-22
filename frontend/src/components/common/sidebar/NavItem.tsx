@@ -82,7 +82,7 @@ export const NavItem = ({ item, isOpen = false, isMobile = false }: NavItemProps
         {isOpen && (
           <>
             <Text
-              ml={6}
+              ml={4}
               fontSize="sm"
               color={isActive ? 'fg.emphasized' : 'fg'}
             >

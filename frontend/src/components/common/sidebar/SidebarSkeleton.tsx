@@ -1,4 +1,4 @@
-import { Box, HStack, VStack, Icon } from '@chakra-ui/react';
+import { Box, HStack, Text, VStack, Icon } from '@chakra-ui/react';
 import {
   FiHome,
   // FiSettings,
@@ -20,12 +20,28 @@ export const SidebarSkeleton = ({ isMobile }: SidebarSkeletonProps) => {
         right="0"
         zIndex="sticky"
         px={2}
-        py={2}
+        pt={2}
+        bg="bg"
       >
         <HStack justify="space-around" align="center" gap={1}>
-          <Icon as={FiHome} boxSize={6} />
-          <Icon as={FiCompass} boxSize={6} />
-          <Icon as={FiUser} boxSize={6} />
+          <VStack>
+            <Icon as={FiHome} boxSize={6} />
+            <Text fontSize="2xs">
+              Home
+            </Text>
+          </VStack>
+          <VStack>
+            <Icon as={FiCompass} boxSize={6} />
+            <Text fontSize="2xs">
+              Explore
+            </Text>
+          </VStack>
+          <VStack>
+            <Icon as={FiUser} boxSize={6} />
+            <Text fontSize="2xs">
+              Profile
+            </Text>
+          </VStack>
         </HStack>
       </Box>
     );
