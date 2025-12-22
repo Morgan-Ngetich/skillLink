@@ -62,14 +62,14 @@ const ProfilePage = () => {
     : publicUser?.profile?.mentor_profile;
 
   // Settings - only use mentor settings hook data if we're viewing own mentor profile
-  const settings = shouldFetchMentorData 
-    ? mentorSettingsHook.settings 
+  const settings = shouldFetchMentorData
+    ? mentorSettingsHook.settings
     : mentorData?.settings;
-  const updateSettingsAsync = shouldFetchMentorData 
-    ? mentorSettingsHook.updateSettingsAsync 
+  const updateSettingsAsync = shouldFetchMentorData
+    ? mentorSettingsHook.updateSettingsAsync
     : undefined;
-  const isUpdating = shouldFetchMentorData 
-    ? mentorSettingsHook.isUpdating 
+  const isUpdating = shouldFetchMentorData
+    ? mentorSettingsHook.isUpdating
     : false;
 
   const readOnly = !isOwnProfile;
@@ -105,7 +105,7 @@ const ProfilePage = () => {
   // 2. User is loading (checking if logged in), OR
   // 3. Blocked by auth guard, OR
   // 4. Loading public user data (when viewing someone else's profile)
-  const isLoadingProfile = !isValidated || isAuthLoading || isUserLoading || isBlocked || 
+  const isLoadingProfile = !isValidated || isAuthLoading || isUserLoading || isBlocked ||
     (!isOwnProfile && isPublicUserLoading);
 
   if (isLoadingProfile) {
@@ -224,6 +224,7 @@ const ProfilePage = () => {
           {shouldShowMobileSidebar ? (
             <MenteeSidebar
               isOwnProfile={isOwnProfile}
+              user_is_mentor={!!user?.is_mentor}
               personalProfile={personalProfile}
               onEditProfile={(step) => handlers.openModal("setup-profile", step || "basic")}
             />

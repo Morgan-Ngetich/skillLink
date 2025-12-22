@@ -6,20 +6,20 @@ import BecomeMentorCard from "@/components/dashboard/mentor/mentorProfileSetup/B
 
 interface MobileSidebarProps {
   isOwnProfile: boolean;
-  personalProfile?: UserProfilePublic | null | undefined;
+  user_is_mentor: boolean;
+  personalProfile?: UserProfilePublic | null;
   onEditProfile: (step?: string) => void;
 }
 
-
-const MenteeSidebar = ({ isOwnProfile, personalProfile, onEditProfile }: MobileSidebarProps) => {
+const MenteeSidebar = ({ isOwnProfile, user_is_mentor, personalProfile, onEditProfile }: MobileSidebarProps) => {
   return (
     <VStack w="full" gap={6}>
       {isOwnProfile && !personalProfile?.is_profile_complete && (
-        <>
-          <ProfileCompletionCard onEditProfile={onEditProfile} />
-          <BecomeMentorCard />
-        </>
+        <ProfileCompletionCard onEditProfile={onEditProfile} />
       )}
+
+      {isOwnProfile && !user_is_mentor && <BecomeMentorCard />}
+
       <PeopleAlsoViewed />
     </VStack>
   );
