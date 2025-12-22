@@ -8,8 +8,6 @@ import {
   SkeletonCircle,
   SkeletonText,
   Spinner,
-  IconButton,
-  useBreakpointValue,
 } from '@chakra-ui/react';
 import { Avatar } from '@/components/ui/avatar';
 import { FaChevronDown } from 'react-icons/fa6';
@@ -18,7 +16,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { ColorModeButton } from '@/components/ui/colormode/color-mode';
 import { useNavigateWithRedirect } from '@/hooks/auth/authState';
 import { useSession } from '@/hooks/auth/useSession';
-import { HiMenuAlt3 } from 'react-icons/hi';
+// import { HiMenuAlt3 } from 'react-icons/hi';
 import Search from './search/IndexSearch';
 
 const Header = () => {
@@ -26,8 +24,6 @@ const Header = () => {
   const { user, isLoading, cachedUserMetadata } = useSession();
   const navigate = useNavigate();
   const navigateWithRedirect = useNavigateWithRedirect();
-
-  const isMobile = useBreakpointValue({ base: true, md: false });
 
   // Gate UI decisions until we know auth state
   const showUserUI = !isLoading && user;
@@ -65,18 +61,8 @@ const Header = () => {
       zIndex="100"
     >
       <Flex align="center" gap={{ base: 2, md: 4 }} justify="space-between">
-        {/* Left Section - Logo + Menu (Mobile) */}
-        <HStack gap={{ base: 2, md: 3 }} flex={{ base: '0 0 auto', md: '0 0 200px' }}>
-          <IconButton
-            display={{ base: 'flex', md: 'none' }}
-            aria-label="Menu"
-            variant="ghost"
-            size="sm"
-            fontSize="2xl"
-          >
-            <HiMenuAlt3 />
-          </IconButton>
-
+        {/* Left Section - Logo */}
+        <HStack flex={{ base: '0 0 auto', md: '0 0 200px' }}>
           <Text
             fontSize={{ base: 'xl', md: '2xl' }}
             fontWeight="bold"
@@ -89,16 +75,15 @@ const Header = () => {
           </Text>
         </HStack>
 
-        {/* Center Section - Search */}
-        {!isMobile && (
-          <Box
-            flex="1"
-            maxW={{ base: '100%', md: '650px' }}
-            mx={4}
-          >
-            <Search />
-          </Box>
-        )}
+        {/* Center Section - Search (Desktop) */}
+        <Box
+          display={{ base: 'none', md: 'block' }}
+          flex="1"
+          maxW={{ base: '100%', md: '650px' }}
+          mx={4}
+        >
+          <Search />
+        </Box>
 
         {/* Right Section - User Actions */}
         <HStack
@@ -106,12 +91,10 @@ const Header = () => {
           flex={{ base: '0 0 auto', md: '0 0 auto' }}
           justify="flex-end"
         >
-
-          {isMobile && (
-            <Box display={{ base: 'block', md: 'none' }}>
-              <Search />
-            </Box>
-          )}
+          {/* Mobile Search */}
+          <Box display={{ base: 'block', md: 'none' }}>
+            <Search isMobile={true}/>
+          </Box>
 
           {/* Color Mode Toggle */}
           <ColorModeButton variant="ghost" size="sm" />
@@ -263,7 +246,7 @@ const Header = () => {
           ) : null}
         </HStack>
       </Flex>
-    </Box >
+    </Box>
   );
 };
 
