@@ -125,6 +125,7 @@ class MentorSession(SQLModel, table=True):
     # Availability & booking rules
     is_public: bool = Field(default=True)
     is_cancelled: bool = Field(default=False)
+    # TODO: Create a propery that toogles this is session end_time > 1hour from now
     is_active: bool = Field(default=True)
     max_bookings: Optional[int] = None
 

@@ -33,18 +33,19 @@ const Explore = () => {
 
   // Fetch data for browsing with filter parameters
   // API only supports single values, so we pass the first selected item
-  const { 
-    data: mentors = [], 
-    isLoading: isLoadingMentors 
+  const {
+    data: mentors = [],
+    isLoading: isLoadingMentors
   } = useBrowseMentors({
     expertise: filters.selectedExpertise.length > 0 ? filters.selectedExpertise[0] : undefined,
-    available: filters.availableOnly,
+    // Only pass available if the user explicitly wants to filter
+    ...(filters.availableOnly ? { available: true } : {}),
     limit: 100,
   });
 
-  const { 
-    data: sessions = [], 
-    isLoading: isLoadingFeaturedSessions 
+  const {
+    data: sessions = [],
+    isLoading: isLoadingFeaturedSessions
   } = useBrowseSessions({
     sessionType: filters.selectedSessionTypes.length > 0 ? filters.selectedSessionTypes[0] : undefined,
     locationType: filters.locationType,
@@ -53,9 +54,9 @@ const Explore = () => {
     limit: 100,
   });
 
-  const { 
-    data: services = [], 
-    isLoading: isLoadingFeaturedServices 
+  const {
+    data: services = [],
+    isLoading: isLoadingFeaturedServices
   } = useBrowseServices({
     category: filters.selectedServiceCategories.length > 0 ? filters.selectedServiceCategories[0] : undefined,
     minPrice: filters.minPrice,
@@ -95,15 +96,15 @@ const Explore = () => {
 
     const timeoutId = setTimeout(() => {
       if (sessionId) {
-        document.getElementById(`session-${sessionId}`)?.scrollIntoView({ 
-          behavior: "smooth", 
-          block: "center" 
+        document.getElementById(`session-${sessionId}`)?.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
         });
       }
       if (serviceId) {
-        document.getElementById(`service-${serviceId}`)?.scrollIntoView({ 
-          behavior: "smooth", 
-          block: "center" 
+        document.getElementById(`service-${serviceId}`)?.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
         });
       }
     }, 100);
