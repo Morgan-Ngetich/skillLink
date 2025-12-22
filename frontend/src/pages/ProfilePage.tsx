@@ -3,7 +3,6 @@ import { useBreakpointValue } from "@chakra-ui/react";
 import { useParams, useRouter, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { useAuthRouteGuard } from "@/hooks/auth/useAuthRouteGuard";
 import { useAuth } from "@/hooks/auth/useAuth";
 import { useMentorSessions } from "@/hooks/mentor/useMentorSessions";
 import { useUserByUuid } from "@/hooks/public/useProfile";
@@ -32,12 +31,13 @@ const ProfilePage = () => {
   const params = useParams({ strict: false });
   const { uuid } = params;
 
-  const { isBlocked, isLoading: isAuthLoading, isValidated } = useAuthRouteGuard();
   const isMobile = useBreakpointValue({ base: true, md: false });
 
+  // Auth state - only needed to determine if viewing own profile
   const { user, isLoading: isUserLoading } = useAuth();
   const isOwnProfile = user?.uuid === uuid;
 
+  // Public profile data - always fetch for any profile view
   const { data: publicUser, isLoading: isPublicUserLoading } = useUserByUuid(uuid);
 
   // Determine if we need mentor-specific hooks BEFORE calling them
@@ -100,13 +100,12 @@ const ProfilePage = () => {
     ? mentorData?.sessions?.find((s) => s.uuid === search.sessionDetailId)
     : null;
 
-  // Loading state - show loading if:
-  // 1. Auth is loading, OR
-  // 2. User is loading (checking if logged in), OR
-  // 3. Blocked by auth guard, OR
-  // 4. Loading public user data (when viewing someone else's profile)
-  const isLoadingProfile = !isValidated || isAuthLoading || isUserLoading || isBlocked ||
-    (!isOwnProfile && isPublicUserLoading);
+  // Loading state logic:
+  // - For own profile: wait for user data to load
+  // - For public profile: wait for public user data to load
+  // - Initial load: show loading if we don't know yet if it's own profile
+  const isLoadingProfile = isUserLoading || 
+    (isOwnProfile ? false : isPublicUserLoading);
 
   if (isLoadingProfile) {
     return (
@@ -134,7 +133,7 @@ const ProfilePage = () => {
 
   return (
     <>
-      {/* Modals */}
+      {/* Modals - only show for own profile */}
       {isOwnProfile && (
         <>
           <ProfileEditModal
