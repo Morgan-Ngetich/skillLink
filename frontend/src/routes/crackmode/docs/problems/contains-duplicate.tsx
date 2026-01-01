@@ -1,12 +1,18 @@
 import { Spinner } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Suspense } from 'react';
-import ContainsDuplicate from "@/crackmode/docs/problems/contains-duplicate.mdx"
+import { Suspense, lazy } from "react";
+
+// Lazy load the MDX component
+const LazyContainsDuplicate= lazy(() => import("@/crackmode/docs/problems/contains-duplicate.mdx"));
+
+function ContainsDuplicate() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <LazyContainsDuplicate />
+    </Suspense>
+  );
+}
 
 export const Route = createFileRoute("/crackmode/docs/problems/contains-duplicate")({
-  component: () => (
-    <Suspense fallback={<Spinner />}>
-      <ContainsDuplicate />
-    </Suspense>
-  ),
+  component: ContainsDuplicate,
 });

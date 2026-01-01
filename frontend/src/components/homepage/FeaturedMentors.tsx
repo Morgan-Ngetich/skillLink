@@ -4,6 +4,7 @@ import type { MentorExplorePublic } from "@/client";
 import type React from "react";
 import { MentorCard } from "../dashboard/mentor/MentorCard";
 import { MentorCardSkeleton } from "../dashboard/mentor/MentorCardSkeleton";
+import { useNavigate } from "@tanstack/react-router";
 
 interface FeaturedMentorsProps {
   featuredMentors: MentorExplorePublic[];
@@ -11,6 +12,7 @@ interface FeaturedMentorsProps {
 }
 
 const FeaturedMentors: React.FC<FeaturedMentorsProps> = ({ featuredMentors, isLoading }) => {
+  const navigate = useNavigate()
   return (
     <Box>
       <HStack
@@ -28,6 +30,7 @@ const FeaturedMentors: React.FC<FeaturedMentorsProps> = ({ featuredMentors, isLo
           borderRadius="full"
           variant="surface"
           _hover={{ bg: { base: 'gray.200', _dark: 'gray.700' } }}
+          onClick={() => navigate({ to: "/explore"})}
         >
           See more
           <FaAngleRight />
