@@ -13,45 +13,11 @@ import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LayoutRouteImport } from './routes/_layout'
-import { Route as CrackmodeIndexRouteImport } from './routes/crackmode/index'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
-import { Route as CrackmodeDocsRouteImport } from './routes/crackmode/docs'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as LayoutProfileSetupRouteImport } from './routes/_layout/profile-setup'
 import { Route as LayoutExploreRouteImport } from './routes/_layout/explore'
-import { Route as CrackmodeDocsIndexRouteImport } from './routes/crackmode/docs/index'
 import { Route as LayoutProfileUuidRouteImport } from './routes/_layout/profile/$uuid'
-import { Route as CrackmodeDocsLeetcode75IndexRouteImport } from './routes/crackmode/docs/leetcode75/index'
-import { Route as CrackmodeDocsIntroductionIndexRouteImport } from './routes/crackmode/docs/introduction/index'
-import { Route as CrackmodeDocsProblemsValidParenthesesRouteImport } from './routes/crackmode/docs/problems/valid-parentheses'
-import { Route as CrackmodeDocsProblemsUniqueNumberOfOccurrencesRouteImport } from './routes/crackmode/docs/problems/unique-number-of-occurrences'
-import { Route as CrackmodeDocsProblemsTwoSumRouteImport } from './routes/crackmode/docs/problems/two-sum'
-import { Route as CrackmodeDocsProblemsNumberOfGoodPairsRouteImport } from './routes/crackmode/docs/problems/number-of-good-pairs'
-import { Route as CrackmodeDocsProblemsNumberOf1BitsRouteImport } from './routes/crackmode/docs/problems/number-of-1-bits'
-import { Route as CrackmodeDocsProblemsMostCommonWordRouteImport } from './routes/crackmode/docs/problems/most-common-word'
-import { Route as CrackmodeDocsProblemsMissingNumberRouteImport } from './routes/crackmode/docs/problems/missing-number'
-import { Route as CrackmodeDocsProblemsMergeSortedArrayRouteImport } from './routes/crackmode/docs/problems/merge-sorted-array'
-import { Route as CrackmodeDocsProblemsLongestPalindromeRouteImport } from './routes/crackmode/docs/problems/longest-palindrome'
-import { Route as CrackmodeDocsProblemsLongestConsecutiveSequenceRouteImport } from './routes/crackmode/docs/problems/longest-consecutive-sequence'
-import { Route as CrackmodeDocsProblemsImplementStackUsingQueuesRouteImport } from './routes/crackmode/docs/problems/implement-stack-using-queues'
-import { Route as CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRouteImport } from './routes/crackmode/docs/problems/find-the-difference-of-two-arrays'
-import { Route as CrackmodeDocsProblemsFindTheDifferenceRouteImport } from './routes/crackmode/docs/problems/find-the-difference'
-import { Route as CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRouteImport } from './routes/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
-import { Route as CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRouteImport } from './routes/crackmode/docs/problems/find-all-duplicates-in-an-array'
-import { Route as CrackmodeDocsProblemsDistributeCandiesRouteImport } from './routes/crackmode/docs/problems/distribute-candies'
-import { Route as CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRouteImport } from './routes/crackmode/docs/problems/determine-if-two-strings-are-close'
-import { Route as CrackmodeDocsProblemsContainsDuplicateRouteImport } from './routes/crackmode/docs/problems/contains-duplicate'
-import { Route as CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRouteImport } from './routes/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
-import { Route as CrackmodeDocsProblemsBestTimeToBuyAndSellStockRouteImport } from './routes/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
-import { Route as CrackmodeDocsProblemsAsteroidCollisionRouteImport } from './routes/crackmode/docs/problems/asteroid-collision'
-import { Route as CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/index'
-import { Route as CrackmodeDocsLeetcode75ArraysStringsStringCompressionRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/string-compression'
-import { Route as CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self'
-import { Route as CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately'
-import { Route as CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies'
-import { Route as CrackmodeDocsLeetcode75ArraysStringsIntroductionRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/introduction'
-import { Route as CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
-import { Route as CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRouteImport } from './routes/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
 
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
@@ -72,20 +38,10 @@ const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CrackmodeIndexRoute = CrackmodeIndexRouteImport.update({
-  id: '/crackmode/',
-  path: '/crackmode/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LayoutIndexRoute = LayoutIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => LayoutRoute,
-} as any)
-const CrackmodeDocsRoute = CrackmodeDocsRouteImport.update({
-  id: '/crackmode/docs',
-  path: '/crackmode/docs',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/auth/callback',
@@ -102,212 +58,11 @@ const LayoutExploreRoute = LayoutExploreRouteImport.update({
   path: '/explore',
   getParentRoute: () => LayoutRoute,
 } as any)
-const CrackmodeDocsIndexRoute = CrackmodeDocsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => CrackmodeDocsRoute,
-} as any)
 const LayoutProfileUuidRoute = LayoutProfileUuidRouteImport.update({
   id: '/profile/$uuid',
   path: '/profile/$uuid',
   getParentRoute: () => LayoutRoute,
 } as any)
-const CrackmodeDocsLeetcode75IndexRoute =
-  CrackmodeDocsLeetcode75IndexRouteImport.update({
-    id: '/leetcode75/',
-    path: '/leetcode75/',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsIntroductionIndexRoute =
-  CrackmodeDocsIntroductionIndexRouteImport.update({
-    id: '/introduction/',
-    path: '/introduction/',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsProblemsValidParenthesesRoute =
-  CrackmodeDocsProblemsValidParenthesesRouteImport.update({
-    id: '/problems/valid-parentheses',
-    path: '/problems/valid-parentheses',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute =
-  CrackmodeDocsProblemsUniqueNumberOfOccurrencesRouteImport.update({
-    id: '/problems/unique-number-of-occurrences',
-    path: '/problems/unique-number-of-occurrences',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsProblemsTwoSumRoute =
-  CrackmodeDocsProblemsTwoSumRouteImport.update({
-    id: '/problems/two-sum',
-    path: '/problems/two-sum',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsProblemsNumberOfGoodPairsRoute =
-  CrackmodeDocsProblemsNumberOfGoodPairsRouteImport.update({
-    id: '/problems/number-of-good-pairs',
-    path: '/problems/number-of-good-pairs',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsProblemsNumberOf1BitsRoute =
-  CrackmodeDocsProblemsNumberOf1BitsRouteImport.update({
-    id: '/problems/number-of-1-bits',
-    path: '/problems/number-of-1-bits',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsProblemsMostCommonWordRoute =
-  CrackmodeDocsProblemsMostCommonWordRouteImport.update({
-    id: '/problems/most-common-word',
-    path: '/problems/most-common-word',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsProblemsMissingNumberRoute =
-  CrackmodeDocsProblemsMissingNumberRouteImport.update({
-    id: '/problems/missing-number',
-    path: '/problems/missing-number',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsProblemsMergeSortedArrayRoute =
-  CrackmodeDocsProblemsMergeSortedArrayRouteImport.update({
-    id: '/problems/merge-sorted-array',
-    path: '/problems/merge-sorted-array',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsProblemsLongestPalindromeRoute =
-  CrackmodeDocsProblemsLongestPalindromeRouteImport.update({
-    id: '/problems/longest-palindrome',
-    path: '/problems/longest-palindrome',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsProblemsLongestConsecutiveSequenceRoute =
-  CrackmodeDocsProblemsLongestConsecutiveSequenceRouteImport.update({
-    id: '/problems/longest-consecutive-sequence',
-    path: '/problems/longest-consecutive-sequence',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsProblemsImplementStackUsingQueuesRoute =
-  CrackmodeDocsProblemsImplementStackUsingQueuesRouteImport.update({
-    id: '/problems/implement-stack-using-queues',
-    path: '/problems/implement-stack-using-queues',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute =
-  CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRouteImport.update({
-    id: '/problems/find-the-difference-of-two-arrays',
-    path: '/problems/find-the-difference-of-two-arrays',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsProblemsFindTheDifferenceRoute =
-  CrackmodeDocsProblemsFindTheDifferenceRouteImport.update({
-    id: '/problems/find-the-difference',
-    path: '/problems/find-the-difference',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute =
-  CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRouteImport.update({
-    id: '/problems/find-all-numbers-disappeared-in-an-array',
-    path: '/problems/find-all-numbers-disappeared-in-an-array',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute =
-  CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRouteImport.update({
-    id: '/problems/find-all-duplicates-in-an-array',
-    path: '/problems/find-all-duplicates-in-an-array',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsProblemsDistributeCandiesRoute =
-  CrackmodeDocsProblemsDistributeCandiesRouteImport.update({
-    id: '/problems/distribute-candies',
-    path: '/problems/distribute-candies',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRoute =
-  CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRouteImport.update({
-    id: '/problems/determine-if-two-strings-are-close',
-    path: '/problems/determine-if-two-strings-are-close',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsProblemsContainsDuplicateRoute =
-  CrackmodeDocsProblemsContainsDuplicateRouteImport.update({
-    id: '/problems/contains-duplicate',
-    path: '/problems/contains-duplicate',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute =
-  CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRouteImport.update(
-    {
-      id: '/problems/check-if-number-has-equal-digit-count-and-digit-value',
-      path: '/problems/check-if-number-has-equal-digit-count-and-digit-value',
-      getParentRoute: () => CrackmodeDocsRoute,
-    } as any,
-  )
-const CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute =
-  CrackmodeDocsProblemsBestTimeToBuyAndSellStockRouteImport.update({
-    id: '/problems/best-time-to-buy-and-sell-stock',
-    path: '/problems/best-time-to-buy-and-sell-stock',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsProblemsAsteroidCollisionRoute =
-  CrackmodeDocsProblemsAsteroidCollisionRouteImport.update({
-    id: '/problems/asteroid-collision',
-    path: '/problems/asteroid-collision',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsLeetcode75ArraysStringsIndexRoute =
-  CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport.update({
-    id: '/leetcode75/arrays-strings/',
-    path: '/leetcode75/arrays-strings/',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsLeetcode75ArraysStringsStringCompressionRoute =
-  CrackmodeDocsLeetcode75ArraysStringsStringCompressionRouteImport.update({
-    id: '/leetcode75/arrays-strings/string-compression',
-    path: '/leetcode75/arrays-strings/string-compression',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRoute =
-  CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRouteImport.update(
-    {
-      id: '/leetcode75/arrays-strings/product-of-array-except-self',
-      path: '/leetcode75/arrays-strings/product-of-array-except-self',
-      getParentRoute: () => CrackmodeDocsRoute,
-    } as any,
-  )
-const CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRoute =
-  CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRouteImport.update(
-    {
-      id: '/leetcode75/arrays-strings/merge-strings-alternately',
-      path: '/leetcode75/arrays-strings/merge-strings-alternately',
-      getParentRoute: () => CrackmodeDocsRoute,
-    } as any,
-  )
-const CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRoute =
-  CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRouteImport.update(
-    {
-      id: '/leetcode75/arrays-strings/kids-with-greatest-candies',
-      path: '/leetcode75/arrays-strings/kids-with-greatest-candies',
-      getParentRoute: () => CrackmodeDocsRoute,
-    } as any,
-  )
-const CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute =
-  CrackmodeDocsLeetcode75ArraysStringsIntroductionRouteImport.update({
-    id: '/leetcode75/arrays-strings/introduction',
-    path: '/leetcode75/arrays-strings/introduction',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
-const CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute =
-  CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRouteImport.update(
-    {
-      id: '/leetcode75/arrays-strings/increasing-triplet-subsequence',
-      path: '/leetcode75/arrays-strings/increasing-triplet-subsequence',
-      getParentRoute: () => CrackmodeDocsRoute,
-    } as any,
-  )
-const CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute =
-  CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRouteImport.update({
-    id: '/leetcode75/arrays-strings/gcd-of-strings',
-    path: '/leetcode75/arrays-strings/gcd-of-strings',
-    getParentRoute: () => CrackmodeDocsRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
@@ -316,42 +71,8 @@ export interface FileRoutesByFullPath {
   '/explore': typeof LayoutExploreRoute
   '/profile-setup': typeof LayoutProfileSetupRoute
   '/auth/callback': typeof AuthCallbackRoute
-  '/crackmode/docs': typeof CrackmodeDocsRouteWithChildren
   '/': typeof LayoutIndexRoute
-  '/crackmode': typeof CrackmodeIndexRoute
   '/profile/$uuid': typeof LayoutProfileUuidRoute
-  '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
-  '/crackmode/docs/problems/asteroid-collision': typeof CrackmodeDocsProblemsAsteroidCollisionRoute
-  '/crackmode/docs/problems/best-time-to-buy-and-sell-stock': typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
-  '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
-  '/crackmode/docs/problems/contains-duplicate': typeof CrackmodeDocsProblemsContainsDuplicateRoute
-  '/crackmode/docs/problems/determine-if-two-strings-are-close': typeof CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRoute
-  '/crackmode/docs/problems/distribute-candies': typeof CrackmodeDocsProblemsDistributeCandiesRoute
-  '/crackmode/docs/problems/find-all-duplicates-in-an-array': typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute
-  '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array': typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute
-  '/crackmode/docs/problems/find-the-difference': typeof CrackmodeDocsProblemsFindTheDifferenceRoute
-  '/crackmode/docs/problems/find-the-difference-of-two-arrays': typeof CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute
-  '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
-  '/crackmode/docs/problems/longest-consecutive-sequence': typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
-  '/crackmode/docs/problems/longest-palindrome': typeof CrackmodeDocsProblemsLongestPalindromeRoute
-  '/crackmode/docs/problems/merge-sorted-array': typeof CrackmodeDocsProblemsMergeSortedArrayRoute
-  '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
-  '/crackmode/docs/problems/most-common-word': typeof CrackmodeDocsProblemsMostCommonWordRoute
-  '/crackmode/docs/problems/number-of-1-bits': typeof CrackmodeDocsProblemsNumberOf1BitsRoute
-  '/crackmode/docs/problems/number-of-good-pairs': typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
-  '/crackmode/docs/problems/two-sum': typeof CrackmodeDocsProblemsTwoSumRoute
-  '/crackmode/docs/problems/unique-number-of-occurrences': typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
-  '/crackmode/docs/problems/valid-parentheses': typeof CrackmodeDocsProblemsValidParenthesesRoute
-  '/crackmode/docs/introduction': typeof CrackmodeDocsIntroductionIndexRoute
-  '/crackmode/docs/leetcode75': typeof CrackmodeDocsLeetcode75IndexRoute
-  '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
-  '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence': typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
-  '/crackmode/docs/leetcode75/arrays-strings/introduction': typeof CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute
-  '/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies': typeof CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRoute
-  '/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately': typeof CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRoute
-  '/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self': typeof CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRoute
-  '/crackmode/docs/leetcode75/arrays-strings/string-compression': typeof CrackmodeDocsLeetcode75ArraysStringsStringCompressionRoute
-  '/crackmode/docs/leetcode75/arrays-strings': typeof CrackmodeDocsLeetcode75ArraysStringsIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -361,40 +82,7 @@ export interface FileRoutesByTo {
   '/profile-setup': typeof LayoutProfileSetupRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/': typeof LayoutIndexRoute
-  '/crackmode': typeof CrackmodeIndexRoute
   '/profile/$uuid': typeof LayoutProfileUuidRoute
-  '/crackmode/docs': typeof CrackmodeDocsIndexRoute
-  '/crackmode/docs/problems/asteroid-collision': typeof CrackmodeDocsProblemsAsteroidCollisionRoute
-  '/crackmode/docs/problems/best-time-to-buy-and-sell-stock': typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
-  '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
-  '/crackmode/docs/problems/contains-duplicate': typeof CrackmodeDocsProblemsContainsDuplicateRoute
-  '/crackmode/docs/problems/determine-if-two-strings-are-close': typeof CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRoute
-  '/crackmode/docs/problems/distribute-candies': typeof CrackmodeDocsProblemsDistributeCandiesRoute
-  '/crackmode/docs/problems/find-all-duplicates-in-an-array': typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute
-  '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array': typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute
-  '/crackmode/docs/problems/find-the-difference': typeof CrackmodeDocsProblemsFindTheDifferenceRoute
-  '/crackmode/docs/problems/find-the-difference-of-two-arrays': typeof CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute
-  '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
-  '/crackmode/docs/problems/longest-consecutive-sequence': typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
-  '/crackmode/docs/problems/longest-palindrome': typeof CrackmodeDocsProblemsLongestPalindromeRoute
-  '/crackmode/docs/problems/merge-sorted-array': typeof CrackmodeDocsProblemsMergeSortedArrayRoute
-  '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
-  '/crackmode/docs/problems/most-common-word': typeof CrackmodeDocsProblemsMostCommonWordRoute
-  '/crackmode/docs/problems/number-of-1-bits': typeof CrackmodeDocsProblemsNumberOf1BitsRoute
-  '/crackmode/docs/problems/number-of-good-pairs': typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
-  '/crackmode/docs/problems/two-sum': typeof CrackmodeDocsProblemsTwoSumRoute
-  '/crackmode/docs/problems/unique-number-of-occurrences': typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
-  '/crackmode/docs/problems/valid-parentheses': typeof CrackmodeDocsProblemsValidParenthesesRoute
-  '/crackmode/docs/introduction': typeof CrackmodeDocsIntroductionIndexRoute
-  '/crackmode/docs/leetcode75': typeof CrackmodeDocsLeetcode75IndexRoute
-  '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
-  '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence': typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
-  '/crackmode/docs/leetcode75/arrays-strings/introduction': typeof CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute
-  '/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies': typeof CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRoute
-  '/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately': typeof CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRoute
-  '/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self': typeof CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRoute
-  '/crackmode/docs/leetcode75/arrays-strings/string-compression': typeof CrackmodeDocsLeetcode75ArraysStringsStringCompressionRoute
-  '/crackmode/docs/leetcode75/arrays-strings': typeof CrackmodeDocsLeetcode75ArraysStringsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -405,42 +93,8 @@ export interface FileRoutesById {
   '/_layout/explore': typeof LayoutExploreRoute
   '/_layout/profile-setup': typeof LayoutProfileSetupRoute
   '/auth/callback': typeof AuthCallbackRoute
-  '/crackmode/docs': typeof CrackmodeDocsRouteWithChildren
   '/_layout/': typeof LayoutIndexRoute
-  '/crackmode/': typeof CrackmodeIndexRoute
   '/_layout/profile/$uuid': typeof LayoutProfileUuidRoute
-  '/crackmode/docs/': typeof CrackmodeDocsIndexRoute
-  '/crackmode/docs/problems/asteroid-collision': typeof CrackmodeDocsProblemsAsteroidCollisionRoute
-  '/crackmode/docs/problems/best-time-to-buy-and-sell-stock': typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
-  '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
-  '/crackmode/docs/problems/contains-duplicate': typeof CrackmodeDocsProblemsContainsDuplicateRoute
-  '/crackmode/docs/problems/determine-if-two-strings-are-close': typeof CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRoute
-  '/crackmode/docs/problems/distribute-candies': typeof CrackmodeDocsProblemsDistributeCandiesRoute
-  '/crackmode/docs/problems/find-all-duplicates-in-an-array': typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute
-  '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array': typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute
-  '/crackmode/docs/problems/find-the-difference': typeof CrackmodeDocsProblemsFindTheDifferenceRoute
-  '/crackmode/docs/problems/find-the-difference-of-two-arrays': typeof CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute
-  '/crackmode/docs/problems/implement-stack-using-queues': typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
-  '/crackmode/docs/problems/longest-consecutive-sequence': typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
-  '/crackmode/docs/problems/longest-palindrome': typeof CrackmodeDocsProblemsLongestPalindromeRoute
-  '/crackmode/docs/problems/merge-sorted-array': typeof CrackmodeDocsProblemsMergeSortedArrayRoute
-  '/crackmode/docs/problems/missing-number': typeof CrackmodeDocsProblemsMissingNumberRoute
-  '/crackmode/docs/problems/most-common-word': typeof CrackmodeDocsProblemsMostCommonWordRoute
-  '/crackmode/docs/problems/number-of-1-bits': typeof CrackmodeDocsProblemsNumberOf1BitsRoute
-  '/crackmode/docs/problems/number-of-good-pairs': typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
-  '/crackmode/docs/problems/two-sum': typeof CrackmodeDocsProblemsTwoSumRoute
-  '/crackmode/docs/problems/unique-number-of-occurrences': typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
-  '/crackmode/docs/problems/valid-parentheses': typeof CrackmodeDocsProblemsValidParenthesesRoute
-  '/crackmode/docs/introduction/': typeof CrackmodeDocsIntroductionIndexRoute
-  '/crackmode/docs/leetcode75/': typeof CrackmodeDocsLeetcode75IndexRoute
-  '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
-  '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence': typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
-  '/crackmode/docs/leetcode75/arrays-strings/introduction': typeof CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute
-  '/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies': typeof CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRoute
-  '/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately': typeof CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRoute
-  '/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self': typeof CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRoute
-  '/crackmode/docs/leetcode75/arrays-strings/string-compression': typeof CrackmodeDocsLeetcode75ArraysStringsStringCompressionRoute
-  '/crackmode/docs/leetcode75/arrays-strings/': typeof CrackmodeDocsLeetcode75ArraysStringsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -451,42 +105,8 @@ export interface FileRouteTypes {
     | '/explore'
     | '/profile-setup'
     | '/auth/callback'
-    | '/crackmode/docs'
     | '/'
-    | '/crackmode'
     | '/profile/$uuid'
-    | '/crackmode/docs/'
-    | '/crackmode/docs/problems/asteroid-collision'
-    | '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
-    | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
-    | '/crackmode/docs/problems/contains-duplicate'
-    | '/crackmode/docs/problems/determine-if-two-strings-are-close'
-    | '/crackmode/docs/problems/distribute-candies'
-    | '/crackmode/docs/problems/find-all-duplicates-in-an-array'
-    | '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
-    | '/crackmode/docs/problems/find-the-difference'
-    | '/crackmode/docs/problems/find-the-difference-of-two-arrays'
-    | '/crackmode/docs/problems/implement-stack-using-queues'
-    | '/crackmode/docs/problems/longest-consecutive-sequence'
-    | '/crackmode/docs/problems/longest-palindrome'
-    | '/crackmode/docs/problems/merge-sorted-array'
-    | '/crackmode/docs/problems/missing-number'
-    | '/crackmode/docs/problems/most-common-word'
-    | '/crackmode/docs/problems/number-of-1-bits'
-    | '/crackmode/docs/problems/number-of-good-pairs'
-    | '/crackmode/docs/problems/two-sum'
-    | '/crackmode/docs/problems/unique-number-of-occurrences'
-    | '/crackmode/docs/problems/valid-parentheses'
-    | '/crackmode/docs/introduction'
-    | '/crackmode/docs/leetcode75'
-    | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
-    | '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
-    | '/crackmode/docs/leetcode75/arrays-strings/introduction'
-    | '/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies'
-    | '/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately'
-    | '/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self'
-    | '/crackmode/docs/leetcode75/arrays-strings/string-compression'
-    | '/crackmode/docs/leetcode75/arrays-strings'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -496,40 +116,7 @@ export interface FileRouteTypes {
     | '/profile-setup'
     | '/auth/callback'
     | '/'
-    | '/crackmode'
     | '/profile/$uuid'
-    | '/crackmode/docs'
-    | '/crackmode/docs/problems/asteroid-collision'
-    | '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
-    | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
-    | '/crackmode/docs/problems/contains-duplicate'
-    | '/crackmode/docs/problems/determine-if-two-strings-are-close'
-    | '/crackmode/docs/problems/distribute-candies'
-    | '/crackmode/docs/problems/find-all-duplicates-in-an-array'
-    | '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
-    | '/crackmode/docs/problems/find-the-difference'
-    | '/crackmode/docs/problems/find-the-difference-of-two-arrays'
-    | '/crackmode/docs/problems/implement-stack-using-queues'
-    | '/crackmode/docs/problems/longest-consecutive-sequence'
-    | '/crackmode/docs/problems/longest-palindrome'
-    | '/crackmode/docs/problems/merge-sorted-array'
-    | '/crackmode/docs/problems/missing-number'
-    | '/crackmode/docs/problems/most-common-word'
-    | '/crackmode/docs/problems/number-of-1-bits'
-    | '/crackmode/docs/problems/number-of-good-pairs'
-    | '/crackmode/docs/problems/two-sum'
-    | '/crackmode/docs/problems/unique-number-of-occurrences'
-    | '/crackmode/docs/problems/valid-parentheses'
-    | '/crackmode/docs/introduction'
-    | '/crackmode/docs/leetcode75'
-    | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
-    | '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
-    | '/crackmode/docs/leetcode75/arrays-strings/introduction'
-    | '/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies'
-    | '/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately'
-    | '/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self'
-    | '/crackmode/docs/leetcode75/arrays-strings/string-compression'
-    | '/crackmode/docs/leetcode75/arrays-strings'
   id:
     | '__root__'
     | '/_layout'
@@ -539,42 +126,8 @@ export interface FileRouteTypes {
     | '/_layout/explore'
     | '/_layout/profile-setup'
     | '/auth/callback'
-    | '/crackmode/docs'
     | '/_layout/'
-    | '/crackmode/'
     | '/_layout/profile/$uuid'
-    | '/crackmode/docs/'
-    | '/crackmode/docs/problems/asteroid-collision'
-    | '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
-    | '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
-    | '/crackmode/docs/problems/contains-duplicate'
-    | '/crackmode/docs/problems/determine-if-two-strings-are-close'
-    | '/crackmode/docs/problems/distribute-candies'
-    | '/crackmode/docs/problems/find-all-duplicates-in-an-array'
-    | '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
-    | '/crackmode/docs/problems/find-the-difference'
-    | '/crackmode/docs/problems/find-the-difference-of-two-arrays'
-    | '/crackmode/docs/problems/implement-stack-using-queues'
-    | '/crackmode/docs/problems/longest-consecutive-sequence'
-    | '/crackmode/docs/problems/longest-palindrome'
-    | '/crackmode/docs/problems/merge-sorted-array'
-    | '/crackmode/docs/problems/missing-number'
-    | '/crackmode/docs/problems/most-common-word'
-    | '/crackmode/docs/problems/number-of-1-bits'
-    | '/crackmode/docs/problems/number-of-good-pairs'
-    | '/crackmode/docs/problems/two-sum'
-    | '/crackmode/docs/problems/unique-number-of-occurrences'
-    | '/crackmode/docs/problems/valid-parentheses'
-    | '/crackmode/docs/introduction/'
-    | '/crackmode/docs/leetcode75/'
-    | '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
-    | '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
-    | '/crackmode/docs/leetcode75/arrays-strings/introduction'
-    | '/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies'
-    | '/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately'
-    | '/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self'
-    | '/crackmode/docs/leetcode75/arrays-strings/string-compression'
-    | '/crackmode/docs/leetcode75/arrays-strings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -583,8 +136,6 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
-  CrackmodeDocsRoute: typeof CrackmodeDocsRouteWithChildren
-  CrackmodeIndexRoute: typeof CrackmodeIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -617,26 +168,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/crackmode/': {
-      id: '/crackmode/'
-      path: '/crackmode'
-      fullPath: '/crackmode'
-      preLoaderRoute: typeof CrackmodeIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_layout/': {
       id: '/_layout/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof LayoutIndexRouteImport
       parentRoute: typeof LayoutRoute
-    }
-    '/crackmode/docs': {
-      id: '/crackmode/docs'
-      path: '/crackmode/docs'
-      fullPath: '/crackmode/docs'
-      preLoaderRoute: typeof CrackmodeDocsRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/auth/callback': {
       id: '/auth/callback'
@@ -659,236 +196,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutExploreRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/crackmode/docs/': {
-      id: '/crackmode/docs/'
-      path: '/'
-      fullPath: '/crackmode/docs/'
-      preLoaderRoute: typeof CrackmodeDocsIndexRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
     '/_layout/profile/$uuid': {
       id: '/_layout/profile/$uuid'
       path: '/profile/$uuid'
       fullPath: '/profile/$uuid'
       preLoaderRoute: typeof LayoutProfileUuidRouteImport
       parentRoute: typeof LayoutRoute
-    }
-    '/crackmode/docs/leetcode75/': {
-      id: '/crackmode/docs/leetcode75/'
-      path: '/leetcode75'
-      fullPath: '/crackmode/docs/leetcode75'
-      preLoaderRoute: typeof CrackmodeDocsLeetcode75IndexRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/introduction/': {
-      id: '/crackmode/docs/introduction/'
-      path: '/introduction'
-      fullPath: '/crackmode/docs/introduction'
-      preLoaderRoute: typeof CrackmodeDocsIntroductionIndexRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/valid-parentheses': {
-      id: '/crackmode/docs/problems/valid-parentheses'
-      path: '/problems/valid-parentheses'
-      fullPath: '/crackmode/docs/problems/valid-parentheses'
-      preLoaderRoute: typeof CrackmodeDocsProblemsValidParenthesesRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/unique-number-of-occurrences': {
-      id: '/crackmode/docs/problems/unique-number-of-occurrences'
-      path: '/problems/unique-number-of-occurrences'
-      fullPath: '/crackmode/docs/problems/unique-number-of-occurrences'
-      preLoaderRoute: typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/two-sum': {
-      id: '/crackmode/docs/problems/two-sum'
-      path: '/problems/two-sum'
-      fullPath: '/crackmode/docs/problems/two-sum'
-      preLoaderRoute: typeof CrackmodeDocsProblemsTwoSumRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/number-of-good-pairs': {
-      id: '/crackmode/docs/problems/number-of-good-pairs'
-      path: '/problems/number-of-good-pairs'
-      fullPath: '/crackmode/docs/problems/number-of-good-pairs'
-      preLoaderRoute: typeof CrackmodeDocsProblemsNumberOfGoodPairsRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/number-of-1-bits': {
-      id: '/crackmode/docs/problems/number-of-1-bits'
-      path: '/problems/number-of-1-bits'
-      fullPath: '/crackmode/docs/problems/number-of-1-bits'
-      preLoaderRoute: typeof CrackmodeDocsProblemsNumberOf1BitsRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/most-common-word': {
-      id: '/crackmode/docs/problems/most-common-word'
-      path: '/problems/most-common-word'
-      fullPath: '/crackmode/docs/problems/most-common-word'
-      preLoaderRoute: typeof CrackmodeDocsProblemsMostCommonWordRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/missing-number': {
-      id: '/crackmode/docs/problems/missing-number'
-      path: '/problems/missing-number'
-      fullPath: '/crackmode/docs/problems/missing-number'
-      preLoaderRoute: typeof CrackmodeDocsProblemsMissingNumberRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/merge-sorted-array': {
-      id: '/crackmode/docs/problems/merge-sorted-array'
-      path: '/problems/merge-sorted-array'
-      fullPath: '/crackmode/docs/problems/merge-sorted-array'
-      preLoaderRoute: typeof CrackmodeDocsProblemsMergeSortedArrayRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/longest-palindrome': {
-      id: '/crackmode/docs/problems/longest-palindrome'
-      path: '/problems/longest-palindrome'
-      fullPath: '/crackmode/docs/problems/longest-palindrome'
-      preLoaderRoute: typeof CrackmodeDocsProblemsLongestPalindromeRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/longest-consecutive-sequence': {
-      id: '/crackmode/docs/problems/longest-consecutive-sequence'
-      path: '/problems/longest-consecutive-sequence'
-      fullPath: '/crackmode/docs/problems/longest-consecutive-sequence'
-      preLoaderRoute: typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/implement-stack-using-queues': {
-      id: '/crackmode/docs/problems/implement-stack-using-queues'
-      path: '/problems/implement-stack-using-queues'
-      fullPath: '/crackmode/docs/problems/implement-stack-using-queues'
-      preLoaderRoute: typeof CrackmodeDocsProblemsImplementStackUsingQueuesRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/find-the-difference-of-two-arrays': {
-      id: '/crackmode/docs/problems/find-the-difference-of-two-arrays'
-      path: '/problems/find-the-difference-of-two-arrays'
-      fullPath: '/crackmode/docs/problems/find-the-difference-of-two-arrays'
-      preLoaderRoute: typeof CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/find-the-difference': {
-      id: '/crackmode/docs/problems/find-the-difference'
-      path: '/problems/find-the-difference'
-      fullPath: '/crackmode/docs/problems/find-the-difference'
-      preLoaderRoute: typeof CrackmodeDocsProblemsFindTheDifferenceRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array': {
-      id: '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
-      path: '/problems/find-all-numbers-disappeared-in-an-array'
-      fullPath: '/crackmode/docs/problems/find-all-numbers-disappeared-in-an-array'
-      preLoaderRoute: typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/find-all-duplicates-in-an-array': {
-      id: '/crackmode/docs/problems/find-all-duplicates-in-an-array'
-      path: '/problems/find-all-duplicates-in-an-array'
-      fullPath: '/crackmode/docs/problems/find-all-duplicates-in-an-array'
-      preLoaderRoute: typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/distribute-candies': {
-      id: '/crackmode/docs/problems/distribute-candies'
-      path: '/problems/distribute-candies'
-      fullPath: '/crackmode/docs/problems/distribute-candies'
-      preLoaderRoute: typeof CrackmodeDocsProblemsDistributeCandiesRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/determine-if-two-strings-are-close': {
-      id: '/crackmode/docs/problems/determine-if-two-strings-are-close'
-      path: '/problems/determine-if-two-strings-are-close'
-      fullPath: '/crackmode/docs/problems/determine-if-two-strings-are-close'
-      preLoaderRoute: typeof CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/contains-duplicate': {
-      id: '/crackmode/docs/problems/contains-duplicate'
-      path: '/problems/contains-duplicate'
-      fullPath: '/crackmode/docs/problems/contains-duplicate'
-      preLoaderRoute: typeof CrackmodeDocsProblemsContainsDuplicateRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value': {
-      id: '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
-      path: '/problems/check-if-number-has-equal-digit-count-and-digit-value'
-      fullPath: '/crackmode/docs/problems/check-if-number-has-equal-digit-count-and-digit-value'
-      preLoaderRoute: typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/best-time-to-buy-and-sell-stock': {
-      id: '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
-      path: '/problems/best-time-to-buy-and-sell-stock'
-      fullPath: '/crackmode/docs/problems/best-time-to-buy-and-sell-stock'
-      preLoaderRoute: typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/problems/asteroid-collision': {
-      id: '/crackmode/docs/problems/asteroid-collision'
-      path: '/problems/asteroid-collision'
-      fullPath: '/crackmode/docs/problems/asteroid-collision'
-      preLoaderRoute: typeof CrackmodeDocsProblemsAsteroidCollisionRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/leetcode75/arrays-strings/': {
-      id: '/crackmode/docs/leetcode75/arrays-strings/'
-      path: '/leetcode75/arrays-strings'
-      fullPath: '/crackmode/docs/leetcode75/arrays-strings'
-      preLoaderRoute: typeof CrackmodeDocsLeetcode75ArraysStringsIndexRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/leetcode75/arrays-strings/string-compression': {
-      id: '/crackmode/docs/leetcode75/arrays-strings/string-compression'
-      path: '/leetcode75/arrays-strings/string-compression'
-      fullPath: '/crackmode/docs/leetcode75/arrays-strings/string-compression'
-      preLoaderRoute: typeof CrackmodeDocsLeetcode75ArraysStringsStringCompressionRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self': {
-      id: '/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self'
-      path: '/leetcode75/arrays-strings/product-of-array-except-self'
-      fullPath: '/crackmode/docs/leetcode75/arrays-strings/product-of-array-except-self'
-      preLoaderRoute: typeof CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately': {
-      id: '/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately'
-      path: '/leetcode75/arrays-strings/merge-strings-alternately'
-      fullPath: '/crackmode/docs/leetcode75/arrays-strings/merge-strings-alternately'
-      preLoaderRoute: typeof CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies': {
-      id: '/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies'
-      path: '/leetcode75/arrays-strings/kids-with-greatest-candies'
-      fullPath: '/crackmode/docs/leetcode75/arrays-strings/kids-with-greatest-candies'
-      preLoaderRoute: typeof CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/leetcode75/arrays-strings/introduction': {
-      id: '/crackmode/docs/leetcode75/arrays-strings/introduction'
-      path: '/leetcode75/arrays-strings/introduction'
-      fullPath: '/crackmode/docs/leetcode75/arrays-strings/introduction'
-      preLoaderRoute: typeof CrackmodeDocsLeetcode75ArraysStringsIntroductionRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence': {
-      id: '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
-      path: '/leetcode75/arrays-strings/increasing-triplet-subsequence'
-      fullPath: '/crackmode/docs/leetcode75/arrays-strings/increasing-triplet-subsequence'
-      preLoaderRoute: typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
-    }
-    '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings': {
-      id: '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
-      path: '/leetcode75/arrays-strings/gcd-of-strings'
-      fullPath: '/crackmode/docs/leetcode75/arrays-strings/gcd-of-strings'
-      preLoaderRoute: typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRouteImport
-      parentRoute: typeof CrackmodeDocsRoute
     }
   }
 }
@@ -910,116 +223,12 @@ const LayoutRouteChildren: LayoutRouteChildren = {
 const LayoutRouteWithChildren =
   LayoutRoute._addFileChildren(LayoutRouteChildren)
 
-interface CrackmodeDocsRouteChildren {
-  CrackmodeDocsIndexRoute: typeof CrackmodeDocsIndexRoute
-  CrackmodeDocsProblemsAsteroidCollisionRoute: typeof CrackmodeDocsProblemsAsteroidCollisionRoute
-  CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute: typeof CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute
-  CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute: typeof CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute
-  CrackmodeDocsProblemsContainsDuplicateRoute: typeof CrackmodeDocsProblemsContainsDuplicateRoute
-  CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRoute: typeof CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRoute
-  CrackmodeDocsProblemsDistributeCandiesRoute: typeof CrackmodeDocsProblemsDistributeCandiesRoute
-  CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute: typeof CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute
-  CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute: typeof CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute
-  CrackmodeDocsProblemsFindTheDifferenceRoute: typeof CrackmodeDocsProblemsFindTheDifferenceRoute
-  CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute: typeof CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute
-  CrackmodeDocsProblemsImplementStackUsingQueuesRoute: typeof CrackmodeDocsProblemsImplementStackUsingQueuesRoute
-  CrackmodeDocsProblemsLongestConsecutiveSequenceRoute: typeof CrackmodeDocsProblemsLongestConsecutiveSequenceRoute
-  CrackmodeDocsProblemsLongestPalindromeRoute: typeof CrackmodeDocsProblemsLongestPalindromeRoute
-  CrackmodeDocsProblemsMergeSortedArrayRoute: typeof CrackmodeDocsProblemsMergeSortedArrayRoute
-  CrackmodeDocsProblemsMissingNumberRoute: typeof CrackmodeDocsProblemsMissingNumberRoute
-  CrackmodeDocsProblemsMostCommonWordRoute: typeof CrackmodeDocsProblemsMostCommonWordRoute
-  CrackmodeDocsProblemsNumberOf1BitsRoute: typeof CrackmodeDocsProblemsNumberOf1BitsRoute
-  CrackmodeDocsProblemsNumberOfGoodPairsRoute: typeof CrackmodeDocsProblemsNumberOfGoodPairsRoute
-  CrackmodeDocsProblemsTwoSumRoute: typeof CrackmodeDocsProblemsTwoSumRoute
-  CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute: typeof CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute
-  CrackmodeDocsProblemsValidParenthesesRoute: typeof CrackmodeDocsProblemsValidParenthesesRoute
-  CrackmodeDocsIntroductionIndexRoute: typeof CrackmodeDocsIntroductionIndexRoute
-  CrackmodeDocsLeetcode75IndexRoute: typeof CrackmodeDocsLeetcode75IndexRoute
-  CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute: typeof CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute
-  CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute: typeof CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute
-  CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute: typeof CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute
-  CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRoute: typeof CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRoute
-  CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRoute: typeof CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRoute
-  CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRoute: typeof CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRoute
-  CrackmodeDocsLeetcode75ArraysStringsStringCompressionRoute: typeof CrackmodeDocsLeetcode75ArraysStringsStringCompressionRoute
-  CrackmodeDocsLeetcode75ArraysStringsIndexRoute: typeof CrackmodeDocsLeetcode75ArraysStringsIndexRoute
-}
-
-const CrackmodeDocsRouteChildren: CrackmodeDocsRouteChildren = {
-  CrackmodeDocsIndexRoute: CrackmodeDocsIndexRoute,
-  CrackmodeDocsProblemsAsteroidCollisionRoute:
-    CrackmodeDocsProblemsAsteroidCollisionRoute,
-  CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute:
-    CrackmodeDocsProblemsBestTimeToBuyAndSellStockRoute,
-  CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute:
-    CrackmodeDocsProblemsCheckIfNumberHasEqualDigitCountAndDigitValueRoute,
-  CrackmodeDocsProblemsContainsDuplicateRoute:
-    CrackmodeDocsProblemsContainsDuplicateRoute,
-  CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRoute:
-    CrackmodeDocsProblemsDetermineIfTwoStringsAreCloseRoute,
-  CrackmodeDocsProblemsDistributeCandiesRoute:
-    CrackmodeDocsProblemsDistributeCandiesRoute,
-  CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute:
-    CrackmodeDocsProblemsFindAllDuplicatesInAnArrayRoute,
-  CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute:
-    CrackmodeDocsProblemsFindAllNumbersDisappearedInAnArrayRoute,
-  CrackmodeDocsProblemsFindTheDifferenceRoute:
-    CrackmodeDocsProblemsFindTheDifferenceRoute,
-  CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute:
-    CrackmodeDocsProblemsFindTheDifferenceOfTwoArraysRoute,
-  CrackmodeDocsProblemsImplementStackUsingQueuesRoute:
-    CrackmodeDocsProblemsImplementStackUsingQueuesRoute,
-  CrackmodeDocsProblemsLongestConsecutiveSequenceRoute:
-    CrackmodeDocsProblemsLongestConsecutiveSequenceRoute,
-  CrackmodeDocsProblemsLongestPalindromeRoute:
-    CrackmodeDocsProblemsLongestPalindromeRoute,
-  CrackmodeDocsProblemsMergeSortedArrayRoute:
-    CrackmodeDocsProblemsMergeSortedArrayRoute,
-  CrackmodeDocsProblemsMissingNumberRoute:
-    CrackmodeDocsProblemsMissingNumberRoute,
-  CrackmodeDocsProblemsMostCommonWordRoute:
-    CrackmodeDocsProblemsMostCommonWordRoute,
-  CrackmodeDocsProblemsNumberOf1BitsRoute:
-    CrackmodeDocsProblemsNumberOf1BitsRoute,
-  CrackmodeDocsProblemsNumberOfGoodPairsRoute:
-    CrackmodeDocsProblemsNumberOfGoodPairsRoute,
-  CrackmodeDocsProblemsTwoSumRoute: CrackmodeDocsProblemsTwoSumRoute,
-  CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute:
-    CrackmodeDocsProblemsUniqueNumberOfOccurrencesRoute,
-  CrackmodeDocsProblemsValidParenthesesRoute:
-    CrackmodeDocsProblemsValidParenthesesRoute,
-  CrackmodeDocsIntroductionIndexRoute: CrackmodeDocsIntroductionIndexRoute,
-  CrackmodeDocsLeetcode75IndexRoute: CrackmodeDocsLeetcode75IndexRoute,
-  CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute:
-    CrackmodeDocsLeetcode75ArraysStringsGcdOfStringsRoute,
-  CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute:
-    CrackmodeDocsLeetcode75ArraysStringsIncreasingTripletSubsequenceRoute,
-  CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute:
-    CrackmodeDocsLeetcode75ArraysStringsIntroductionRoute,
-  CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRoute:
-    CrackmodeDocsLeetcode75ArraysStringsKidsWithGreatestCandiesRoute,
-  CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRoute:
-    CrackmodeDocsLeetcode75ArraysStringsMergeStringsAlternatelyRoute,
-  CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRoute:
-    CrackmodeDocsLeetcode75ArraysStringsProductOfArrayExceptSelfRoute,
-  CrackmodeDocsLeetcode75ArraysStringsStringCompressionRoute:
-    CrackmodeDocsLeetcode75ArraysStringsStringCompressionRoute,
-  CrackmodeDocsLeetcode75ArraysStringsIndexRoute:
-    CrackmodeDocsLeetcode75ArraysStringsIndexRoute,
-}
-
-const CrackmodeDocsRouteWithChildren = CrackmodeDocsRoute._addFileChildren(
-  CrackmodeDocsRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   LayoutRoute: LayoutRouteWithChildren,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
   VerifyEmailRoute: VerifyEmailRoute,
   AuthCallbackRoute: AuthCallbackRoute,
-  CrackmodeDocsRoute: CrackmodeDocsRouteWithChildren,
-  CrackmodeIndexRoute: CrackmodeIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
