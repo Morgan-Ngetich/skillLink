@@ -1,8 +1,10 @@
-import { Spinner } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Suspense } from 'react';
-import ProfilePage from "@/pages/ProfilePage";
+import { Suspense, lazy } from 'react';
 import { requireOwnerProfileCompletion } from "@/utils/routeGuards";
+import { UsersService } from "@/client"; // Import the service directly
+import ProfilePageSkeleton from "@/skeletons/profilPage/Index";
+
+const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 
 export interface ProfileSearchParams {
   pt?: string; // profileTab
@@ -24,11 +26,20 @@ export const Route = createFileRoute("/_layout/profile/$uuid")({
     const result = await requireOwnerProfileCompletion(params.uuid, location);
     return result;
   },
-  // This is what the AuthPromptController checks
-  loader: ({ context }) => {
-    return {
-      requiresAuth: context?.requiresAuth ?? false,
-    };
+  
+  // Load public data directly (NOT using React hooks)
+  loader: async ({ params }) => {
+    // Call the API directly, not through React hook
+    try {
+      const publicData = await UsersService.getUserApiV1UsersIdentifierGet({ 
+        identifier: params.uuid 
+      });
+      return { publicData };
+    } catch (error) {
+      console.error("Failed to load profile data:", error);
+      // Return null or empty data, but don't crash
+      return { publicData: null };
+    }
   },
 
   validateSearch: (search: Record<string, unknown>): ProfileSearchParams => ({
@@ -47,9 +58,15 @@ export const Route = createFileRoute("/_layout/profile/$uuid")({
     // Settings dialog
     settings: search.settings as "open" | undefined,
   }),
-  component: () => (
-    <Suspense fallback={<Spinner />}>
-      <ProfilePage />
-    </Suspense>
-  ),
+  component: ProfileRouteComponent
 });
+
+function ProfileRouteComponent() {
+  const { publicData } = Route.useLoaderData();
+  
+  return (
+    <Suspense fallback={<ProfilePageSkeleton />}>
+      <ProfilePage initialPublicData={publicData} />
+    </Suspense>
+  );
+}
