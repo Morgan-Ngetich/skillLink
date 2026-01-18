@@ -5,19 +5,24 @@
     <link rel="icon" type="image/svg+xml" href="/group.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <!--app-head-->
-    
-    <!-- Default fallback (these will be replaced by SSR for bots) -->
-    <title>MENTspace</title>
-    <meta name="description" content="Master your craft. Get a Mentor, Today." />
-
-    <!-- Preconnect -->
+    <!-- Preconnect to critical domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Add your API domain -->
+    <link rel="preconnect" href="https://backend-production-3e33.up.railway.app/" />
+    <link rel="dns-prefetch" href="https://backend-production-3e33.up.railway.app/" />
+    
+    <!--app-head-->
+    
+    <!-- Default fallback -->
+    <title>MENTspace</title>
+    <meta name="description" content="Master your craft. Get a Mentor, Today." />
+    
+    <!-- Preload critical fonts (if there are custom fonts) -->
+    <!-- <link rel="preload" href="/fonts/your-font.woff2" as="font" type="font/woff2" crossorigin /> -->
 
   </head>
   <body>
-
     <div id="root"><!--app-html--></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
