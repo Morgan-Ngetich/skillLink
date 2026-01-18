@@ -1,15 +1,21 @@
 import { Spinner } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Suspense } from 'react';
-import ExplorePage from "@/pages/ExplorePage";
+import { Suspense, lazy } from "react";
 import { z } from "zod"
 
-export const Route = createFileRoute("/_layout/explore")({
-  component: () => (
+// Lazy load the MDX component
+const LazyExplorePage = lazy(() => import("@/pages/ExplorePage"));
+
+function ExplorePage() {
+  return (
     <Suspense fallback={<Spinner />}>
-      <ExplorePage />
+      <LazyExplorePage />
     </Suspense>
-  ),
+  );
+}
+
+export const Route = createFileRoute("/_layout/explore")({
+  component: ExplorePage,
   validateSearch: z.object({
     q: z.string().optional(),
   }),
