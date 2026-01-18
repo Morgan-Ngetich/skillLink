@@ -79,6 +79,9 @@ services:
   celery_worker_default:
     container_name: celery_worker_default
     image: "backend:latest"
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     command: "celery_worker"
     restart: on-failure
     depends_on:
@@ -100,6 +103,9 @@ services:
  
   celery_worker_llm:
     container_name: celery_worker_llm
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     image: "backend:latest"
     command: "celery_worker --llm"
     restart: on-failure
@@ -121,6 +127,9 @@ services:
   celery_beat:
     container_name: "celery_beat"
     image: "backend:latest"
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     command: "celery_beat"
     restart: always
     depends_on:
