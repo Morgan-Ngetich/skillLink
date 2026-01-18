@@ -1,8 +1,19 @@
+import type React from "react"
 import Home from "../components/homepage/Index"
+import type { MentorExplorePublic, MentorSessionPublic, MentorServicePublic } from "@/client"
 
-const HomePage = () => {
+interface HomePageProps {
+  initialFeaturedData?: {
+    mentors: MentorExplorePublic[];
+    sessions: MentorSessionPublic[];
+    services?: MentorServicePublic[];
+  };
+}
+
+
+const HomePage: React.FC<HomePageProps> = ({ initialFeaturedData }) => {
   return (
-    <Home />
+    <Home initialFeaturedData={initialFeaturedData} />
   )
 }
 
