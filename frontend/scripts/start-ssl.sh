@@ -10,9 +10,11 @@ else
 fi
 
 # Start Node.js SSR server in BOTH environments
-echo "Starting Node.js SSR server on port 8080..."
-cd /app
-node scripts/server.js &
+# TODO: Re-enable SSR when ready
+echo "⚠️  SSR server is currently disabled. Serving static files only." 
+# echo "Starting Node.js SSR server on port 8080..."
+# cd /app
+# node scripts/server.js &
 
 # Wait for Node.js to start
 sleep 3
