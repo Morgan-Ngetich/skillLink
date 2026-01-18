@@ -17,10 +17,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { FaPlus, FaServicestack } from "react-icons/fa6";
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy } from "react";
 import { useColorModeValue } from "@/components/ui";
 import ServiceCard from "./ServiceCard";
-import ServiceFormModal from "./ServiceFormModal";
+const LazyServiceFormModal = lazy(() => import("./ServiceFormModal"));
+
 import { useMentorServices } from "@/hooks/mentor/useMentorServices";
 import type { MentorServicePublic } from "@/client";
 
@@ -126,7 +127,7 @@ const ServicesContent: React.FC<ServicesContentProps> = ({
           </Button>
         </Box>
 
-        <ServiceFormModal
+        <LazyServiceFormModal
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           service={editingService}
@@ -167,7 +168,7 @@ const ServicesContent: React.FC<ServicesContentProps> = ({
       {/* Private mode modals */}
       {!readOnly && (
         <>
-          <ServiceFormModal
+          <LazyServiceFormModal
             isOpen={isModalOpen}
             onClose={handleCloseModal}
             service={editingService}

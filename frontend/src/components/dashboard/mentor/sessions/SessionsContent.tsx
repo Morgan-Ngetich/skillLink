@@ -27,7 +27,8 @@ import SessionFormModal from "./SessionFormModal";
 import { useMentorSessions } from "@/hooks/mentor/useMentorSessions";
 import type { MentorSessionPublic } from "@/client";
 import SessionCard from "./SessionCard";
-// import SessionDetailModal from "./SessionDetailsModal";
+// const LazySessionDetailModal = lazy(() => import("@/components/dashboard/mentor/sessions/sessionDetails/Index"));
+
 import { FaCheckCircle } from "react-icons/fa";
 
 interface SessionsContentProps {
@@ -436,7 +437,7 @@ const SessionsContent = ({
       </DialogRoot>
 
       {/* Session Detail Modal
-      <SessionDetailModal
+      <LazySessionDetailModal
         session={selectedSession}
         isOpen={isDetailModalOpen}
         onClose={onCloseDetailModal}
