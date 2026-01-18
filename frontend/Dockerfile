@@ -37,7 +37,7 @@ WORKDIR /app
 
 # Copy built files
 COPY --from=build /app/dist/client /usr/share/nginx/html
-COPY --from=build /app/dist/server /app/dist/server
+# COPY --from=build /app/dist/server /app/dist/server
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/scripts/server.js ./scripts/
 
