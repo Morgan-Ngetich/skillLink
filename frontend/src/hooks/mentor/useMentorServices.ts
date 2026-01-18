@@ -32,13 +32,14 @@ export const useMentorServices = ({ enabled = true } = {}) => {
     ),
     staleTime: 1000 * 60 * 5,
     enabled,
+    refetchOnMount: false,
   });
 
   // Create service
   const createService = useMutation<MentorServicePublic, Error, MentorServiceCreate>({
     mutationFn: (data) => toNativePromise(
-      MentorsService.createServiceApiV1MentorsServicesPost({ 
-        requestBody: data 
+      MentorsService.createServiceApiV1MentorsServicesPost({
+        requestBody: data
       })
     ),
     onSuccess: () => {
@@ -62,14 +63,14 @@ export const useMentorServices = ({ enabled = true } = {}) => {
 
   // Update service
   const updateService = useMutation<
-    MentorServicePublic, 
-    Error, 
+    MentorServicePublic,
+    Error,
     { id: number; data: MentorServiceUpdate }
   >({
     mutationFn: ({ id, data }) => toNativePromise(
-      MentorsService.updateServiceApiV1MentorsServicesServiceIdPatch({ 
-        serviceId: id, 
-        requestBody: data 
+      MentorsService.updateServiceApiV1MentorsServicesServiceIdPatch({
+        serviceId: id,
+        requestBody: data
       })
     ),
     onSuccess: () => {
@@ -94,8 +95,8 @@ export const useMentorServices = ({ enabled = true } = {}) => {
   // Delete service
   const deleteService = useMutation<void, Error, number>({
     mutationFn: (id) => toNativePromise(
-      MentorsService.deleteServiceApiV1MentorsServicesServiceIdDelete({ 
-        serviceId: id 
+      MentorsService.deleteServiceApiV1MentorsServicesServiceIdDelete({
+        serviceId: id
       })
     ),
     onSuccess: () => {
@@ -120,10 +121,10 @@ export const useMentorServices = ({ enabled = true } = {}) => {
   // Smart create/update helper
   const saveService = async (
     data: Partial<MentorServiceCreate | MentorServiceUpdate> & { id?: number },
-    callbacks?: { 
-      onSettled?: () => void; 
-      onSuccess?: () => void; 
-      onError?: (err: unknown) => void 
+    callbacks?: {
+      onSettled?: () => void;
+      onSuccess?: () => void;
+      onError?: (err: unknown) => void
     }
   ) => {
     setIsSubmitting(true);
@@ -161,7 +162,7 @@ export const useMentorServices = ({ enabled = true } = {}) => {
     deleteService: deleteService.mutate,
     deleteServiceAsync: deleteService.mutateAsync,
     saveService,
-    
+
     isCreating: createService.isPending,
     isUpdating: updateService.isPending,
     isDeleting: deleteService.isPending,

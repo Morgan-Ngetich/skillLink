@@ -1,7 +1,7 @@
-import { Box, Flex, Container, Spinner } from "@chakra-ui/react";
+import { Box, Flex, Container } from "@chakra-ui/react";
 import { useBreakpointValue } from "@chakra-ui/react";
 import { useParams, useRouter, useSearch } from "@tanstack/react-router";
-import { useState } from "react";
+import React, { useState, Suspense, lazy, useMemo } from "react";
 
 import { useAuth } from "@/hooks/auth/useAuth";
 import { useMentorSessions } from "@/hooks/mentor/useMentorSessions";
@@ -9,23 +9,30 @@ import { useUserByUuid } from "@/hooks/public/useProfile";
 import { useMentorSettings } from "@/hooks/mentor/useMentorSettings";
 import { useProfilePageHandlers } from "@/hooks/public/useProfilePageHandlers";
 
-import type { MentorSessionPublic, MentorServicePublic } from "@/client";
+import type { MentorSessionPublic, MentorServicePublic, UserPublic } from "@/client";
 
-import DeleteSessionDialog from "@/components/dashboard/mentor/sessions/DeleteSessionDialog";
-import DeleteServiceDialog from "@/components/dashboard/mentor/services/DeleteServiceDialog";
 import MenteeSidebar from "@/components/profile/profilePage/MenteeSidebar";
 import DesktopSidebar from "@/components/profile/profilePage/DesktopSidebar";
-import ProfileEditModal from "@/components/dashboard/profileCard/editProfileCard/ProfileEditModal";
-import MentorProfileSetupModal from "@/components/dashboard/mentor/mentorProfileSetup/MentorProfileSetupModal";
-import MentorSettingsDialog from "@/components/dashboard/mentor/settings/mentorSettingsDialog.tsx/Index";
-import SessionDetailModal from "@/components/dashboard/mentor/sessions/sessionDetails/Index";
+
 import ProfileCard from "@/components/dashboard/profileCard/Index";
 
 import { useMentorServices } from "@/hooks/mentor/useMentorServices";
-import ProfilePageLoadingState from "@/components/profile/profilePage/loadingSkeletons/ProfilePageLoadingState";
-import DesktopSidebarLoadingState from "@/components/profile/profilePage/loadingSkeletons/DesktopSidebarLoadingState";
+import ProfilePageSkeleton from "@/skeletons/profilPage/Index";
+import { useSession } from "@/hooks/auth/useSession";
 
-const ProfilePage = () => {
+// Lazy load modals - only needed for owners
+const LazyProfileEditModal = lazy(() => import("@/components/dashboard/profileCard/editProfileCard/ProfileEditModal"));
+const LazyMentorProfileSetupModal = lazy(() => import("@/components/dashboard/mentor/mentorProfileSetup/MentorProfileSetupModal"));
+const LazyMentorSettingsDialog = lazy(() => import("@/components/dashboard/mentor/settings/mentorSettingsDialog.tsx/Index"));
+const LazyDeleteSessionDialog = lazy(() => import("@/components/dashboard/mentor/sessions/DeleteSessionDialog"));
+const LazyDeleteServiceDialog = lazy(() => import("@/components/dashboard/mentor/services/DeleteServiceDialog"));
+const LazySessionDetailModal = lazy(() => import("@/components/dashboard/mentor/sessions/sessionDetails/Index"));
+
+interface ProfilePageProps {
+  initialPublicData: UserPublic;
+}
+
+const ProfilePage: React.FC<ProfilePageProps> = ({ initialPublicData }) => {
   const router = useRouter();
   const search = useSearch({ strict: false });
   const params = useParams({ strict: false });
@@ -35,13 +42,28 @@ const ProfilePage = () => {
 
   // Auth state - only needed to determine if viewing own profile
   const { user, isLoading: isUserLoading } = useAuth();
-  const isOwnProfile = user?.uuid === uuid;
+  const { cachedUserMetadata } = useSession()
 
-  // Public profile data - always fetch for any profile view
-  const { data: publicUser, isLoading: isPublicUserLoading } = useUserByUuid(uuid);
+  // Use cached metadata for instant decision, fall back to actual user data
+  const isOwnProfile = useMemo(() => {
+    // First check cache for instant decision
+    if (cachedUserMetadata?.uuid === uuid) return true;
+    // Then check actual user data once loaded
+    if (user?.uuid === uuid) return true;
+    return false;
+  }, [cachedUserMetadata, user, uuid]);
+
+  const {
+    data: publicUser,
+    isLoading: isPublicUserLoading,
+    // refetch: refetchPublicUser // Remove if not used
+  } = useUserByUuid(uuid, {
+    // Use initial data from route loader
+    initialData: initialPublicData,
+  });
 
   // Determine if we need mentor-specific hooks BEFORE calling them
-  const shouldFetchMentorData = isOwnProfile && user?.is_mentor;
+  const shouldFetchMentorData = isOwnProfile && (cachedUserMetadata?.is_mentor || user?.is_mentor);
 
   // Only call mentor hooks when needed
   const mentorSessionsHook = useMentorSessions({ enabled: shouldFetchMentorData });
@@ -51,31 +73,47 @@ const ProfilePage = () => {
   // states for session and service deletion dialogs
   const [isDeleteSessionDialogOpen, setIsDeleteSessionDialogOpen] = useState(false);
   const [sessionToDelete, setSessionToDelete] = useState<MentorSessionPublic | null>(null);
-
   const [isDeleteServiceDialogOpen, setIsDeleteServiceDialogOpen] = useState(false);
   const [serviceToDelete, setServiceToDelete] = useState<MentorServicePublic | null>(null);
 
-  // Profile data
-  const personalProfile = isOwnProfile ? user?.profile : publicUser?.profile;
-  const mentorData = isOwnProfile
-    ? user?.profile?.mentor_profile
-    : publicUser?.profile?.mentor_profile;
+  // Profile data - memoized to prevent unnecessary recalculations
+  const { personalProfile, mentorData } = useMemo(() => {
+    if (isOwnProfile) {
+      return {
+        personalProfile: user?.profile,
+        mentorData: user?.profile?.mentor_profile
+      };
+    } else {
+      return {
+        personalProfile: publicUser?.profile,
+        mentorData: publicUser?.profile?.mentor_profile
+      };
+    }
+  }, [isOwnProfile, user, publicUser]);
 
-  // Settings - only use mentor settings hook data if we're viewing own mentor profile
-  const settings = shouldFetchMentorData
-    ? mentorSettingsHook.settings
-    : mentorData?.settings;
-  const updateSettingsAsync = shouldFetchMentorData
-    ? mentorSettingsHook.updateSettingsAsync
-    : undefined;
-  const isUpdating = shouldFetchMentorData
-    ? mentorSettingsHook.isUpdating
-    : false;
+  // Settings - memoized
+  const { settings, updateSettingsAsync, isUpdating } = useMemo(() => {
+    if (shouldFetchMentorData) {
+      return {
+        settings: mentorSettingsHook.settings,
+        updateSettingsAsync: mentorSettingsHook.updateSettingsAsync,
+        isUpdating: mentorSettingsHook.isUpdating
+      };
+    } else {
+      return {
+        settings: mentorData?.settings,
+        updateSettingsAsync: undefined,
+        isUpdating: false
+      };
+    }
+  }, [shouldFetchMentorData, mentorSettingsHook, mentorData]);
 
   const readOnly = !isOwnProfile;
 
   // Determine if the profile being viewed belongs to a mentor
-  const profileUserIsMentor = isOwnProfile ? user?.is_mentor : publicUser?.is_mentor;
+  const profileUserIsMentor = isOwnProfile 
+    ? user?.is_mentor 
+    : publicUser?.is_mentor;
 
   // All handlers in one custom hook
   const handlers = useProfilePageHandlers({
@@ -95,36 +133,18 @@ const ProfilePage = () => {
     updateSettingsAsync,
   });
 
-  // Find selected session from URL
-  const selectedSessionFromUrl = search.sessionDetailId
-    ? mentorData?.sessions?.find((s) => s.uuid === search.sessionDetailId)
-    : null;
+  // Find selected session from URL - memoized
+  const selectedSessionFromUrl = useMemo(() => {
+    if (!search.sessionDetailId || !mentorData?.sessions) return null;
+    return mentorData.sessions.find((s: MentorSessionPublic) => s.uuid === search.sessionDetailId) || null;
+  }, [search.sessionDetailId, mentorData?.sessions]);
 
-  // Loading state logic:
-  // - For own profile: wait for user data to load
-  // - For public profile: wait for public user data to load
-  // - Initial load: show loading if we don't know yet if it's own profile
-  const isLoadingProfile = isUserLoading || 
-    (isOwnProfile ? false : isPublicUserLoading);
+  // Loading state - simplified
+  const isLoadingProfile = isUserLoading || (!initialPublicData && isPublicUserLoading);
 
-  if (isLoadingProfile) {
-    return (
-      <Container h="full" p={{ base: 2, md: 5 }} maxW="breakpoint-xl">
-        <Flex justify="space-between" gap={5} direction={{ base: "column", md: "row" }}>
-          <Box flex={{ base: "none", lg: "0 0 60%" }} w={{ base: "100%", lg: "60%" }}>
-            <ProfilePageLoadingState />
-          </Box>
-
-          {isMobile ? (
-            <Flex justify="center" align="center" h="30vh" bg={"bg"} borderRadius={"xl"}>
-              <Spinner size="lg" />
-            </Flex>
-          ) : (
-            <DesktopSidebarLoadingState />
-          )}
-        </Flex>
-      </Container>
-    );
+  // Show skeleton only if we have NO data at all
+  if (isLoadingProfile && !initialPublicData && !publicUser && !personalProfile) {
+    return <ProfilePageSkeleton />;
   }
 
   // Determine which sidebar to show
@@ -133,40 +153,40 @@ const ProfilePage = () => {
 
   return (
     <>
-      {/* Modals - only show for own profile */}
+      {/* Lazy-loaded modals for owners only */}
       {isOwnProfile && (
-        <>
-          <ProfileEditModal
+        <Suspense fallback={null}>
+          <LazyProfileEditModal
             isOpen={search.drawer === "setup-profile"}
             onClose={handlers.closeModal}
             initialStep={search.step || "basic"}
           />
 
-          <MentorProfileSetupModal
+          <LazyMentorProfileSetupModal
             isOpen={search.drawer === "mentor-setup"}
             onClose={handlers.closeModal}
           />
 
-          <MentorSettingsDialog
+          <LazyMentorSettingsDialog
             isOpen={search.settings === "open"}
             onClose={handlers.handleCloseSettings}
             settings={settings}
             onSave={handlers.handleSaveSettings}
             isUpdating={isUpdating}
           />
-        </>
+        </Suspense>
       )}
 
       {/* Delete Session Confirmation Dialog */}
-      <DeleteSessionDialog
+      <LazyDeleteSessionDialog
         isOpen={isDeleteSessionDialogOpen}
         session={sessionToDelete}
         onClose={handlers.cancelSessionDelete}
         onConfirm={handlers.confirmSessionDelete}
       />
 
-      {/* Delete Service Confirmation Dialog  */}
-      <DeleteServiceDialog
+      {/* Delete Service Confirmation Dialog */}
+      <LazyDeleteServiceDialog
         isOpen={isDeleteServiceDialogOpen}
         service={serviceToDelete}
         onClose={handlers.cancelServiceDelete}
@@ -174,8 +194,8 @@ const ProfilePage = () => {
       />
 
       {/* Session Detail Modal */}
-      <SessionDetailModal
-        session={selectedSessionFromUrl || null}
+      <LazySessionDetailModal
+        session={selectedSessionFromUrl}
         isOpen={!!search.sessionDetailId}
         onClose={handlers.closeSessionDetailModal}
       />
@@ -187,8 +207,8 @@ const ProfilePage = () => {
             <ProfileCard
               user={isOwnProfile ? user || undefined : publicUser}
               isOwnProfile={isOwnProfile}
-              profile={personalProfile || undefined}
-              mentorProfile={mentorData || undefined}
+              profile={personalProfile}
+              mentorProfile={mentorData}
               readOnly={readOnly}
               onOpenProfileSection={(section) =>
                 handlers.openModal("setup-profile", section)
@@ -216,10 +236,7 @@ const ProfilePage = () => {
             />
           </Box>
 
-          {/* Sidebar Logic:
-              - MobileSidebar: Show on mobile OR when viewing a non-mentor profile
-              - DesktopSidebar: Show on desktop AND when viewing a mentor profile
-          */}
+          {/* Sidebar Logic */}
           {shouldShowMobileSidebar ? (
             <MenteeSidebar
               isOwnProfile={isOwnProfile}

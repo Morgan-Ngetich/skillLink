@@ -35,13 +35,14 @@ export const useMentorSessions = ({ enabled = true } = {}) => {
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 1,
     enabled,
+    refetchOnMount: false,
   });
 
   // Create session
   const createSession = useMutation<MentorSessionPublic, Error, MentorSessionCreate>({
     mutationFn: (data) => toNativePromise(
-      MentorsService.createSessionApiV1MentorsSessionsPost({ 
-        requestBody: data 
+      MentorsService.createSessionApiV1MentorsSessionsPost({
+        requestBody: data
       })
     ),
     onSuccess: () => {
@@ -71,9 +72,9 @@ export const useMentorSessions = ({ enabled = true } = {}) => {
   >({
     mutationFn: ({ id, data }) =>
       toNativePromise(
-        MentorsService.updateSessionApiV1MentorsSessionsSessionIdPatch({ 
-          sessionId: id, 
-          requestBody: data 
+        MentorsService.updateSessionApiV1MentorsSessionsSessionIdPatch({
+          sessionId: id,
+          requestBody: data
         })
       ),
     onSuccess: () => {
@@ -98,8 +99,8 @@ export const useMentorSessions = ({ enabled = true } = {}) => {
   // Delete session (soft delete - marks as cancelled)
   const deleteSession = useMutation<void, Error, number>({
     mutationFn: (id) => toNativePromise(
-      MentorsService.cancelSessionApiV1MentorsSessionsSessionIdDelete({ 
-        sessionId: id 
+      MentorsService.cancelSessionApiV1MentorsSessionsSessionIdDelete({
+        sessionId: id
       })
     ),
     onSuccess: () => {
@@ -125,8 +126,8 @@ export const useMentorSessions = ({ enabled = true } = {}) => {
   // Toggle session visibility
   const toggleVisibility = useMutation<MentorSessionPublic, Error, number>({
     mutationFn: (id) => toNativePromise(
-      MentorsService.toggleSessionVisibilityApiV1MentorsSessionsSessionIdTogglePublicPatch({ 
-        sessionId: id 
+      MentorsService.toggleSessionVisibilityApiV1MentorsSessionsSessionIdTogglePublicPatch({
+        sessionId: id
       })
     ),
     onSuccess: (data) => {
@@ -180,7 +181,7 @@ export const useMentorSessions = ({ enabled = true } = {}) => {
     isLoading,
     isError,
     error,
-    
+
     // Actions
     refetch,
     isSubmitting,

@@ -1,10 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import useToaster from '../public/useToaster';
-import { 
-  MentorsService, 
-  type MentorProfilePublic, 
-  type MentorSettingsPublic, 
-  type MentorSettingsUpdate 
+import {
+  MentorsService,
+  type MentorProfilePublic,
+  type MentorSettingsPublic,
+  type MentorSettingsUpdate
 } from '@/client';
 import { toNativePromise } from '@/utils/toNativePromisse';
 import { getApiErrorMessage } from '@/utils/errorUtils';
@@ -30,7 +30,8 @@ export const useMentorSettings = ({ enabled = true } = {}) => {
     ),
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 1,
-    enabled
+    enabled,
+    refetchOnMount: false,
   });
 
   // Update settings
@@ -41,8 +42,8 @@ export const useMentorSettings = ({ enabled = true } = {}) => {
   >({
     mutationFn: (data) =>
       toNativePromise(
-        MentorsService.updateMySettingsApiV1MentorsSettingsPatch({ 
-          requestBody: data 
+        MentorsService.updateMySettingsApiV1MentorsSettingsPatch({
+          requestBody: data
         })
       ),
     onSuccess: () => {
