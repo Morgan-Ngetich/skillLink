@@ -166,19 +166,30 @@ export const useBrowseServices = (params?: UseServicesParams) => {
   });
 };
 
+
+interface InitialFeaturedData {
+  mentors?: MentorExplorePublic[];
+  sessions?: MentorSessionPublic[];
+  services?: MentorServicePublic[];
+}
+
+interface UsePublicMentorsOptions {
+  enabled?: boolean;
+  initialData?: InitialFeaturedData;
+}
+
 /**
  * Hook for public mentor discovery and exploration
  * Fetches featured content for homepage
  */
-export const usePublicMentors = (enabled: boolean = true) => {
+
+export const usePublicMentors = (
+  options: UsePublicMentorsOptions = {}
+) => {
+  const { enabled = true, initialData } = options;
+
   // Featured mentors (homepage)
-  const {
-    data: featuredMentors,
-    isLoading: isLoadingFeaturedMentors,
-    isError: isFeaturedError,
-    error: featuredError,
-    refetch: refetchFeatured,
-  } = useQuery<MentorExplorePublic[], Error>({
+  const featuredMentorsQuery = useQuery<MentorExplorePublic[], Error>({
     queryKey: ['featuredMentors'],
     queryFn: () => toNativePromise(
       PublicService.getFeaturedMentorsApiV1PublicFeaturedMentorsGet()
@@ -186,16 +197,11 @@ export const usePublicMentors = (enabled: boolean = true) => {
     staleTime: 1000 * 60 * 10, // 10 minutes - featured list changes rarely
     retry: 2,
     enabled,
+    initialData: initialData?.mentors,
   });
 
   // Featured sessions
-  const {
-    data: featuredSessions,
-    isLoading: isLoadingFeaturedSessions,
-    isError: isFeaturedSessionsError,
-    error: featuredSessionsError,
-    refetch: refetchFeaturedSessions,
-  } = useQuery<MentorSessionPublic[], Error>({
+  const featuredSessionsQuery = useQuery<MentorSessionPublic[], Error>({
     queryKey: ['featuredSessions'],
     queryFn: () => toNativePromise(
       PublicService.getFeaturedSessionsApiV1PublicFeaturedSessionsGet()
@@ -203,16 +209,11 @@ export const usePublicMentors = (enabled: boolean = true) => {
     staleTime: 1000 * 60 * 10, // 10 minutes
     retry: 2,
     enabled,
+    initialData: initialData?.sessions,
   });
 
   // Featured services
-  const {
-    data: featuredServices,
-    isLoading: isLoadingFeaturedServices,
-    isError: isFeaturedServicesError,
-    error: featuredServicesError,
-    refetch: refetchFeaturedServices,
-  } = useQuery<MentorServicePublic[], Error>({
+  const featuredServicesQuery = useQuery<MentorServicePublic[], Error>({
     queryKey: ['featuredServices'],
     queryFn: () => toNativePromise(
       PublicService.getFeaturedServicesApiV1PublicFeaturedServicesGet()
@@ -220,37 +221,40 @@ export const usePublicMentors = (enabled: boolean = true) => {
     staleTime: 1000 * 60 * 10, // 10 minutes
     retry: 2,
     enabled,
+    initialData: initialData?.services,
   });
 
   return {
     // Featured mentors
-    featuredMentors,
-    isLoadingFeaturedMentors,
-    isFeaturedError,
-    featuredError,
-    refetchFeatured,
+    featuredMentors: featuredMentorsQuery.data,
+    isLoadingFeaturedMentors: featuredMentorsQuery.isLoading,
+    isFeaturedError: featuredMentorsQuery.isError,
+    featuredError: featuredMentorsQuery.error,
+    refetchFeatured: featuredMentorsQuery.refetch,
 
     // Featured sessions
-    featuredSessions,
-    isLoadingFeaturedSessions,
-    isFeaturedSessionsError,
-    featuredSessionsError,
-    refetchFeaturedSessions,
+    featuredSessions: featuredSessionsQuery.data,
+    isLoadingFeaturedSessions: featuredSessionsQuery.isLoading,
+    isFeaturedSessionsError: featuredSessionsQuery.isError,
+    featuredSessionsError: featuredSessionsQuery.error,
+    refetchFeaturedSessions: featuredSessionsQuery.refetch,
 
     // Featured services
-    featuredServices,
-    isLoadingFeaturedServices,
-    isFeaturedServicesError,
-    featuredServicesError,
-    refetchFeaturedServices,
+    featuredServices: featuredServicesQuery.data,
+    isLoadingFeaturedServices: featuredServicesQuery.isLoading,
+    isFeaturedServicesError: featuredServicesQuery.isError,
+    featuredServicesError: featuredServicesQuery.error,
+    refetchFeaturedServices: featuredServicesQuery.refetch,
 
-    // Combined loading state
-    isLoading:
-      isLoadingFeaturedMentors ||
-      isLoadingFeaturedSessions ||
-      isLoadingFeaturedServices,
+    // Combined loading state (only if no initial data)
+    isLoading: !initialData && (
+      featuredMentorsQuery.isLoading ||
+      featuredSessionsQuery.isLoading ||
+      featuredServicesQuery.isLoading
+    ),
   };
 };
+
 
 /**
  * Hook for fetching a specific mentor's sessions (public)
