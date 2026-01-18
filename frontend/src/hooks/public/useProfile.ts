@@ -211,80 +211,29 @@ export const useUserById = (
  * @param uuid - User UUID string
  * @param enabled - Whether to fetch (default: true)
  */
-export const useUserByUuid = (uuid: string, enabled: boolean = true) => {
-  return useUserById(uuid, enabled);
+export const useUserByUuid = (
+  uuid: string, 
+  options?: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    initialData?: any;
+    enabled?: boolean;
+  }
+) => {
+  return useQuery({
+    queryKey: ['public-user', uuid],
+    queryFn: () => toNativePromise(
+      UsersService.getUserApiV1UsersIdentifierGet({ 
+        identifier: String(uuid) 
+      })
+    ),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 30 * 60 * 1000, // 30 minutes
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    // Use initial data from route loader
+    initialData: options?.initialData,
+    // Only fetch if enabled (true by default)
+    enabled: options?.enabled ?? true,
+  });
 };
 
-// ================== USAGE EXAMPLES ==================
-
-/*
-// Example 1: Current user's profile
-function MyProfilePage() {
-  const { profile, isLoading, updateUserProfile } = useProfile();
-  
-  if (isLoading) return <Spinner />;
-  
-  return (
-    <div>
-      <h1>{profile?.full_name}</h1>
-      <p>{profile?.bio}</p>
-    </div>
-  );
-}
-
-// Example 2: View another user's profile by ID
-function UserProfilePage({ userId }: { userId: number }) {
-  const { data: userProfile, isLoading } = useUserProfileById(userId);
-  
-  if (isLoading) return <Spinner />;
-  
-  return (
-    <div>
-      <h1>{userProfile?.full_name}</h1>
-      <p>{userProfile?.bio}</p>
-    </div>
-  );
-}
-
-// Example 3: View complete user by UUID (includes nested data)
-function UserDetailsPage({ userUuid }: { userUuid: string }) {
-  const { data: user, isLoading } = useUserByUuid(userUuid);
-  
-  if (isLoading) return <Spinner />;
-  
-  return (
-    <div>
-      <h1>{user?.email}</h1>
-      <p>{user?.profile?.full_name}</p>
-      {user?.mentor_profile && (
-        <div>
-          <h2>Mentor Info</h2>
-          <p>{user.mentor_profile.bio}</p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// Example 4: Smart update (create or update based on existence)
-function ProfileForm() {
-  const { profile, updateProfileAll, isSubmitting } = useProfile();
-  
-  const handleSubmit = (data: any) => {
-    updateProfileAll(data, {
-      onSuccess: () => console.log('Profile saved!'),
-      onError: (err) => console.error('Failed:', err),
-      onSettled: () => console.log('Request complete'),
-    });
-  };
-  
-  return <form onSubmit={handleSubmit}>...</form>;
-}
-
-// Example 5: Conditional fetching
-function ConditionalProfile({ userId, shouldFetch }: Props) {
-  const { data: profile } = useUserProfileById(userId, shouldFetch);
-  
-  return <div>{profile?.full_name}</div>;
-}
-*/
