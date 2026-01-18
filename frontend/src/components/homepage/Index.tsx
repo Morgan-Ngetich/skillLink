@@ -1,3 +1,4 @@
+// pages/HomePage.tsx
 import {
   Box,
   SimpleGrid,
@@ -5,7 +6,7 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { useKeenSlider } from "keen-slider/react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, lazy } from "react";
 
 import HeroCard from "./herocard/HeroCard";
 import GrowthStats from "./GrowthStats";
@@ -14,26 +15,56 @@ import FeaturedMentors from "./FeaturedMentors";
 
 import "keen-slider/keen-slider.min.css";
 import { usePublicMentors } from "@/hooks/public/usePublicMentors";
-import SessionDetailModal from "../dashboard/mentor/sessions/sessionDetails/Index";
+const LazySessionDetailModal = lazy(() => import("@/components/dashboard/mentor/sessions/sessionDetails/Index"));
+
 import { useRouter, useSearch } from "@tanstack/react-router";
 import { useProfilePageHandlers } from "@/hooks/public/useProfilePageHandlers";
+import type { MentorExplorePublic, MentorSessionPublic, MentorServicePublic } from "@/client";
+import HomePageSkeleton from "@/skeletons/homePage/Index";
 
-const Home = () => {
+interface HomeProps {
+  initialFeaturedData?: {
+    mentors: MentorExplorePublic[];
+    sessions: MentorSessionPublic[];
+    services?: MentorServicePublic[];
+  };
+}
+
+const Home: React.FC<HomeProps> = ({ initialFeaturedData }) => {
   const router = useRouter();
   const search = useSearch({ strict: false });
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
 
+  // Debug what we're receiving
+  console.log("initialFeaturedData received:", initialFeaturedData);
+  console.log("Is object?", typeof initialFeaturedData === 'object');
+  console.log("Has mentors?", initialFeaturedData?.mentors?.length);
+
+  // Use the hook with the data
   const {
-    // FeaturedMentors
     featuredMentors,
     isLoadingFeaturedMentors,
-
     featuredSessions,
-    isLoadingFeaturedSessions
-  } = usePublicMentors()
+    isLoadingFeaturedSessions,
+    // featuredServices,
+    // isLoadingFeaturedServices,
+  } = usePublicMentors({
+    initialData: initialFeaturedData,
+    enabled: true, // Always enabled, TanStack Query handles caching
+  });
 
+  // Memoize the data to use
+  const displayMentors = useMemo(() => 
+    featuredMentors || initialFeaturedData?.mentors || [],
+    [featuredMentors, initialFeaturedData]
+  );
+
+  const displaySessions = useMemo(() => 
+    featuredSessions || initialFeaturedData?.sessions || [],
+    [featuredSessions, initialFeaturedData]
+  );
 
   const [sliderRef, sliderInstanceRef] = useKeenSlider<HTMLDivElement>(
     {
@@ -57,7 +88,7 @@ const Home = () => {
 
   // Find selected session from URL
   const selectedSessionFromUrl = search.sessionDetailId
-    ? featuredSessions?.find((s) => s.uuid === search.sessionDetailId)
+    ? displaySessions?.find((s) => s.uuid === search.sessionDetailId)
     : null;
 
   // Create minimal handlers object for homepage
@@ -74,6 +105,11 @@ const Home = () => {
     setServiceToDelete: () => { },
     deleteService: () => { },
   });
+
+  // Show loading state if we have no data at all
+  if (!initialFeaturedData && isLoadingFeaturedMentors && isLoadingFeaturedSessions) {
+    return <HomePageSkeleton />;
+  }
 
   return (
     <>
@@ -94,8 +130,8 @@ const Home = () => {
                 >
                   <Box className="keen-slider__slide">
                     <HeroCard
-                      featuredSessions={featuredSessions}
-                      isLoading={isLoadingFeaturedSessions}
+                      featuredSessions={displaySessions}
+                      isLoading={isLoadingFeaturedSessions && !initialFeaturedData?.sessions}
                       onOpenSessionDetail={handlers.openSessionDetailModal}
                     />
                   </Box>
@@ -127,8 +163,8 @@ const Home = () => {
               // SSR: Show only HeroCard
               <Box borderRadius="xl">
                 <HeroCard
-                  featuredSessions={featuredSessions}
-                  isLoading={isLoadingFeaturedSessions}
+                  featuredSessions={displaySessions}
+                  isLoading={isLoadingFeaturedSessions && !initialFeaturedData?.sessions}
                   onOpenSessionDetail={handlers.openSessionDetailModal}
                 />
               </Box>
@@ -137,8 +173,8 @@ const Home = () => {
             {/* Featured Mentors */}
             <Box>
               <FeaturedMentors
-                featuredMentors={featuredMentors || []}
-                isLoading={isLoadingFeaturedMentors}
+                featuredMentors={displayMentors}
+                isLoading={isLoadingFeaturedMentors && !initialFeaturedData?.mentors}
               />
             </Box>
 
@@ -159,13 +195,13 @@ const Home = () => {
               align="stretch"
             >
               <HeroCard
-                featuredSessions={featuredSessions}
-                isLoading={isLoadingFeaturedSessions}
+                featuredSessions={displaySessions}
+                isLoading={isLoadingFeaturedSessions && !initialFeaturedData?.sessions}
                 onOpenSessionDetail={handlers.openSessionDetailModal}
               />
               <FeaturedMentors
-                featuredMentors={featuredMentors || []}
-                isLoading={isLoadingFeaturedMentors}
+                featuredMentors={displayMentors}
+                isLoading={isLoadingFeaturedMentors && !initialFeaturedData?.mentors}
               />
             </VStack>
 
@@ -181,7 +217,7 @@ const Home = () => {
       </Box>
 
       {/* Session Detail Modal */}
-      <SessionDetailModal
+      <LazySessionDetailModal
         session={selectedSessionFromUrl || null}
         isOpen={!!search.sessionDetailId}
         onClose={handlers.closeSessionDetailModal}
