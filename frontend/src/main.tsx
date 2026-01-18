@@ -10,14 +10,25 @@ import themeSystem from './theme';
 import { Toaster } from '@/components/ui/toaster';
 import { GlobalStyles } from './components/ui/GlobalStyles';
 import { useSession } from './hooks/auth/useSession';
-import { MDXProvider } from '@mdx-js/react';
-import MDXComponents from '@/crackmode/components/MDXComponents';
+// import { MDXProvider } from '@mdx-js/react';
 import { HelmetProvider } from 'react-helmet-async';
 
-const queryClient = new QueryClient();
+// Optimized Query Client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 30 * 60 * 1000,   // 30 minutes
+      retry: 1,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+    },
+  },
+});
 
 const router = createRouter({
   routeTree,
+  defaultPreload: "intent",
   context: {
     queryClient,
   },
@@ -26,11 +37,8 @@ const router = createRouter({
 const App = () => {
   const { isLoading } = useSession();
 
-  // Only show spinner if we're on client AND loading AND no cached session
   if (typeof window !== 'undefined' && isLoading) {
-    // Check if we have a session cookie to avoid unnecessary spinner
     const hasSessionCookie = document.cookie.includes('sb-session');
-    
     if (!hasSessionCookie) {
       return (
         <Flex justify="center" align="center" height="100vh">
@@ -51,10 +59,9 @@ const AppTree = () => (
         <ChakraProvider value={themeSystem}>
           <ColorModeProvider>
             <GlobalStyles />
-            <MDXProvider components={MDXComponents}>
-              <App />
-              <Toaster />
-            </MDXProvider>
+            {/* FIXED: No MDXProvider here - move it to crackmode routes only */}
+            <App />
+            <Toaster />
           </ColorModeProvider>
         </ChakraProvider>
       </QueryClientProvider>
@@ -62,11 +69,7 @@ const AppTree = () => (
   </StrictMode>
 );
 
-// Check if we're in a browser environment
 if (typeof window !== 'undefined') {
   const container = document.getElementById("root")!;
-
-  // For no hydration, we just render the app without hydrating
-  // This means the client will start fresh without trying to reconcile with server HTML
   createRoot(container).render(<AppTree />);
 }
