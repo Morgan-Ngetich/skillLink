@@ -7,16 +7,15 @@
     "generate": "tsr generate",
     "lint": "eslint . --ext .ts,.tsx",
     "check": "tsc --build",
-    "build:search": "tsx scripts/buildSearchData.ts",
-    "search:watch": "chokidar 'src/crackmode/docs/**/*.mdx' -c 'npm run build:search'",
     "dev:client": "vite",
-    "dev:ssr": "npm run generate && npm run build:search && node scripts/server.js",
-    "dev": "npm run generate && npm run build:search && vite",
+    "dev:ssr": "npm run generate && node scripts/server.js",
+    "dev": "npm run generate && vite",
     "build:client": "vite build --outDir dist/client",
-    "build:server": "vite build --ssr src/seo/entry-server.tsx --outDir dist/server",
-    "build": "npm run generate && npm run check && npm run build:search && npm run build:client && npm run build:server",
+    "build": "npm run generate && npm run check && npm run build:client",
     "preview": "NODE_ENV=production node scripts/server.js",
-    "serve": "NODE_ENV=production node scripts/server.js"
+    "serve": "NODE_ENV=production node scripts/server.js",
+    "analyze": "ANALYZE=true npm run build",
+    "lighthouse": "npm run build && npm run preview & sleep 3 && npx lighthouse http://localhost:4173 --view && killall node"
   },
   "dependencies": {
     "@chakra-ui/form-control": "^2.2.0",
@@ -25,9 +24,6 @@
     "@chakra-ui/theme-tools": "^2.2.6",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@mdx-js/mdx": "^3.1.0",
-    "@mdx-js/react": "^3.1.0",
-    "@mdx-js/rollup": "^3.1.0",
     "@supabase/supabase-js": "^2.50.0",
     "@tanstack/react-query": "^5.80.7",
     "@tanstack/react-router": "^1.121.21",
@@ -49,13 +45,12 @@
     "react-hydration-provider": "^2.1.0",
     "react-icons": "^5.5.0",
     "recharts": "^3.1.0",
-    "shiki": "^3.11.0",
-    "slugify": "^1.6.6",
     "zustand": "^5.0.6"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.5",
     "@eslint/js": "^9.25.0",
+    "@tanstack/react-query-devtools": "^5.91.2",
     "@tanstack/router-cli": "^1.121.21",
     "@types/babel__core": "^7.20.5",
     "@types/babel__generator": "^7.27.0",
@@ -76,12 +71,14 @@
     "globals": "^16.0.0",
     "lint-staged": "^16.1.2",
     "prettier": "^3.6.1",
+    "rollup-plugin-visualizer": "^6.0.5",
     "tsr": "^1.3.4",
     "tsx": "^4.20.5",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.30.1",
     "vite": "^6.3.5",
     "vite-plugin-checker": "^0.9.3",
-    "vite-plugin-pwa": "^1.0.0"
+    "vite-plugin-pwa": "^1.0.0",
+    "web-vitals": "^5.1.0"
   }
 }
