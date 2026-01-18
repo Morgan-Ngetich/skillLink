@@ -3,8 +3,8 @@ import { FaAngleRight } from "react-icons/fa6";
 import type { MentorExplorePublic } from "@/client";
 import type React from "react";
 import { MentorCard } from "../dashboard/mentor/MentorCard";
-import { MentorCardSkeleton } from "../dashboard/mentor/MentorCardSkeleton";
 import { useNavigate } from "@tanstack/react-router";
+import { MentorCardSkeleton } from "@/skeletons/homePage/MentorCardSkeleton";
 
 interface FeaturedMentorsProps {
   featuredMentors: MentorExplorePublic[];
@@ -13,6 +13,7 @@ interface FeaturedMentorsProps {
 
 const FeaturedMentors: React.FC<FeaturedMentorsProps> = ({ featuredMentors, isLoading }) => {
   const navigate = useNavigate()
+  console.log("featuredMentors", featuredMentors)
   return (
     <Box>
       <HStack

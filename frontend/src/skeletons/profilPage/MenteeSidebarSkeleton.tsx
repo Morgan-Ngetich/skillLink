@@ -1,7 +1,7 @@
 import { VStack } from "@chakra-ui/react";
 import ProfileCompletionCardSkeleton from "./ProfileCompletionCardSkeleton";
+import { PeopleAlsoViewedSkeleton } from "../PeopleAlsoViewedSkeleton"
 import BecomeMentorCardSkeleton from "./BecomeMentorCardSkeleton";
-import { PeopleAlsoViewedSkeleton } from "./PeopleAlsoViewedSkeleton"
 
 export default function MenteeSidebarSkeleton() {
   return (

@@ -4,7 +4,8 @@ import type { MentorSessionPublic } from '@/client';
 import { useUserById } from '@/hooks/public/useProfile';
 import MentorSessionInfo from './MentorSessionInfo';
 import InfoPanelContent from './InfoPanelContent';
-import HeroCardSkeleton from './HeroCardSkeleton';
+import HeroCardSkeleton from '@/skeletons/homePage/HeroCardSkeleton';
+
 
 interface HeroCardProps {
   featuredSessions?: MentorSessionPublic[];

@@ -1,5 +1,5 @@
 import { VStack, Box, HStack, Skeleton, SkeletonText, SimpleGrid, Flex } from "@chakra-ui/react";
-import { PeopleAlsoViewedSkeleton } from "./PeopleAlsoViewedSkeleton";
+import { PeopleAlsoViewedSkeleton } from "../PeopleAlsoViewedSkeleton";
 
 const DesktopSidebarLoadingState = () => {
   return (

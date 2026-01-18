@@ -1,6 +1,5 @@
 import { Text, SimpleGrid } from "@chakra-ui/react";
 import { MentorCard } from "@/components/dashboard/mentor/MentorCard";
-import { MentorCardSkeleton } from "@/components/dashboard/mentor/MentorCardSkeleton";
 import SessionCard from "@/components/dashboard/mentor/sessions/SessionCard";
 import ServiceCard from "@/components/dashboard/mentor/services/ServiceCard";
 import { EmptyState } from "./EmptyState";
@@ -8,6 +7,7 @@ import type { ViewType } from "./types";
 import type { MentorExplorePublic, MentorServicePublic, MentorSessionPublic } from "@/client";
 import { SessionCardSkeleton } from "../dashboard/mentor/sessions/SessionCardSkeleton";
 import { ServiceCardSkeleton } from "../dashboard/mentor/services/ServiceCardSkeleton";
+import { MentorCardSkeleton } from "@/skeletons/homePage/MentorCardSkeleton";
 
 interface ExploreContentProps {
   currentView: ViewType;
