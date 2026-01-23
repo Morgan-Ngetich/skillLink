@@ -8,16 +8,16 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as VerifyEmailRouteImport } from './routes/verify-email'
-import { Route as SignupRouteImport } from './routes/signup'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as LayoutRouteImport } from './routes/_layout'
-import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
-import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
-import { Route as LayoutProfileSetupRouteImport } from './routes/_layout/profile-setup'
-import { Route as LayoutExploreRouteImport } from './routes/_layout/explore'
-import { Route as LayoutProfileUuidRouteImport } from './routes/_layout/profile/$uuid'
+import { Route as rootRouteImport } from '../app/routes/__root'
+import { Route as VerifyEmailRouteImport } from '../app/routes/verify-email'
+import { Route as SignupRouteImport } from '../app/routes/signup'
+import { Route as LoginRouteImport } from '../app/routes/login'
+import { Route as LayoutRouteImport } from '../app/routes/_layout'
+import { Route as LayoutIndexRouteImport } from '../app/routes/_layout/index'
+import { Route as AuthCallbackRouteImport } from '../app/routes/auth/callback'
+import { Route as LayoutProfileSetupRouteImport } from '../app/routes/_layout/profile-setup'
+import { Route as LayoutExploreRouteImport } from '../app/routes/_layout/explore'
+import { Route as LayoutProfileUuidRouteImport } from '../app/routes/_layout/profile/$uuid'
 
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
@@ -65,13 +65,13 @@ const LayoutProfileUuidRoute = LayoutProfileUuidRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof LayoutIndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
   '/explore': typeof LayoutExploreRoute
   '/profile-setup': typeof LayoutProfileSetupRoute
   '/auth/callback': typeof AuthCallbackRoute
-  '/': typeof LayoutIndexRoute
   '/profile/$uuid': typeof LayoutProfileUuidRoute
 }
 export interface FileRoutesByTo {
@@ -99,35 +99,35 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/login'
-    | '/signup'
-    | '/verify-email'
-    | '/explore'
-    | '/profile-setup'
-    | '/auth/callback'
-    | '/'
-    | '/profile/$uuid'
+  | '/'
+  | '/login'
+  | '/signup'
+  | '/verify-email'
+  | '/explore'
+  | '/profile-setup'
+  | '/auth/callback'
+  | '/profile/$uuid'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/login'
-    | '/signup'
-    | '/verify-email'
-    | '/explore'
-    | '/profile-setup'
-    | '/auth/callback'
-    | '/'
-    | '/profile/$uuid'
+  | '/login'
+  | '/signup'
+  | '/verify-email'
+  | '/explore'
+  | '/profile-setup'
+  | '/auth/callback'
+  | '/'
+  | '/profile/$uuid'
   id:
-    | '__root__'
-    | '/_layout'
-    | '/login'
-    | '/signup'
-    | '/verify-email'
-    | '/_layout/explore'
-    | '/_layout/profile-setup'
-    | '/auth/callback'
-    | '/_layout/'
-    | '/_layout/profile/$uuid'
+  | '__root__'
+  | '/_layout'
+  | '/login'
+  | '/signup'
+  | '/verify-email'
+  | '/_layout/explore'
+  | '/_layout/profile-setup'
+  | '/auth/callback'
+  | '/_layout/'
+  | '/_layout/profile/$uuid'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -164,7 +164,7 @@ declare module '@tanstack/react-router' {
     '/_layout': {
       id: '/_layout'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof LayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
