@@ -1,20 +1,51 @@
 import { defineConfig, type UserConfig, type ConfigEnv } from 'vite'
-import react from '@vitejs/plugin-react'
-import path from 'node:path'
+import viteReact from '@vitejs/plugin-react'
+import { tanstackStart } from '@tanstack/react-start/plugin/vite'
+import tsConfigPaths from 'vite-tsconfig-paths'
+import { nitro } from 'nitro/vite'
+import { resolve } from 'path'
 import { visualizer } from 'rollup-plugin-visualizer'
 
 export default defineConfig((configEnv: ConfigEnv): UserConfig => {
-  const { mode } = configEnv;
-  //eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const ssrBuild = (configEnv as any).ssrBuild
+  const { mode } = configEnv
   const isDev = mode === 'development'
-  const isProd = mode === 'production'
 
   return {
-    base: "/",
+    server: {
+      port: 3000,
+      host: true,
+      ...(isDev && {
+        hmr: {
+          overlay: true,
+        },
+        proxy: {
+          '/api': {
+            target: 'http://localhost:8000',
+            changeOrigin: true,
+            secure: false,
+            rewrite: (path) => path,
+          },
+        },
+      }),
+    },
+
     plugins: [
-      react(),
-      // Bundle analyzer - run with: ANALYZE=true npm run build
+      tanstackStart({
+        srcDirectory: './src/app',
+        router: {
+          entry: './router.tsx',
+          routesDirectory: './routes',
+          generatedRouteTree: './routeTree.gen.ts',
+        },
+        start: {
+          entry: './ssr.tsx',
+        },
+      }),
+      tsConfigPaths({
+        projects: ['./tsconfig.json'],
+      }),
+      viteReact(),
+      nitro(),  // CRITICAL for TanStack Start SSR
       process.env.ANALYZE === 'true' &&
       visualizer({
         open: true,
@@ -23,93 +54,17 @@ export default defineConfig((configEnv: ConfigEnv): UserConfig => {
         filename: 'dist/stats.html',
       }),
     ].filter(Boolean),
-
+    
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, './src'),
+        '@': resolve(__dirname, 'src'),
       },
     },
-
-    build: {
-      // ✅ Use esbuild for MUCH faster builds (10x faster than terser)
-      minify: isProd ? 'esbuild' : false,
-
-      // ✅ Target modern browsers for smaller bundles
-      target: 'es2020',
-
-      // ✅ CSS code splitting
-      cssCodeSplit: true,
-
-      // ✅ Reasonable chunk size warning
-      chunkSizeWarningLimit: 1000,
-
-      rollupOptions: ssrBuild ? {
-        input: '/src/crackmode/components/seo/entry-server',
-        external: ['fs', 'path', 'url']
-      } : {
-        output: {
-          // ✅ CRITICAL: Manual chunks for optimal caching + lazy loading
-          manualChunks: (id) => {
-            // Search-related chunks (only load with crackmode)
-            if (id.includes('fuse.js')) {
-              return 'vendor-search';
-            }
-
-            if (id.includes('recharts')) {
-              return 'vendor-recharts';
-            }
-
-            // React core - cached forever
-            if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
-              return 'vendor-react';
-            }
-
-            // TanStack - cached forever
-            if (id.includes('@tanstack/react-router') || id.includes('@tanstack/react-query')) {
-              return 'vendor-tanstack';
-            }
-
-            // Chakra UI - large library, separate chunk
-            if (id.includes('@chakra-ui') || id.includes('@emotion')) {
-              return 'vendor-chakra';
-            }
-
-            // Other node_modules
-            if (id.includes('node_modules')) {
-              return 'vendor-other';
-            }
-          },
-
-          // ✅ Consistent naming for better caching
-          chunkFileNames: 'assets/[name]-[hash].js',
-          entryFileNames: 'assets/[name]-[hash].js',
-          assetFileNames: 'assets/[name]-[hash].[ext]',
-        }
-      }
-    },
-
+    
     ssr: {
-      noExternal: ['@tanstack/react-router', '@chakra-ui/react', 'react-helmet-async']
+      noExternal: ['@chakra-ui/react'],
     },
-
-    // ✅ Dev server optimizations
-    server: isDev ? {
-      port: 5174,
-      // Fast HMR
-      hmr: {
-        overlay: true,
-      },
-      proxy: {
-        '/api': {
-          target: 'http://localhost:8000',
-          changeOrigin: true,
-          secure: true,
-          rewrite: (path) => path,
-        },
-      },
-    } : undefined,
-
-    // ✅ Pre-bundle heavy dependencies for instant dev startup
+    
     optimizeDeps: {
       include: [
         'react',
@@ -118,19 +73,54 @@ export default defineConfig((configEnv: ConfigEnv): UserConfig => {
         'react/jsx-dev-runtime',
         '@tanstack/react-router',
         '@tanstack/react-query',
+        '@tanstack/react-start',
         '@chakra-ui/react',
         '@emotion/react',
         '@emotion/styled',
+        'framer-motion',
+        'zustand',
       ],
-      // Exclude HEAVY libraries from pre-bundling
-      // These will be lazy-loaded when needed
-      exclude: ['fuse.js']
+      exclude: ['fuse.js'],
+      esbuildOptions: {
+        define: {
+          global: 'globalThis',
+        },
+      },
     },
+    
+    build: {
+      target: 'es2020',
+      chunkSizeWarningLimit: 1000,
+      rollupOptions: {
+        output: {
+          manualChunks: (id: string) => {
+            if (id.includes('fuse.js')) return 'vendor-search'
+            if (id.includes('recharts')) return 'vendor-charts'
+            if (id.includes('axios')) return 'vendor-http'
+            if (id.includes('supabase')) return 'vendor-supabase'
 
-    // Faster builds with esbuild
-    esbuild: {
-      logOverride: { 'this-is-undefined-in-esm': 'silent' },
-      drop: isProd ? ['console', 'debugger'] : undefined,
+            if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+              return 'vendor-react'
+            }
+
+            if (id.includes('@tanstack')) {
+              return 'vendor-tanstack'
+            }
+
+            if (id.includes('@chakra-ui') || id.includes('@emotion')) {
+              return 'vendor-chakra'
+            }
+
+            if (id.includes('framer-motion')) {
+              return 'vendor-animation'
+            }
+
+            if (id.includes('node_modules')) {
+              return 'vendor-other'
+            }
+          },
+        },
+      },
     },
-  };
-});
+  }
+})
