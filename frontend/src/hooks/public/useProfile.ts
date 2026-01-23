@@ -212,7 +212,7 @@ export const useUserById = (
  * @param enabled - Whether to fetch (default: true)
  */
 export const useUserByUuid = (
-  uuid: string, 
+  uuid: string | undefined, 
   options?: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     initialData?: any;
@@ -233,7 +233,7 @@ export const useUserByUuid = (
     // Use initial data from route loader
     initialData: options?.initialData,
     // Only fetch if enabled (true by default)
-    enabled: options?.enabled ?? true,
+    enabled: (options?.enabled ?? true) && !!uuid,
   });
 };
 
