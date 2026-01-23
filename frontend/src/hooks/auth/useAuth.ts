@@ -10,6 +10,7 @@ import { UsersService, type UserPublic, type UserUpdate } from "@/client";
 import { toNativePromise } from "@/utils/toNativePromisse";
 import { getApiErrorMessage } from "@/utils/errorUtils";
 import useToaster from '../public/useToaster';
+import { safeSessionStorage } from "@/utils/storage";
 
 export function useAuth() {
   const navigate = useNavigate();
@@ -84,7 +85,7 @@ export function useAuth() {
         session: data.session,
         timestamp: Date.now()
       };
-      sessionStorage.setItem("supabase_session_cache", JSON.stringify(cacheData));
+      safeSessionStorage.setItem("supabase_session_cache", JSON.stringify(cacheData));
     }
 
     // Fetch backend user again
@@ -125,7 +126,7 @@ export function useAuth() {
         session: data.session,
         timestamp: Date.now()
       };
-      sessionStorage.setItem("supabase_session_cache", JSON.stringify(cacheData));
+      safeSessionStorage.setItem("supabase_session_cache", JSON.stringify(cacheData));
     }
 
     await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });

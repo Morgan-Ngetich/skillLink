@@ -1,3 +1,4 @@
+import { safeLocalStorage } from "@/utils/storage";
 import { useState, useEffect } from "react";
 
 const HISTORY_KEY = "searchHistory";
@@ -8,7 +9,7 @@ export const useSearchHistory = () => {
 
   useEffect(() => {
     try {
-      const stored = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+      const stored = JSON.parse(safeLocalStorage.getItem(HISTORY_KEY) || "[]");
       setHistory(Array.isArray(stored) ? stored : []);
     } catch {
       setHistory([]);
@@ -18,12 +19,12 @@ export const useSearchHistory = () => {
   const addToHistory = (query: string) => {
     const newHistory = [query, ...history.filter((h) => h !== query)].slice(0, MAX_HISTORY);
     setHistory(newHistory);
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(newHistory));
+    safeLocalStorage.setItem(HISTORY_KEY, JSON.stringify(newHistory));
   };
 
   const clearHistory = () => {
     setHistory([]);
-    localStorage.setItem(HISTORY_KEY, "[]");
+    safeLocalStorage.setItem(HISTORY_KEY, "[]");
   };
 
   return { history, addToHistory, clearHistory };

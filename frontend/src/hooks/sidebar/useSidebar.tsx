@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { FiHome, FiSettings, FiUser, FiCompass } from 'react-icons/fi';
 import { useAuth } from '@/hooks/auth/useAuth';
 import type { NavItemConfig } from '@/components/common/sidebar/types';
+import { safeLocalStorage } from '@/utils/storage';
 
 const SIDEBAR_STORAGE_KEY = 'sidebar-open';
 
@@ -9,7 +10,7 @@ export const useSidebarState = () => {
   const [isOpen, setIsOpen] = useState(() => {
     // Initialize from localStorage if available
     if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem(SIDEBAR_STORAGE_KEY);
+      const stored = safeLocalStorage.getItem(SIDEBAR_STORAGE_KEY);
       return stored ? JSON.parse(stored) : false;
     }
     return false;
@@ -18,7 +19,7 @@ export const useSidebarState = () => {
   const toggle = () => {
     setIsOpen((prev: boolean) => {
       const newState = !prev;
-      localStorage.setItem(SIDEBAR_STORAGE_KEY, JSON.stringify(newState));
+      safeLocalStorage.setItem(SIDEBAR_STORAGE_KEY, JSON.stringify(newState));
       return newState;
     });
   };

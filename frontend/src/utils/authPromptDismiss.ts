@@ -1,3 +1,5 @@
+import { safeLocalStorage } from "./storage";
+
 const STORAGE_KEY = 'auth_prompt_dismissed';
 const DISMISSAL_DURATION = 30 * 60 * 1000; // 30min in milliseconds
 
@@ -12,7 +14,7 @@ interface DismissalRecord {
  */
 export function isPromptDismissed(pathname: string): boolean {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = safeLocalStorage.getItem(STORAGE_KEY);
     if (!stored) return false;
 
     const records: DismissalRecord[] = JSON.parse(stored);
@@ -42,7 +44,7 @@ export function isPromptDismissed(pathname: string): boolean {
  */
 export function setPromptDismissed(pathname: string): void {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = safeLocalStorage.getItem(STORAGE_KEY);
     const records: DismissalRecord[] = stored ? JSON.parse(stored) : [];
 
     // Remove existing record for this path
@@ -54,7 +56,7 @@ export function setPromptDismissed(pathname: string): void {
       timestamp: Date.now(),
     });
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+    safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
   } catch (error) {
     console.error('Error setting prompt dismissal:', error);
   }
@@ -65,16 +67,16 @@ export function setPromptDismissed(pathname: string): void {
  */
 export function clearPromptDismissal(pathname: string): void {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = safeLocalStorage.getItem(STORAGE_KEY);
     if (!stored) return;
 
     const records: DismissalRecord[] = JSON.parse(stored);
     const filtered = records.filter(r => r.pathname !== pathname);
 
     if (filtered.length === 0) {
-      localStorage.removeItem(STORAGE_KEY);
+      safeLocalStorage.removeItem(STORAGE_KEY);
     } else {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+      safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
     }
   } catch (error) {
     console.error('Error clearing prompt dismissal:', error);
@@ -86,7 +88,7 @@ export function clearPromptDismissal(pathname: string): void {
  */
 export function cleanupExpiredDismissals(): void {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = safeLocalStorage.getItem(STORAGE_KEY);
     if (!stored) return;
 
     const records: DismissalRecord[] = JSON.parse(stored);
@@ -95,9 +97,9 @@ export function cleanupExpiredDismissals(): void {
     const valid = records.filter(r => now - r.timestamp <= DISMISSAL_DURATION);
 
     if (valid.length === 0) {
-      localStorage.removeItem(STORAGE_KEY);
+      safeLocalStorage.removeItem(STORAGE_KEY);
     } else if (valid.length !== records.length) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(valid));
+      safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(valid));
     }
   } catch (error) {
     console.error('Error cleaning up dismissals:', error);

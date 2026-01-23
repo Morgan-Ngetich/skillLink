@@ -1,3 +1,4 @@
+import { safeSessionStorage } from '@/utils/storage';
 import { setCookie, deleteCookie } from './cookies';
 
 const SESSION_CACHE_KEY = "supabase_session_cache";
@@ -14,12 +15,12 @@ export function setAuthSession(session: any, userMetadata?: { is_mentor?: boolea
       session: session,
       timestamp: Date.now()
     };
-    sessionStorage.setItem(SESSION_CACHE_KEY, JSON.stringify(cacheData));
+    safeSessionStorage.setItem(SESSION_CACHE_KEY, JSON.stringify(cacheData));
 
     // 2. Cache user metadata separately for instant access
     console.log("Caching user metadata:", userMetadata)
     if (userMetadata) {
-      sessionStorage.setItem(USER_METADATA_KEY, JSON.stringify({
+      safeSessionStorage.setItem(USER_METADATA_KEY, JSON.stringify({
         // TODO: add more user_roles if needed
         is_mentor: userMetadata.is_mentor,
         uuid: userMetadata.uuid,
@@ -68,16 +69,16 @@ export function setAuthSession(session: any, userMetadata?: { is_mentor?: boolea
 }
 
 export function clearAuthSession(): void {
-  sessionStorage.removeItem(SESSION_CACHE_KEY);
-  sessionStorage.removeItem(USER_METADATA_KEY);
-  sessionStorage.removeItem("googleUser");
+  safeSessionStorage.removeItem(SESSION_CACHE_KEY);
+  safeSessionStorage.removeItem(USER_METADATA_KEY);
+  safeSessionStorage.removeItem("googleUser");
   deleteCookie(SESSION_COOKIE_KEY);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getCachedSession(): any {
   try {
-    const cached = sessionStorage.getItem(SESSION_CACHE_KEY);
+    const cached = safeSessionStorage.getItem(SESSION_CACHE_KEY);
     if (cached) {
       const { session, timestamp } = JSON.parse(cached);
       // Check if cache is still valid (e.g., 1 hour)
@@ -93,7 +94,7 @@ export function getCachedSession(): any {
 // Get cached user metadata for instant UI decisions
 export function getCachedUserMetadata(): { is_mentor?: boolean; uuid?: string } | null {
   try {
-    const cached = sessionStorage.getItem(USER_METADATA_KEY);
+    const cached = safeSessionStorage.getItem(USER_METADATA_KEY);
     if (cached) {
       const { is_mentor, uuid, timestamp } = JSON.parse(cached);
       // Check if cache is still valid (1 hour)
