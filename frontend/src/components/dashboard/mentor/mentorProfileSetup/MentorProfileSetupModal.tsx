@@ -41,7 +41,7 @@ export default function MentorProfileSetupModal({
 }: MentorSetupModalProps) {
   const { updateMentorProfileAll, isSubmitting } = useMentorProfile()
   const { user } = useAuth()
-  console.log(user)
+  // console.log(user)
   const router = useRouter()
   const { profile } = useProfile()
   const { mentorProfile } = useMentorProfile()
