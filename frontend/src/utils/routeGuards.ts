@@ -25,6 +25,7 @@ export async function requireProfileCompletion(location: { pathname: string; sea
     throw redirect({
       to: "/profile-setup",
       search: {
+        step: 1,
         redirectTo: location.pathname + '?' + new URLSearchParams(location.search).toString(),
       },
     });
@@ -40,28 +41,55 @@ export async function requireOwnerProfileCompletion(
   profileUuid: string,
   location: { pathname: string; search: Record<string, string> }
 ) {
-  const user = await fetchCurrentUser();
+  console.log('🔐 requireOwnerProfileCompletion - START', { 
+    profileUuid,
+    isServer: typeof window === 'undefined' 
+  });
   
-  // Not logged in → Allow public access (not protected)
-  if (!user) return { requiresAuth: false };
-  
-  // Logged in but viewing someone else's profile → Allow (not protected)
-  if (user.uuid !== profileUuid) return { requiresAuth: false };
-  
-  // Viewing own profile but setup incomplete → Redirect to setup
-  if (!user?.profile?.is_profile_setup_complete) {
-    throw redirect({
-      to: "/profile-setup",
-      search: {
-        redirectTo: location.pathname + '?' + new URLSearchParams(location.search).toString(),
-      },
-    });
+  // CRITICAL: Don't check auth on server-side during SSR
+  if (typeof window === 'undefined') {
+    console.log('✅ SSR mode - skipping auth check completely');
+    return { requiresAuth: false };
   }
 
-  // Viewing own profile with complete setup → Protected
-  return { requiresAuth: true };
-}
+  console.log('🔐 Client mode - checking auth');
+  
+  try {
+    const user = await fetchCurrentUser();
+    console.log('🔐 User fetched:', user?.uuid);
+    
+    // Not logged in → Allow public access (not protected)
+    if (!user) {
+      console.log('🔐 No user, allowing public access');
+      return { requiresAuth: false };
+    }
+    
+    // Logged in but viewing someone else's profile → Allow (not protected)
+    if (user.uuid !== profileUuid) {
+      console.log('🔐 Viewing other profile, allowing access');
+      return { requiresAuth: false };
+    }
+    
+    // Viewing own profile but setup incomplete → Redirect to setup
+    if (!user?.profile?.is_profile_setup_complete) {
+      console.log('🔐 Own profile but incomplete, redirecting to setup');
+      throw redirect({
+        to: "/profile-setup",
+        search: {
+          step: 1,
+          redirectTo: location.pathname + '?' + new URLSearchParams(location.search).toString(),
+        },
+      });
+    }
 
+    // Viewing own profile with complete setup → Protected
+    console.log('🔐 Own profile and complete, marking as protected');
+    return { requiresAuth: true };
+  } catch (error) {
+    console.error('🔐 Error in requireOwnerProfileCompletion:', error);
+    throw error;
+  }
+}
 
 /**
  * Helper for actions that require authentication AND profile completion.
@@ -85,6 +113,7 @@ export async function requireAuthWithProfile(
     throw redirect({
       to: "/profile-setup",
       search: {
+        step: 1,
         redirectTo: location.pathname + '?' + new URLSearchParams(location.search).toString(),
       },
     });
