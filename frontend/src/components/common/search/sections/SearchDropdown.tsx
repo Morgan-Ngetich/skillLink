@@ -3,7 +3,7 @@ import { CiSearch } from "react-icons/ci";
 import { SearchResultItem } from "./SearchResultItem";
 import { useSearchNavigation } from "@/hooks/search/useSearchNavigation";
 import type { UnifiedSearchResult } from "../types";
-import { useLocation } from "@tanstack/react-router";
+import { useSearch } from "@tanstack/react-router";
 
 interface SearchDropdownProps {
   search: string;
@@ -22,10 +22,9 @@ export const SearchDropdown = ({
   onSubmit,
   onClearHistory,
 }: SearchDropdownProps) => {
-  const location = useLocation();
-  const urlParams = new URLSearchParams(location.search);
-  const urlQuery = urlParams.get("q") || "";
-  
+  const searchParams = useSearch({ strict: false });
+  const urlQuery = searchParams.q || "";
+
   const { handleResultClick } = useSearchNavigation(urlQuery);
 
   return (
