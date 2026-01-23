@@ -1,10 +1,10 @@
 // src/routes/_layout.tsx
 import { createFileRoute, Outlet } from '@tanstack/react-router';
-import AppLayout from '../AppLayout';
+import AppLayout from '../../AppLayout';
 function Layout() {
   return (
     <AppLayout>
-        <Outlet />
+      <Outlet />
     </AppLayout>
   );
 }

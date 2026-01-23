@@ -10,6 +10,7 @@ import { AuthCallbackLoader } from '@/components/common/AuthCallBackLoader';
 import { type GoogleUserInfo, type Identity, type SupabaseUser } from '@/hooks/auth/types';
 import { getApiErrorMessage } from '@/utils/errorUtils';
 import { setAuthSession, clearAuthSession } from "@/hooks/auth/cookies/sessionCookies"
+import { safeSessionStorage } from '@/utils/storage';
 
 const LOCAL_STORAGE_KEY = 'googleUser';
 
@@ -58,10 +59,10 @@ function AuthCallbackPage() {
 
           const googleUser: GoogleUserInfo = { name, email, avatar_url };
           console.log(' Saving Google user to localStorage:', googleUser);
-          sessionStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(googleUser));
+          safeSessionStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(googleUser));
         } else {
           // Clear if not a Google user
-          sessionStorage.removeItem(LOCAL_STORAGE_KEY);
+          safeSessionStorage.removeItem(LOCAL_STORAGE_KEY);
         }
 
         redirect()

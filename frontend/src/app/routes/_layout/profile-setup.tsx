@@ -7,9 +7,17 @@ const ProfileSetup = lazy(() => import("@/components/profile/profileSetup/Index"
 
 export const Route = createFileRoute("/_layout/profile-setup")({
   validateSearch: (search) => {
-    const step = Number(search.step ?? 1);
+    const stepParam = search.step;
+    let step: number | undefined = undefined;
+    
+    if (stepParam !== undefined && stepParam !== null) {
+      const stepNum = Number(stepParam);
+      step = isNaN(stepNum) || stepNum < 1 ? 1 : stepNum;
+    }
+    
     return {
-      step: isNaN(step) || step < 1 ? 1 : step,
+      step,
+      redirectTo: (search.redirectTo as string | undefined) ?? undefined,
     };
   },
   loader: async () => {
