@@ -14,17 +14,15 @@ import { FaStar, FaMapMarkerAlt } from 'react-icons/fa';
 import { Link, useNavigate } from '@tanstack/react-router';
 import type { MentorExplorePublic } from '@/client';
 
-
 interface MentorCardProps {
   mentor: MentorExplorePublic;
   onCollapse?: () => void;
-  //* e.g on FeaturedMentors maxW="300px", on Explore page its full.
   maxW?: string;
 }
 
 export const MentorCard: React.FC<MentorCardProps> = ({ mentor, maxW = "full" }) => {
-  const navigate = useNavigate()
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const navigate = useNavigate();
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   return (
     <Box
@@ -38,7 +36,10 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor, maxW = "full" })
       h="full"
       display="flex"
       flexDirection="column"
-      onClick={isMobile ? () => navigate({ to: `/profile/${mentor.uuid}` }) : undefined}
+      onClick={isMobile ? () => navigate({ 
+        to: "/profile/$uuid", // ✅ Use the route path
+        params: { uuid: mentor.uuid } // ✅ Pass params separately
+      }) : undefined}
     >
       {/* Cover Image and Avatar */}
       <Box position="relative" borderRadius="xl">
@@ -54,14 +55,12 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor, maxW = "full" })
                 h="100%"
               />
 
-              {/* This acts as dark bg, instead ther is no image. */}
               <Box
                 position="absolute"
                 bottom="0"
                 left="0"
                 right="0"
                 height="100%"
-              // bg="blackAlpha.600"
               />
             </Box>
 
@@ -182,7 +181,10 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor, maxW = "full" })
 
         {/* CTA */}
         {!isMobile && (
-          <Link to={`/profile/${mentor.uuid}`}>
+          <Link 
+            to="/profile/$uuid" // ✅ Use the route path
+            params={{ uuid: mentor.uuid }} // ✅ Pass params separately
+          >
             <Button mt={5} width="100%">
               View Profile
             </Button>

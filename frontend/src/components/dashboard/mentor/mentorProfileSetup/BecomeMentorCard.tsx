@@ -14,8 +14,11 @@ export default function BecomeMentorCard() {
   const handleBecomeMentor = () => {
     // Check if already a mentor
     if (user?.is_mentor) {
+      // Navigate to their profile with mentor settings
       router.navigate({
-        to: '/dashboard/mentor',
+        to: '/profile/$uuid',
+        params: { uuid: user.uuid },
+        search: { st: 'services' }, // Open services tab or whatever makes sense
       })
       return
     }
@@ -32,21 +35,21 @@ export default function BecomeMentorCard() {
         status: 'warning',
       })
 
-      // Open profile setup modal with redirect param
       router.navigate({
-        to: `/profile/${user?.uuid}`,
+        to: '/profile/$uuid',
+        params: { uuid: user?.uuid || '' },
         search: {
           drawer: 'setup-profile',
           step: nextStep,
-          redirectTo: 'mentor-setup', // Simple flag instead of full URL
+          redirectTo: 'mentor-setup',
         },
       })
       return
     }
 
-    // Open mentor setup modal
     router.navigate({
-      to: `/profile/${user?.uuid}`,
+      to: '/profile/$uuid',
+      params: { uuid: user?.uuid || '' },
       search: { drawer: 'mentor-setup', step: 'expertise' },
     })
   }

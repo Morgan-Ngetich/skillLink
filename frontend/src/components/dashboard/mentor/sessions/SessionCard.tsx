@@ -364,10 +364,10 @@ const SessionCard: React.FC<SessionCardProps> = ({
 
         {/* Mentor Info */}
         <Box mb={3}>
-          {!showActions ? (
+          {!showActions && mentorProfileData?.uuid ? (
             <Link
-              to="/profile/$id"
-              params={{ id: mentorProfileData?.uuid }}
+              to="/profile/$uuid"
+              params={{ uuid: mentorProfileData.uuid }}
             >
               {content}
             </Link>

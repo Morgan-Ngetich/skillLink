@@ -147,7 +147,7 @@ const MentorSessionInfo: React.FC<MentorSessionInfoProps> = ({
 
             {/* Mentor info + session title */}
             <Box mb={{ base: 3, md: 4 }}>
-              <Link to={`/profile/${mentorData?.uuid}`}>
+              <Link to={`/profile/$uuid`} params={{ uuid: mentorData?.uuid || '' }}>
                 <HStack gap={2} align="start" mb={{ base: 2, md: 3 }}>
                   <Avatar src={mentorData?.avatar_url ?? "/fallback.jpg"} name={mentorData?.full_name} size={{ base: 'sm', md: 'md' }} />
                   <VStack align="start" gap={0}>

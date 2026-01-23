@@ -141,7 +141,7 @@ const InfoPanelContent: React.FC<InfoPanelContentProps> = ({
                 </Box>
               </HStack>
 
-              <Link to={`/profile/${mentorData?.uuid}`}>
+              <Link to={`/profile/$uuid`} params={{ uuid: mentorData?.uuid || '' }}>
                 <Button size="xs" rounded="md" variant="surface" _hover={{ border: "1px solid" }}>View Profile</Button>
               </Link>
             </HStack>
