@@ -37,11 +37,6 @@ const Home: React.FC<HomeProps> = ({ initialFeaturedData }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
 
-  // Debug what we're receiving
-  console.log("initialFeaturedData received:", initialFeaturedData);
-  console.log("Is object?", typeof initialFeaturedData === 'object');
-  console.log("Has mentors?", initialFeaturedData?.mentors?.length);
-
   // Use the hook with the data
   const {
     featuredMentors,

@@ -19,7 +19,7 @@ export default function ProfileCompletionCard({ onEditProfile }: ProfileCompleti
   const { profileCompletionStatus } = useProfile()
   
   if (!profileCompletionStatus) return null
-  console.log("profileCompletionStatus", profileCompletionStatus)
+  // console.log("profileCompletionStatus", profileCompletionStatus)
 
   // Find the first incomplete step
   const firstIncompleteStep = profileCompletionStatus?.missing_fields[0]?.step|| 'basic'

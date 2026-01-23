@@ -13,7 +13,6 @@ interface FeaturedMentorsProps {
 
 const FeaturedMentors: React.FC<FeaturedMentorsProps> = ({ featuredMentors, isLoading }) => {
   const navigate = useNavigate()
-  console.log("featuredMentors", featuredMentors)
   return (
     <Box>
       <HStack
