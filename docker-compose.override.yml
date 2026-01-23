@@ -2,6 +2,7 @@ services:
   frontend:
     ports:
       - "80:80"  # This exposes nginx running on port 80 inside container to localhost:80
+      - "3000:3000"  # Expose Vite dev server for hot reload
     env_file:
       - .env
     environment:
@@ -10,6 +11,9 @@ services:
       - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
     volumes:
       - ./frontend:/app  # For hot reload (e.g., npm run dev)
+      - /app/node_modules  # To persist node_modules
+      - /app/.output  # To persist build output
+    command: /start-ssl.sh
 
   backend:
     build:
