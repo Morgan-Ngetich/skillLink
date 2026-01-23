@@ -234,7 +234,7 @@ const SessionsContent = ({
                         session={session}
                         onEdit={!readOnly ? onEdit : undefined}
                         onDelete={!readOnly ? onDelete : undefined}
-                        showActions={!readOnly || !session.is_cancelled}
+                        showActions={!readOnly}
                         onViewDetails={onViewDetails}
                       />
                     </Box>
@@ -264,7 +264,7 @@ const SessionsContent = ({
                         session={session}
                         onEdit={!readOnly ? onEdit : undefined}
                         onDelete={!readOnly ? onDelete : undefined}
-                        showActions={!readOnly || !session.is_cancelled}
+                        showActions={!readOnly}
                         onViewDetails={onViewDetails}
                       />
                     </Box>
@@ -292,7 +292,7 @@ const SessionsContent = ({
                         session={session}
                         onEdit={!readOnly ? onEdit : undefined}
                         onDelete={!readOnly ? onDelete : undefined}
-                        showActions={!readOnly || !session.is_cancelled}
+                        showActions={!readOnly}
                         onViewDetails={onViewDetails}
                       />
                     </Box>
