@@ -13,11 +13,11 @@ import { inputRecipe } from "@/recipes/input.recipe"
 const config = defineConfig({
   globalCss: {
     body: {
-      bg: "white",
-      color: "gray.800",
-      _dark: {
-        bg: "gray.900",
-        color: "whiteAlpha.900",
+      bg: "gray.900",  // Dark as default
+      color: "whiteAlpha.900",
+      _light: {
+        bg: "white",
+        color: "gray.800",
       },
     },
   },
