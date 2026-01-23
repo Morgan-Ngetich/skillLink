@@ -1,6 +1,6 @@
 import { Box, Container, VStack } from "@chakra-ui/react";
-import { useState, useMemo, useEffect } from "react";
-import { useLocation, useNavigate } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useBrowseMentors, useBrowseSessions, useBrowseServices } from "@/hooks/public/usePublicMentors";
 import { useAuth } from "@/hooks/auth/useAuth";
 import { ExploreHeader } from "@/components/explore/ExploreHeader";
@@ -11,13 +11,15 @@ import { useExploreSearch } from "@/hooks/explore/useExploreSearch";
 import type { ViewType } from "@/components/explore/types";
 
 const Explore = () => {
-  const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
-
-  const urlParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
-  const searchQuery = urlParams.get("q") || "";
-  const viewParam = urlParams.get("view") as ViewType | null;
+  
+  // Use useSearch to get typed search params
+  const searchParams = useSearch({ strict: false });
+  const searchQuery = searchParams.q || "";
+  const viewParam = searchParams.view as ViewType | null;
+  const sessionId = searchParams.sessionId;
+  const serviceId = searchParams.serviceId;
 
   const [currentView, setCurrentView] = useState<ViewType>(viewParam || "mentors");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -32,13 +34,11 @@ const Explore = () => {
   }, [currentView, viewParam]);
 
   // Fetch data for browsing with filter parameters
-  // API only supports single values, so we pass the first selected item
   const {
     data: mentors = [],
     isLoading: isLoadingMentors
   } = useBrowseMentors({
     expertise: filters.selectedExpertise.length > 0 ? filters.selectedExpertise[0] : undefined,
-    // Only pass available if the user explicitly wants to filter
     ...(filters.availableOnly ? { available: true } : {}),
     limit: 100,
   });
@@ -64,7 +64,7 @@ const Explore = () => {
     limit: 100,
   });
 
-  // Apply client-side filtering for ALL selected filters (multi-select support)
+  // Apply client-side filtering
   const { filteredMentors, filteredSessions, filteredServices } = useExploreSearch({
     mentors,
     sessions,
@@ -75,23 +75,32 @@ const Explore = () => {
 
   const handleViewChange = (view: ViewType) => {
     setCurrentView(view);
-    const newParams = new URLSearchParams(location.search);
-    newParams.set("view", view);
-    newParams.delete("sessionId");
-    newParams.delete("serviceId");
-    navigate({ to: "/explore", search: Object.fromEntries(newParams) });
+    // Use navigate with search object directly
+    navigate({ 
+      to: "/explore", 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      search: (prev: Record<string, any>) => ({ 
+        ...prev, 
+        view, 
+        sessionId: undefined, // Remove these params
+        serviceId: undefined 
+      }) 
+    });
   };
 
   const clearSearch = () => {
-    const newParams = new URLSearchParams(location.search);
-    newParams.delete("q");
-    navigate({ to: "/explore", search: Object.fromEntries(newParams) });
+    // Use navigate with search object
+    navigate({ 
+      to: "/explore", 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      search: (prev: Record<string, any>) => ({ 
+        ...prev, 
+        q: undefined // Remove the q param
+      }) 
+    });
   };
 
   useEffect(() => {
-    const sessionId = urlParams.get("sessionId");
-    const serviceId = urlParams.get("serviceId");
-
     if (!sessionId && !serviceId) return;
 
     const timeoutId = setTimeout(() => {
@@ -110,7 +119,7 @@ const Explore = () => {
     }, 100);
 
     return () => clearTimeout(timeoutId);
-  }, [urlParams]);
+  }, [sessionId, serviceId]); // Update dependencies
 
   return (
     <Box minH="100vh">

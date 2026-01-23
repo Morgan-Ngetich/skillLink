@@ -1,12 +1,12 @@
-import { useState, useMemo, useEffect, useRef, useCallback } from "react";
-import { useNavigate, useLocation } from "@tanstack/react-router";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 
 export const useSearchState = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const urlParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
-  const urlQuery = urlParams.get("q") || "";
+  
+  // Use useSearch to get typed search params
+  const searchParams = useSearch({ strict: false });
+  const urlQuery = searchParams.q || "";
 
   const [search, setSearchState] = useState(urlQuery);
   const [isFocused, setIsFocused] = useState(false);
@@ -57,23 +57,36 @@ export const useSearchState = () => {
 
   const submitSearch = useCallback((query: string) => {
     const trimmed = query.trim();
-    const newParams = new URLSearchParams(location.search);
 
-    if (trimmed) newParams.set("q", trimmed);
-    else newParams.delete("q");
-
-    navigate({ to: "/explore", search: Object.fromEntries(newParams) });
+    // Use navigate with search updater function
+    navigate({ 
+      to: "/explore", 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      search: (prev: Record<string, any>) => ({
+        ...prev,
+        q: trimmed || undefined, // undefined removes the param
+      })
+    });
+    
     setSearchState(trimmed);
     isTypingRef.current = false;
-  }, [location.search, navigate]);
+  }, [navigate]);
 
   const clearSearch = useCallback(() => {
     setSearchState("");
-    const newParams = new URLSearchParams(location.search);
-    newParams.delete("q");
-    navigate({ to: "/explore", search: Object.fromEntries(newParams) });
+    
+    // Use navigate with search updater function
+    navigate({ 
+      to: "/explore", 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      search: (prev: Record<string, any>) => ({
+        ...prev,
+        q: undefined, // Remove the q param
+      })
+    });
+    
     isTypingRef.current = false;
-  }, [location.search, navigate]);
+  }, [navigate]);
 
   return {
     search,
