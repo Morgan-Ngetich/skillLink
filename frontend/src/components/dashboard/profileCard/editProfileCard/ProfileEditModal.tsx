@@ -102,9 +102,13 @@ export default function ProfileEditModal({ isOpen, onClose, initialStep = "basic
 
   useEffect(() => {
     if (search.step) {
-      setStep(getStepIndex(search.step))
+      // Convert to string if it's a number
+      const stepValue = typeof search.step === 'number'
+        ? search.step.toString()
+        : search.step;
+      setStep(getStepIndex(stepValue));
     }
-  }, [search.step])
+  }, [search.step]);
 
   const updateStep = (newStepIndex: number) => {
     const newStep = STEPS[newStepIndex].id
