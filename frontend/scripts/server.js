@@ -12,39 +12,12 @@ console.log('Production mode:', isProduction)
 
 // Fallback content generator
 function getFallbackContent(url) {
-  if (url === '/' || url === '') {
-    return {
-      title: 'MENTspace | Get your Mentor',
-      description: 'Master your craft. Get a Mentor, Today.',
-      content: `
-        <div id="root">
-          <header style="text-align: center; padding: 2rem;">
-            <h1>MENTspace</h1>
-            <p>Master your craft. Get a Mentor, Today.</p>
-          </header>
-        </div>
-      `
-    }
-  } else if (url.startsWith('/crackmode')) {
-    return {
-      title: 'CrackMode | Master LeetCode & Algorithms',
-      description: 'Master coding interviews with comprehensive LeetCode solutions and algorithm tutorials',
-      content: `
-        <div id="root">
-          <header style="text-align: center; padding: 2rem;">
-            <h1>CrackMode</h1>
-            <p>Master LeetCode & Algorithms</p>
-            <p>Your ultimate platform for coding interviews.</p>
-          </header>
-        </div>
-      `
-    }
-  } else {
-    return {
-      title: 'MENTspace | Get your Mentor',
-      description: 'Master your craft. Get a Mentor, Today.',
-      content: '<div id="root"></div>'
-    }
+  return {
+    title: 'MENTspace | Get your Mentor',
+    description: 'Master your craft. Get a Mentor, Today.',
+    content: '<div id="root"></div>',
+    head: `<title>MENTspace | Get your Mentor</title>
+    <meta name="description" content="Master your craft. Get a Mentor, Today." />`
   }
 }
 
@@ -61,15 +34,35 @@ async function createServer() {
     })
     app.use(vite.middlewares)
   } else {
-    // Serve static files in production - nginx handles this anyway
-    console.log('Production mode: nginx will serve static files')
+    // Serve static files in production
+    console.log('Production mode: serving static files from dist/client')
+    app.use(express.static(path.resolve(__dirname, '../dist/client')))
   }
 
-  // Handle all routes
-  app.use(/(.*)/, async (req, res) => {
+  // ✅ Handle all routes EXCEPT static assets
+  app.use('*', async (req, res, next) => {
+    const url = req.originalUrl
+    
+    console.log('📥 Incoming request:', url);
+    
+    // Skip SSR for static assets and Vite's special paths
+    if (
+      url.startsWith('/@') ||           // Vite internal routes
+      url.startsWith('/node_modules') || // Vite deps
+      url.startsWith('/src/') ||        // Source files in dev
+      url.startsWith('/api/') ||        // Your API routes
+      url.match(/\.(js|ts|tsx|jsx|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)(\?.*)?$/) || // Static files
+      url.includes('__vite') ||         // Vite HMR
+      url.includes('.well-known')       // Browser special paths
+    ) {
+      console.log('⏭️  Skipping SSR for:', url);
+      return next()
+    }
+
+    console.log('🎯 Processing SSR for:', url);
+
     try {
-      const url = req.originalUrl.split("?")[0]
-      console.log("SSR request for:", url)
+      const cleanUrl = url.split("?")[0]
 
       let template, render
 
@@ -82,10 +75,12 @@ async function createServer() {
         // Production mode
         console.log('Loading production template and server...')
 
-        // Template from nginx html directory
-        template = fs.readFileSync('/usr/share/nginx/html/index.html', 'utf-8')
+        // Template from dist/client
+        const templatePath = path.resolve(__dirname, '../dist/client/index.html')
+        console.log('📄 Loading production template from:', templatePath)
+        template = fs.readFileSync(templatePath, 'utf-8')
 
-        // Server entry - use the fixed relative path
+        // Server entry
         const serverPath = path.resolve(__dirname, '../dist/server/entry-server.js')
         console.log('Loading server from:', serverPath)
 
@@ -101,39 +96,65 @@ async function createServer() {
       const isBot = /bot|crawler|spider|crawling/i.test(userAgent) ||
         /facebookexternalhit|twitterbot|linkedinbot|slackbot|telegrambot|whatsapp|discordbot/i.test(userAgent)
 
-      // Always do SSR in this setup since nginx routes bots to us
+      console.log('User-Agent:', userAgent)
+      console.log('Is Bot:', isBot)
+
       try {
         console.log('Attempting SSR...')
-        // pass cookies to SSR render
+
+        // Get the full URL for context
+        const protocol = req.get('x-forwarded-proto') || req.protocol || 'http'
+        const host = req.get('host') || 'localhost:8080'
+        const fullUrl = `${protocol}://${host}${req.originalUrl}`
+
+        console.log('Full URL:', fullUrl)
+
+        // Pass cookies and full URL context to SSR render
         const cookies = req.headers.cookie || ""
         const { html, head } = await render({
-          url,
-          cookies
+          url: cleanUrl,
+          cookies,
+          host,
+          protocol,
+          fullUrl
         })
 
+        // DEBUG: Check what the server is generating
+        console.log('=== SSR DEBUG ===')
+        console.log('URL:', cleanUrl)
+        console.log('Head length:', head.length)
+        console.log('Head content (first 500 chars):', head.substring(0, 500))
+        console.log('Contains "og:":', head.includes('og:'))
+        console.log('Contains "og:title":', head.includes('og:title'))
+        console.log('Contains "twitter:":', head.includes('twitter:'))
+        console.log('=== END DEBUG ===')
+
+        // If no head content was generated, use fallback
+        const finalHead = head && head.trim() ? head : getFallbackContent(cleanUrl).head
+
         const finalHtml = template
-          .replace(`<!--app-head-->`, head.title + head.meta + head.link + head.script)
-          .replace(`<!--app-html-->`, html)
+          .replace(`<!--app-head-->`, finalHead)
+          .replace(`<!--app-html-->`, html);
 
         res.status(200).set({ 'Content-Type': 'text/html' }).end(finalHtml)
-        console.log('SSR successful for:', url)
+        console.log('✅ SSR successful for:', cleanUrl)
       } catch (ssrError) {
         console.error('SSR Error:', ssrError)
+        console.error('Stack:', ssrError.stack)
 
         // Fallback with route-specific content
-        const fallback = getFallbackContent(url)
+        const fallback = getFallbackContent(cleanUrl)
         const fallbackHtml = template
-          .replace(`<!--app-head-->`,
-            `<title>${fallback.title}</title>
-             <meta name="description" content="${fallback.description}">`)
+          .replace(`<!--app-head-->`, fallback.head)
           .replace(`<!--app-html-->`, fallback.content)
 
         res.status(200).set({ 'Content-Type': 'text/html' }).end(fallbackHtml)
-        console.log('Served fallback for:', url)
+        console.log('Served fallback for:', cleanUrl)
       }
 
     } catch (e) {
       console.error('Route handler error:', e)
+      console.error('Stack:', e.stack)
 
       // Ultimate fallback
       const fallback = getFallbackContent(req.originalUrl.split("?")[0])
