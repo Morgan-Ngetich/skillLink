@@ -4,8 +4,17 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 
-export default tseslint.config(
-  { ignores: ['dist', 'src/client'] },
+// Use defineConfig from ESLint instead of tseslint.config
+import { defineConfig } from 'eslint/config'
+
+export default defineConfig([
+  { 
+    ignores: [
+      'dist',
+      'node_modules', 
+      'src/client',
+    ] 
+  },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ['**/*.{ts,tsx}'],
@@ -25,4 +34,4 @@ export default tseslint.config(
       ],
     },
   },
-)
+])
