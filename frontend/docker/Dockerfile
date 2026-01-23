@@ -51,6 +51,6 @@ COPY docker/nginx.local.conf /etc/nginx/nginx.local.conf
 COPY docker/start-ssl.sh /start-ssl.sh
 RUN chmod +x /start-ssl.sh
 
-EXPOSE 80 443 3000
+EXPOSE 80 443
 
 ENTRYPOINT ["/start-ssl.sh"]
