@@ -33,6 +33,8 @@ export async function requireProfileCompletion(location: { pathname: string; sea
 }
 
 /**
+ * SSR-SAFE: Returns consistent initial state on server
+ * Actual auth check happens client-side after hydration
  * Requires profile completion if viewing YOUR OWN profile
  * Use this for public-but-ownable routes like /profile/$uuid
  * Returns requiresAuth: true if user is viewing their own profile
@@ -41,33 +43,41 @@ export async function requireOwnerProfileCompletion(
   profileUuid: string,
   location: { pathname: string; search: Record<string, string> }
 ) {
+  const isServer = typeof window === 'undefined';
+  
   console.log('🔐 requireOwnerProfileCompletion - START', { 
     profileUuid,
-    isServer: typeof window === 'undefined' 
+    isServer 
   });
   
-  // CRITICAL: Don't check auth on server-side during SSR
-  if (typeof window === 'undefined') {
-    console.log('✅ SSR mode - skipping auth check completely');
-    return { requiresAuth: false };
+  // ALWAYS return the same initial state structure for SSR consistency
+  if (isServer) {
+    console.log('✅ SSR mode - returning initial state (auth check deferred to client)');
+    return { 
+      requiresAuth: false, 
+      isOwner: false,
+      profileUuid,
+      needsClientAuthCheck: true // Flag for client to check
+    };
   }
 
+  // CLIENT-SIDE: Perform actual auth check
   console.log('🔐 Client mode - checking auth');
   
   try {
     const user = await fetchCurrentUser();
     console.log('🔐 User fetched:', user?.uuid);
     
-    // Not logged in → Allow public access (not protected)
+    // Not logged in → Public access
     if (!user) {
       console.log('🔐 No user, allowing public access');
-      return { requiresAuth: false };
+      return { requiresAuth: false, isOwner: false, profileUuid };
     }
     
-    // Logged in but viewing someone else's profile → Allow (not protected)
+    // Viewing someone else's profile → Public access
     if (user.uuid !== profileUuid) {
       console.log('🔐 Viewing other profile, allowing access');
-      return { requiresAuth: false };
+      return { requiresAuth: false, isOwner: false, profileUuid };
     }
     
     // Viewing own profile but setup incomplete → Redirect to setup
@@ -84,10 +94,17 @@ export async function requireOwnerProfileCompletion(
 
     // Viewing own profile with complete setup → Protected
     console.log('🔐 Own profile and complete, marking as protected');
-    return { requiresAuth: true };
+    return { requiresAuth: true, isOwner: true, profileUuid };
+    
   } catch (error) {
+    // If it's a redirect, rethrow it
+    if (error && typeof error === 'object' && 'href' in error) {
+      throw error;
+    }
+    
     console.error('🔐 Error in requireOwnerProfileCompletion:', error);
-    throw error;
+    // On error, default to public access
+    return { requiresAuth: false, isOwner: false, profileUuid };
   }
 }
 

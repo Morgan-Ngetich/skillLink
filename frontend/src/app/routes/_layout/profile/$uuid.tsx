@@ -1,10 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { Suspense, lazy } from 'react'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { Suspense, lazy, useEffect } from 'react'
 import { requireOwnerProfileCompletion } from '@/utils/routeGuards'
 import { UsersService } from '@/client'
 import ProfilePageSkeleton from '@/skeletons/profilPage/Index'
 import { createServerFn } from '@tanstack/react-start'
 import { generateProfileSEO } from '@/seo/profileSeo'
+import { fetchCurrentUser } from '@/hooks/auth/useAuthQuery'
 
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'))
 
@@ -59,6 +60,45 @@ export const Route = createFileRoute('/_layout/profile/$uuid')({
 
 function ProfileRouteComponent() {
   const { publicData } = Route.useLoaderData()
+  const navigate = useNavigate()
+  const { uuid } = Route.useParams()
+  // const search = Route.useSearch()
+
+  // Client-side auth check after hydration
+  useEffect(() => {
+    let mounted = true
+
+    const checkAuthAndRedirect = async () => {
+      try {
+        const user = await fetchCurrentUser()
+        
+        if (!mounted) return
+
+        // If viewing own profile and setup incomplete, redirect
+        if (user && user.uuid === uuid && !user?.profile?.is_profile_setup_complete) {
+          const currentPath = window.location.pathname
+          const currentSearch = new URLSearchParams(window.location.search).toString()
+          
+          navigate({
+            to: '/profile-setup',
+            search: {
+              step: 1,
+              redirectTo: currentPath + (currentSearch ? '?' + currentSearch : ''),
+            },
+            replace: true, // Use replace to avoid back button issues
+          })
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error)
+      }
+    }
+
+    checkAuthAndRedirect()
+
+    return () => {
+      mounted = false
+    }
+  }, [uuid, navigate])
 
   return (
     <Suspense fallback={<ProfilePageSkeleton />}>
