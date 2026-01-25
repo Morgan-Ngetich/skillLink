@@ -8,13 +8,14 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import React, { useEffect } from 'react'
 // import React, { Suspense, useEffect } from 'react'
-// import { ChakraProvider } from '@chakra-ui/react'
+import { ChakraProvider } from '@chakra-ui/react'
 // import { ColorModeProvider } from '@/components/ui/colormode/color-mode'
 // import themeSystem from '@/theme'
 // import { Toaster } from '@/components/ui/toaster'
 // import { GlobalStyles } from '@/components/ui/GlobalStyles'
 import NotFound from '@/components/common/NotFound'
 import { DefaultCatchBoundary } from '@/components/common/DefaultCatchBoundary'
+import themeSystem from '@/theme'
 
 // const TanStackRouterDevtools =
 //   process.env.NODE_ENV === 'production'
@@ -66,11 +67,11 @@ function RootComponent() {
     isServer: typeof window === 'undefined',
     timestamp: Date.now()
   })
-  
+
   useEffect(() => {
     console.log('✅ ROOT HYDRATED SUCCESSFULLY')
   }, [])
-  
+
   return (
     <RootDocument>
       <Outlet />
@@ -90,7 +91,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         <div id="root">
           <QueryClientProvider client={queryClient}>
-            {children}
+            <ChakraProvider value={themeSystem}>
+              {children}
+            </ChakraProvider>
           </QueryClientProvider>
         </div>
         <Scripts />
