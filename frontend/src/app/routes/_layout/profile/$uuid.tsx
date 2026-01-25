@@ -11,7 +11,7 @@ const ProfilePage = lazy(() => import('@/pages/ProfilePage'))
 
 const getProfileData = createServerFn({ method: 'GET' }).handler(async (ctx) => {
   const uuid = ctx.data as unknown as string
-  
+
   try {
     const publicData = await UsersService.getUserApiV1UsersIdentifierGet({
       identifier: uuid,
@@ -35,7 +35,7 @@ export const Route = createFileRoute('/_layout/profile/$uuid')({
 
   head: ({ loaderData }) => {
     const { publicData } = loaderData || {}
-    
+
     return {
       meta: generateProfileSEO(publicData),
     }
@@ -54,7 +54,7 @@ export const Route = createFileRoute('/_layout/profile/$uuid')({
     sessionDetailId: search.sessionDetailId as string | undefined,
     settings: search.settings as 'open' | undefined,
   }),
-  
+
   component: ProfileRouteComponent,
 })
 
@@ -64,6 +64,16 @@ function ProfileRouteComponent() {
   const { uuid } = Route.useParams()
   // const search = Route.useSearch()
 
+  // Debug logging
+  console.log('🎨 ProfileRouteComponent rendering', {
+    isServer: typeof window === 'undefined',
+    hasPublicData: !!publicData,
+    uuid
+  })
+
+  useEffect(() => {
+    console.log('✅ Client hydrated successfully')
+  }, [])
   // Client-side auth check after hydration
   useEffect(() => {
     let mounted = true
@@ -71,14 +81,14 @@ function ProfileRouteComponent() {
     const checkAuthAndRedirect = async () => {
       try {
         const user = await fetchCurrentUser()
-        
+
         if (!mounted) return
 
         // If viewing own profile and setup incomplete, redirect
         if (user && user.uuid === uuid && !user?.profile?.is_profile_setup_complete) {
           const currentPath = window.location.pathname
           const currentSearch = new URLSearchParams(window.location.search).toString()
-          
+
           navigate({
             to: '/profile-setup',
             search: {
