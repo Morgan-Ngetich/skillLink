@@ -11,8 +11,8 @@ import React, { useEffect } from 'react'
 import { ChakraProvider } from '@chakra-ui/react'
 import { ColorModeProvider } from '@/components/ui/colormode/color-mode'
 // import themeSystem from '@/theme'
-// import { Toaster } from '@/components/ui/toaster'
-// import { GlobalStyles } from '@/components/ui/GlobalStyles'
+import { Toaster } from '@/components/ui/toaster'
+import { GlobalStyles } from '@/components/ui/GlobalStyles'
 import NotFound from '@/components/common/NotFound'
 import { DefaultCatchBoundary } from '@/components/common/DefaultCatchBoundary'
 import themeSystem from '@/theme'
@@ -93,7 +93,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           <QueryClientProvider client={queryClient}>
             <ChakraProvider value={themeSystem}>
               <ColorModeProvider>
+                <GlobalStyles />
                 {children}
+                <Toaster />
               </ColorModeProvider>
             </ChakraProvider>
           </QueryClientProvider>
