@@ -17,7 +17,6 @@ import {
   Icon,
 } from '@chakra-ui/react'
 import { BiError, BiHome, BiUndo, BiRefresh } from 'react-icons/bi'
-import { useColorModeValue } from '../ui'
 
 export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
   const router = useRouter()
@@ -28,14 +27,10 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
 
   console.error('DefaultCatchBoundary Error:', error)
 
-  const bgColor = useColorModeValue('gray.50', 'gray.900')
-  const cardBg = useColorModeValue('white', 'gray.800')
-  const borderColor = useColorModeValue('gray.200', 'gray.700')
-
   return (
     <Box
       minH="100vh"
-      bg={bgColor}
+      bg={{ base: 'gray.50', _dark: 'gray.900' }}
       display="flex"
       alignItems="center"
       justifyContent="center"
@@ -44,25 +39,23 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
       <Container maxW="2xl">
         <VStack
           gap={6}
-          bg={cardBg}
+          bg={{ base: 'white', _dark: 'gray.800' }}
           p={8}
           borderRadius="xl"
           borderWidth="1px"
-          borderColor={borderColor}
+          borderColor={{ base: 'gray.200', _dark: 'gray.700' }}
           boxShadow="lg"
         >
           {/* Error Icon */}
           <Box
             p={4}
             borderRadius="full"
-            bg="red.100"
-            _dark={{ bg: 'red.900' }}
+            bg={{ base: 'red.100', _dark: 'red.900' }}
           >
             <Icon
               as={BiError}
               boxSize={12}
-              color="red.600"
-              _dark={{ color: 'red.300' }}
+              color={{ base: 'red.600', _dark: 'red.300' }}
             />
           </Box>
 
@@ -70,8 +63,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
           <Heading
             size="xl"
             textAlign="center"
-            color="red.600"
-            _dark={{ color: 'red.300' }}
+            color={{ base: 'red.600', _dark: 'red.300' }}
           >
             Oops! Something went wrong
           </Heading>
@@ -79,8 +71,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
           {/* Error Message */}
           <Text
             textAlign="center"
-            color="gray.600"
-            _dark={{ color: 'gray.400' }}
+            color={{ base: 'gray.600', _dark: 'gray.400' }}
             fontSize="lg"
           >
             We encountered an unexpected error. Don't worry, we're on it!
@@ -139,8 +130,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
           {/* Help Text */}
           <Text
             fontSize="sm"
-            color="gray.500"
-            _dark={{ color: 'gray.500' }}
+            color={{ base: 'gray.500', _dark: 'gray.500' }}
             textAlign="center"
           >
             If this problem persists, please contact support
