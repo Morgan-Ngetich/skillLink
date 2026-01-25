@@ -3,33 +3,43 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 
 let supabaseInstance: SupabaseClient | null = null;
 
-function getSupabaseClient(): SupabaseClient {
-  // On server, return a dummy/mock client or throw
+function initSupabase(): SupabaseClient | null {
+  // Don't create on server
   if (typeof window === 'undefined') {
-    throw new Error('Supabase client cannot be used on server. Use it only in client components or after hydration.');
+    return null;
   }
 
-  // Singleton pattern: create once on client
+  // Create once on client
   if (!supabaseInstance) {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
-    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+    const url = import.meta.env.VITE_SUPABASE_URL as string;
+    const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 
-    if (!supabaseUrl || !supabaseAnonKey) {
-      throw new Error('Missing Supabase environment variables');
+    if (!url || !key) {
+      console.error('Missing Supabase credentials');
+      return null;
     }
 
-    console.log('🌐 Creating Supabase client', { supabaseUrl });
-
-    supabaseInstance = createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        autoRefreshToken: true,
-        persistSession: true,
-        detectSessionInUrl: true,
-      },
-    });
+    supabaseInstance = createClient(url, key);
   }
 
   return supabaseInstance;
 }
 
-export const supabase = getSupabaseClient();
+// Export getter function instead of instance
+export function getSupabase(): SupabaseClient {
+  const client = initSupabase();
+  if (!client) {
+    throw new Error('Supabase is only available on client-side');
+  }
+  return client;
+}
+
+// Use Proxy for full backwards compatibility with proper typing
+export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
+  get(_target, prop) {
+    const client = getSupabase();
+    const value = client[prop as keyof SupabaseClient];
+    // Bind methods to maintain proper 'this' context
+    return typeof value === 'function' ? value.bind(client) : value;
+  }
+});
