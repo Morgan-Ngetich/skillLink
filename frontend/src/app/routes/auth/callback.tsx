@@ -101,5 +101,6 @@ export const Route = createFileRoute('/auth/callback')({
   //   }
   //   return {};
   // },
+  ssr: false,
   component: AuthCallbackPage,
 });
