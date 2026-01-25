@@ -135,6 +135,7 @@ function VerifyEmailPage() {
 }
 
 export const Route = createFileRoute('/verify-email')({
+  ssr: false,
   validateSearch: (search: Record<string, unknown>) => {
     if (!search.email || typeof search.email !== 'string') {
       throw new Error("Missing or invalid 'email' query parameter");

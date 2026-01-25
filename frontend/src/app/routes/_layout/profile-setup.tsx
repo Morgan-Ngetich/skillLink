@@ -6,6 +6,7 @@ import { Suspense } from 'react';
 const ProfileSetup = lazy(() => import("@/components/profile/profileSetup/Index"));
 
 export const Route = createFileRoute("/_layout/profile-setup")({
+  ssr: false,
   validateSearch: (search) => {
     const stepParam = search.step;
     let step: number | undefined = undefined;

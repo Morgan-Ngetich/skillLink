@@ -18,6 +18,7 @@ function ExplorePage() {
 }
 
 export const Route = createFileRoute("/_layout/explore")({
+  ssr: false,
   validateSearch: (search: Record<string, unknown>): ExploreSearchParams => ({
     q: search.q as string | undefined,
     view: search.view as "mentors" | "sessions" | "services" | undefined,

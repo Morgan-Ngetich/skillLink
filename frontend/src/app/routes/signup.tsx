@@ -5,6 +5,7 @@ import SignupForm from "../../pages/SignupForm";
 // import { isLoggedIn } from "../hooks/auth/authState";
 
 export const Route = createFileRoute("/signup")({
+  ssr: false,
   component: () => (
     <Suspense fallback={<Spinner />}>
       <SignupForm />

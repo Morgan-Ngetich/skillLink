@@ -24,6 +24,7 @@ async function fetchFeaturedData() {
 }
 
 export const Route = createFileRoute("/_layout/")({
+  ssr: false,
   loader: async () => {
     // Await the data in the loader
     const featuredData = await fetchFeaturedData();
