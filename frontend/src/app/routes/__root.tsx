@@ -6,8 +6,7 @@ import {
   Outlet,
 } from '@tanstack/react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import React, { useEffect } from 'react'
-// import React, { Suspense, useEffect } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import { ChakraProvider } from '@chakra-ui/react'
 import { ColorModeProvider } from '@/components/ui/colormode/color-mode'
 // import themeSystem from '@/theme'
@@ -17,14 +16,14 @@ import NotFound from '@/components/common/NotFound'
 import { DefaultCatchBoundary } from '@/components/common/DefaultCatchBoundary'
 import themeSystem from '@/theme'
 
-// const TanStackRouterDevtools =
-//   process.env.NODE_ENV === 'production'
-//     ? () => null
-//     : React.lazy(() =>
-//       import('@tanstack/react-router-devtools').then((res) => ({
-//         default: res.TanStackRouterDevtools,
-//       }))
-//     )
+const TanStackRouterDevtools =
+  process.env.NODE_ENV === 'production'
+    ? () => null
+    : React.lazy(() =>
+      import('@tanstack/react-router-devtools').then((res) => ({
+        default: res.TanStackRouterDevtools,
+      }))
+    )
 
 const fallbackQueryClient = new QueryClient({
   defaultOptions: {
@@ -96,6 +95,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 <GlobalStyles />
                 {children}
                 <Toaster />
+                <Suspense fallback={null}>
+                  <TanStackRouterDevtools />
+                </Suspense>
               </ColorModeProvider>
             </ChakraProvider>
           </QueryClientProvider>
