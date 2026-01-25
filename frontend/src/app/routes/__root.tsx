@@ -14,6 +14,7 @@ import themeSystem from '@/theme'
 import { Toaster } from '@/components/ui/toaster'
 import { GlobalStyles } from '@/components/ui/GlobalStyles'
 import NotFound from '@/components/common/NotFound'
+import { DefaultCatchBoundary } from '@/components/common/DefaultCatchBoundary'
 
 const TanStackRouterDevtools =
   process.env.NODE_ENV === 'production'
@@ -56,6 +57,7 @@ export const Route = createRootRoute({
   }),
   component: RootComponent,
   notFoundComponent: () => <NotFound />,
+  errorComponent: DefaultCatchBoundary
 })
 
 function RootComponent() {
