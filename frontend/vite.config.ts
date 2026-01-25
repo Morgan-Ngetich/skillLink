@@ -45,7 +45,7 @@ export default defineConfig((configEnv: ConfigEnv): UserConfig => {
         projects: ['./tsconfig.json'],
       }),
       viteReact(),
-      nitro(),  // CRITICAL for TanStack Start SSR
+      nitro(),
       process.env.ANALYZE === 'true' &&
       visualizer({
         open: true,
@@ -59,10 +59,13 @@ export default defineConfig((configEnv: ConfigEnv): UserConfig => {
       alias: {
         '@': resolve(__dirname, 'src'),
       },
+      dedupe: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
     },
     
     ssr: {
-      noExternal: ['@chakra-ui/react'],
+      noExternal: ['@chakra-ui/react', '@emotion/react', '@emotion/styled'],
+      // CRITICAL: Don't externalize React in SSR
+      external: [],
     },
     
     optimizeDeps: {
@@ -91,33 +94,27 @@ export default defineConfig((configEnv: ConfigEnv): UserConfig => {
     build: {
       target: 'es2020',
       chunkSizeWarningLimit: 1000,
+      // CRITICAL: Change rollup config
       rollupOptions: {
         output: {
           manualChunks: (id: string) => {
+            // Don't split React into multiple chunks - keep it together
+            if (id.includes('node_modules/react') || 
+                id.includes('node_modules/react-dom') ||
+                id.includes('react/jsx-runtime') ||
+                id.includes('react/jsx-dev-runtime') ||
+                id.includes('scheduler')) {
+              return 'react-vendor'  // Single chunk for all React code
+            }
+
             if (id.includes('fuse.js')) return 'vendor-search'
             if (id.includes('recharts')) return 'vendor-charts'
             if (id.includes('axios')) return 'vendor-http'
             if (id.includes('supabase')) return 'vendor-supabase'
-
-            if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
-              return 'vendor-react'
-            }
-
-            if (id.includes('@tanstack')) {
-              return 'vendor-tanstack'
-            }
-
-            if (id.includes('@chakra-ui') || id.includes('@emotion')) {
-              return 'vendor-chakra'
-            }
-
-            if (id.includes('framer-motion')) {
-              return 'vendor-animation'
-            }
-
-            if (id.includes('node_modules')) {
-              return 'vendor-other'
-            }
+            if (id.includes('@tanstack')) return 'vendor-tanstack'
+            if (id.includes('@chakra-ui') || id.includes('@emotion')) return 'vendor-chakra'
+            if (id.includes('framer-motion')) return 'vendor-animation'
+            if (id.includes('node_modules')) return 'vendor-other'
           },
         },
       },
