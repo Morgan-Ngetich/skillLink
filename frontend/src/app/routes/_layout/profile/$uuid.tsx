@@ -23,9 +23,7 @@ const getProfileData = createServerFn({ method: 'GET' }).handler(async (ctx) => 
   }
 })
 
-export const Route = createFileRoute('/_layout/profile/$uuid')({
-  ssr: false, // Disable SSR for this route
-  
+export const Route = createFileRoute('/_layout/profile/$uuid')({  
   beforeLoad: async ({ params, location }) => {
     const result = await requireOwnerProfileCompletion(params.uuid, location)
     return result
