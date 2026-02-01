@@ -16,7 +16,7 @@ export function isProtectedRoute(matches: AnyRouteMatch[]): boolean {
  * Examples: /dashboard, /settings, /messages /before user makes a book
  */
 export async function requireProfileCompletion(location: { pathname: string; search: Record<string, string> }) {
-  const user = await fetchCurrentUser();
+  const user = await fetchCurrentUser({ skipCache: true });
   
   // If no user (i.e., not logged in), do nothing. Let AuthPromptDialog handle it.
   if (!user) return;
@@ -26,7 +26,8 @@ export async function requireProfileCompletion(location: { pathname: string; sea
       to: "/profile-setup",
       search: {
         step: 1,
-        redirectTo: location.pathname + '?' + new URLSearchParams(location.search).toString(),
+        redirectTo: location.pathname,
+        redirectSearch: JSON.stringify(location.search),
       },
     });
   }
@@ -65,7 +66,7 @@ export async function requireOwnerProfileCompletion(
   console.log('🔐 Client mode - checking auth');
   
   try {
-    const user = await fetchCurrentUser();
+    const user = await fetchCurrentUser({ skipCache: true });
     console.log('🔐 User fetched:', user?.uuid);
     
     // Not logged in → Public access
@@ -87,7 +88,8 @@ export async function requireOwnerProfileCompletion(
         to: "/profile-setup",
         search: {
           step: 1,
-          redirectTo: location.pathname + '?' + new URLSearchParams(location.search).toString(),
+          redirectTo: location.pathname,
+          redirectSearch: JSON.stringify(location.search),
         },
       });
     }
@@ -117,7 +119,7 @@ export async function requireAuthWithProfile(
   location: { pathname: string; search: Record<string, string> },
   openAuthPrompt: (mode: "full" | "lite") => void
 ) {
-  const user = await fetchCurrentUser();
+  const user = await fetchCurrentUser({ skipCache: true });
 
   // Not logged in → open AuthPromptDialog and stop
   if (!user) {
@@ -131,7 +133,8 @@ export async function requireAuthWithProfile(
       to: "/profile-setup",
       search: {
         step: 1,
-        redirectTo: location.pathname + '?' + new URLSearchParams(location.search).toString(),
+        redirectTo: location.pathname,
+        redirectSearch: JSON.stringify(location.search),
       },
     });
   }

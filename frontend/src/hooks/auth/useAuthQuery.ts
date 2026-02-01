@@ -1,12 +1,19 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient, QueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { supabase } from '../supabase/supabaseClient';
-import { UsersService } from '@/client';
+import { UserPublic, UsersService } from '@/client';
 import { useSupabaseSessionReady } from '../supabase/useSupabaseSession';
 import { updateUserMetadataCache } from './useSession';
 import { clearAuthSession } from '@/hooks/auth/cookies/sessionCookies';
 
-export const fetchCurrentUser = async () => {
+// Singleton query client for use outside React components
+let globalQueryClient: QueryClient | null = null;
+
+export const setGlobalQueryClient = (client: QueryClient) => {
+  globalQueryClient = client;
+};
+
+const getUserData = async (): Promise<UserPublic | null> => {
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -14,7 +21,6 @@ export const fetchCurrentUser = async () => {
   const token = session?.access_token;
 
   if (!token) {
-    // No token - clear everything
     clearAuthSession();
     updateUserMetadataCache({ is_mentor: undefined, uuid: undefined });
     return null;
@@ -23,10 +29,8 @@ export const fetchCurrentUser = async () => {
   try {
     const user = await UsersService.getMeApiV1UsersMeGet();
 
-    // CRITICAL: If backend returns null/error, the token is invalid
     if (!user) {
       console.warn('Backend returned no user - session invalid');
-      // Sign out from Supabase to clear the invalid session
       await supabase.auth.signOut();
       clearAuthSession();
       updateUserMetadataCache({ is_mentor: undefined, uuid: undefined });
@@ -45,13 +49,11 @@ export const fetchCurrentUser = async () => {
   } catch (err: unknown) {
     console.error('Failed to fetch user:', err);
     
-    // Check if it's an authentication error (401, 403)
     if (err && typeof err === 'object' && 'status' in err) {
       const status = (err as { status: number }).status;
       
       if (status === 401 || status === 403) {
         console.warn('Authentication error - clearing session');
-        // Backend rejected the token - clear everything
         await supabase.auth.signOut();
         clearAuthSession();
         updateUserMetadataCache({ is_mentor: undefined, uuid: undefined });
@@ -59,44 +61,75 @@ export const fetchCurrentUser = async () => {
       }
     }
     
-    // For other errors (network issues, etc), return null but don't clear session
-    // This prevents clearing valid sessions during temporary network issues
     return null;
   }
 };
 
-// Use Auth query for hardCore, e.g setting/profiles
+export const fetchCurrentUser = async (options?: { skipCache?: boolean }) => {
+  const queryClient = globalQueryClient;
+  
+  if (!queryClient) {
+    // Fallback if query client not set (shouldn't happen in normal use)
+    console.warn('Query client not initialized, fetching directly');
+    return getUserData();
+  }
+
+  if (options?.skipCache) {
+    // Force fresh fetch and update cache
+    return await queryClient.fetchQuery<UserPublic | null>({
+      queryKey: ['auth', 'user'],
+      queryFn: getUserData,
+      staleTime: 0,
+    });
+  }
+
+  // Try to get from cache first
+  const cachedData = queryClient.getQueryData<UserPublic | null>(['auth', 'user']);
+  
+  if (cachedData !== undefined) {
+    return cachedData;
+  }
+
+  // If not in cache, fetch and cache it
+  return await queryClient.fetchQuery<UserPublic | null>({
+    queryKey: ['auth', 'user'],
+    queryFn: getUserData,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+};
+
+// Use Auth query for components
 export const useAuthQuery = () => {
   const ready = useSupabaseSessionReady();
   const queryClient = useQueryClient();
 
-  const query = useQuery({
+  // Set global query client on first use
+  useEffect(() => {
+    setGlobalQueryClient(queryClient);
+  }, [queryClient]);
+
+  const query = useQuery<UserPublic | null>({
     queryKey: ['auth', 'user'],
-    queryFn: fetchCurrentUser,
-    enabled: ready, // Don't run until Supabase session is ready
-    staleTime: 1000 * 60 * 5, // 5 minutes - TanStack Query caches this
+    queryFn: getUserData,
+    enabled: ready,
+    staleTime: 1000 * 60 * 5,
     retry: (failureCount, error) => {
-      // Don't retry on auth errors
       if (error && typeof error === 'object' && 'status' in error) {
         const status = (error as { status: number }).status;
         if (status === 401 || status === 403) {
           return false;
         }
       }
-      // Retry other errors up to 2 times
       return failureCount < 2;
     },
     retryDelay: 1000,
   });
 
-  // Invalidate query when auth state changes (login/logout)
   useEffect(() => {
     const { data: listener } = supabase.auth.onAuthStateChange((event) => {
-      // On sign out or session changes, invalidate the TanStack Query cache
       if (event === 'SIGNED_OUT' || event === 'SIGNED_IN') {
         queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
         
-        // Clear lightweight metadata cache on sign out
         if (event === 'SIGNED_OUT') {
           clearAuthSession();
           updateUserMetadataCache({ is_mentor: undefined, uuid: undefined });

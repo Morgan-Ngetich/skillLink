@@ -10,15 +10,26 @@ export const Route = createFileRoute("/_layout/profile-setup")({
   validateSearch: (search) => {
     const stepParam = search.step;
     let step: number | undefined = undefined;
-    
+
     if (stepParam !== undefined && stepParam !== null) {
       const stepNum = Number(stepParam);
       step = isNaN(stepNum) || stepNum < 1 ? 1 : stepNum;
     }
-    
+
+    // Parse redirectSearch back to object
+    let redirectSearch = {};
+    if (search.redirectSearch && typeof search.redirectSearch === 'string') {
+      try {
+        redirectSearch = JSON.parse(search.redirectSearch);
+      } catch (e) {
+        console.error('Failed to parse redirectSearch', e);
+      }
+    }
+
     return {
       step,
       redirectTo: (search.redirectTo as string | undefined) ?? undefined,
+      redirectSearch,
     };
   },
   loader: async () => {

@@ -1,41 +1,36 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Suspense, lazy, useEffect } from 'react'
-import { requireOwnerProfileCompletion } from '@/utils/routeGuards'
 import { UsersService } from '@/client'
 import ProfilePageSkeleton from '@/skeletons/profilPage/Index'
-import { createServerFn } from '@tanstack/react-start'
 import { generateProfileSEO } from '@/seo/profileSeo'
 import { fetchCurrentUser } from '@/hooks/auth/useAuthQuery'
+import { toNativePromise } from '@/utils/toNativePromisse'
 
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'))
 
-const getProfileData = createServerFn({ method: 'GET' }).handler(async (ctx) => {
-  const uuid = ctx.data as unknown as string
-
+async function fetchProfileData(uuid: string) {
   try {
-    const publicData = await UsersService.getUserApiV1UsersIdentifierGet({
-      identifier: uuid,
-    })
+    const publicData = await toNativePromise(
+      UsersService.getUserApiV1UsersIdentifierGet({
+        identifier: uuid,
+      })
+    )
     return { publicData }
   } catch (error) {
     console.error('Failed to load profile data:', error)
     return { publicData: null }
   }
-})
+}
 
-export const Route = createFileRoute('/_layout/profile/$uuid')({  
-  beforeLoad: async ({ params, location }) => {
-    const result = await requireOwnerProfileCompletion(params.uuid, location)
-    return result
-  },
-
+export const Route = createFileRoute('/_layout/profile/$uuid')({
   loader: async ({ params }) => {
-    return await getProfileData({ data: params.uuid })
+    // Only fetch public data in loader (SSR-safe)
+    const profileData = await fetchProfileData(params.uuid)
+    return profileData
   },
 
   head: ({ loaderData }) => {
     const { publicData } = loaderData || {}
-
     return {
       meta: generateProfileSEO(publicData),
     }
@@ -56,54 +51,46 @@ export const Route = createFileRoute('/_layout/profile/$uuid')({
   }),
 
   component: ProfileRouteComponent,
+  pendingComponent: ProfilePageSkeleton,
 })
 
 function ProfileRouteComponent() {
   const { publicData } = Route.useLoaderData()
   const navigate = useNavigate()
   const { uuid } = Route.useParams()
-  // const search = Route.useSearch()
 
-  // Debug logging
-  console.log('🎨 ProfileRouteComponent rendering', {
-    isServer: typeof window === 'undefined',
-    hasPublicData: !!publicData,
-    uuid
-  })
-
-  useEffect(() => {
-    console.log('✅ Client hydrated successfully')
-  }, [])
-  // Client-side auth check after hydration
+  // Client-side only: Check auth and redirect if needed
   useEffect(() => {
     let mounted = true
 
     const checkAuthAndRedirect = async () => {
       try {
-        const user = await fetchCurrentUser()
+        const user = await fetchCurrentUser({ skipCache: true })
 
         if (!mounted) return
 
         // If viewing own profile and setup incomplete, redirect
         if (user && user.uuid === uuid && !user?.profile?.is_profile_setup_complete) {
-          const currentPath = window.location.pathname
-          const currentSearch = new URLSearchParams(window.location.search).toString()
-
           navigate({
             to: '/profile-setup',
             search: {
               step: 1,
-              redirectTo: currentPath + (currentSearch ? '?' + currentSearch : ''),
+              redirectTo: window.location.pathname,
+              redirectSearch: window.location.search.slice(1),
             },
-            replace: true, // Use replace to avoid back button issues
+            replace: true,
           })
         }
       } catch (error) {
         console.error('Auth check failed:', error)
+        // Fail silently - user can still view profile as public
       }
     }
 
-    checkAuthAndRedirect()
+    // Only run on client
+    if (typeof window !== 'undefined') {
+      checkAuthAndRedirect()
+    }
 
     return () => {
       mounted = false
