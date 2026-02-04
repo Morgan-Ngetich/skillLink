@@ -9,7 +9,7 @@ router = APIRouter()
 @router.get("/me", response_model=UserPublic)
 def get_me(current_user: CurrentUser) -> UserPublic:
     """Get current authenticated user"""
-    return current_user.to_public()
+    return current_user.to_public(current_user_id=current_user.id)
 
 
 @router.patch("/me", response_model=UserPublic)
@@ -20,4 +20,4 @@ def update_me(
 ) -> UserPublic:
     """Update current user's information"""
     updated_user = crud.update_user(session, current_user, user_in)
-    return updated_user.to_public()
+    return updated_user.to_public(current_user_id=current_user.id)

@@ -15,7 +15,7 @@ router = APIRouter()
 def get_my_profile(session: SessionDep, current_user: CurrentUser):
     """Get current user's profile"""
     profile = crud.get_user_profile_or_404(session, current_user.id)
-    return profile.to_public()
+    return profile.to_public(current_user_id=current_user.id)
 
 
 @router.post("/", response_model=UserProfilePublic)
@@ -34,7 +34,7 @@ def create_profile(
     # Assign MENTEE role
     crud.assign_role(session, current_user, RoleName.MENTEE)
     
-    return profile.to_public()
+    return profile.to_public(current_user_id=current_user.id)
 
 
 @router.patch("/", response_model=UserProfilePublic)
@@ -46,7 +46,7 @@ def update_my_profile(
     """Update current user's profile"""
     try:
         profile = crud.update_user_profile(session, current_user.id, profile_in)
-        return profile.to_public()
+        return profile.to_public(current_user_id=current_user.id)
     except ValueError:
         raise HTTPException(status_code=404, detail="Profile not found")
 
