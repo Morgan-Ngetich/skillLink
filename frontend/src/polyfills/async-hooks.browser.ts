@@ -1,4 +1,4 @@
-// src/polyfills/async-hooks.browser.ts
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class AsyncLocalStorage<T = any> {
   private store: T | undefined = undefined;
 
@@ -6,6 +6,7 @@ export class AsyncLocalStorage<T = any> {
     return this.store;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   run<R>(store: T, callback: (...args: any[]) => R, ...args: any[]): R {
     const previousStore = this.store;
     this.store = store;
@@ -15,7 +16,7 @@ export class AsyncLocalStorage<T = any> {
       this.store = previousStore;
     }
   }
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   exit<R>(callback: (...args: any[]) => R, ...args: any[]): R {
     const previousStore = this.store;
     this.store = undefined;
@@ -36,8 +37,8 @@ export class AsyncLocalStorage<T = any> {
 }
 
 export const createHook = () => ({
-  enable: () => {},
-  disable: () => {},
+  enable: () => { },
+  disable: () => { },
 });
 
 export const executionAsyncId = () => 0;
