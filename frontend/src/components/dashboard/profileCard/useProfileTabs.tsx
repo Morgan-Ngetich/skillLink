@@ -3,11 +3,11 @@ import { LuUser, LuStar, LuActivity, LuCalendar, LuClock4 } from 'react-icons/lu
 import type { MentorProfilePublic, MentorServicePublic, MentorSessionPublic, UserProfilePublic, UserPublic } from '@/client';
 
 import AboutTab from './sections/tabs/aboutTab/Index';
-import CalendarTab from './sections/tabs/CalendarTab';
 import ReviewsTab from './sections/tabs/ReviewsTab';
 import ActivityTab from './sections/tabs/ActivityTab';
 import ServicesTab from './sections/tabs/ServicesTab';
 import SessionsTab from './sections/tabs/SessionsTab';
+import MyBookingsTab from './sections/tabs/myBookingsTab/MyBookingsTab';
 
 interface UseProfileTabsProps {
   user?: UserPublic;
@@ -26,6 +26,7 @@ interface UseProfileTabsProps {
   onCloseServiceModal?: () => void;
 
   // Session props
+  sessions?: MentorSessionPublic[];
   sessionModal?: "create" | "edit";
   sessionId?: string;
   onOpenSessionModal?: (mode: "create" | "edit", sessionId?: string) => void;
@@ -52,6 +53,7 @@ export const useProfileTabs = ({
   serviceId,
   onOpenServiceModal,
   onCloseServiceModal,
+  sessions,
   sessionModal,
   sessionId,
   onOpenSessionModal,
@@ -117,7 +119,7 @@ export const useProfileTabs = ({
       icon: LuClock4,
       content: (
         <SessionsTab
-          sessions={mentorProfile?.sessions || []}
+          sessions={mentorProfile?.sessions || sessions || []}
           readOnly={readOnly}
           sessionModal={sessionModal}
           sessionId={sessionId}
@@ -128,23 +130,7 @@ export const useProfileTabs = ({
           onViewDetails={handleSessionViewDetails}
         />
       ),
-      showIf: isMobile,
-    },
-    {
-      value: 'calendar',
-      label: 'Calendar',
-      icon: LuCalendar,
-      content: (
-        <CalendarTab
-          isOwnProfile={isOwnProfile}
-          mentorSessions={mentorProfile?.sessions || []}
-          mentorSettings={mentorProfile?.settings}
-          onEdit={handleSessionEdit}
-          onDelete={handleSessionDelete}
-          onViewDetails={handleSessionViewDetails}
-        />
-      ),
-      showIf: isMobile,
+      showIf: isMobile && user?.is_mentor,
     },
     {
       value: 'reviews',
@@ -160,7 +146,26 @@ export const useProfileTabs = ({
       content: <ActivityTab isMentor={user?.is_mentor} />,
       showIf: !readOnly,
     },
+    {
+      value: "myBookings",
+      label: "My bookings",
+      icon: LuCalendar,
+      content: (
+        <MyBookingsTab
+          isOwnProfile={!!isOwnProfile}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onViewBooking={handleSessionViewDetails as any}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onCancelBooking={handleSessionDelete as any}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onEditBooking={handleSessionEdit as any}
+        />
+      ),
+      showIf: isOwnProfile,
+    }
   ].filter((tab) => tab.showIf !== false);
+
+
 
   return tabs;
 };

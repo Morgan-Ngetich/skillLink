@@ -23,6 +23,7 @@ interface ProfileCardProps {
   onCloseServiceModal?: () => void;
 
   // Session modal props
+  sessions?: MentorSessionPublic[];
   sessionModal?: "create" | "edit";
   sessionId?: string;
   onOpenSessionModal?: (mode: "create" | "edit", sessionId?: string) => void;
@@ -55,6 +56,7 @@ export default function ProfileCard({
   serviceId,
   onOpenServiceModal,
   onCloseServiceModal,
+  sessions,
   sessionModal,
   sessionId,
   onOpenSessionModal,
@@ -80,6 +82,7 @@ export default function ProfileCard({
     serviceId,
     onOpenServiceModal,
     onCloseServiceModal,
+    sessions: sessions  || [],
     sessionModal,
     sessionId,
     onOpenSessionModal,
