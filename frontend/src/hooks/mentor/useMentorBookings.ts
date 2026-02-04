@@ -70,21 +70,9 @@ export const useMentorBookings = (statusFilter?: BookingStatus) => {
     enabled: false, // Only fetch when explicitly requested
   });
 
-  const invalidateAllQueries = () => {
+  const invalidateAllQueries = async () => {
     // Invalidate bookings
-    queryClient.invalidateQueries({ queryKey: ['mentorBookings'] });
-
-    // Invalidate sessions (CRITICAL - this updates session.bookings)
-    queryClient.invalidateQueries({ queryKey: ['mentorSessions'] });
-
-    // Invalidate stats
-    queryClient.invalidateQueries({ queryKey: ['mentorStats'] });
-
-    // Invalidate calendar data
-    queryClient.invalidateQueries({ queryKey: ['mentorCalendar'] });
-
-    // Invalidate users data
-    queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
+    await queryClient.invalidateQueries();
   };
 
   // MUTATIONS
@@ -104,9 +92,9 @@ export const useMentorBookings = (statusFilter?: BookingStatus) => {
   >({
     mutationFn: ({ sessionId, data }) =>
       toNativePromise(
-        MentorsService.bookSessionApiV1MentorsSessionsSessionIdBookPost({ 
-          sessionId, 
-          requestBody: data 
+        MentorsService.bookSessionApiV1MentorsSessionsSessionIdBookPost({
+          sessionId,
+          requestBody: data
         })
       ),
     onSuccess: (booking) => {
@@ -147,9 +135,9 @@ export const useMentorBookings = (statusFilter?: BookingStatus) => {
   >({
     mutationFn: ({ bookingId, data }) =>
       toNativePromise(
-        MentorsService.updateBookingStatusApiV1MentorsBookingsBookingIdStatusPatch({ 
-          bookingId, 
-          requestBody: data 
+        MentorsService.updateBookingStatusApiV1MentorsBookingsBookingIdStatusPatch({
+          bookingId,
+          requestBody: data
         })
       ),
     onSuccess: (data) => {
@@ -192,7 +180,7 @@ export const useMentorBookings = (statusFilter?: BookingStatus) => {
       toNativePromise(
         MentorsService.confirmBookingApiV1MentorsBookingsBookingIdConfirmPost({ bookingId })
       ),
-    onSuccess: () => {
+    onSuccess: async () => {
       toast({
         id: 'confirm-booking-success',
         title: 'Booking confirmed',
@@ -201,7 +189,7 @@ export const useMentorBookings = (statusFilter?: BookingStatus) => {
       });
 
       // Invalidate all related queries
-      invalidateAllQueries();
+      await invalidateAllQueries();
     },
     onError: (error) => {
       toast({
@@ -219,15 +207,15 @@ export const useMentorBookings = (statusFilter?: BookingStatus) => {
    * Transitions: PENDING → CANCELLED_BY_MENTOR
    */
   const denyBookingMutation = useMutation<
-    BookingPublic, 
-    Error, 
+    BookingPublic,
+    Error,
     { bookingId: number; reason: string }
   >({
     mutationFn: ({ bookingId, reason }) =>
       toNativePromise(
-        MentorsService.denyBookingApiV1MentorsBookingsBookingIdDenyPost({ 
-          bookingId, 
-          reason 
+        MentorsService.denyBookingApiV1MentorsBookingsBookingIdDenyPost({
+          bookingId,
+          reason
         })
       ),
     onSuccess: () => {
@@ -307,8 +295,8 @@ export const useMentorBookings = (statusFilter?: BookingStatus) => {
    * Wrapper with callbacks for UI integration
    */
   const denyBooking = async (
-    bookingId: number, 
-    reason: string, 
+    bookingId: number,
+    reason: string,
     callbacks?: BookingCallbacks
   ) => {
     setIsSubmitting(true);
