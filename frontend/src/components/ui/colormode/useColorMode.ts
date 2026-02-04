@@ -1,6 +1,7 @@
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
-import type { ColorMode } from "./color-mode"
+
+export type ColorMode = "light" | "dark" 
 
 export interface UseColorModeReturn {
   colorMode: ColorMode
