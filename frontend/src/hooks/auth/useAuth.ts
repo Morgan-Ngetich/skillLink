@@ -5,12 +5,25 @@ import { supabase } from '../supabase/supabaseClient';
 import { useNavigate } from '@tanstack/react-router';
 import { invalidateTokenCache } from "@/client/core/OpenAPI";
 import { clearAuthSession, setAuthSession } from "@/hooks/auth/cookies/sessionCookies";
-import { updateUserMetadataCache } from "@/hooks/auth/useSession"; // ← ADD THIS
+import { updateUserMetadataCache } from "@/hooks/auth/useSession";
 import { UsersService, type UserPublic, type UserUpdate } from "@/client";
 import { toNativePromise } from "@/utils/toNativePromisse";
 import { getApiErrorMessage } from "@/utils/errorUtils";
 import useToaster from '../public/useToaster';
 import { safeSessionStorage } from "@/utils/storage";
+
+// Helper to get the correct redirect URL for OAuth
+const getOAuthRedirectUrl = () => {
+  const isDevelopment = window.location.hostname === 'localhost';
+
+  if (isDevelopment) {
+    // Use current port dynamically (works for both 3000, 5173, etc.)
+    return `http://localhost:${window.location.port || '3000'}/auth/callback`;
+  }
+
+  // Production: use current origin
+  return `${window.location.origin}/auth/callback`;
+};
 
 export function useAuth() {
   const navigate = useNavigate();
@@ -18,13 +31,7 @@ export function useAuth() {
   const { data: user, isLoading } = useAuthQuery();
   const toast = useToaster()
 
-  // Cache is updated automatically in useAuthQuery
-
   // Update the current authenticated user
-  /**
-   * Update Current Authenticated User
-   * - Email, name, avatar
-   */
   const updateCurrentAuthUser = useMutation<UserPublic, Error, UserUpdate>({
     mutationFn: (data) => toNativePromise(UsersService.updateMeApiV1UsersMePatch({ requestBody: data })),
     onSuccess: (updatedUser) => {
@@ -33,7 +40,7 @@ export function useAuth() {
         title: 'User updated',
         status: 'success',
       });
-      
+
       // UPDATE CACHE WITH NEW USER DATA
       if (updatedUser?.uuid && updatedUser?.is_mentor !== undefined) {
         updateUserMetadataCache({
@@ -41,7 +48,7 @@ export function useAuth() {
           uuid: updatedUser.uuid
         });
       }
-      
+
       queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
     },
     onError: (error: unknown) => {
@@ -56,8 +63,10 @@ export function useAuth() {
 
   // When a user signs up, i need to sync them with the database.
   const signUp = async (email: string, password: string, fullName: string) => {
+    // Store redirect destination BEFORE OAuth flow
     const urlParams = new URLSearchParams(window.location.search);
-    const redirectToParam = urlParams.get("redirectTo") || `/profile/${user?.uuid}`;
+    const redirectToParam = urlParams.get("redirectTo") || `/`;
+    safeSessionStorage.setItem('auth_redirect_after_login', redirectToParam);
 
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -88,14 +97,11 @@ export function useAuth() {
       safeSessionStorage.setItem("supabase_session_cache", JSON.stringify(cacheData));
     }
 
-    // Fetch backend user again
-    await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
+    // Invalidate all the queries, remember that the user was a guest. This also Fetch backend user again
+    await queryClient.invalidateQueries();
 
-    // Navigate to sync user to the backend
-    navigate({
-      to: '/auth/callback',
-      search: { redirectTo: redirectToParam },
-    });
+    // Navigate to callback which will handle the redirect
+    navigate({ to: '/auth/callback' });
     return { data };
   };
 
@@ -129,7 +135,7 @@ export function useAuth() {
       safeSessionStorage.setItem("supabase_session_cache", JSON.stringify(cacheData));
     }
 
-    await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
+    await queryClient.invalidateQueries();
 
     return { data };
   };
@@ -143,7 +149,6 @@ export function useAuth() {
 
       // CLEAR BOTH SESSION AND METADATA CACHE
       clearAuthSession()
-
       await queryClient.removeQueries({ queryKey: ['auth', 'user'] });
       invalidateTokenCache()
 
@@ -166,13 +171,28 @@ export function useAuth() {
   };
 
   const signInWithGoogle = async () => {
+    // Store intended redirect BEFORE OAuth flow starts
     const urlParams = new URLSearchParams(window.location.search);
-    const redirectToParam = urlParams.get("redirectTo") || `/profile/${user?.uuid}`;
+    const redirectToParam = urlParams.get("redirectTo") || `/`; // Safe fallback
+    safeSessionStorage.setItem('auth_redirect_after_login', redirectToParam);
+
+    const redirectUrl = getOAuthRedirectUrl();
+
+    // Debug log (remove in production)
+    console.log('🔐 Google OAuth:', {
+      redirectTo: redirectUrl,
+      isDev: window.location.hostname === 'localhost',
+      port: window.location.port,
+    });
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectToParam)}`,
+        redirectTo: redirectUrl, // Clean URL without query params
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
       },
     });
 
