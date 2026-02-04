@@ -1,7 +1,7 @@
 import { Box, VStack, HStack, Text, Grid, Separator } from "@chakra-ui/react";
 import { Switch } from "@/components/ui/switch";
 import { Field, StyledInput } from "@/components/ui";
-import type { MentorSettingsForm } from "../Index";
+import type { MentorSettingsForm } from "../types";
 
 interface BookingRulesTabProps {
   formData: MentorSettingsForm;

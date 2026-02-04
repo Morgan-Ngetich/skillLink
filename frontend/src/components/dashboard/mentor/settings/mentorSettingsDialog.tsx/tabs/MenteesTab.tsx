@@ -1,6 +1,6 @@
 import { VStack, Text } from "@chakra-ui/react";
 import { Field, StyledInput, StyledTextarea } from "@/components/ui";
-import type { MentorSettingsForm } from "../Index";
+import type { MentorSettingsForm } from "../types";
 
 interface MenteesTabProps {
   formData: MentorSettingsForm;

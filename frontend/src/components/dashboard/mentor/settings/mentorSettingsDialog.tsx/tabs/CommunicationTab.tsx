@@ -1,6 +1,6 @@
 import { VStack, HStack, Text, Box, SimpleGrid } from "@chakra-ui/react";
 import { Field, StyledInput } from "@/components/ui";
-import type { MentorSettingsForm } from "../Index";
+import type { MentorSettingsForm } from "../types";
 
 interface CommunicationTabProps {
   formData: MentorSettingsForm;

@@ -1,6 +1,6 @@
 import { Box, VStack, HStack, Text } from "@chakra-ui/react";
 import { Switch } from "@/components/ui/switch";
-import type { MentorSettingsForm } from "../Index";
+import type { MentorSettingsForm } from "../types";
 
 interface VisibilityTabProps {
   formData: MentorSettingsForm;
