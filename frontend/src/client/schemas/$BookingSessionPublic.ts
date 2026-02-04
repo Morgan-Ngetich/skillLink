@@ -2,8 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export const $MentorSessionPublic = {
-    description: `Session without nested mentor profile`,
+export const $BookingSessionPublic = {
+    description: `Slim session for bookings - no nested bookings to avoid circular dependency`,
     properties: {
         id: {
             type: 'number',
@@ -16,10 +16,6 @@ export const $MentorSessionPublic = {
         },
         mentor_id: {
             type: 'number',
-            isRequired: true,
-        },
-        mentor: {
-            type: 'UserMinimal',
             isRequired: true,
         },
         title: {
@@ -92,10 +88,6 @@ export const $MentorSessionPublic = {
             isRequired: true,
         },
         is_active: {
-            type: 'boolean',
-            isRequired: true,
-        },
-        is_owner: {
             type: 'boolean',
             isRequired: true,
         },
@@ -175,12 +167,6 @@ export const $MentorSessionPublic = {
             }, {
                 type: 'null',
             }],
-        },
-        bookings: {
-            type: 'array',
-            contains: {
-                type: 'BookingPublic',
-            },
         },
         created_at: {
             type: 'string',

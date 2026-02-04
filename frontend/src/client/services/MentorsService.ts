@@ -18,7 +18,6 @@ import type { MentorSessionUpdate } from '../models/MentorSessionUpdate';
 import type { MentorSettingsPublic } from '../models/MentorSettingsPublic';
 import type { MentorSettingsUpdate } from '../models/MentorSettingsUpdate';
 import type { MentorStatsPublic } from '../models/MentorStatsPublic';
-import type { User } from '../models/User';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -444,11 +443,9 @@ export class MentorsService {
      * @throws ApiError
      */
     public static listSessionsApiV1MentorsSessionsGet({
-        currentUser,
         skip,
         limit = 100,
     }: {
-        currentUser?: (User | null),
         skip?: number,
         limit?: number,
     }): CancelablePromise<Array<MentorSessionPublic>> {
@@ -456,7 +453,6 @@ export class MentorsService {
             method: 'GET',
             url: '/api/v1/mentors/sessions',
             query: {
-                'current_user': currentUser,
                 'skip': skip,
                 'limit': limit,
             },
@@ -473,19 +469,14 @@ export class MentorsService {
      */
     public static getSessionApiV1MentorsSessionsSessionUuidGet({
         sessionUuid,
-        currentUser,
     }: {
         sessionUuid: string,
-        currentUser?: (User | null),
     }): CancelablePromise<MentorSessionPublic> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/v1/mentors/sessions/{session_uuid}',
             path: {
                 'session_uuid': sessionUuid,
-            },
-            query: {
-                'current_user': currentUser,
             },
             errors: {
                 422: `Validation Error`,
@@ -570,19 +561,14 @@ export class MentorsService {
      */
     public static getMentorSessionsApiV1MentorsMentorIdSessionsGet({
         mentorId,
-        currentUser,
     }: {
         mentorId: number,
-        currentUser?: (User | null),
     }): CancelablePromise<Array<MentorSessionPublic>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/v1/mentors/{mentor_id}/sessions',
             path: {
                 'mentor_id': mentorId,
-            },
-            query: {
-                'current_user': currentUser,
             },
             errors: {
                 422: `Validation Error`,

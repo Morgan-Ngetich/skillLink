@@ -24,3 +24,4 @@ export type MentorExplorePublic = {
     max_session_price: (number | null);
     avg_session_price: (number | null);
 };
+

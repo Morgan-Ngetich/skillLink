@@ -2,19 +2,16 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { BookingPublic } from './BookingPublic';
 import type { BookingStatus } from './BookingStatus';
 import type { LocationType } from './LocationType';
 import type { PreparationMaterial } from './PreparationMaterial';
-import type { UserMinimal } from './UserMinimal';
 /**
- * Session without nested mentor profile
+ * Slim session for bookings - no nested bookings to avoid circular dependency
  */
-export type MentorSessionPublic = {
+export type BookingSessionPublic = {
     id: number;
     uuid: string;
     mentor_id: number;
-    mentor: UserMinimal;
     title: string;
     description?: (string | null);
     cover_image?: (string | null);
@@ -28,7 +25,6 @@ export type MentorSessionPublic = {
     is_public: boolean;
     is_cancelled: boolean;
     is_active: boolean;
-    is_owner: boolean;
     max_bookings?: (number | null);
     location_type: LocationType;
     meeting_link?: (string | null);
@@ -42,7 +38,6 @@ export type MentorSessionPublic = {
     user_has_booked?: boolean;
     user_cancelled_by_mentor?: boolean;
     user_booking_status?: (BookingStatus | null);
-    bookings?: Array<BookingPublic>;
     created_at: string;
     updated_at: string;
 };

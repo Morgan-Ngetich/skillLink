@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { BookingSessionPublic } from './BookingSessionPublic';
 import type { BookingStatus } from './BookingStatus';
 import type { UserMinimal } from './UserMinimal';
 /**
@@ -11,6 +12,7 @@ export type BookingPublic = {
     id: number;
     uuid: string;
     session_id: number;
+    session?: (BookingSessionPublic | null);
     mentee?: (UserMinimal | null);
     status: BookingStatus;
     message?: (string | null);

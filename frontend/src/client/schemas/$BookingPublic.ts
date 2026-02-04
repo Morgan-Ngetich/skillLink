@@ -18,6 +18,14 @@ export const $BookingPublic = {
             type: 'number',
             isRequired: true,
         },
+        session: {
+            type: 'any-of',
+            contains: [{
+                type: 'BookingSessionPublic',
+            }, {
+                type: 'null',
+            }],
+        },
         mentee: {
             type: 'any-of',
             contains: [{
