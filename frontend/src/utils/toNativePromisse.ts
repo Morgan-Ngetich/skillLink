@@ -13,6 +13,7 @@
  *NOTE: Use this when a library requires a real Promise.
  */
 import { CancelablePromise } from "@/client";
+
 export function toNativePromise<T>(cancelable: CancelablePromise<T>): Promise<T> {
   // Create and return a native Promise
   return new Promise<T>((resolve, reject) => {
