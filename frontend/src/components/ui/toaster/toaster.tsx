@@ -4,14 +4,9 @@ import {
   Spinner,
   Stack,
   Toast,
-  createToaster,
 } from "@chakra-ui/react";
 import { activeToasts } from "@/hooks/public/useToaster";
-
-export const toaster = createToaster({
-  placement: "bottom-end",
-  pauseOnPageIdle: true,
-});
+import { toaster } from "./createToaster";
 
 // NOTE: No dismissing toast on handleClose. Chakra handles dismiss internally via <Toast.CloseTrigger> automatically.
 export const Toaster = () => {
