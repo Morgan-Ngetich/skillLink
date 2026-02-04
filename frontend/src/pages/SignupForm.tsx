@@ -33,13 +33,18 @@ const SignupForm = () => {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting },
-  } = useForm<SignUpFormData>();
+    formState: { errors, isSubmitting, isValid, isDirty },
+  } = useForm<SignUpFormData>({
+    mode: 'onChange',
+    criteriaMode: 'all',
+  });
 
   const passwordValue = watch('password');
   const toast = useToaster();
   const redirect = useCleanRedirect()
-  const googleUser  = useGoogleUser()
+  const googleUser = useGoogleUser()
+
+  const canSubmit = isValid && isDirty;
 
   const onSubmit = async ({ fullName, email, password }: SignUpFormData) => {
     const { error } = await signUp(email, password, fullName);
@@ -61,6 +66,7 @@ const SignupForm = () => {
       redirect()
     }
   };
+
 
   return (
     <Flex minH="100vh" align="center" justify="center" px={4} bg={{ base: "gray.100", _dark: "gray.800" }}>
@@ -84,7 +90,10 @@ const SignupForm = () => {
             <FormControl isInvalid={!!errors.fullName}>
               <FormLabel>Full Name</FormLabel>
               <StyledInput
-                {...register('fullName', { required: 'Full name is required' })}
+                {...register('fullName', {
+                  required: 'Full name is required',
+                  minLength: { value: 2, message: 'Name must be at least 2 characters' }
+                })}
               />
               <Text color="red.400" fontSize="xs">
                 {errors.fullName?.message}
@@ -106,7 +115,6 @@ const SignupForm = () => {
               </Text>
             </FormControl>
 
-
             {/* Password */}
             <FormControl isInvalid={!!errors.password}>
               <FormLabel>Password</FormLabel>
@@ -124,7 +132,6 @@ const SignupForm = () => {
                     hasUpper: (val) => hasUpperCase(val) || 'Must contain an uppercase letter',
                     hasLower: (val) => hasLowerCase(val) || 'Must contain a lowercase letter',
                     hasNumber: (val) => hasNumber(val) || 'Must contain a number',
-                    // hasSpecial: (val) => hasSpecialChar(val) || 'Must contain a special character',
                   },
                 })}
               />
@@ -138,13 +145,18 @@ const SignupForm = () => {
               </Text>
             </FormControl>
 
-            {/* Submit Button */}
+            {/* Submit Button - Disabled until valid */}
             <Button
               type="submit"
               loading={isSubmitting}
+              disabled={!canSubmit || isSubmitting}
               size="md"
               rounded="lg"
-              _disabled={{ cursor: 'not-allowed' }}
+              _disabled={{
+                cursor: 'not-allowed',
+                opacity: 0.4,
+                bg: 'gray.300'
+              }}
             >
               Sign Up
             </Button>
@@ -156,7 +168,6 @@ const SignupForm = () => {
             </Text>
 
             {/* Google Sign In */}
-
             <Flex justify="center" w="100%">
               <Button
                 onClick={signInWithGoogle}
@@ -180,20 +191,19 @@ const SignupForm = () => {
                 {googleUser?.avatar_url ? (
                   <Box position="relative" display="inline-block">
                     <Avatar size="sm" src={googleUser.avatar_url} name={googleUser.name} />
-                    {/* Google Icon overlay */}
                     <Box
                       position="absolute"
                       top="-2px"
                       right="-2px"
                       boxSize="16px"
                       borderRadius="full"
-                      bg="white"                   // Background behind the icon
+                      bg="white"
                       border="1px solid"
-                      borderColor="gray.300"      // Soft border to match Google styling
+                      borderColor="gray.300"
                       display="flex"
                       alignItems="center"
                       justifyContent="center"
-                      boxShadow="0 0 2px rgba(0,0,0,0.1)" // Optional subtle shadow
+                      boxShadow="0 0 2px rgba(0,0,0,0.1)"
                     >
                       <Icon as={FcGoogle} boxSize={4} />
                     </Box>
