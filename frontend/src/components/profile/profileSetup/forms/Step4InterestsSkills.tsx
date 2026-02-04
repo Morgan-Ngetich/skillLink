@@ -9,7 +9,6 @@ import {
   HStack,
   InputGroup,
   TagLabel,
-  SegmentGroup,
   Tabs,
 } from '@chakra-ui/react';
 import { Alert, Tag } from '@/components/ui';
@@ -26,9 +25,11 @@ import { useState } from 'react';
 
 export default function Step4InterestsSkills() {
   const { control, getValues, setValue } = useFormContext();
-  const [isOpen, setIsOpen] = useState(false);
-  const [customType, setCustomType] = useState<'interest' | 'skill'>('interest');
-  const [customInputValue, setCustomInputValue] = useState('');
+  const [isInterestInputOpen, setIsInterestInputOpen] = useState(false);
+  const [isSkillInputOpen, setIsSkillInputOpen] = useState(false);
+  const [customInterestValue, setCustomInterestValue] = useState('');
+  const [customSkillValue, setCustomSkillValue] = useState('');
+  const [activeTab, setActiveTab] = useState('interests');
 
   const selectedAreas = useWatch({ control, name: 'area_of_focus' }) || [];
   const selectedInterests = useWatch({ control, name: 'interests' }) || [];
@@ -80,22 +81,36 @@ export default function Step4InterestsSkills() {
     });
   };
 
-  const addCustomItem = () => {
-    const value = customInputValue.trim();
+  const addCustomInterest = () => {
+    const value = customInterestValue.trim();
     if (!value) return;
 
-    const fieldName = customType === 'interest' ? 'interests' : 'skills';
-    const current = getValues(fieldName) || [];
-
+    const current = getValues('interests') || [];
     if (!current.includes(value)) {
-      setValue(fieldName, [...current, value], {
+      setValue('interests', [...current, value], {
         shouldValidate: true,
         shouldDirty: true,
       });
     }
 
-    setCustomInputValue('');
-    setIsOpen(false);
+    setCustomInterestValue('');
+    setIsInterestInputOpen(false);
+  };
+
+  const addCustomSkill = () => {
+    const value = customSkillValue.trim();
+    if (!value) return;
+
+    const current = getValues('skills') || [];
+    if (!current.includes(value)) {
+      setValue('skills', [...current, value], {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+
+    setCustomSkillValue('');
+    setIsSkillInputOpen(false);
   };
 
   const renderSection = (
@@ -106,7 +121,7 @@ export default function Step4InterestsSkills() {
     colorScheme: string
   ) => (
     <Box>
-      
+
       {items.length > 0 ? (
         <Flex flexWrap="wrap" gap={3} maxH="300px" overflowY="auto" py={2}>
           {items.map((item) => {
@@ -121,7 +136,7 @@ export default function Step4InterestsSkills() {
                 key={item.label}
                 onClick={() => toggleItem(item.label, type)}
                 borderWidth="1px"
-                borderRadius={{base: "lg", md: "xl"}}
+                borderRadius={{ base: "lg", md: "xl" }}
                 px={{ base: 2, md: 4 }}
                 py={2}
                 bg={isSelected ? selectedBg : 'transparent'}
@@ -190,15 +205,8 @@ export default function Step4InterestsSkills() {
     </Box>
   );
 
-  return (
+return (
     <VStack align="start" gap={8} w="full">
-      {/* Header */}
-      {/* <Box>
-        <Text fontSize="md" color="gray.600" _dark={{ color: 'gray.300' }}>
-          Tell us about your interests and skills. We need at least 2 interests and 1 skill to help match you with the right opportunities.
-        </Text>
-      </Box> */}
-
       {/* Validation Alert */}
       {!isValid && (
         <Alert status="warning" borderRadius="md" fontSize="sm" p={2}>
@@ -210,7 +218,12 @@ export default function Step4InterestsSkills() {
       )}
 
       {/* Tabs for Interests and Skills */}
-      <Tabs.Root defaultValue="interests" w="full" variant="outline">
+      <Tabs.Root 
+        value={activeTab} 
+        onValueChange={(e) => setActiveTab(e.value)} 
+        w="full" 
+        variant="outline"
+      >
         <Tabs.List>
           <Tabs.Trigger value="interests">
             <HStack>
@@ -233,109 +246,169 @@ export default function Step4InterestsSkills() {
         </Tabs.List>
 
         <Tabs.Content value="interests" p={{base: 2, md: 4}}>
-          <FormControl>
-            <Controller
-              control={control}
-              name="interests"
-              render={() => renderSection(allInterests, 'interest', selectedInterests, FiHeart, 'pink')}
-            />
-          </FormControl>
+          <VStack align="start" gap={4} w="full">
+            <FormControl>
+              <Controller
+                control={control}
+                name="interests"
+                render={() => renderSection(allInterests, 'interest', selectedInterests, FiHeart, 'pink')}
+              />
+            </FormControl>
+
+            {/* Custom Interest Input */}
+            <Collapsible.Root 
+              open={isInterestInputOpen} 
+              onOpenChange={({ open }) => setIsInterestInputOpen(open)} 
+              w="full"
+            >
+              {!isInterestInputOpen && (
+                <Collapsible.Trigger asChild>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    colorPalette="pink"
+                  >
+                    <FiPlus /> Add Custom Interest
+                  </Button>
+                </Collapsible.Trigger>
+              )}
+
+              <Collapsible.Content>
+                <VStack align="start" gap={4} mt={4} p={4} bg="pink.50" _dark={{ bg: 'pink.900/20' }} borderRadius="lg">
+                  <FormControl w="100%">
+                    <FormLabel fontSize="sm" mb={2} color="pink.600" _dark={{ color: 'pink.300' }}>
+                      Add your own interest
+                    </FormLabel>
+                    <HStack>
+                      <InputGroup
+                        endElement={
+                          <HStack>
+                            <Button
+                              size="sm"
+                              colorPalette="pink"
+                              onClick={addCustomInterest}
+                              disabled={!customInterestValue.trim()}
+                            >
+                              Add
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              colorPalette="red"
+                              aria-label="Close"
+                              onClick={() => {
+                                setIsInterestInputOpen(false);
+                                setCustomInterestValue('');
+                              }}
+                            >
+                              <FiX />
+                            </Button>
+                          </HStack>
+                        }
+                      >
+                        <StyledInput
+                          placeholder="Enter your custom interest..."
+                          value={customInterestValue}
+                          onChange={(e) => setCustomInterestValue(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              addCustomInterest();
+                            }
+                          }}
+                          autoFocus
+                        />
+                      </InputGroup>
+                    </HStack>
+                  </FormControl>
+                </VStack>
+              </Collapsible.Content>
+            </Collapsible.Root>
+          </VStack>
         </Tabs.Content>
 
-        <Tabs.Content value="skills" p={4}>
-          <FormControl>
-            <Controller
-              control={control}
-              name="skills"
-              render={() => renderSection(allSkills, 'skill', selectedSkills, FiTool, 'green')}
-            />
-          </FormControl>
+        <Tabs.Content value="skills" p={{base: 2, md: 4}}>
+          <VStack align="start" gap={4} w="full">
+            <FormControl>
+              <Controller
+                control={control}
+                name="skills"
+                render={() => renderSection(allSkills, 'skill', selectedSkills, FiTool, 'green')}
+              />
+            </FormControl>
+
+            {/* Custom Skill Input */}
+            <Collapsible.Root 
+              open={isSkillInputOpen} 
+              onOpenChange={({ open }) => setIsSkillInputOpen(open)} 
+              w="full"
+            >
+              {!isSkillInputOpen && (
+                <Collapsible.Trigger asChild>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    colorPalette="green"
+                  >
+                    <FiPlus /> Add Custom Skill
+                  </Button>
+                </Collapsible.Trigger>
+              )}
+
+              <Collapsible.Content>
+                <VStack align="start" gap={4} mt={4} p={4} bg="green.50" _dark={{ bg: 'green.900/20' }} borderRadius="lg">
+                  <FormControl w="100%">
+                    <FormLabel fontSize="sm" mb={2} color="green.600" _dark={{ color: 'green.300' }}>
+                      Add your own skill
+                    </FormLabel>
+                    <HStack>
+                      <InputGroup
+                        endElement={
+                          <HStack>
+                            <Button
+                              size="sm"
+                              colorPalette="green"
+                              onClick={addCustomSkill}
+                              disabled={!customSkillValue.trim()}
+                            >
+                              Add
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              colorPalette="red"
+                              aria-label="Close"
+                              onClick={() => {
+                                setIsSkillInputOpen(false);
+                                setCustomSkillValue('');
+                              }}
+                            >
+                              <FiX />
+                            </Button>
+                          </HStack>
+                        }
+                      >
+                        <StyledInput
+                          placeholder="Enter your custom skill..."
+                          value={customSkillValue}
+                          onChange={(e) => setCustomSkillValue(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              addCustomSkill();
+                            }
+                          }}
+                          autoFocus
+                        />
+                      </InputGroup>
+                    </HStack>
+                  </FormControl>
+                </VStack>
+              </Collapsible.Content>
+            </Collapsible.Root>
+          </VStack>
         </Tabs.Content>
       </Tabs.Root>
-
-      {/* Custom Input */}
-      <Collapsible.Root open={isOpen} onOpenChange={({ open }) => setIsOpen(open)} w="full">
-        {!isOpen && (
-          <Collapsible.Trigger asChild>
-            <Button
-              size="sm"
-              variant="outline"
-              colorPalette="purple"
-            >
-              <FiPlus /> Add Custom Item
-            </Button>
-          </Collapsible.Trigger>
-        )}
-
-        <Collapsible.Content>
-          <VStack align="start" gap={4} mt={4} p={4} bg="pink.50" _dark={{ bg: 'pink.900/20' }} borderRadius="lg">
-            <SegmentGroup.Root
-              value={customType}
-              onValueChange={(val) => {
-                const strVal = typeof val === 'string' ? val : val?.value;
-                if (strVal === 'interest' || strVal === 'skill') {
-                  setCustomType(strVal);
-                }
-              }}
-            >
-              <SegmentGroup.Indicator colorPalette="pink" />
-              <SegmentGroup.Items
-                items={[
-                  { value: 'interest', label: 'Interest' },
-                  { value: 'skill', label: 'Skill' },
-                ]}
-                colorPalette="pink"
-              />
-            </SegmentGroup.Root>
-
-            <FormControl w="100%">
-              <FormLabel fontSize="sm" mb={2}>
-                Add your own {customType}
-              </FormLabel>
-              <HStack>
-                <InputGroup
-                  endElement={
-                    <HStack>
-                      <Button
-                        size="sm"
-                        colorPalette="pink"
-                        onClick={addCustomItem}
-                        disabled={!customInputValue.trim()}
-                      >
-                        Add
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        colorPalette="red"
-                        aria-label="Close"
-                        onClick={() => {
-                          setIsOpen(false);
-                          setCustomInputValue('');
-                        }}
-                      >
-                        <FiX />
-                      </Button>
-                    </HStack>
-                  }
-                >
-                  <StyledInput
-                    placeholder={`Enter your custom ${customType}...`}
-                    value={customInputValue}
-                    onChange={(e) => setCustomInputValue(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        addCustomItem();
-                      }
-                    }}
-                  />
-                </InputGroup>
-              </HStack>
-            </FormControl>
-          </VStack>
-        </Collapsible.Content>
-      </Collapsible.Root>
 
       {/* Progress Summary */}
       <Box w="full" p={4} bg="gray.50" _dark={{ bg: 'gray.800' }} borderRadius="lg">
