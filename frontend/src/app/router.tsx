@@ -24,10 +24,8 @@ export function createRouter() {
   })
 }
 
-// Export getRouter for TanStack Start
-export function getRouter() {
-  return createRouter()
-}
+// alias it, don't create a new function. This is to prevent unwanted funtion from being generated into the routeTreegen.ts
+export const getRouter = createRouter
 
 // Type declarations
 declare module '@tanstack/react-router' {
