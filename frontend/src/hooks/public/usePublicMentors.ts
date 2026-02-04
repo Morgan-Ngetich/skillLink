@@ -197,7 +197,7 @@ export const usePublicMentors = (
     staleTime: 1000 * 60 * 10, // 10 minutes - featured list changes rarely
     retry: 2,
     enabled,
-    initialData: initialData?.mentors,
+    placeholderData: initialData?.mentors,
   });
 
   // Featured sessions
@@ -209,7 +209,7 @@ export const usePublicMentors = (
     staleTime: 1000 * 60 * 10, // 10 minutes
     retry: 2,
     enabled,
-    initialData: initialData?.sessions,
+    placeholderData: initialData?.sessions,
   });
 
   // Featured services
@@ -221,7 +221,7 @@ export const usePublicMentors = (
     staleTime: 1000 * 60 * 10, // 10 minutes
     retry: 2,
     enabled,
-    initialData: initialData?.services,
+    placeholderData: initialData?.services,
   });
 
   return {
