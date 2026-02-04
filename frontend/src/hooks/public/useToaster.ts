@@ -21,6 +21,7 @@ const useToaster = () => {
           title,
           description,
           type: status,
+          duration: 4000,
         });
       } else {
         toaster.create({
@@ -29,6 +30,7 @@ const useToaster = () => {
           description,
           type: status,
           closable: true,
+          duration: 4000,
         });
         if (id) activeToasts.add(id);
       }
