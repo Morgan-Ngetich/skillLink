@@ -7,6 +7,8 @@ import {
   HStack,
   VStack,
   useBreakpointValue,
+  Skeleton,
+  SkeletonCircle,
 } from '@chakra-ui/react';
 import { Tabs } from '@chakra-ui/react';
 import { Avatar, Tag } from '@/components/ui';
@@ -23,6 +25,7 @@ interface InfoPanelContentProps {
   confirmedBookings: BookingPublic[];
   closeButton?: React.ReactNode;
   isMobileLayout?: boolean;
+  mentorLoading?: boolean;
 }
 
 const InfoPanelContent: React.FC<InfoPanelContentProps> = ({
@@ -31,12 +34,14 @@ const InfoPanelContent: React.FC<InfoPanelContentProps> = ({
   confirmedBookings,
   closeButton,
   isMobileLayout,
+  mentorLoading
 }) => {
   const avs = { base: 'gray.100', _dark: 'gray.700' };
   const isMobile = useBreakpointValue({ base: true, md: false });
 
   const startDate = session.start_time ? parseISO(session.start_time) : null;
   const isFull = session.is_full;
+  const isOwner = session.is_owner
 
   return (
     <Box
@@ -115,42 +120,108 @@ const InfoPanelContent: React.FC<InfoPanelContentProps> = ({
 
             {/* Session description */}
             {session.description && (
-              <Text fontSize={{ base: "xs", md: "sm" }} color="fg.muted" lineHeight="1.6" lineClamp={2}>
+              <Text fontSize={{ base: "xs", md: "sm" }} color="fg.muted" lineClamp={2}>
                 {session.description}
               </Text>
             )}
 
             {/* Tags */}
             {session.tags && session.tags.length > 0 && (
-              <HStack gap={2} flexWrap="wrap">
+              <HStack
+                gap={2}
+                overflowX="auto"
+                w="full"
+                flexWrap="nowrap"
+                scrollbar={"hidden"}
+              >
                 {session.tags.map((tag, idx) => (
-                  <Badge key={idx} variant="subtle" colorPalette="blue" size="sm">
+                  <Badge
+                    key={idx}
+                    variant="subtle"
+                    colorPalette="blue"
+                    size="sm"
+                    flexShrink={0}
+                    whiteSpace="nowrap"
+                  >
                     {tag}
                   </Badge>
                 ))}
               </HStack>
             )}
 
-            {/* Mentor Info */}
+            {/* Mentor Info with Loading States */}
             <HStack justify="space-between" w="full" p={{ base: 2, md: 4 }} bg={avs} rounded="md">
-              <HStack>
-                <Avatar size="sm" src={mentorData?.avatar_url ?? "/fallback.jpg"} name={mentorData?.full_name} />
+              <HStack gap={3}>
+                {/* Avatar Skeleton */}
+                {mentorLoading ? (
+                  <SkeletonCircle size="10" />
+                ) : (
+                  <Avatar
+                    size="sm"
+                    src={mentorData?.avatar_url ?? "/fallback.jpg"}
+                    name={mentorData?.full_name}
+                  />
+                )}
+
                 <Box>
-                  <Text fontSize="sm" fontWeight="semibold">{mentorData?.full_name}</Text>
-                  <Text fontSize="xs" color="fg.muted">{mentorData?.profile?.title}</Text>
+                  {/* Mentor Name Skeleton */}
+                  {mentorLoading ? (
+                    <Skeleton height="4" width="120px" mb={1} />
+                  ) : (
+                    <Text fontSize="sm" fontWeight="semibold">
+                      {mentorData?.full_name}
+                    </Text>
+                  )}
+
+                  {/* Mentor Title Skeleton */}
+                  {mentorLoading ? (
+                    <Skeleton height="3" width="100px" />
+                  ) : (
+                    <Text fontSize="xs" color="fg.muted">
+                      {mentorData?.profile?.title || 'Mentor'}
+                    </Text>
+                  )}
                 </Box>
               </HStack>
 
-              <Link to={`/profile/$uuid`} params={{ uuid: mentorData?.uuid || '' }}>
-                <Button size="xs" rounded="md" variant="surface" _hover={{ border: "1px solid" }}>View Profile</Button>
-              </Link>
+              {/* Button Skeleton */}
+              {mentorLoading ? (
+                <Skeleton height="8" width="90px" borderRadius="md" />
+              ) : (
+                <Link
+                  to={`/profile/$uuid`}
+                  params={{ uuid: mentorData?.uuid || '' }}
+                  search={{
+                    pt: 'about',
+                    st: 'sessions',
+                    drawer: undefined,
+                    step: undefined,
+                    redirectTo: undefined,
+                    serviceModal: undefined,
+                    serviceId: undefined,
+                    sessionModal: undefined,
+                    sessionId: undefined,
+                    sessionDetailId: undefined,
+                    settings: undefined,
+                  }}
+                >
+                  <Button
+                    size="xs"
+                    rounded="md"
+                    variant="surface"
+                    _hover={{ border: "1px solid" }}
+                  >
+                    View Profile
+                  </Button>
+                </Link>
+              )}
             </HStack>
           </VStack>
         </Tabs.Content>
 
         {/* Members Tab */}
         <Tabs.Content value="members" flex="1" minH="0" overflowY="auto">
-          <VStack align="stretch" gap={2}>
+          <VStack align="stretch" gap={0}>
             {confirmedBookings.length > 0 ? (
               confirmedBookings.map((booking) => (
                 <Flex
@@ -158,14 +229,30 @@ const InfoPanelContent: React.FC<InfoPanelContentProps> = ({
                   align="center"
                   p={{ base: 2, md: 3 }}
                   borderRadius="md"
-                  _hover={{ bg: avs }}
-                  borderBottom="1px solid"
-                  borderColor="border.subtle"
+                  bgGradient="to-b"
+                  gradientFrom={"bg.subtle"}
+                  gradientTo={"cardbg"}
+                  borderBottom={"1px solid"}
+                  _hover={{ bg: "bg.muted" }}
+                  rounded="lg"
+                  borderColor="border.emphasized"
+                  transition="all 0.2s"
                 >
-                  <Avatar size="sm" src={booking.mentee?.avatar_url ?? "/fallback.jpg"} name={booking.mentee?.full_name || `Participant ${booking.id}`} mr={3} />
+                  <Avatar
+                    size="sm"
+                    src={booking.mentee?.avatar_url ?? "/fallback.jpg"}
+                    name={booking.mentee?.full_name || `Participant ${booking.id}`}
+                    mr={3}
+                  />
                   <Box flex={1}>
-                    <Text fontWeight="medium" fontSize="sm">{booking.mentee?.full_name || 'Anonymous'}</Text>
-                    <Text fontSize="xs" color="fg.muted">{booking.mentee?.email}</Text>
+                    <Text fontWeight="medium" fontSize="sm">
+                      {booking.mentee?.full_name || 'Anonymous'}
+                    </Text>
+                    {isOwner && (
+                      <Text fontSize="xs" color="fg.muted">
+                        {booking.mentee?.email}
+                      </Text>
+                    )}
                   </Box>
                   <Badge colorPalette="green" fontSize="xs">Confirmed</Badge>
                 </Flex>

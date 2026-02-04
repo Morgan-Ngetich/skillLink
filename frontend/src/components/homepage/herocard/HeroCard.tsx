@@ -33,7 +33,7 @@ const HeroCard = ({ featuredSessions = [], isLoading, variant = 'responsive' }: 
   const isMobileLayout = variant === 'card' || isMobile;
 
   // Handle loading and empty states
-  if (isLoading || mentorLoading || !featuredSessions || featuredSessions.length === 0) {
+  if (isLoading || !featuredSessions || featuredSessions.length === 0) {
     return (
       <HeroCardSkeleton />
     );
@@ -74,6 +74,7 @@ const HeroCard = ({ featuredSessions = [], isLoading, variant = 'responsive' }: 
           currentIndex={currentIndex}
           totalSlides={featuredSessions.length}
           isMobileLayout={isMobileLayout}
+          mentorLoading={mentorLoading}
         />
       </Box>
 
@@ -86,6 +87,7 @@ const HeroCard = ({ featuredSessions = [], isLoading, variant = 'responsive' }: 
           mentorData={mentorData}
           confirmedBookings={confirmedBookings}
           isMobileLayout={isMobileLayout}
+          mentorLoading={mentorLoading}
         />
       </Box>
     </Flex>

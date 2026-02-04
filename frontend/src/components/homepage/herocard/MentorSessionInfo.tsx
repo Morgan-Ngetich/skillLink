@@ -11,6 +11,8 @@ import {
   CloseButton,
   Portal,
   useDisclosure,
+  Skeleton,
+  SkeletonCircle,
 } from '@chakra-ui/react';
 import { AvatarGroup, Avatar } from '@/components/ui';
 import InfoPanelContent, { DrawerContainer } from './InfoPanelContent';
@@ -31,6 +33,7 @@ interface MentorSessionInfoProps {
   currentIndex: number;
   totalSlides: number;
   isMobileLayout?: boolean;
+  mentorLoading?: boolean;
 }
 
 const MentorSessionInfo: React.FC<MentorSessionInfoProps> = ({
@@ -42,20 +45,82 @@ const MentorSessionInfo: React.FC<MentorSessionInfoProps> = ({
   currentIndex,
   totalSlides,
   isMobileLayout,
+  mentorLoading,
 }) => {
   const portalRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { open, onOpen, onClose } = useDisclosure();
 
+  const showActions = session.is_owner || false
   const startDate = session.start_time ? parseISO(session.start_time) : null;
   const endDate = session.end_time ? parseISO(session.end_time) : null;
   const isSessionPast = endDate ? isPast(endDate) : false;
   const isFull = session.is_full;
   const spotsLeft = session.available_spots || 0;
+  const isUserBooked = session.user_has_booked || false;
+  const isSessionCancelled = session.is_cancelled || !session.is_active;
+  const isUserCancelledByMentor = session.user_cancelled_by_mentor || false;
+
+  const getBookingButtonProps = () => {
+    if (isSessionPast) {
+      return {
+        text: "Session Ended",
+        colorPalette: "gray",
+        disabled: true,
+      };
+    }
+    if (isSessionCancelled) {
+      return {
+        text: "Cancelled",
+        colorPalette: "gray",
+        disabled: true,
+      };
+    }
+    if (isFull) {
+      return {
+        text: "Fully Booked",
+        colorPalette: "gray",
+        disabled: true,
+      };
+    }
+    if (!session.is_public && !showActions) {
+      return {
+        text: "Private Session",
+        colorPalette: "gray",
+        disabled: true,
+      };
+    }
+    if (showActions) {
+      return {
+        text: "View Details",
+        colorPalette: "blue",
+        disabled: false,
+      };
+    }
+    if (isUserBooked) {
+      return {
+        text: "Booked",
+        colorPalette: "blue",
+      };
+    }
+    if (isUserCancelledByMentor) {
+      return {
+        text: "Cancelled by Mentor",
+        colorPalette: "red",
+        disabled: true,
+      };
+    }
+    return {
+      text: "Reserve Spot",
+      colorPalette: "green",
+      disabled: false,
+    };
+  };
+
+  const bookingButtonProps = getBookingButtonProps();
 
   return (
     <Drawer.Root open={open} onOpenChange={(val) => !val && onClose()}>
-      {/* Drawer content container */}
       <DrawerContainer ref={portalRef}>
         <Box
           w="full"
@@ -87,11 +152,11 @@ const MentorSessionInfo: React.FC<MentorSessionInfoProps> = ({
             <Flex justify="space-between" align="center" mb={{ base: 3, md: 4 }}>
               {/* Avatars */}
               {confirmedBookings.length > 0 ? (
-                <AvatarGroup size={{ base: 'xs', md: 'sm' }}>
+                <AvatarGroup size={{ base: '2xs', md: 'sm' }}>
                   {confirmedBookings.slice(0, 3).map((booking, idx) => (
                     <Avatar
                       key={idx}
-                      src={booking.mentee?.avatar_url ?? "/fallbacl.jpg"}
+                      src={booking.mentee?.avatar_url ?? "/fallback.jpg"}
                       name={booking.mentee?.full_name || `Participant ${booking.id}`}
                       border="1px solid white"
                     />
@@ -147,16 +212,53 @@ const MentorSessionInfo: React.FC<MentorSessionInfoProps> = ({
 
             {/* Mentor info + session title */}
             <Box mb={{ base: 3, md: 4 }}>
-              <Link to={`/profile/$uuid`} params={{ uuid: mentorData?.uuid || '' }}>
+              <Link
+                to={`/profile/$uuid`}
+                params={{ uuid: mentorData?.uuid || '' }}
+                search={{
+                  pt: 'about',
+                  st: 'sessions',
+                  drawer: undefined,
+                  step: undefined,
+                  redirectTo: undefined,
+                  serviceModal: undefined,
+                  serviceId: undefined,
+                  sessionModal: undefined,
+                  sessionId: undefined,
+                  sessionDetailId: undefined,
+                  settings: undefined,
+                }}
+              >
                 <HStack gap={2} align="start" mb={{ base: 2, md: 3 }}>
-                  <Avatar src={mentorData?.avatar_url ?? "/fallback.jpg"} name={mentorData?.full_name} size={{ base: 'sm', md: 'md' }} />
-                  <VStack align="start" gap={0}>
-                    <Text fontSize={{ base: 'sm', md: 'lg' }} fontWeight="bold" color="white" truncate>
-                      {mentorData?.full_name}
-                    </Text>
-                    <Text fontSize={{ base: 'xs', md: 'sm' }} color="gray.300" lineClamp={{ base: 1, md: 2 }}>
-                      {mentorData?.profile?.title}
-                    </Text>
+                  {/* Avatar with loading state */}
+                  {mentorLoading ? (
+                    <SkeletonCircle size={{ base: '10', md: '12' }} />
+                  ) : (
+                    <Avatar
+                      src={mentorData?.avatar_url ?? "/fallback.jpg"}
+                      name={mentorData?.full_name}
+                      size={{ base: 'sm', md: 'md' }}
+                    />
+                  )}
+
+                  <VStack align="start" gap={0} flex="1">
+                    {/* Mentor name with loading state */}
+                    {mentorLoading ? (
+                      <Skeleton height={{ base: '4', md: '6' }} width="120px" />
+                    ) : (
+                      <Text fontSize={{ base: 'sm', md: 'lg' }} fontWeight="bold" color="white" truncate>
+                        {mentorData?.full_name}
+                      </Text>
+                    )}
+
+                    {/* Mentor title with loading state */}
+                    {mentorLoading ? (
+                      <Skeleton height={{ base: '3', md: '4' }} width="160px" mt={1} />
+                    ) : (
+                      <Text fontSize={{ base: 'xs', md: 'sm' }} color="gray.300" lineClamp={{ base: 1, md: 2 }}>
+                        {mentorData?.profile?.title || 'Mentor'}
+                      </Text>
+                    )}
                   </VStack>
                 </HStack>
               </Link>
@@ -222,7 +324,10 @@ const MentorSessionInfo: React.FC<MentorSessionInfoProps> = ({
                         ? 'Session cancelled'
                         : isFull
                           ? 'Session is full'
-                          : `${spotsLeft} ${spotsLeft === 1 ? 'spot' : 'spots'} left`}
+                          : session.user_has_booked
+                            ? "Already Booked"
+                            : `${spotsLeft} ${spotsLeft === 1 ? 'spot' : 'spots'} left`
+                    }
                   </Text>
                 </VStack>
 
@@ -235,25 +340,31 @@ const MentorSessionInfo: React.FC<MentorSessionInfoProps> = ({
                     <Text fontWeight="semibold">{session.price_usd ? `$${session.price_usd}` : 'Free'}</Text>
                   </HStack>
 
-                  <Button
-                    size={{ base: 'xs', md: 'sm' }}
-                    colorPalette={isFull || isSessionPast ? 'gray' : 'green'}
-                    rounded="full"
-                    fontWeight="semibold"
-                    disabled={isFull || isSessionPast}
-                    _hover={{ transform: isFull || isSessionPast ? 'none' : 'scale(1.05)' }}
-                    _active={{ transform: isFull || isSessionPast ? 'none' : 'scale(0.98)' }}
-                    onClick={() => navigate({
-                      to: `/profile/${mentorData?.uuid}`,
-                      search: {
-                        pt: 'about',
-                        st: 'sessions',
-                        sessionDetailId: session.uuid
-                      }
-                    })}
-                  >
-                    {isSessionPast ? 'Completed' : isFull ? 'Full' : 'Book Now'}
-                  </Button>
+                  {/* Button with loading state */}
+                  {mentorLoading ? (
+                    <Skeleton height={{ base: '6', md: '9' }} width="100px" borderRadius="full" />
+                  ) : (
+                    <Button
+                      size={{ base: 'xs', md: 'sm' }}
+                      colorPalette={bookingButtonProps.colorPalette}
+                      rounded={'full'}
+                      fontWeight="semibold"
+                      disabled={bookingButtonProps.disabled}
+                      _hover={{ transform: isFull || isSessionPast ? 'none' : 'scale(1.05)' }}
+                      _active={{ transform: isFull || isSessionPast ? 'none' : 'scale(0.98)' }}
+                      onClick={() => navigate({
+                        to: `/profile/${mentorData?.uuid}`,
+                        search: {
+                          pt: 'about',
+                          st: 'sessions',
+                          sessionDetailId: session.uuid
+                        }
+                      })}
+                      cursor={bookingButtonProps.disabled ? "not-allowed" : "pointer"}
+                    >
+                      {bookingButtonProps.text}
+                    </Button>
+                  )}
                 </VStack>
               </Flex>
             </Box>
@@ -261,7 +372,7 @@ const MentorSessionInfo: React.FC<MentorSessionInfoProps> = ({
         </Box>
       </DrawerContainer>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer - same as before */}
       <Portal container={portalRef}>
         {isMobileLayout && (
           <Drawer.Positioner pos="absolute" boxSize="full">
