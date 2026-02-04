@@ -331,7 +331,7 @@ const ServiceCard = ({
                 // disabled={isSessionPast}
                 >
                   <LuPencil />
-                  Edit Session
+                  Edit Service
                 </Menu.Item>
 
                 <Menu.Separator />

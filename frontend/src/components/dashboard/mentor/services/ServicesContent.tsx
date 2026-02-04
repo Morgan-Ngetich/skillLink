@@ -39,12 +39,12 @@ interface ServicesContentProps {
   onDelete?: (service: MentorServicePublic) => void;
 }
 
-const ServicesContent: React.FC<ServicesContentProps> = ({ 
-  services = [], 
-  readOnly, 
-  serviceModal, 
-  serviceId, 
-  onOpenServiceModal, 
+const ServicesContent: React.FC<ServicesContentProps> = ({
+  services = [],
+  readOnly,
+  serviceModal,
+  serviceId,
+  onOpenServiceModal,
   onCloseServiceModal,
 
   onEdit,
@@ -102,7 +102,14 @@ const ServicesContent: React.FC<ServicesContentProps> = ({
   const isModalOpen = !readOnly && (serviceModal === "create" || serviceModal === "edit");
 
   if (!services || services.length === 0) {
-    if (readOnly) return <Text>No services available.</Text>;
+    if (readOnly) return (
+      <Box py={12} textAlign="center" bg="cardbg" border="1px dotted" borderRadius={"md"}>
+        <Text color="fg.muted">No services available</Text>
+        <Text fontSize="sm" color="fg.subtle" mt={2}>
+          services will appear here
+        </Text>
+      </Box>
+    );
 
     return (
       <>
