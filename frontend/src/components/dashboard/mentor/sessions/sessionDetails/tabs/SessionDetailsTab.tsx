@@ -72,16 +72,12 @@ const SessionDetailsTab = ({
       <SessionPriceAvailability session={session} />
 
       {/* Booking Message - Only for mentees */}
-      {!isOwner && !isFull && (
+      {!isOwner && !isFull && requiresMessage && (
         <>
           <Separator />
           <Box>
             <Field
-              label={
-                requiresMessage
-                  ? "Introduction Message (Required)"
-                  : "Message to Mentor (Optional)"
-              }
+              label={"Introduction Message (Required)"}
               required={requiresMessage}
               helperText="Tell the mentor why you're interested in this session"
             >

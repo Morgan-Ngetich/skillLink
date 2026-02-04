@@ -1,55 +1,65 @@
-import { VStack, Box, HStack, Text, Badge, IconButton } from "@chakra-ui/react";
+import { VStack, Box, HStack, Text, Badge, IconButton, Menu, Icon } from "@chakra-ui/react";
 import { Avatar } from "@/components/ui";
-import { Menu } from "@chakra-ui/react";
-import { BsThreeDotsVertical } from "react-icons/bs";
-import { LuX, LuMail } from "react-icons/lu";
 import type { BookingPublic } from "@/client";
+import { formatDistanceToNow } from "date-fns";
+import { FaX } from "react-icons/fa6";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { FaRedoAlt } from "react-icons/fa";
+import { LuMail } from "react-icons/lu";
 import { useState } from "react";
 
-interface ParticipantsTabProps {
+interface CancelledBookingsTabProps {
   bookings: BookingPublic[];
-  sessionTitle: string;
-  isOwner: boolean;
-  onCancelBooking?: (bookingId: number) => void;
+  sessionTitle?: string;
+  isOwner?: boolean;
+  onConfirm?: (bookingId: number) => void;
+  isConfirming: boolean;
 }
 
-const ParticipantsTab = ({
+const CancelledBookingsTab = ({
   bookings,
   sessionTitle,
   isOwner,
-  onCancelBooking,
-}: ParticipantsTabProps) => {
+  onConfirm,
+  isConfirming
+}: CancelledBookingsTabProps) => {
   // Track which booking is being cancelled
-  const [cancellingBookingId, setCancellingBookingId] = useState<number | null>(null);
+  const [confirmingBookingId, setConfirmingBookingId] = useState<number | null>(null);
 
-  const handleCancel = async (bookingId: number) => {
-    if (!onCancelBooking) return;
+  const handleConfirm = async (bookingId: number) => {
+    if (!onConfirm) return;
 
-    setCancellingBookingId(bookingId);
-    await onCancelBooking(bookingId);
-    setCancellingBookingId(null);
+    setConfirmingBookingId(bookingId);
+    await onConfirm(bookingId);
+    setConfirmingBookingId(null);
   };
 
   return (
     <VStack align="stretch" gap={0}>
       <Text fontSize="sm" color="fg.muted" mb={2}>
-        {bookings.length} confirmed {bookings.length === 1 ? "participant" : "participants"}
+        {bookings.length} cancelled {bookings.length === 1 ? "booking" : "bookings"}
       </Text>
 
       {bookings.length > 0 ? (
         bookings.map((booking) => {
-          const isCancellingThis = cancellingBookingId === booking.id;
+          const cancelledBy = booking.status === "cancelled_by_mentor"
+            ? "Cancelled by you"
+            : "Cancelled by participant";
+
+          const cancelledWhen = booking.updated_at
+            ? formatDistanceToNow(new Date(booking.updated_at), { addSuffix: true })
+            : "";
+
+          const isConfirmingThis = confirmingBookingId === booking.id;
 
           return (
             <Box
               key={booking.id}
-              position="relative"
-              p={isOwner ? 3 : 2}
+              p={3}
               bgGradient="to-b"
               gradientFrom={"bg.subtle"}
               gradientTo={"cardbg"}
               borderBottom={"1px solid"}
-              _hover={{ bg: "bg.muted" }}
               rounded="lg"
               borderColor="border.emphasized"
               transition="all 0.2s"
@@ -60,33 +70,32 @@ const ParticipantsTab = ({
                     size={{ base: "sm", md: "md" }}
                     src={booking.mentee?.avatar_url ?? "/fallback.jpg"}
                     name={booking.mentee?.full_name || `Participant ${booking.id}`}
+                    opacity={0.7}
                   />
                   <Box flex={1}>
-                    <Text fontWeight="semibold" fontSize={{ base: "sm", md: "md" }}>
+                    <Text fontWeight="semibold" fontSize={{ base: "sm", md: "md" }} color={"fg.muted"}>
                       {booking.mentee?.full_name || "Anonymous"}
                     </Text>
-                    {isOwner && (
-                      <Text fontSize="xs" color="fg.muted">
-                        {booking.mentee?.email || "Confirmed"}
-                      </Text>
-                    )}
+                    <Text fontSize="xs" color="fg.subtle">
+                      {cancelledBy} {cancelledWhen}
+                    </Text>
                   </Box>
                 </HStack>
 
-                <HStack gap={2} align="center">
-                  <Badge colorPalette="green" size={{ base: "sm", md: "md" }}>
-                    Booked
+                <HStack gap={2} justify="end">
+                  <Badge colorPalette="red" size={{ base: "sm", md: "md" }} variant="subtle">
+                    <FaX />
+                    Cancelled
                   </Badge>
 
-                  {/* Menu (Owner only) */}
-                  {isOwner && onCancelBooking && (
+                  {isOwner && onConfirm && (
                     <Menu.Root positioning={{ placement: "bottom-end" }}>
                       <Menu.Trigger asChild>
                         <IconButton
                           size="xs"
                           variant="ghost"
                           aria-label="More options"
-                          disabled={cancellingBookingId !== null}
+                          disabled={isConfirming}
                         >
                           <BsThreeDotsVertical />
                         </IconButton>
@@ -101,18 +110,22 @@ const ParticipantsTab = ({
                               cursor: "pointer",
                             }}
                             onClick={() => {
+                              // Open default mail client with pre-filled email to the mentee this mentor cancelled
                               const email = booking.mentee?.email;
-                              const subject = encodeURIComponent(`Re: Session Booking - ${sessionTitle || 'Your Session'}`);
+                              const subject = encodeURIComponent(`Regarding your booking for "${sessionTitle || "the session"}"`);
                               const body = encodeURIComponent(
-                                `Hi ${booking.mentee?.full_name || 'there'},\n\n` +
-                                `I'm reaching out regarding your booking for our session.\n\n` +
-                                `Best regards`
+                                `Hi ${booking.mentee?.full_name || "there"},\n\n` +
+                                `I wanted to reach out regarding your booking for "${sessionTitle || "the session"}". ` +
+                                `If you have any questions or would like to discuss rebooking, please feel free to reply to this email.\n\n` +
+                                `Best regards,\n` +
+                                `Your Mentor`
                               );
 
                               if (email) {
                                 window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
                               }
                             }}
+
                           >
                             <LuMail />
                             Message Participant
@@ -120,18 +133,19 @@ const ParticipantsTab = ({
 
                           <Menu.Separator />
 
-                          {/* Cancel booking */}
                           <Menu.Item
-                            value="cancel"
-                            color="red.500"
-                            onClick={() => handleCancel(booking.id)}
-                            disabled={isCancellingThis}
+                            value="confirm"
+                            color="green.500"
+                            onClick={() => handleConfirm(booking.id)}
+                            disabled={isConfirmingThis}
                             _hover={{
                               cursor: "pointer",
                             }}
                           >
-                            <LuX />
-                            {isCancellingThis ? "Cancelling..." : "Cancel Booking"}
+                            <Icon rotate="280deg">
+                              <FaRedoAlt />
+                            </Icon>
+                            {isConfirming ? "Confirming..." : "Accept Participant"}
                           </Menu.Item>
 
                           <Menu.Arrow />
@@ -140,6 +154,7 @@ const ParticipantsTab = ({
                     </Menu.Root>
                   )}
                 </HStack>
+
               </HStack>
             </Box>
           );
@@ -147,10 +162,7 @@ const ParticipantsTab = ({
       ) : (
         <Box py={12} textAlign="center">
           <Text color="fg.muted" fontSize={{ base: "sm", md: "md" }}>
-            No confirmed bookings yet
-          </Text>
-          <Text color="fg.subtle" fontSize="xs" mt={2}>
-            {isOwner ? "Waiting for bookings" : "Be the first to book this session"}
+            No cancelled bookings
           </Text>
         </Box>
       )}
@@ -158,4 +170,4 @@ const ParticipantsTab = ({
   );
 };
 
-export default ParticipantsTab;
+export default CancelledBookingsTab;

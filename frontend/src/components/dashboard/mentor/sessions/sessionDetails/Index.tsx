@@ -9,29 +9,30 @@ import {
   DialogCloseTrigger,
 } from "@/components/ui/dialog";
 import { Tabs, Stack, Button, HStack, Text, Badge } from "@chakra-ui/react";
-import { LuUser, LuUsers, LuBookOpen, LuClock } from "react-icons/lu";
+import { LuUser, LuUsers, LuBookOpen, LuClock, LuCircleX } from "react-icons/lu";
 import type { MentorSessionPublic } from "@/client";
 import { useMentorBookings } from "@/hooks/mentor/useMentorBookings";
 import { useUserById } from "@/hooks/public/useProfile";
 import { useAuth } from "@/hooks/auth/useAuth";
-import { useAuthPromptStore } from "@/hooks/store/useAuthPromptStore";
 import { useNavigateWithRedirect } from "@/hooks/auth/authState";
 
 import SessionDetailsTab from "./tabs/SessionDetailsTab";
 import ParticipantsTab from "./tabs/ParticipantsTab";
 import PreparationTab from "./tabs/PreparationTab";
 import PendingBookingsTab from "./tabs/PendingBookingsTab";
+import SessionDetailSkeleton from "@/skeletons/SessionDetailSkeleton";
+import CancelledBookingsTab from "./tabs/CancelledBookinsTab";
 
 interface SessionDetailModalProps {
   session: MentorSessionPublic | null;
   isOpen: boolean;
   onClose: () => void;
+  isLoading?: boolean;
 }
 
-const SessionDetailModal = ({ session, isOpen, onClose }: SessionDetailModalProps) => {
+const SessionDetailModal = ({ session, isOpen, onClose, isLoading }: SessionDetailModalProps) => {
   const { user } = useAuth();
   const [message, setMessage] = useState("");
-  const { setOpen } = useAuthPromptStore();
   const navigateWithRedirect = useNavigateWithRedirect();
 
   const {
@@ -43,29 +44,36 @@ const SessionDetailModal = ({ session, isOpen, onClose }: SessionDetailModalProp
     isDenying,
   } = useMentorBookings();
 
-  const { data: userData } = useUserById(session?.mentor_id || 0);
+  // Only fetch userData if we have a session
+  const { data: userData } = useUserById(
+    session?.mentor_id || 0,
+    !!session?.mentor_id // Pass boolean directly as second parameter
+  );
+  // Don't render modal at all if not open or if no session and not loading
+  if (!session && !isLoading) return null;
 
-  if (!session) return null;
-
-  const isOwner = user?.is_mentor && session.mentor_id === user.id;
-  const isFull = session.is_full;
+  const isOwner = session ? user?.is_mentor && session.mentor_id === user.id : false;
+  const isFull = session?.is_full ?? false;
+  const isBooked = session?.user_has_booked ?? false
   const requiresMessage = userData?.profile?.mentor_profile?.settings?.require_intro_message;
 
-  const sessionPendingBookings = (session.bookings || []).filter((b) => b.status === "pending");
-  const sessionConfirmedBookings = (session.bookings || []).filter((b) => b.status === "confirmed");
+  const sessionPendingBookings = session ? (session.bookings || []).filter((b) => b.status === "pending") : [];
+  const sessionConfirmedBookings = session ? (session.bookings || []).filter((b) => b.status === "confirmed") : [];
+  const sessionCancelledBookings = session
+    ? (session.bookings || []).filter((b) =>
+      b.status === "cancelled_by_mentor" ||
+      b.status === "cancelled_by_mentee"
+    )
+    : [];
 
   const handleBook = async () => {
+    if (!session) return;
+
+    const currentSearchParams = new URLSearchParams(window.location.search);
+    const redirectUrl = `${window.location.pathname}?${currentSearchParams.toString()}`;
     try {
       if (!user) {
-        setOpen(true);
-        return;
-      }
-
-      if (!user.profile?.is_profile_setup_complete) {
-        const currentSearchParams = new URLSearchParams(window.location.search);
-        currentSearchParams.set('sessionDetailId', session.uuid);
-        const redirectUrl = `${window.location.pathname}?${currentSearchParams.toString()}`;
-        navigateWithRedirect("/profile-setup", redirectUrl);
+        navigateWithRedirect("/login", redirectUrl);
         return;
       }
 
@@ -113,83 +121,114 @@ const SessionDetailModal = ({ session, isOpen, onClose }: SessionDetailModalProp
         </DialogHeader>
 
         <DialogBody flex="1" overflow="auto" px={{ base: 4, md: 6 }}>
-          <Tabs.Root defaultValue="details">
-            <Tabs.List mb={4}>
-              <Tabs.Trigger value="details" fontSize={{ base: "sm", md: "md" }}>
-                <HStack gap={1.5}>
-                  <LuUser aria-hidden="true" />
-                  <Text>Details</Text>
-                </HStack>
-              </Tabs.Trigger>
-              
-              <Tabs.Trigger value="participants" fontSize={{ base: "sm", md: "md" }}>
-                <HStack gap={1.5}>
-                  <LuUsers aria-hidden="true" />
-                  <Text>Participants</Text>
-                  <Text>({sessionConfirmedBookings.length})</Text>
-                </HStack>
-              </Tabs.Trigger>
-
-              {isOwner && sessionPendingBookings.length > 0 && (
-                <Tabs.Trigger value="pending" fontSize={{ base: "sm", md: "md" }}>
+          {isLoading || !session ? (
+            <SessionDetailSkeleton />
+          ) : (
+            <Tabs.Root defaultValue="details">
+              <Tabs.List mb={4}>
+                <Tabs.Trigger value="details" fontSize={{ base: "sm", md: "md" }}>
                   <HStack gap={1.5}>
-                    <LuClock aria-hidden="true" />
-                    <Text>Pending</Text>
-                    <Badge colorPalette="orange" size="sm">
-                      {sessionPendingBookings.length}
-                    </Badge>
+                    <LuUser aria-hidden="true" />
+                    <Text>Details</Text>
                   </HStack>
                 </Tabs.Trigger>
-              )}
 
-              {session.preparation_materials && session.preparation_materials.length > 0 && (
-                <Tabs.Trigger value="prep" fontSize={{ base: "sm", md: "md" }}>
+                {session.preparation_materials && session.preparation_materials.length > 0 && (
+                  <Tabs.Trigger value="prep" fontSize={{ base: "sm", md: "md" }}>
+                    <HStack gap={1.5}>
+                      <LuBookOpen aria-hidden="true" />
+                      <Text>Prep</Text>
+                    </HStack>
+                  </Tabs.Trigger>
+                )}
+
+                <Tabs.Trigger value="participants" fontSize={{ base: "sm", md: "md" }}>
                   <HStack gap={1.5}>
-                    <LuBookOpen aria-hidden="true" />
-                    <Text>Prep</Text>
+                    <LuUsers aria-hidden="true" />
+                    <Text>Participants</Text>
+                    <Text>({sessionConfirmedBookings.length})</Text>
                   </HStack>
                 </Tabs.Trigger>
-              )}
-              <Tabs.Indicator />
-            </Tabs.List>
 
-            <Tabs.Content value="details">
-              <SessionDetailsTab
-                session={session}
-                userData={userData}
-                isOwner={!!isOwner}
-                isFull={isFull}
-                requiresMessage={requiresMessage}
-                message={message}
-                setMessage={setMessage}
-              />
-            </Tabs.Content>
+                {isOwner && sessionPendingBookings.length > 0 && (
+                  <Tabs.Trigger value="pending" fontSize={{ base: "sm", md: "md" }}>
+                    <HStack gap={1.5}>
+                      <LuClock aria-hidden="true" />
+                      <Text>Pending</Text>
+                      <Badge colorPalette="orange" size="sm">
+                        {sessionPendingBookings.length}
+                      </Badge>
+                    </HStack>
+                  </Tabs.Trigger>
+                )}
 
-            {isOwner && (
-              <Tabs.Content value="pending">
-                <PendingBookingsTab
-                  bookings={sessionPendingBookings}
-                  onConfirm={handleConfirmBooking}
-                  onDeny={handleDenyBooking}
-                  isConfirming={isConfirming}
-                  isDenying={isDenying}
+                {isOwner && sessionCancelledBookings.length > 0 && (
+                  <Tabs.Trigger value="cancelled">
+                    <HStack gap={1.5}>
+                      <LuCircleX />
+                      <Text>Cancelled</Text>
+                      <Badge colorPalette="red" size="sm" variant="subtle">
+                        {sessionCancelledBookings.length}
+                      </Badge>
+                    </HStack>
+                  </Tabs.Trigger>
+                )}
+
+                <Tabs.Indicator />
+              </Tabs.List>
+
+              <Tabs.Content value="details">
+                <SessionDetailsTab
+                  session={session}
+                  userData={userData}
+                  isOwner={!!isOwner}
+                  isFull={isFull}
+                  requiresMessage={requiresMessage}
+                  message={message}
+                  setMessage={setMessage}
                 />
               </Tabs.Content>
-            )}
 
-            <Tabs.Content value="participants">
-              <ParticipantsTab
-                bookings={sessionConfirmedBookings}
-                isOwner={!!isOwner}
-              />
-            </Tabs.Content>
+              {session.preparation_materials && session.preparation_materials.length > 0 && (
+                <Tabs.Content value="prep">
+                  <PreparationTab materials={session.preparation_materials} />
+                </Tabs.Content>
+              )}
 
-            {session.preparation_materials && session.preparation_materials.length > 0 && (
-              <Tabs.Content value="prep">
-                <PreparationTab materials={session.preparation_materials} />
+              {isOwner && (
+                <Tabs.Content value="pending">
+                  <PendingBookingsTab
+                    bookings={sessionPendingBookings}
+                    onConfirm={handleConfirmBooking}
+                    onDeny={handleDenyBooking}
+                    isConfirming={isConfirming}
+                    isDenying={isDenying}
+                  />
+                </Tabs.Content>
+              )}
+
+              <Tabs.Content value="participants">
+                <ParticipantsTab
+                  bookings={sessionConfirmedBookings}
+                  sessionTitle={session.title}
+                  isOwner={!!isOwner}
+                  onCancelBooking={isOwner ? handleDenyBooking : undefined}
+                />
               </Tabs.Content>
-            )}
-          </Tabs.Root>
+
+              {isOwner && (
+                <Tabs.Content value="cancelled">
+                  <CancelledBookingsTab
+                    bookings={sessionCancelledBookings}
+                    sessionTitle={session.title}
+                    isOwner={!!isOwner}
+                    onConfirm={handleConfirmBooking}
+                    isConfirming={isConfirming}
+                  />
+                </Tabs.Content>
+              )}
+            </Tabs.Root>
+          )}
         </DialogBody>
 
         <DialogFooter pt={4} borderTopWidth="1px" borderColor="border.muted">
@@ -205,18 +244,18 @@ const SessionDetailModal = ({ session, isOpen, onClose }: SessionDetailModalProp
               w={{ base: "full", sm: "auto" }}
               order={{ base: 2, sm: 1 }}
             >
-              {isOwner ? "Close" : "Cancel"}
+              {isOwner || isBooked ? "Close" : "Cancel"}
             </Button>
-            {!isOwner && (
+            {!isOwner && !isLoading && (
               <Button
                 colorPalette="green"
                 onClick={handleBook}
                 loading={isBooking}
-                disabled={isFull || (requiresMessage && !message.trim())}
+                disabled={isFull || isBooked || (requiresMessage && !message.trim())}
                 w={{ base: "full", sm: "auto" }}
                 order={{ base: 1, sm: 2 }}
               >
-                {isFull ? "Session Full" : "Book Session"}
+                {isBooked ? "Booked" : isFull ? "Session Full" : "Book Session"}
               </Button>
             )}
           </Stack>

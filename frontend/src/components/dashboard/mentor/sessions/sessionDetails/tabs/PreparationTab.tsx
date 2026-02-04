@@ -19,7 +19,7 @@ interface PreparationTabProps {
 
 const PreparationTab = ({ materials, isFromHeroCard }: PreparationTabProps) => {
   return (
-    <VStack align="stretch" gap={isFromHeroCard ? 3: 4} pb={4}>
+    <VStack align="stretch" gap={isFromHeroCard ? 3 : 4} pb={4}>
       <Text fontSize="sm" color="fg.muted" mb={2}>
         Review these materials before the session
       </Text>
@@ -29,11 +29,15 @@ const PreparationTab = ({ materials, isFromHeroCard }: PreparationTabProps) => {
         return (
           <Box
             key={index}
-            bg="cardbg"
-            p={isFromHeroCard ? 2: 4}
+            p={isFromHeroCard ? 2 : 4}
+            bgGradient="to-b"
+            gradientFrom={"bg.subtle"}
+            gradientTo={"cardbg"}
+            borderBottom={"1px solid"}
+            _hover={{ bg: "bg.muted" }}
             rounded="lg"
-            borderWidth="1px"
-            borderColor={"border.emphasized"}
+            borderColor="border.emphasized"
+            transition="all 0.2s"
           >
             <HStack gap={1}>
               <IconButton boxSize={8} color={typeInfo.color} variant="plain" p={0}>
