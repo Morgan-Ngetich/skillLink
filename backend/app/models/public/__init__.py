@@ -20,6 +20,7 @@ from .mentor_public import (
     MentorProfilePublic,
     MentorStatsPublic,
     MentorExplorePublic,
+    BookingSessionPublic,
 )
 
 from .roadmap_public import (

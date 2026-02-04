@@ -111,6 +111,7 @@ from .public import (
     MentorSettingsPublic,
     MentorStatsPublic,
     MentorExplorePublic,
+    BookingSessionPublic,
     BookingPublic,
     RoadmapPublic,
     GoalPublic,
@@ -130,6 +131,7 @@ UserProfilePublic.model_rebuild()
 UserPublic.model_rebuild()
 UsersPublic.model_rebuild()
 BookingPublic.model_rebuild()
+BookingSessionPublic.model_rebuild()
 
 MentorServicePublic.model_rebuild()
 MentorSessionPublic.model_rebuild()

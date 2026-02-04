@@ -4,7 +4,7 @@ from typing import List, Optional, Dict, Any, TYPE_CHECKING
 from datetime import datetime
 from uuid import UUID
 
-from app.models.enums import ExperienceLevel, MentorType, LocationType
+from app.models.enums import ExperienceLevel, MentorType, LocationType, BookingStatus
 from app.models.base import PreparationMaterial
 
 if TYPE_CHECKING:
@@ -49,6 +49,7 @@ class MentorSessionPublic(SQLModel):
     is_public: bool
     is_cancelled: bool
     is_active: bool
+    is_owner: bool
     max_bookings: Optional[int] = None
     
     location_type: LocationType
@@ -62,6 +63,8 @@ class MentorSessionPublic(SQLModel):
     is_full: bool
     available_spots: Optional[int] = None
     user_has_booked: bool = False
+    user_cancelled_by_mentor: bool = False
+    user_booking_status: Optional[BookingStatus] = None
     
     bookings: List["BookingPublic"] = Field(default_factory=list)
     
@@ -182,3 +185,46 @@ class MentorExplorePublic(SQLModel):
     min_session_price: Optional[float]
     max_session_price: Optional[float]
     avg_session_price: Optional[float]
+    
+
+class BookingSessionPublic(SQLModel):
+    """Slim session for bookings - no nested bookings to avoid circular dependency"""
+    id: int
+    uuid: UUID
+    mentor_id: int
+    
+    title: str
+    description: Optional[str] = None
+    cover_image: Optional[str] = None
+    session_type: str
+    duration_minutes: int
+    price_usd: Optional[float] = None
+    tags: Optional[List[str]] = None
+    
+    start_time: datetime
+    end_time: datetime
+    timezone: str
+    
+    is_public: bool
+    is_cancelled: bool
+    is_active: bool
+    max_bookings: Optional[int] = None
+    
+    location_type: LocationType
+    meeting_link: Optional[str] = None
+    physical_address: Optional[str] = None
+    preparation_materials: Optional[List[PreparationMaterial]] = None
+    
+    total_bookings: int
+    confirmed_bookings: int
+    pending_bookings: int
+    is_full: bool
+    available_spots: Optional[int] = None
+    user_has_booked: bool = False
+    user_cancelled_by_mentor: bool = False
+    user_booking_status: Optional[BookingStatus] = None
+    
+    created_at: datetime
+    updated_at: datetime
+    
+    model_config = {"from_attributes": True}

@@ -10,7 +10,7 @@ from app.models.enums import BookingStatus
 if TYPE_CHECKING:
     from app.models.board import Board, Card
     from app.models.roadmap import Roadmap, Goal
-    from app.models.public.mentor_public import MentorProfilePublic
+    from app.models.public.mentor_public import MentorProfilePublic, BookingSessionPublic
 
 
 class UserMinimal(SQLModel):
@@ -87,9 +87,10 @@ class BookingPublic(SQLModel):
     id: int
     uuid: UUID
     session_id: int
+    session: Optional["BookingSessionPublic"] = None
     mentee: Optional[UserMinimal] = None
     status: BookingStatus
-    message: Optional[str] = None
+    message: Optional[str] = None   
     created_at: datetime
     updated_at: datetime
     
