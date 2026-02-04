@@ -45,7 +45,17 @@ export default defineConfig((configEnv: ConfigEnv): UserConfig => {
         projects: ['./tsconfig.json'],
       }),
       viteReact(),
-      nitro(),
+      nitro({
+        routeRules: {
+          '/api/**': { proxy: 'http://localhost:8000/api/**' }
+        },
+        devProxy: {
+          '/api': {
+            target: 'http://localhost:8000',
+            changeOrigin: true,
+          }
+        }
+      }),
       process.env.ANALYZE === 'true' &&
       visualizer({
         open: true,
@@ -54,20 +64,20 @@ export default defineConfig((configEnv: ConfigEnv): UserConfig => {
         filename: 'dist/stats.html',
       }),
     ].filter(Boolean),
-    
+
     resolve: {
       alias: {
         '@': resolve(__dirname, 'src'),
+        'node:async_hooks': resolve(__dirname, 'src/polyfills/async-hooks.browser.ts'),
       },
       dedupe: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
     },
-    
+
     ssr: {
       noExternal: ['@chakra-ui/react', '@emotion/react', '@emotion/styled'],
-      // CRITICAL: Don't externalize React in SSR
-      external: [],
+      external: ['node:async_hooks', 'async_hooks'],
     },
-    
+
     optimizeDeps: {
       include: [
         'react',
@@ -88,36 +98,28 @@ export default defineConfig((configEnv: ConfigEnv): UserConfig => {
         define: {
           global: 'globalThis',
         },
+        alias: {
+          'node:async_hooks': resolve(__dirname, 'src/polyfills/async-hooks.browser.ts'),
+        },
       },
     },
-    
+
     build: {
       target: 'es2020',
       chunkSizeWarningLimit: 1000,
-      // CRITICAL: Change rollup config
-      rollupOptions: {
-        output: {
-          manualChunks: (id: string) => {
-            // Don't split React into multiple chunks - keep it together
-            if (id.includes('node_modules/react') || 
-                id.includes('node_modules/react-dom') ||
-                id.includes('react/jsx-runtime') ||
-                id.includes('react/jsx-dev-runtime') ||
-                id.includes('scheduler')) {
-              return 'react-vendor'  // Single chunk for all React code
-            }
-
-            if (id.includes('fuse.js')) return 'vendor-search'
-            if (id.includes('recharts')) return 'vendor-charts'
-            if (id.includes('axios')) return 'vendor-http'
-            if (id.includes('supabase')) return 'vendor-supabase'
-            if (id.includes('@tanstack')) return 'vendor-tanstack'
-            if (id.includes('@chakra-ui') || id.includes('@emotion')) return 'vendor-chakra'
-            if (id.includes('framer-motion')) return 'vendor-animation'
-            if (id.includes('node_modules')) return 'vendor-other'
-          },
+      minify: 'terser', // Use terser for minification
+      terserOptions: {
+        compress: {
+          drop_console: !isDev, // Remove console.* in production
+          drop_debugger: !isDev, // Remove debugger statements in production
+          pure_funcs: !isDev ? ['console.log', 'console.info', 'console.debug', 'console.trace'] : [], // Remove specific console methods
         },
       },
+    },
+
+    // esbuild to drop console in deps
+    esbuild: {
+      drop: isDev ? [] : ['console', 'debugger'],
     },
   }
 })
