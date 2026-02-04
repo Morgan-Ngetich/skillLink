@@ -91,7 +91,7 @@ export function SessionDetails({
         </DialogCloseTrigger>
 
         <DialogBody overflowY="auto" p={{ base: 4, md: 6 }}>
-          <Flex wrap="wrap" gap={4}>
+          <Flex wrap="wrap" gap={4} justify={"center"}>
             {sessions.map((session) => (
               <Box
                 key={session.id}
@@ -99,6 +99,7 @@ export function SessionDetails({
                 minW="250px"
               >
                 <SessionCard
+                  isSmall={sessions.length > 1 ? true : false}
                   session={session}
                   onEdit={onEdit}
                   onDelete={onDelete}

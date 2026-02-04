@@ -25,7 +25,7 @@ interface MentorshipCalendarProps {
   sessions: Record<string, MentorSessionPublic[]>;
   onDateClick: (dateString: string) => void;
   viewMode?: ViewMode;
-  mentorSettings?: MentorSettingsPublic;
+  mentorSettings?: MentorSettingsPublic | null;
   isOwnProfile?: boolean;
 }
 
@@ -34,14 +34,14 @@ const getSessionStatus = (session: MentorSessionPublic): SessionStatus => {
   if (session.is_cancelled) {
     return "cancelled";
   }
-  
+
   const endTime = new Date(session.end_time);
   const now = new Date();
-  
+
   if (endTime < now) {
     return "completed";
   }
-  
+
   return "scheduled";
 };
 
@@ -186,11 +186,11 @@ export const MentorshipCalendar = ({
   };
 
   const getDiagonalPattern = (status: SessionStatus) => {
-    const colorValue = status === "scheduled" 
-      ? "255, 165, 0" 
-      : status === "completed" 
-      ? "34, 197, 94" 
-      : "239, 68, 68";
+    const colorValue = status === "scheduled"
+      ? "255, 165, 0"
+      : status === "completed"
+        ? "34, 197, 94"
+        : "239, 68, 68";
 
     return `repeating-linear-gradient(
       45deg,
@@ -231,10 +231,10 @@ export const MentorshipCalendar = ({
           position="relative"
           overflow="hidden"
           opacity={hasSessions ? 1 : 0.3}
+          bgImage={bannerImage ? `url(${bannerImage})` : undefined}
           _hover={hasSessions ? {
             transform: 'scale(1.05)',
             boxShadow: 'md',
-            bgImage: bannerImage ? `url(${bannerImage})` : undefined,
           } : {}}
           onClick={() => hasSessions && onDateClick(dateString)}
         >
@@ -266,7 +266,7 @@ export const MentorshipCalendar = ({
               <Text
                 fontSize="sm"
                 fontWeight={isToday ? "bold" : "medium"}
-                color={hasSessions ? "" : (isToday ? todayRingColor : textColor)}
+                color={hasSessions ? (bannerImage ? "white" : textColor) : (isToday ? todayRingColor : (bannerImage ? "white" : mutedTextColor))}
               >
                 {day}
               </Text>
@@ -300,6 +300,7 @@ export const MentorshipCalendar = ({
                       bgPos="center"
                       borderRadius="xs"
                       outline="1px solid"
+                      outlineColor={bannerImage ? "white" : ""}
                     />
                   ))}
                 </HStack>
@@ -318,7 +319,7 @@ export const MentorshipCalendar = ({
   const showPrivacyWarning = viewMode === "booked-sessions" && !isOwnProfile && !mentorSettings?.allow_public_availability_view;
 
   return (
-    <Card.Root bg={{ base: 'white', _dark: 'gray.800' }} borderColor={"gray.600"}>
+    <Card.Root bg={{ base: 'white', _dark: 'gray.800' }} borderColor={"gray.600"} maxW={"md"}>
       <Card.Body py={2} px={1}>
         <Box p={5}>
           <Flex justify="space-between" align="center" mb={filter === "all" ? 6 : 0}>
