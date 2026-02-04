@@ -74,7 +74,7 @@ interface SessionFormData {
 const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) => {
   const { user } = useAuth();
   const { saveSession, isSubmitting } = useMentorSessions();
-  const { uploadFile, isUploading } = useSupabaseStorage();
+  const { uploadFile, deleteFile, isUploading, isDeleting } = useSupabaseStorage();
 
   const defaultMaxBookings = user?.profile?.mentor_profile?.settings?.max_mentees?.toString() ?? "5";
 
@@ -124,6 +124,7 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
   const [tagInput, setTagInput] = useState("");
   const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [coverImagePreview, setCoverImagePreview] = useState<string>("");
+  const [oldImagePath, setOldImagePath] = useState<string>("");
 
   // Calculate duration automatically
   const calculatedDuration = startTime && endTime
@@ -159,6 +160,15 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
         preparation_materials: session.preparation_materials || [],
       });
       setCoverImagePreview(session.cover_image || "");
+
+      // Extract and store the file path from the URL
+      if (session.cover_image) {
+        const urlParts = session.cover_image.split("/mentor_sessions/");
+        if (urlParts.length > 1) {
+          setOldImagePath(decodeURIComponent(urlParts[1]));
+        }
+      }
+
     } else {
       // Reset for new session
       reset({
@@ -180,8 +190,60 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
       });
       setCoverImagePreview("");
       setCoverImageFile(null);
+      setOldImagePath("");
+
     }
   }, [isOpen, session, reset, defaultMaxBookings]);
+
+  // Remove banner with Supabase deletion AND backend update
+  const removeBanner = async () => {
+    // If there's an old image, delete it from storage
+    if (oldImagePath && user?.uuid) {
+      try {
+        await new Promise<void>((resolve, reject) => {
+          deleteFile(
+            {
+              bucket: "mentor_sessions",
+              path: oldImagePath,
+              userUuid: user.uuid,
+            },
+            {
+              onSuccess: () => resolve(),
+              onError: reject,
+            }
+          );
+        });
+      } catch (error) {
+        console.error("Failed to delete old banner image:", error);
+      }
+    }
+
+    // If editing existing session, update backend immediately
+    if (session?.id) {
+      await saveSession(
+        {
+          id: session.id,
+          mentor_id: user?.id || 0,
+          cover_image: null, // Remove the image
+        },
+        {
+          onSuccess: () => {
+            // Clear local state after successful backend update
+            setCoverImageFile(null);
+            setCoverImagePreview("");
+            setOldImagePath("");
+            setValue("cover_image", "");
+          },
+        }
+      );
+    } else {
+      // For new sessions, just clear local state
+      setCoverImageFile(null);
+      setCoverImagePreview("");
+      setOldImagePath("");
+      setValue("cover_image", "");
+    }
+  };
 
   // Handle cover image upload
   const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -192,12 +254,6 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
       reader.onloadend = () => setCoverImagePreview(reader.result as string);
       reader.readAsDataURL(file);
     }
-  };
-
-  const removeBanner = () => {
-    setCoverImageFile(null);
-    setCoverImagePreview("");
-    setValue("cover_image", "");
   };
 
   // Tag management
@@ -227,12 +283,12 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
 
   // Form submission
   const onSubmit = async (data: SessionFormData) => {
-    let cover_image = data.cover_image;
+    let cover_image: string | undefined = data.cover_image;
 
     // Upload cover image if new file is selected
     if (coverImageFile && user?.uuid) {
       try {
-        const result = await new Promise<{ url: string }>((resolve, reject) => {
+        const result = await new Promise<{ url: string, path: string }>((resolve, reject) => {
           uploadFile(
             {
               bucket: "mentor_sessions",
@@ -240,10 +296,11 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
               options: {
                 userUuid: user.uuid,
                 sessionUuid: session?.uuid || crypto.randomUUID(),
+                oldFilePath: oldImagePath || undefined,
               },
             },
             {
-              onSuccess: (uploadData) => resolve(uploadData as { url: string }),
+              onSuccess: (uploadData) => resolve(uploadData as { url: string, path: string }),
               onError: reject,
             }
           );
@@ -255,13 +312,18 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
       }
     }
 
+    else if (!coverImageFile) {
+      // If no cover image file is selected, remove existing image
+      cover_image = undefined;
+    }
+
     // NOTE: Backend expects the human-readable session type value, not the key
     const payload = {
       ...(session && { id: session.id }),
       mentor_id: user?.id || 0,
       title: data.title,
       description: data.description || undefined,
-      cover_image: cover_image || undefined,
+      cover_image: cover_image,
       session_type: data.session_type as SessionType, // Send the value directly (e.g., "1-on-1 Video Call")
       duration_minutes: calculatedDuration,
       price_usd: data.price_usd ? parseFloat(data.price_usd) : undefined,
@@ -429,7 +491,7 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
                             pl={3}
                             pr={1}
                             py={1}
-                            rounded="full"
+                            rounded="md"
                             fontSize="sm"
                             border="1px solid"
                             borderColor="border.emphasized"
@@ -747,7 +809,7 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
                 <Button
                   colorPalette="green"
                   type="submit"
-                  loading={isSubmitting || isUploading}
+                  loading={isSubmitting || isUploading || isDeleting}
                   disabled={!isValid}
                   w={{ base: "full", sm: "auto" }}
                   order={{ base: 1, sm: 2 }}

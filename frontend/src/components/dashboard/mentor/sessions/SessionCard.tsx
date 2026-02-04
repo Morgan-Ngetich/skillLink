@@ -28,9 +28,11 @@ interface SessionCardProps {
   onViewDetails?: (session: MentorSessionPublic) => void;
   showActions: boolean;
   isFromExplore?: boolean;
+  isSmall?: boolean;
 }
 
 const SessionCard: React.FC<SessionCardProps> = ({
+  isSmall = false,
   session,
   onEdit,
   onDelete,
@@ -54,6 +56,10 @@ const SessionCard: React.FC<SessionCardProps> = ({
   const isSessionCancelled = session.is_cancelled || !session.is_active;
   const isFull = session.is_full;
   const spotsLeft = session.available_spots || 0;
+  const isUserBooked = session.user_has_booked || false;
+  const isUserCancelledByMentor = session.user_cancelled_by_mentor || false;
+  console.log("SessionCard - isUserBooked:", isUserBooked);
+  console.log("SessionCard - isUserCancelledByMentor:", isUserCancelledByMentor);
 
   // Session can be booked if: upcoming, not cancelled, not full, and public
   // const canBook = isSessionUpcoming && !isSessionCancelled && !isFull && session.is_public;
@@ -139,6 +145,19 @@ const SessionCard: React.FC<SessionCardProps> = ({
         disabled: false,
       };
     }
+    if (isUserBooked) {
+      return {
+        text: "Booked",
+        colorPalette: "blue",
+      };
+    }
+    if (isUserCancelledByMentor) {
+      return {
+        text: "Cancelled by Mentor",
+        colorPalette: "red",
+        disabled: true,
+      };
+    }
     return {
       text: "Reserve Spot",
       colorPalette: "green",
@@ -149,23 +168,25 @@ const SessionCard: React.FC<SessionCardProps> = ({
   const bookingButtonProps = getBookingButtonProps();
 
   const content = (
-    <HStack gap={2} align="start" mb={2}>
+    <HStack gap={2} align="start" mb={isSmall ? 1 : 2}>
       <Avatar
         src={mentorProfileData?.avatar_url ?? "/fallback.jpg"}
+        border={isSmall ? "1px solid white" : ""}
         name={mentorProfileData?.full_name}
-        size={{ base: "sm", md: "md" }}
+        size={{ base: isSmall ? "xs" : "sm", md: isSmall ? "sm" : "md" }}
       />
       <VStack align="start" gap={0} flex={1}>
-        <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="semibold" color="white">
+        <Text fontSize={{ base: isSmall ? "xs" : "sm", md: isSmall ? "sm" : "md" }} fontWeight="semibold" color="white">
           {mentorLoading ? "..." : mentorProfileData?.full_name}
         </Text>
-        <Text fontSize="xs" color="gray.300" lineClamp={1}>
+        <Text fontSize={isSmall ? "2xs" : "xs"} color="gray.300" lineClamp={1}>
           {mentorProfileData?.profile?.title}
         </Text>
       </VStack>
     </HStack>
   );
 
+  console.log("Current_Session:", session);
 
   return (
     <Box
@@ -218,12 +239,12 @@ const SessionCard: React.FC<SessionCardProps> = ({
                     src={booking.mentee?.avatar_url || "https://via.placeholder.com/150"}
                     name={booking.mentee?.full_name || `Participant ${booking.id}`}
                     border="1px solid white"
-                    size="xs"
+                    size={isSmall ? "2xs" : "xs"}
                   />
                 ))}
               </AvatarGroup>
               {confirmedBookings.length > 3 && (
-                <Text fontSize={"xs"} color="white">
+                <Text fontSize={isSmall ? "2xs" : "xs"} color="white">
                   +{confirmedBookings.length - 3}
                 </Text>
               )}
@@ -238,7 +259,7 @@ const SessionCard: React.FC<SessionCardProps> = ({
             <Badge
               py={1}
               px={2}
-              fontSize="2xs"
+              fontSize={isSmall ? "9px" : "2xs"}
               fontWeight="semibold"
               colorPalette={isSessionPast ? "gray" : "green"}
               variant="subtle"
@@ -265,24 +286,12 @@ const SessionCard: React.FC<SessionCardProps> = ({
               </HStack>
             </Badge>
 
-            {/* Pending Badge (Owner only, not for past sessions) */}
-            {showActions && pendingCount > 0 && !isSessionPast && (
-              <Badge
-                colorPalette="orange"
-                variant="solid"
-                size="sm"
-                rounded="full"
-              >
-                {pendingCount} pending
-              </Badge>
-            )}
-
             {/* Menu (Owner only) */}
             {showActions && (
               <Menu.Root positioning={{ placement: "bottom-end" }}>
                 <Menu.Trigger asChild>
                   <IconButton
-                    size="sm"
+                    size={isSmall ? "2xs" : "sm"}
                     variant="ghost"
                     aria-label="More options"
                     color="white"
@@ -368,6 +377,19 @@ const SessionCard: React.FC<SessionCardProps> = ({
             <Link
               to="/profile/$uuid"
               params={{ uuid: mentorProfileData.uuid }}
+              search={{
+                pt: 'about',
+                st: 'sessions',
+                drawer: undefined,
+                step: undefined,
+                redirectTo: undefined,
+                serviceModal: undefined,
+                serviceId: undefined,
+                sessionModal: undefined,
+                sessionId: undefined,
+                sessionDetailId: undefined,
+                settings: undefined,
+              }}
             >
               {content}
             </Link>
@@ -377,15 +399,27 @@ const SessionCard: React.FC<SessionCardProps> = ({
 
           <HStack justify="space-between" align="start" gap={2}>
             <Text
-              fontSize={{ base: "md", md: "lg" }}
+              fontSize={{ base: isSmall ? "sm" : "md", md: isSmall ? "md" : "lg" }}
               fontWeight="bold"
               color="white"
-              lineClamp={2}
+              lineClamp={isSmall ? 1 : 2}
               flex={1}
             >
               {session.title}
             </Text>
             {getSessionStatusBadge()}
+            {/* Pending Badge (Owner only, not for past sessions) */}
+            {showActions && pendingCount > 0 && !isSessionPast && (
+              <Badge
+                colorPalette="orange"
+                variant="solid"
+                size={isSmall ? "xs" : "sm"}
+                rounded="sm"
+              >
+                {pendingCount} pending
+              </Badge>
+            )
+            }
           </HStack>
         </Box>
 
@@ -393,7 +427,7 @@ const SessionCard: React.FC<SessionCardProps> = ({
         <Box
           bg="whiteAlpha.900"
           _dark={{ bg: "blackAlpha.800" }}
-          py={2}
+          py={isSmall ? 1 : 2}
           px={3}
           borderRadius="lg"
           backdropFilter="blur(10px)"
@@ -406,7 +440,7 @@ const SessionCard: React.FC<SessionCardProps> = ({
 
           <Flex justify="space-between" align="center">
             <Box flex={1}>
-              <Text fontWeight="bold" fontSize={{ base: "md", md: "lg" }}>
+              <Text fontWeight="bold" fontSize={{ base: isSmall ? "sm" : "md", md: isSmall ? "md" : "lg" }}>
                 {session.confirmed_bookings || 0} / {session.max_bookings || 0} {isSessionPast ? "Attended" : "Booked"}
               </Text>
               <Text fontSize="xs" color="fg.muted">
@@ -420,8 +454,8 @@ const SessionCard: React.FC<SessionCardProps> = ({
               </Text>
             </Box>
 
-            <VStack align="end" gap={1}>
-              <HStack fontSize="md" color="fg.muted">
+            <VStack align="end" gap={1} alignItems={'center'}>
+              <HStack fontSize={isSmall ? "sm" : "md"} color="fg.muted">
                 <Text fontWeight="medium">{formatDuration(session.duration_minutes)}</Text>
                 <Text>•</Text>
                 <Text fontWeight="semibold">
@@ -430,9 +464,9 @@ const SessionCard: React.FC<SessionCardProps> = ({
               </HStack>
 
               <Button
-                size="sm"
+                size={isSmall ? "xs" : "sm"}
                 colorPalette={bookingButtonProps.colorPalette}
-                rounded="full"
+                rounded={'full'}
                 fontWeight="semibold"
                 disabled={bookingButtonProps.disabled}
                 onClick={
