@@ -1,5 +1,4 @@
-import { Stack, VStack, HStack, Box, Text } from "@chakra-ui/react";
-import { LuDollarSign } from "react-icons/lu";
+import { Stack, VStack, HStack, Text } from "@chakra-ui/react";
 import type { MentorSessionPublic } from "@/client";
 
 interface SessionPriceAvailabilityProps {
@@ -47,11 +46,7 @@ const SessionPriceAvailability = ({ session }: SessionPriceAvailabilityProps) =>
       {/* Price */}
       <VStack flex="1" p={2} my="auto">
         <HStack gap={0} mb={1}>
-          <Box color="colorPalette.fg" aria-hidden="true">
-            <LuDollarSign size={18} />
-          </Box>
           <Text
-            fontSize="xs"
             fontWeight="semibold"
             textTransform="uppercase"
             color="fg.muted"

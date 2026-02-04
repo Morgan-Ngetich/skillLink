@@ -37,6 +37,7 @@ const MentorInfo = ({ userData }: MentorInfoProps) => {
           </Box>
         </HStack>
         <Button
+          display={{ base: "none", sm: "inline-flex" }}
           size={{ base: "sm", md: "md" }}
           variant="subtle"
           w={{ base: "full", sm: "auto" }}
