@@ -111,13 +111,13 @@ class User(SQLModel, table=True):
     def is_mentee(self) -> bool:
         return self.has_role(RoleName.MENTEE)
 
-    def to_public(self):
+    def to_public(self, current_user_id: Optional[int] = None):
         """Convert to UserPublic (imported to avoid circular imports)"""
         from .public.user_public import UserPublic
         from .enums import GoalStatus
 
-        profile_public = self.profile.to_public() if self.profile else None
-
+        profile_public = self.profile.to_public(current_user_id=current_user_id) if self.profile else None
+    
         return UserPublic(
             id=self.id,
             uuid=str(self.uuid),
@@ -281,15 +281,15 @@ class UserProfile(SQLModel, table=True):
                 self.interests,
                 self.skills,
             ]
-        )
+    )
 
-    def to_public(self):
+    def to_public(self, current_user_id: Optional[int] = None):
         """Convert to UserProfilePublic"""
         from .public.user_public import UserProfilePublic
 
         mentor_profile_public = None
         if self.user and self.user.mentor_profile:
-            mentor_profile_public = self.user.mentor_profile.to_public()
+            mentor_profile_public = self.user.mentor_profile.to_public(current_user_id=current_user_id)
 
         return UserProfilePublic(
             user_id=self.user_id,
