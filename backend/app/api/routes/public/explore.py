@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query
 from typing import Optional, List
 from datetime import datetime
-from app.api.deps import SessionDep
+from app.api.deps import CurrentUserOptional, SessionDep
 from app.models import (
     UserPublic,
     MentorSessionPublic,
@@ -58,7 +58,12 @@ def browse_sessions(
     only_available: bool = Query(False),
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
+    # Current User is optional for public browsing
+    current_user: CurrentUserOptional = None,
 ):
+    
+    current_user_id = current_user.id if current_user else None
+    
     sessions = crud.list_public_sessions(
         session=session,
         session_type=session_type,
@@ -75,7 +80,7 @@ def browse_sessions(
         limit=limit,
         offset=offset,
     )
-    return [s.to_public(current_user_id=None) for s in sessions]
+    return [s.to_public(current_user_id=current_user_id) for s in sessions]
 
 
 

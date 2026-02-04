@@ -2,7 +2,7 @@ from typing import Optional, List, Dict, Any, TYPE_CHECKING
 from uuid import UUID, uuid4
 from datetime import datetime, timezone
 from sqlmodel import SQLModel, Field, Relationship
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, String, DateTime, Boolean
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
 from pydantic import BaseModel
 
@@ -16,7 +16,15 @@ from .enums import (
 from .base import PreparationMaterial
 
 if TYPE_CHECKING:
-  from app.models.users import User
+    from app.models.users import User
+    from app.models.public.mentor_public import (
+        BookingPublic,
+        MentorSessionPublic,
+        MentorProfilePublic,
+        MentorServicePublic,
+        MentorSettingsPublic,
+        BookingSessionPublic,
+    )
 
 
 # ==================== MENTOR PROFILE MODEL ====================
@@ -75,7 +83,7 @@ class MentorProfile(SQLModel, table=True):
         ]
         return int((sum(fields) / len(fields)) * 100)
 
-    def to_public(self):
+    def to_public(self, current_user_id: Optional[int] = None) -> "MentorProfilePublic":
         """Convert to MentorProfilePublic"""
         from .public.mentor_public import MentorProfilePublic
         
@@ -94,7 +102,7 @@ class MentorProfile(SQLModel, table=True):
             created_at=self.created_at,
             updated_at=self.updated_at,
             user=self.user.to_minimal() if self.user else None,
-            sessions=[s.to_public() for s in self.sessions],
+            sessions=[s.to_public(current_user_id=current_user_id) for s in self.sessions],
             services=[s.to_public() for s in self.services],
             settings=self.settings.to_public() if self.settings else None,
         )
@@ -178,6 +186,7 @@ class MentorSession(SQLModel, table=True):
         ])
         return max(0, self.max_bookings - active_bookings)
     
+    @property
     def user_has_booked(self, user_id: int) -> bool:
         return any(
             b.mentee_id == user_id and b.status in [
@@ -187,27 +196,81 @@ class MentorSession(SQLModel, table=True):
             for b in self.bookings
         )
         
+    def is_owner(self, user_id: Optional[int] = None) -> bool:
+        owner = self.mentor_id == user_id if user_id else False
+        return owner
+    
+    @property
     def can_user_access(self, user_id: int) -> bool:
-        is_owner = self.mentor_id == user_id
+        is_owner = self.is_owner(user_id)
         has_booking = self.user_has_booked(user_id)
         return is_owner or has_booking
 
-    def to_public(self, current_user_id: Optional[int] = None):
+
+    def get_user_booking(self, user_id: int) -> "MentorSessionBooking":
+        return next(
+            (b for b in self.bookings if b.mentee_id == user_id),
+            None
+        )
+
+    def to_public(self, current_user_id: Optional[int] = None) -> "MentorSessionPublic":
         """Convert to MentorSessionPublic"""
         from .public.mentor_public import MentorSessionPublic
+        from app.utils.current_request_user import RequestContext
+        current_user_id = RequestContext.get_user() if current_user_id is None else current_user_id
         
+        # Try to access bookings
+        try:
+            bookings_list = list(self.bookings)
+        except Exception as e:
+            print(f"❌ Error loading bookings: {e}")
+            print(f"   Exception type: {type(e)}")
+            import traceback
+            traceback.print_exc()
+            bookings_list = []
+        
+        # Calculate properties manually for debugging
+        total_bookings = len(bookings_list)
+        confirmed_bookings = len([b for b in bookings_list if b.status == BookingStatus.CONFIRMED])
+        pending_bookings = len([b for b in bookings_list if b.status == BookingStatus.PENDING])
+        
+        
+        # Check ownership
         is_owner = current_user_id and self.mentor_id == current_user_id
-        user_has_booked = current_user_id and self.user_has_booked(current_user_id)
-        can_access = current_user_id and self.can_user_access(current_user_id)
-        
+                
+        # Check booking status
+        if current_user_id:
+            user_has_booked = any(
+                b.mentee_id == current_user_id and b.status in [
+                    BookingStatus.CONFIRMED,
+                    BookingStatus.PENDING
+                ]
+                for b in bookings_list
+            )
+            user_cancelled = any(
+                b.mentee_id == current_user_id and b.status == BookingStatus.CANCELLED_BY_MENTOR
+                for b in bookings_list
+            )
+            can_access = is_owner or user_has_booked
+            
+        else:
+            user_has_booked = False
+            user_cancelled = False
+            can_access = False
+
         # Hide sensitive data if user doesn't have access
         meeting_link = self.meeting_link if can_access else None
         physical_address = self.physical_address if can_access else None
+        
+        # Get user booking status
+        user_booking = self.get_user_booking(current_user_id) if current_user_id else None
+        booking_status = user_booking.status if user_booking else None
         
         return MentorSessionPublic(
             id=self.id,
             uuid=self.uuid,
             mentor_id=self.mentor_id,
+            mentor=self.mentor.user.to_minimal(),
             title=self.title,
             description=self.description,
             cover_image=self.cover_image,
@@ -221,18 +284,98 @@ class MentorSession(SQLModel, table=True):
             is_public=self.is_public,
             is_cancelled=self.is_cancelled,
             is_active=self.is_active,
+            is_owner=self.is_owner(user_id=current_user_id),
             max_bookings=self.max_bookings,
             location_type=self.location_type,
             meeting_link=meeting_link,
             physical_address=physical_address,
             preparation_materials=self.preparation_materials,
-            total_bookings=self.total_bookings,
-            confirmed_bookings=self.confirmed_bookings,
-            pending_bookings=self.pending_bookings,
+            total_bookings=total_bookings,  # Use calculated value
+            confirmed_bookings=confirmed_bookings,  # Use calculated value
+            pending_bookings=pending_bookings,  # Use calculated value
             is_full=self.is_full,
             available_spots=self.available_spots,
             user_has_booked=bool(user_has_booked),
-            bookings=[b.to_public() for b in self.bookings] if is_owner else [],
+            user_cancelled_by_mentor=bool(user_cancelled),
+            user_booking_status=booking_status,
+            bookings=[b.to_public(current_user_id=current_user_id) for b in bookings_list],  # Use the list we verified
+            created_at=self.created_at,
+            updated_at=self.updated_at,
+        )
+        
+        
+    def to_booking_session(self, current_user_id: Optional[int] = None) -> "BookingSessionPublic":
+        """Convert to BookingSessionPublic (slim version without nested bookings)"""
+        from .public.mentor_public import BookingSessionPublic
+        from app.utils.current_request_user import RequestContext
+        current_user_id = RequestContext.get_user() if current_user_id is None else current_user_id
+        
+        # Calculate stats from bookings
+        try:
+            bookings_list = list(self.bookings)
+        except Exception:
+            bookings_list = []
+        
+        total_bookings = len(bookings_list)
+        confirmed_bookings = len([b for b in bookings_list if b.status == BookingStatus.CONFIRMED])
+        pending_bookings = len([b for b in bookings_list if b.status == BookingStatus.PENDING])
+        
+        # Check access
+        is_owner = current_user_id and self.mentor_id == current_user_id
+        user_has_booked = current_user_id and any(
+            b.mentee_id == current_user_id and b.status in [
+                BookingStatus.CONFIRMED,
+                BookingStatus.PENDING
+            ]
+            for b in bookings_list
+        )
+        can_access = is_owner or user_has_booked
+        
+        # Hide sensitive data
+        meeting_link = self.meeting_link if can_access else None
+        physical_address = self.physical_address if can_access else None
+        
+        # Get user booking status
+        user_booking = self.get_user_booking(current_user_id) if current_user_id else None
+        booking_status = user_booking.status if user_booking else None
+        
+        user_cancelled_by_mentor = any(
+            b.mentee_id == current_user_id and b.status == BookingStatus.CANCELLED_BY_MENTOR
+            for b in bookings_list
+        )
+        
+        return BookingSessionPublic(
+            id=self.id,
+            uuid=self.uuid,
+            mentor_id=self.mentor_id,
+            mentor=self.mentor.user.to_minimal(),
+            title=self.title,
+            description=self.description,
+            cover_image=self.cover_image,
+            session_type=self.session_type,
+            duration_minutes=self.duration_minutes,
+            price_usd=self.price_usd,
+            tags=self.tags,
+            start_time=self.start_time,
+            end_time=self.end_time,
+            timezone=self.timezone,
+            is_public=self.is_public,
+            is_cancelled=self.is_cancelled,
+            is_active=self.is_active,
+            # ``is_owner``: A user cannot book their own session. So ``is_owner`` is not ideal here.
+            max_bookings=self.max_bookings,
+            location_type=self.location_type,
+            meeting_link=meeting_link,
+            physical_address=physical_address,
+            preparation_materials=self.preparation_materials,
+            total_bookings=total_bookings,
+            confirmed_bookings=confirmed_bookings,
+            pending_bookings=pending_bookings,
+            is_full=self.is_full,
+            available_spots=self.available_spots,
+            user_has_booked=bool(user_has_booked),
+            user_cancelled_by_mentor=bool(user_cancelled_by_mentor),
+            user_booking_status=booking_status,
             created_at=self.created_at,
             updated_at=self.updated_at,
         )
@@ -256,15 +399,16 @@ class MentorSessionBooking(SQLModel, table=True):
     session: "MentorSession" = Relationship(back_populates="bookings")
     mentee: "User" = Relationship()
 
-    def to_public(self):
+    def to_public(self, current_user_id: Optional[int] = None) -> "BookingPublic":
         """Convert to BookingPublic"""
-        from .public.mentor_public import BookingPublic
+        from .public.user_public import BookingPublic
         
         return BookingPublic(
             id=self.id,
             uuid=self.uuid,
             session_id=self.session_id,
-            mentee=self.mentee.to_minimal(),
+            session=self.session.to_booking_session(current_user_id=current_user_id) if self.session else None,
+            mentee=self.mentee.to_minimal() if self.mentee else None,
             status=self.status,
             message=self.message,
             created_at=self.created_at,
@@ -296,7 +440,7 @@ class MentorService(SQLModel, table=True):
 
     mentor: MentorProfile = Relationship(back_populates="services")
 
-    def to_public(self):
+    def to_public(self) -> "MentorServicePublic":
         """Convert to MentorServicePublic"""
         from .public.mentor_public import MentorServicePublic
         
@@ -318,6 +462,7 @@ class MentorService(SQLModel, table=True):
 
 
 # ==================== MENTOR SETTINGS MODEL ====================
+# TODO: Create a Field for Mentors to set the X hours before a session starts that bookings are no longer allowed. Refer to `crud.py validate_session_booking`
 class MentorSettings(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     mentor_id: int = Field(foreign_key="mentorprofile.user_id")
@@ -325,7 +470,7 @@ class MentorSettings(SQLModel, table=True):
     currently_open_to_mentees: bool = Field(default=True)
     profile_visibility: bool = Field(default=True)
     auto_accept_bookings: bool = Field(default=True)
-    require_intro_message: bool = Field(default=True)
+    require_intro_message: bool = Field(default=False, sa_column=Column(Boolean, server_default="false", nullable=False))
     allow_public_availability_view: bool = Field(default=True)
 
     timezone: Optional[str] = None
@@ -352,7 +497,7 @@ class MentorSettings(SQLModel, table=True):
 
     mentor: "MentorProfile" = Relationship(back_populates="settings")
 
-    def to_public(self):
+    def to_public(self) -> "MentorSettingsPublic":
         """Convert to MentorSettingsPublic"""
         from .public.mentor_public import MentorSettingsPublic
         
@@ -476,7 +621,7 @@ class MentorSettingsCreate(BaseModel):
     currently_open_to_mentees: bool = True
     profile_visibility: bool = True
     auto_accept_bookings: bool = False
-    require_intro_message: bool = True
+    require_intro_message: bool = False
     allow_public_availability_view: Optional[bool] = True
     timezone: Optional[str] = None
     available_times: Optional[List[str]] = None

@@ -16,7 +16,7 @@ router = APIRouter()
 def get_my_mentor_profile(current_user: CurrentUser, session: SessionDep):
     """Get current user's mentor profile"""
     profile = crud.get_mentor_profile_or_404(session, current_user.id)
-    return profile.to_public()
+    return profile.to_public(current_user_id=current_user.id)
 
 
 @router.post("/profile", response_model=MentorProfilePublic)

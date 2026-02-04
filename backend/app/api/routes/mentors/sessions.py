@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
-from typing import Optional, List
+from typing import List
 from uuid import UUID
-from app.api.deps import SessionDep, CurrentUser
+from app.api.deps import SessionDep, CurrentUser, CurrentUserOptional
 from app.models import (
     MentorSessionPublic,
     MentorSessionCreate,
@@ -34,7 +34,7 @@ def create_session(
 @router.get("/sessions", response_model=List[MentorSessionPublic])
 def list_sessions(
     session: SessionDep,
-    current_user: Optional[CurrentUser] = None,
+    current_user: CurrentUserOptional,
     skip: int = 0,
     limit: int = 100
 ):
@@ -46,30 +46,44 @@ def list_sessions(
         skip=skip,
         limit=limit
     )
-    return [s.to_public(current_user_id=current_user_id) for s in sessions]
+    public_sessions = [s.to_public(current_user_id=current_user_id) for s in sessions]
+    return public_sessions
 
 
 @router.get("/sessions/{session_uuid}", response_model=MentorSessionPublic)
 def get_session(
     session_uuid: UUID,
     session: SessionDep,
-    current_user: Optional[CurrentUser] = None
+    current_user: CurrentUserOptional  # Back to optional
 ):
     """Get session by UUID with privacy checks"""
     mentor_session: MentorSession = crud.get_mentor_session_or_404_by_uuid(
         session,
         session_uuid
     )
+    
     current_user_id = current_user.id if current_user else None
     
+    # 🔍 Log auth state
+    if current_user:
+        print(f"✅ Authenticated user {current_user_id} viewing session {session_uuid}")
+    else:
+        print(f"👤 Unauthenticated user viewing session {session_uuid}")
+    
+    # Privacy check for private sessions
     if not mentor_session.is_public:
-        if not current_user_id or not mentor_session.can_user_access(current_user_id):
+        if not current_user_id:
+            raise HTTPException(
+                status_code=401,  # Changed from 403
+                detail="Authentication required to view private session"
+            )
+        if not mentor_session.can_user_access(current_user_id):
             raise HTTPException(
                 status_code=403,
                 detail="No access to this private session"
             )
-    
-    return mentor_session.to_public(current_user_id=current_user_id)
+    public_mentor_session = mentor_session.to_public(current_user_id=current_user_id)
+    return public_mentor_session
 
 
 @router.patch("/sessions/{session_id}", response_model=MentorSessionPublic)
@@ -140,7 +154,7 @@ def cancel_session(
 def get_mentor_sessions(
     mentor_id: int,
     session: SessionDep,
-    current_user: Optional[CurrentUser] = None
+    current_user: CurrentUser
 ):
     """Get all sessions for a specific mentor"""
     current_user_id = current_user.id if current_user else None
@@ -149,4 +163,4 @@ def get_mentor_sessions(
         mentor_id=mentor_id,
         current_user_id=current_user_id
     )
-    return [s.to_public(current_user_id=current_user_id) for s in sessions]
+    return [s.to_public() for s in sessions]

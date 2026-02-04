@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from typing import List
-from app.api.deps import SessionDep
+from app.api.deps import CurrentUserOptional, SessionDep
 from app.models import (
     MentorExplorePublic,
     MentorSessionPublic,
@@ -24,10 +24,12 @@ def get_featured_mentors(session: SessionDep):
 
 
 @router.get("/featured/sessions", response_model=List[MentorSessionPublic])
-def get_featured_sessions(session: SessionDep):
+def get_featured_sessions(session: SessionDep, current_user: CurrentUserOptional = None):
     """Get featured sessions"""
-    sessions = crud.get_featrued_sessions(session=session, limit=20)
-    return [s.to_public() for s in sessions]
+    current_user_id = current_user.id if current_user else None
+    
+    sessions = crud.get_featured_sessions(session=session, limit=20)
+    return [s.to_public(current_user_id=current_user_id) for s in sessions]
 
 
 @router.get("/featured/services", response_model=List[MentorServicePublic])

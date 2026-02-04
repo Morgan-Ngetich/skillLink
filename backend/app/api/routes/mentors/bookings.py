@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Query
 from typing import Optional, List
 from sqlmodel import select
-from app.api.deps import SessionDep, CurrentUser
+from app.api.deps import SessionDep, CurrentUser, CurrentUserOptional
 from app.models import (
     BookingPublic,
     BookingCreateRequest,
@@ -32,13 +32,13 @@ def book_session(
         mentee_id=current_user.id,
         message=booking_data.message,
     )
-    return booking.to_public()
+    return booking.to_public(current_user_id=current_user.id)
 
 
 @router.get("/bookings", response_model=List[BookingPublic])
 def list_my_bookings(
     session: SessionDep,
-    current_user: CurrentUser,
+    current_user: CurrentUserOptional = None,
     status: Optional[BookingStatus] = Query(None)
 ):
     """List current user's bookings"""
@@ -47,7 +47,7 @@ def list_my_bookings(
         user_id=current_user.id,
         status=status
     )
-    return [b.to_public() for b in bookings]
+    return [b.to_public(current_user_id=current_user.id if current_user else None) for b in bookings]
 
 
 @router.get("/bookings/history", response_model=List[BookingPublic])
@@ -67,7 +67,7 @@ def get_booking_history(
         )
     
     bookings = session.exec(query).all()
-    return [b.to_public() for b in bookings]
+    return [b.to_public(current_user_id=current_user.id) for b in bookings]
 
 
 @router.patch("/bookings/{booking_id}/status", response_model=BookingPublic)
@@ -84,7 +84,7 @@ def update_booking_status(
         new_status=status_update.status,
         user_id=current_user.id
     )
-    return booking.to_public()
+    return booking.to_public(current_user_id=current_user.id)
 
 
 @router.post("/bookings/{booking_id}/confirm", response_model=BookingPublic)
@@ -99,7 +99,7 @@ def confirm_booking(
         booking_id=booking_id,
         new_status=BookingStatus.CONFIRMED,
         user_id=current_user.id
-    ).to_public()
+    ).to_public(current_user_id=current_user.id)
 
 
 @router.post("/bookings/{booking_id}/deny", response_model=BookingPublic)
@@ -115,7 +115,7 @@ def deny_booking(
         booking_id=booking_id,
         new_status=BookingStatus.CANCELLED_BY_MENTOR,
         user_id=current_user.id
-    ).to_public()
+    ).to_public(current_user_id=current_user.id)
 
 
 @router.delete("/bookings/{booking_id}", status_code=204)
