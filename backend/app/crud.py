@@ -792,19 +792,17 @@ def get_mentor_session_or_404(session: Session, session_id: int) -> MentorSessio
 def get_mentor_session_or_404_by_uuid(
     session: Session, session_uuid: UUID
 ) -> MentorSession:
-    """Get session by UUID or raise 404, with bookings eagerly loaded"""    
+    """Get session by UUID or raise 404, with bookings eagerly loaded"""
     mentor_session = session.exec(
         select(MentorSession)
         .where(MentorSession.uuid == session_uuid)
         .options(
-            selectinload(MentorSession.bookings)
-            .joinedload(MentorSessionBooking.mentee)
+            selectinload(MentorSession.bookings).joinedload(MentorSessionBooking.mentee)
         )
     ).first()
 
     if not mentor_session:
         raise HTTPException(status_code=404, detail="Session not found")
-    
 
     return mentor_session
 
@@ -838,11 +836,11 @@ def get_mentor_sessions(
     query = query.where(MentorSession.is_active, MentorSession.is_cancelled.is_(False))
 
     sessions = list(session.exec(query).all())
-    
+
     # Force load bookings for all sessions
     for s in sessions:
-        _  = len(s.bookings)
-    
+        _ = len(s.bookings)
+
     return sessions
 
 
@@ -1284,7 +1282,10 @@ ALLOWED_STATUS_TRANSITIONS = {
     ],
     BookingStatus.COMPLETED: [],  # Final state
     BookingStatus.CANCELLED_BY_MENTEE: [],  # Final state
-    BookingStatus.CANCELLED_BY_MENTOR: [],  # Final state
+    BookingStatus.CANCELLED_BY_MENTOR: [
+        # TODO: Maybe consider adding BookingStatus.PENDING, to allow mentors to move cancelled mentees from cancelled to pending.
+        BookingStatus.CONFIRMED
+    ],
     BookingStatus.NO_SHOW_MENTEE: [],  # Final state
     BookingStatus.NO_SHOW_MENTOR: [],  # Final state
     BookingStatus.EXPIRED: [],  # Final state
@@ -1410,8 +1411,11 @@ def get_user_bookings(
         .join(MentorSession)
         .where(MentorSessionBooking.mentee_id == user_id)
         .options(
-            selectinload(MentorSessionBooking.session)  # Eager load session
-            .selectinload(MentorSession.bookings)  # And its bookings for stats
+            selectinload(
+                MentorSessionBooking.session
+            ).selectinload(  # Eager load session
+                MentorSession.bookings
+            )  # And its bookings for stats
         )
     )
 
@@ -1461,7 +1465,7 @@ def update_booking_status(
     if old_status in [
         BookingStatus.COMPLETED,
         BookingStatus.CANCELLED_BY_MENTEE,
-        BookingStatus.CANCELLED_BY_MENTOR,
+        # Canceled by mentor is not here, because a mentor could later change their mind.
         BookingStatus.NO_SHOW_MENTEE,
         BookingStatus.NO_SHOW_MENTOR,
         BookingStatus.EXPIRED,
