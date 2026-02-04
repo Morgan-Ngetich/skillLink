@@ -46,6 +46,9 @@ export const useNavItems = () => {
         label: 'Explore', 
         icon: FiCompass, 
         to: '/explore',
+        params: {
+          view: 'mentors',
+        },
       },
     ];
 
