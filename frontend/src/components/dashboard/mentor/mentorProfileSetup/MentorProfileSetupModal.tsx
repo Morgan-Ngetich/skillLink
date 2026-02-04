@@ -48,12 +48,18 @@ export default function MentorProfileSetupModal({
 
 
   const [formData, setFormData] = useState<MentorProfileCreate>({
-    user_id: user?.id || 0,
-    title: mentorProfile?.title || profile?.title || '',
-    industries: mentorProfile?.industries || [],
-    expertise: mentorProfile?.expertise || profile?.area_of_focus || [],
-    experience_level: mentorProfile?.experience_level || 'mid',
+    user_id: user?.id ?? 0,
+    title: mentorProfile?.title ?? profile?.title ?? '',
+    industries: mentorProfile?.industries?.length
+      ? mentorProfile.industries
+      : profile?.area_of_focus ?? [],
+    expertise: mentorProfile?.expertise?.length
+      ? mentorProfile.expertise
+      : profile?.skills ?? [],
+    experience_level: mentorProfile?.experience_level ?? 'mid',
   })
+
+  console.log("Profile title", profile?.title)
 
   const [newIndustry, setNewIndustry] = useState('')
   const [newExpertise, setNewExpertise] = useState('')
@@ -197,7 +203,7 @@ export default function MentorProfileSetupModal({
                     </Text>
                   </HStack>
                   <Text fontSize="xs" color="blue.600">
-                    You can add services, availability, and more details later from your profile settings.
+                    You can add services, availability, and more details from your profile settings.
                   </Text>
                 </VStack>
               </HStack>
