@@ -21,6 +21,10 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/login/access-token")
 # For Swagger / Bearer auth
 bearer_scheme = HTTPBearer(auto_error=False)
 
+# Optional versions for endpoints that can be accessed without authentication
+oauth2_scheme_optional = OAuth2PasswordBearer(tokenUrl="/api/v1/login/access-token", auto_error=False)
+bearer_scheme_optional = HTTPBearer(auto_error=False)
+
 ALGORITHM = "HS256"  # For internal tokens and Supabase Tokens
 
 def create_access_token(subject: str | Any, expires_delta: timedelta) -> str:
