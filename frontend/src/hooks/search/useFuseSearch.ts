@@ -17,7 +17,7 @@ export function useFuseSearch<T>(
     const fuseOptions: IFuseOptions<T> = {
       threshold: 0.3,
       includeMatches: true,
-      minMatchCharLength: 2,
+      minMatchCharLength: 1,
       ...options,
     };
     return new Fuse(data, fuseOptions);
