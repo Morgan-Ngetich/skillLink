@@ -32,6 +32,7 @@ import Step4InterestsSkills from "./forms/Step4InterestsSkills"
 import { useAuthRouteGuard } from '@/hooks/auth/useAuthRouteGuard';
 import { useEffect } from 'react';
 import { useAuth } from '@/hooks/auth/useAuth';
+import { queryClient } from '@/hooks/lib/queryClient';
 
 const steps = [
   {
@@ -65,7 +66,7 @@ export default function ProfileSetup() {
   const navigate = useNavigate()
   const { isBlocked, isLoading: authLoading } = useAuthRouteGuard()
 
-  const { step: stepParam, redirectTo } = useSearch({ from: '/_layout/profile-setup' });
+  const { step: stepParam, redirectTo, redirectSearch } = useSearch({ from: '/_layout/profile-setup' });
 
   const { user } = useAuth();
   const { profile, isLoading: profileLoading, updateProfileAll, isSubmitting } = useProfile();
@@ -147,7 +148,11 @@ export default function ProfileSetup() {
   const setStepInUrl = (index: number) => {
     router.navigate({
       to: "/profile-setup",
-      search: { step: index + 1, redirectTo },
+      search: {
+        step: index + 1,
+        redirectTo,
+        redirectSearch
+      },
       replace: true,
     });
   };
@@ -161,7 +166,12 @@ export default function ProfileSetup() {
   const onSubmit = async (data: UserProfileCreate) => {
     await updateProfileAll(data, {
       onSuccess: async () => {
-        await navigate({ to: redirectTo || `profile/${user?.uuid}` })
+        queryClient.invalidateQueries({ queryKey: ['auth', 'user'] })
+
+        await navigate({
+          to: redirectTo || `profile/${user?.uuid}`,
+          search: redirectSearch || { pt: 'about', st: 'services' }
+        })
       },
       onError: (err: unknown) => console.error(err),
     });
