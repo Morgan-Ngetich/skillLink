@@ -438,18 +438,15 @@ def list_public_mentors(
     """
     List mentors for explore page with optional filters and pagination.
     - Only returns active mentors with visible profiles.
-    
+
     NOTE: By joining MentorProfile, we implicitly filter to mentors only
     """
-    
+
     query = (
         select(User)
         .join(MentorProfile, MentorProfile.user_id == User.id)
         .join(MentorSettings, MentorSettings.mentor_id == MentorProfile.user_id)
-        .where(
-            User.is_active,
-            MentorSettings.profile_visibility
-        )
+        .where(User.is_active, MentorSettings.profile_visibility)
         # TODO: intead of order_by create a marketing logic that would base the mentors on return.
         .order_by(User.created_at.desc())
         .options(
@@ -467,9 +464,7 @@ def list_public_mentors(
 
     # Availability filter
     if available is not None:
-        query = query.where(
-            MentorSettings.currently_open_to_mentees == available
-        )
+        query = query.where(MentorSettings.currently_open_to_mentees == available)
 
     query = query.offset(offset).limit(limit)
 
@@ -772,25 +767,44 @@ def update_mentor_cached_stats(session: Session, mentor_id: int) -> MentorProfil
 
 # MENTOR SESSIONS
 def get_mentor_session(session: Session, session_id: int) -> MentorSession | None:
-    return session.get(MentorSession, session_id)
+    """Get session by ID with bookings eagerly loaded"""
+    return session.exec(
+        select(MentorSession)
+        .where(MentorSession.id == session_id)
+        .options(
+            selectinload(MentorSession.bookings).joinedload(
+                MentorSessionBooking.mentee
+            )  # Also load mentee for to_public()
+        )
+    ).first()
 
 
 def get_mentor_session_or_404(session: Session, session_id: int) -> MentorSession:
+    """Get session by ID or raise 404, with bookings eagerly loaded"""
     session_obj = get_mentor_session(session, session_id)
     if not session_obj:
         raise HTTPException(status_code=404, detail="Mentor session not found")
+    # Force load relationships
+    _ = len(session_obj.bookings)
     return session_obj
 
 
 def get_mentor_session_or_404_by_uuid(
     session: Session, session_uuid: UUID
 ) -> MentorSession:
+    """Get session by UUID or raise 404, with bookings eagerly loaded"""    
     mentor_session = session.exec(
-        select(MentorSession).where(MentorSession.uuid == session_uuid)
+        select(MentorSession)
+        .where(MentorSession.uuid == session_uuid)
+        .options(
+            selectinload(MentorSession.bookings)
+            .joinedload(MentorSessionBooking.mentee)
+        )
     ).first()
 
     if not mentor_session:
         raise HTTPException(status_code=404, detail="Session not found")
+    
 
     return mentor_session
 
@@ -804,7 +818,11 @@ def get_mentor_sessions(
     - Others see public sessions or private sessions they booked
     Only active and non-cancelled sessions are returned.
     """
-    query = select(MentorSession).options(selectinload(MentorSession.bookings))
+    query = select(MentorSession).options(
+        selectinload(MentorSession.bookings).joinedload(
+            MentorSessionBooking.mentee
+        )  # Also load mentee
+    )
     query = query.where(MentorSession.mentor_id == mentor_id)
 
     if current_user_id != mentor_id:
@@ -817,9 +835,15 @@ def get_mentor_sessions(
             )
         )
 
-    query = query.where(MentorSession.is_active, MentorSession.is_cancelled._is(False))
+    query = query.where(MentorSession.is_active, MentorSession.is_cancelled.is_(False))
 
-    return list(session.exec(query).all())
+    sessions = list(session.exec(query).all())
+    
+    # Force load bookings for all sessions
+    for s in sessions:
+        _  = len(s.bookings)
+    
+    return sessions
 
 
 def get_public_sessions(
@@ -835,7 +859,11 @@ def get_public_sessions(
     - User's own sessions
     Only active and non-cancelled sessions are returned.
     """
-    query = select(MentorSession).options(selectinload(MentorSession.bookings))
+    query = select(MentorSession).options(
+        selectinload(MentorSession.bookings).joinedload(
+            MentorSessionBooking.mentee
+        )  # Also load mentee
+    )
 
     # Privacy filters
     if current_user_id:
@@ -864,7 +892,11 @@ def get_all_mentor_sessions(
     query = (
         select(MentorSession)
         .where(MentorSession.mentor_id == mentor_id)
-        .options(selectinload(MentorSession.bookings))
+        .options(
+            selectinload(MentorSession.bookings).joinedload(
+                MentorSessionBooking.mentee
+            )  # Also load mentee
+        )
     )
 
     if active_only:
@@ -873,14 +905,18 @@ def get_all_mentor_sessions(
     return list(session.exec(query).all())
 
 
-def get_featrued_sessions(session: Session, limit: int = 20) -> List[MentorSession]:
+def get_featured_sessions(session: Session, limit: int = 20) -> List[MentorSession]:
     """Get featured mentor sessions (earliest created, active only)"""
     # TODO: Later replace with popularity mentrics or eplicit featured flag
     return list(
         session.exec(
             select(MentorSession)
             .where(MentorSession.is_active and MentorSession.is_public)
-            .options(selectinload(MentorSession.bookings))
+            .options(
+                selectinload(MentorSession.bookings).joinedload(
+                    MentorSessionBooking.mentee
+                )  # Also load mentee
+            )
             .order_by(MentorSession.created_at.asc())
             .limit(limit)
         ).all()
@@ -903,14 +939,18 @@ def list_public_sessions(
     only_available: bool = False,
     limit: int = 20,
     offset: int = 0,
-):
+) -> List[MentorSession]:
     query = (
         select(MentorSession)
         .join(MentorProfile, MentorSession.mentor_id == MentorProfile.user_id)
         .join(MentorSettings, MentorSettings.mentor_id == MentorProfile.user_id)
+        .options(
+            selectinload(MentorSession.bookings).joinedload(
+                MentorSessionBooking.mentee
+            )  # Also load mentee
+        )
         .where(
             MentorSession.is_public,
-            # 
             MentorSession.is_active,
             MentorSession.is_cancelled.is_(False),
             MentorSettings.profile_visibility,
@@ -979,6 +1019,9 @@ def create_mentor_session(
     session.commit()
     session.refresh(session_obj)
 
+    # Reload with relationships for to_public()
+    session_obj = get_mentor_session(session, session_obj.id)
+
     # update cached stats
     update_mentor_cached_stats(session, session_in.mentor_id)
 
@@ -988,6 +1031,7 @@ def create_mentor_session(
 def update_mentor_session(
     session: Session, session_id: int, session_in: MentorSessionUpdate
 ) -> MentorSession:
+    # Now properly loads bookings via get_mentor_session_or_404()
     session_obj = get_mentor_session_or_404(session, session_id)
 
     update_data = session_in.model_dump(exclude_unset=True)
@@ -1011,6 +1055,10 @@ def update_mentor_session(
     session.add(session_obj)
     session.commit()
     session.refresh(session_obj)
+
+    # Reload with relationships
+    session_obj = get_mentor_session(session, session_obj.id)
+
     return session_obj
 
 
@@ -1157,8 +1205,10 @@ def validate_session_booking(
     if start_time.tzinfo is None:
         start_time = start_time.replace(tzinfo=timezone.utc)
 
-    # Rule 2: Session not expried
-    if start_time <= now:
+    # TODO:// Create a rule that will look at the MentorSettigns to see if bookings are allowed after the session starts, or X hours before the session start time.
+    # Rule 2: Session not expired
+    end_time = mentor_session.end_time
+    if end_time <= now:
         raise HTTPException(
             status_code=400, detail="This session has already started or passed"
         )
@@ -1199,7 +1249,7 @@ def validate_session_booking(
             status_code=400, detail="You already have a booking for this session"
         )
 
-    # Rule 6. Check mentor settings
+    # Rule 6. Check mentor settings if intro message is required
     mentor_settings = get_mentor_settings_or_404(session, mentor_session.mentor_id)
 
     if mentor_settings.require_intro_message and not message:
@@ -1354,14 +1404,15 @@ def get_booking_or_404(session: Session, booking_id: int) -> MentorSessionBookin
 def get_user_bookings(
     session: Session, user_id: int, status: Optional[BookingStatus] = None
 ) -> list[MentorSessionBooking]:
-    """
-    Get bookings where this user is the mentee.
-    - Mentees can see their own bookings
-    """
+    """Get bookings where this user is the mentee"""
     query = (
         select(MentorSessionBooking)
         .join(MentorSession)
         .where(MentorSessionBooking.mentee_id == user_id)
+        .options(
+            selectinload(MentorSessionBooking.session)  # Eager load session
+            .selectinload(MentorSession.bookings)  # And its bookings for stats
+        )
     )
 
     if status:
