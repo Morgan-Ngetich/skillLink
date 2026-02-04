@@ -145,11 +145,14 @@ function invalidateQueries(
 
   switch (bucket) {
     case "mentor-services":
+      qc.invalidateQueries({ queryKey: ["auth", "user"] });
       qc.invalidateQueries({ queryKey: ["mentorServices"] });
       if (resourceId) qc.invalidateQueries({ queryKey: ["mentor-service", resourceId] });
       break;
     case "mentor_sessions":
+      qc.invalidateQueries({ queryKey: ["auth", "user"] });
       qc.invalidateQueries({ queryKey: ["mentorSessions"] });
+      qc.invalidateQueries({ queryKey: ["mentorProfile", "me", userUuid] });
       break;
     case "avatars":
       qc.invalidateQueries({ queryKey: ["auth", "user"] });
@@ -158,6 +161,7 @@ function invalidateQueries(
       qc.invalidateQueries({ queryKey: ["auth", "user"] });
       break;
     case "mentor-profiles":
+      qc.invalidateQueries({ queryKey: ["auth", "user"] });
       qc.invalidateQueries({ queryKey: ["mentorProfile", "me", userUuid] });
       break;
   }
@@ -190,7 +194,11 @@ export function useSupabaseStorage() {
   const deleteMutation = useMutation({
     mutationFn: ({ bucket, path }: DeleteOptions) => supabaseDeleteFile(bucket, path),
     onSuccess: (_, v) => {
-      toast({ id: "delete-success", title: "File deleted", status: "info" });
+      toast({
+        id: "delete-success",
+        title: "File deleted",
+        status: "info"
+      });
       if (v.userUuid) invalidateQueries(qc, v.bucket, v.userUuid);
     },
   });
@@ -215,7 +223,7 @@ export function useProfileImageUpload({ type, onSuccess, onError }: UseProfileIm
   const { user, updateCurrentAuthUser } = useAuth();
   const toast = useToaster();
   const { uploadFile, isUploading } = useSupabaseStorage();
-  
+
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
