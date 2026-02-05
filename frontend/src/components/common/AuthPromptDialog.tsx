@@ -66,8 +66,8 @@ const AuthPromptDialog: React.FC<AuthPromptDialogProps> = ({
       size="sm"
       placement="center"
       motionPreset="slide-in-left"
-      closeOnInteractOutside={showStayLoggedOut} // Only allow backdrop close for non-protected routes
-      closeOnEscape={showStayLoggedOut} // Only allow ESC close for non-protected routes
+      closeOnInteractOutside={false} // Deny backdrop close for non-protected routes
+      closeOnEscape={false} // Deny ESC close for non-protected routes
     >
       <Portal>
         <Dialog.Backdrop />

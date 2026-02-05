@@ -1,7 +1,7 @@
 import { safeLocalStorage } from "./storage";
 
 const STORAGE_KEY = 'auth_prompt_dismissed';
-const DISMISSAL_DURATION = 30 * 60 * 1000; // 30min in milliseconds
+const DISMISSAL_DURATION = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
 
 interface DismissalRecord {
   pathname: string;

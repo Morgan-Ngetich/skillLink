@@ -19,6 +19,9 @@ export function useAuthPromptController() {
 
   // Track previous pathname to detect route changes
   const prevPathname = useRef(location.pathname);
+  
+  // Track if we've shown the prompt this session for non-protected routes
+  const hasShownPromptThisSession = useRef(false);
 
   // Cleanup expired dismissals on mount
   useEffect(() => {
@@ -78,10 +81,17 @@ export function useAuthPromptController() {
       return;
     }
 
-    // Non-protected route + not dismissed - show full prompt
-    if (mode !== 'full' || !open) {
-      setMode('full');
-      setOpen(true);
+    // Non-protected route + not dismissed - show ONCE per session after delay
+    if (!hasShownPromptThisSession.current) {
+      const timer = setTimeout(() => {
+        if (!user && !dismissedThisSession) {
+          setMode('full');
+          setOpen(true);
+          hasShownPromptThisSession.current = true;
+        }
+      }, 3000); // Wait 3 seconds before showing
+
+      return () => clearTimeout(timer);
     }
   }, [
     user,
