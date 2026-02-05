@@ -90,9 +90,15 @@ function AuthCallbackPage() {
 
         // 8. Determine final redirect
         let finalRedirect = '/'; // Default fallback
+        let finalSearchParams = {};
 
         if (redirectTo) {
-          finalRedirect = redirectTo;
+          // Parse the redirectTo URL to separate path and search params
+          const [pathname, searchString] = redirectTo.split('?');
+          finalRedirect = pathname;
+          if (searchString) {
+            finalSearchParams = Object.fromEntries(new URLSearchParams(searchString));
+          }
         } else if (user.id) {
           // Fallback to user profile if no redirect was stored
           const CurrentUser: UserPublic = await queryClient.fetchQuery({ queryKey: ['auth', 'user'] });
@@ -103,12 +109,15 @@ function AuthCallbackPage() {
           finalRedirect = `/`;
         }
 
-        console.log('🔄 Redirecting to:', finalRedirect);
+        console.log('🔄 Redirecting to:', finalRedirect, 'with params:', finalSearchParams);
 
-        // 9. Navigate to final destination
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        navigate({ to: finalRedirect as any });
-
+        // 9. Navigate to final destination with proper search params
+        navigate({
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          to: finalRedirect as any,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          search: finalSearchParams as any
+        });
       } catch (err: unknown) {
         console.error('❌ Error during auth callback:', err);
 
@@ -126,7 +135,7 @@ function AuthCallbackPage() {
         });
 
         // Redirect to login with error message
-        navigate({ 
+        navigate({
           to: '/login',
           search: { error: 'auth_failed' }
         });
