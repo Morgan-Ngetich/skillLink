@@ -81,47 +81,26 @@ function RootComponent() {
 function RootDocument({ children }: { children: React.ReactNode }) {
   const routeContext = Route.useRouteContext() as RouterContext
   const queryClient = routeContext?.queryClient ?? fallbackQueryClient
-  const isServer = typeof window === 'undefined'
+  // const isServer = typeof window === 'undefined'
 
   return (
     <html lang="en">
       <head>
         <HeadContent />
-        {/* Initialize color mode ASAP */}
-        {!isServer && (
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                (function() {
-                  try {
-                    var mode = localStorage.getItem('chakra-ui-color-mode') || 'dark';
-                    document.documentElement.setAttribute('data-theme', mode);
-                    document.documentElement.classList.add(mode);
-                  } catch (e) {}
-                })();
-              `,
-            }}
-          />
-        )}
       </head>
       <body>
-
-        <div id="root">
-          <QueryClientProvider client={queryClient}>
-            <ChakraProvider value={themeSystem}>
-              <ColorModeProvider
-                forcedTheme={isServer ? 'light' : undefined}
-              >
-                {!isServer && <GlobalStyles />}
-                {children}
-                {!isServer && <Toaster />}
-                <Suspense fallback={null}>
-                  <TanStackRouterDevtools />
-                </Suspense>
-              </ColorModeProvider>
-            </ChakraProvider>
-          </QueryClientProvider>
-        </div>
+        <QueryClientProvider client={queryClient}>
+          <ChakraProvider value={themeSystem}>
+            <ColorModeProvider>
+              <GlobalStyles />
+              {children}
+              <Toaster />
+              <Suspense fallback={null}>
+                <TanStackRouterDevtools />
+              </Suspense>
+            </ColorModeProvider>
+          </ChakraProvider>
+        </QueryClientProvider>
         <Scripts />
       </body>
     </html>
