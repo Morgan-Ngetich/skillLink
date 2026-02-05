@@ -392,6 +392,6 @@ class TestUserWorkflows:
         assert mentor_session.pending_bookings == 0
         
         # 9. Test access control
-        assert mentor_session.can_user_access(mentor_user.id) is True
-        assert mentor_session.can_user_access(test_user.id) is True
-        assert mentor_session.can_user_access(another_user.id) is False  # Booking was cancelled
+        assert mentor_session.can_user_access(user_id=mentor_user.id) is True
+        assert mentor_session.can_user_access(user_id=test_user.id) is True
+        assert mentor_session.can_user_access(user_id=another_user.id) is False  # Booking was cancelled

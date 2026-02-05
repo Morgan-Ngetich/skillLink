@@ -186,7 +186,6 @@ class MentorSession(SQLModel, table=True):
         ])
         return max(0, self.max_bookings - active_bookings)
     
-    @property
     def user_has_booked(self, user_id: int) -> bool:
         return any(
             b.mentee_id == user_id and b.status in [
@@ -200,7 +199,7 @@ class MentorSession(SQLModel, table=True):
         owner = self.mentor_id == user_id if user_id else False
         return owner
     
-    @property
+    # TODO:// consider adding this to the public model
     def can_user_access(self, user_id: int) -> bool:
         is_owner = self.is_owner(user_id)
         has_booking = self.user_has_booked(user_id)
