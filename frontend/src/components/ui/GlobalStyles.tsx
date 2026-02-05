@@ -1,23 +1,28 @@
 import { Global, css } from '@emotion/react';
-import { useColorMode } from './colormode/useColorMode';
 
 export function GlobalStyles() {
-  const { colorMode } = useColorMode();
-
   return (
     <Global
       styles={css`
+        :root {
+          --scrollbar-thumb: rgba(0, 0, 0, 0.2);
+        }
+
+        /* ✅ Changed from [data-theme="dark"] to .dark */
+        .dark {
+          --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+        }
+
         * {
           scroll-behavior: smooth !important;
         }
 
-        /* Ensure no conflicting styles */
         body, html {
           scroll-behavior: smooth !important;
         }
                   
         html {
-          scroll-padding-top: 50px; /* Instead of scroll-margin-top on headings */
+          scroll-padding-top: 50px;
         }
 
         h2, h3, h4, h5, h6 {
@@ -30,7 +35,8 @@ export function GlobalStyles() {
           font-weight: 600;
         }
         
-        [data-theme="dark"] .search-highlight {
+        /* ✅ Changed from [data-theme="dark"] to .dark */
+        .dark .search-highlight {
           background-color: #365314;
           color: #bef264;
         }
@@ -41,9 +47,7 @@ export function GlobalStyles() {
         }
 
         ::-webkit-scrollbar-thumb {
-          background: ${colorMode === 'dark'
-          ? 'rgba(255, 255, 255, 0.2)'
-          : 'rgba(0, 0, 0, 0.2)'};
+          background: var(--scrollbar-thumb);
           border-radius: 8px;
         }
 
@@ -53,9 +57,7 @@ export function GlobalStyles() {
 
         * {
           scrollbar-width: thin;
-          scrollbar-color: ${colorMode === 'dark'
-          ? 'rgba(255, 255, 255, 0.2) transparent'
-          : 'rgba(0, 0, 0, 0.2) transparent'};
+          scrollbar-color: var(--scrollbar-thumb) transparent;
         }
       `}
     />

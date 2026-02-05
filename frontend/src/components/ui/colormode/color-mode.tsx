@@ -13,7 +13,8 @@ export function ColorModeProvider(props: ColorModeProviderProps) {
     <ThemeProvider
       attribute="class"
       defaultTheme="dark"
-      enableSystem={true}
+      enableSystem={false}
+      storageKey="chakra-ui-color-mode"
       disableTransitionOnChange
       {...props}
     />
