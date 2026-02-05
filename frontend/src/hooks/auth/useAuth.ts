@@ -107,6 +107,10 @@ export function useAuth() {
 
   // When a user signs in they need to be synced with the database
   const signIn = async (email: string, password: string) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectToParam = urlParams.get("redirectTo") || `/`;
+    safeSessionStorage.setItem('auth_redirect_after_login', redirectToParam);
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -136,6 +140,8 @@ export function useAuth() {
     }
 
     await queryClient.invalidateQueries();
+
+    navigate({ to: "/auth/callback" })
 
     return { data };
   };

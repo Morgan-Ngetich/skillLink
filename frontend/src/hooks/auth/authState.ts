@@ -63,11 +63,18 @@ export function useNavigateWithRedirect() {
   return (path: string, redirectTarget?: string) => {
     const redirectToState = redirectTarget || routerState.location.pathname;
 
+    // Parse the path to separate pathname and search params
+    const [pathname, searchString] = path.split('?');
+    const searchParams = searchString
+      ? Object.fromEntries(new URLSearchParams(searchString))
+      : {};
+
     navigate({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      to: path as any,
+      to: pathname as any,
+      // Merge the path's search params with redirectTo
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      search: ((prev: any) => ({ ...prev, redirectTo: redirectToState })) as any,
+      search: { ...searchParams, redirectTo: redirectToState } as any,
       replace: true,
     });
   };
