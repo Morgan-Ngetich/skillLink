@@ -33,7 +33,7 @@ const MyBookingsListView: React.FC<MyBookingsListViewProps> = ({
 }) => {
   const router = useRouter();
   const { bookings, isLoading } = useMentorBookings();
-  const [filter, setFilter] = useState<"all" | "upcoming" | "past" | "cancelled">("upcoming");
+  const [filter, setFilter] = useState<"all" | "upcoming" | "past" | "cancelled">("all");
 
   const isSessionCardSmall = useBreakpointValue({ base: false, md: true })
 
