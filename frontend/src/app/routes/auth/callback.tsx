@@ -1,17 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { supabase } from '@/hooks/supabase/supabaseClient';
 import useToaster from '@/hooks/public/useToaster';
 import { Flex } from '@chakra-ui/react';
 import { useNavigate } from '@tanstack/react-router';
-import { queryClient } from '@/hooks/lib/queryClient';
 import { syncUserToBackend } from '@/hooks/auth/authState';
 import { AuthCallbackLoader } from '@/components/common/AuthCallBackLoader';
 import { type GoogleUserInfo, type Identity, type SupabaseUser } from '@/hooks/auth/types';
 import { getApiErrorMessage } from '@/utils/errorUtils';
 import { setAuthSession, clearAuthSession } from "@/hooks/auth/cookies/sessionCookies";
 import { safeSessionStorage } from '@/utils/storage';
-import { UserPublic } from '@/client';
 
 const LOCAL_STORAGE_KEY = 'googleUser';
 const REDIRECT_STORAGE_KEY = 'auth_redirect_after_login';
@@ -23,8 +21,12 @@ function isUserFromGoogle(user: SupabaseUser): boolean {
 function AuthCallbackPage() {
   const toast = useToaster();
   const navigate = useNavigate();
+  const hasRun = useRef(false)
 
   useEffect(() => {
+    if (hasRun.current) return;
+    hasRun.current = true;
+    
     const handleCallback = async () => {
       try {
         // 1. Get session from Supabase
@@ -65,10 +67,7 @@ function AuthCallbackPage() {
           // Don't block login if backend sync fails - user can still use the app
         }
 
-        // 5. Invalidate auth queries to fetch fresh user data
-        await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
-
-        // 6. Handle Google-specific user info caching
+        // 5. Handle Google-specific user info caching
         const isGoogle = isUserFromGoogle(user);
         const email = user.email;
 
@@ -84,11 +83,12 @@ function AuthCallbackPage() {
           safeSessionStorage.removeItem(LOCAL_STORAGE_KEY);
         }
 
-        // 7. Get stored redirect destination (from OAuth flow)
+        // 6. Get stored redirect destination (from OAuth flow)
         const redirectTo = safeSessionStorage.getItem(REDIRECT_STORAGE_KEY);
+        console.log("Auth callback redirectTo", redirectTo)
         safeSessionStorage.removeItem(REDIRECT_STORAGE_KEY);
 
-        // 8. Determine final redirect
+        // 7. Determine final redirect
         let finalRedirect = '/'; // Default fallback
         let finalSearchParams = {};
 
@@ -99,19 +99,13 @@ function AuthCallbackPage() {
           if (searchString) {
             finalSearchParams = Object.fromEntries(new URLSearchParams(searchString));
           }
-        } else if (user.id) {
-          // Fallback to user profile if no redirect was stored
-          const CurrentUser: UserPublic = await queryClient.fetchQuery({ queryKey: ['auth', 'user'] });
-          if (CurrentUser?.uuid) {
-            finalRedirect = `/profile/${CurrentUser.uuid}`;
-          }
         } else {
           finalRedirect = `/`;
         }
 
         console.log('🔄 Redirecting to:', finalRedirect, 'with params:', finalSearchParams);
 
-        // 9. Navigate to final destination with proper search params
+        // 8. Navigate to final destination with proper search params
         navigate({
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           to: finalRedirect as any,

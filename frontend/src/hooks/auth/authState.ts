@@ -61,7 +61,9 @@ export function useNavigateWithRedirect() {
   const routerState = useRouterState();
 
   return (path: string, redirectTarget?: string) => {
+    console.log("redirectTarget", redirectTarget)
     const redirectToState = redirectTarget || routerState.location.pathname;
+    console.log("redirectToState", redirectToState)
 
     // Parse the path to separate pathname and search params
     const [pathname, searchString] = path.split('?');

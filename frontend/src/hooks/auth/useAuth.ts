@@ -66,6 +66,7 @@ export function useAuth() {
     // Store redirect destination BEFORE OAuth flow
     const urlParams = new URLSearchParams(window.location.search);
     const redirectToParam = urlParams.get("redirectTo") || `/`;
+    console.log("redirectToParam", redirectToParam)
     safeSessionStorage.setItem('auth_redirect_after_login', redirectToParam);
 
     const { data, error } = await supabase.auth.signUp({

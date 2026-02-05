@@ -73,6 +73,7 @@ const SessionDetailModal = ({ session, isOpen, onClose, isLoading }: SessionDeta
     const redirectUrl = `${window.location.pathname}?${currentSearchParams.toString()}`;
     try {
       if (!user) {
+        console.log("redirect url", redirectUrl)
         navigateWithRedirect("/login", redirectUrl);
         return;
       }
