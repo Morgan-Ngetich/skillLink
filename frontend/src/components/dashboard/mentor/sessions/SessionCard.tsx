@@ -58,8 +58,6 @@ const SessionCard: React.FC<SessionCardProps> = ({
   const spotsLeft = session.available_spots || 0;
   const isUserBooked = session.user_has_booked || false;
   const isUserCancelledByMentor = session.user_cancelled_by_mentor || false;
-  console.log("SessionCard - isUserBooked:", isUserBooked);
-  console.log("SessionCard - isUserCancelledByMentor:", isUserCancelledByMentor);
 
   // Session can be booked if: upcoming, not cancelled, not full, and public
   // const canBook = isSessionUpcoming && !isSessionCancelled && !isFull && session.is_public;
@@ -185,8 +183,6 @@ const SessionCard: React.FC<SessionCardProps> = ({
       </VStack>
     </HStack>
   );
-
-  console.log("Current_Session:", session);
 
   return (
     <Box

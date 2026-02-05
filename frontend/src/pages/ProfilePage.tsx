@@ -170,20 +170,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ initialPublicData }) => {
   const shouldShowMobileSidebar = isMobile || !profileUserIsMentor;
   const shouldShowDesktopSidebar = !isMobile && profileUserIsMentor;
 
-  console.log('ProfilePage render:', {
-    isOwnProfile,
-    userIsMentor,
-    personalProfile: !!personalProfile,
-    isProfileComplete: personalProfile?.is_profile_complete,
-    isProfileSetupComplete: personalProfile?.is_profile_setup_complete,
-    shouldShowMobileSidebar,
-    isMobile,
-    profileUserIsMentor,
-    user: !!user,
-    publicUser: !!publicUser
-  })
-
-
   return (
     <>
       {/* Lazy-loaded modals for owners only */}
