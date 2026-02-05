@@ -17,7 +17,7 @@ import useToaster from '@/hooks/public/useToaster';
 import { Link } from '@tanstack/react-router';
 import { PasswordInput } from '@/components/ui/password-input';
 import { isValidEmail } from '@/utils/validator';
-import { useCleanRedirect } from '@/hooks/auth/authState';
+// import { useCleanRedirect } from '@/hooks/auth/authState';
 // import useAuthRedirect from '@/hooks/auth/authState';
 import { useGoogleUser } from '@/hooks/auth/authState';
 import { StyledInput } from '@/components/ui';
@@ -38,7 +38,7 @@ const LoginForm = () => {
 
   const toast = useToaster();
   // const navigate = useNavigate();
-  const redirect = useCleanRedirect()
+  // const redirect = useCleanRedirect()
   const googleUser = useGoogleUser()
   console.log("googleUser", googleUser)
 
@@ -59,7 +59,7 @@ const LoginForm = () => {
         status: 'success',
       });
 
-      redirect()
+      // redirect()
     }
   };
 
