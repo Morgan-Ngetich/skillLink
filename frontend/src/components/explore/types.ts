@@ -41,15 +41,6 @@ export const PRICE_RANGES: PriceRange[] = [
   { value: "200+", label: "$200+", min: 200, max: Infinity },
 ];
 
-export const SESSION_TYPES = [
-  "1-on-1 Video Call",
-  "Code Review",
-  "Resume Review",
-  "Mock Interview",
-  "Career Advice",
-  "Portfolio Review",
-] as const;
-
 export const SERVICE_CATEGORIES = [
   "Consulting",
   "Coaching",

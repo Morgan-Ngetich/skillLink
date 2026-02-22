@@ -924,7 +924,6 @@ def get_featured_sessions(session: Session, limit: int = 20) -> List[MentorSessi
 def list_public_sessions(
     *,
     session,
-    session_type: str | None = None,
     location_type: str | None = None,
     tag: str | None = None,
     mentor_expertise: str | None = None,
@@ -957,9 +956,6 @@ def list_public_sessions(
     )
 
     # --- Filters ---
-    if session_type:
-        query = query.where(MentorSession.session_type == session_type)
-
     if location_type:
         query = query.where(MentorSession.location_type == location_type)
 
@@ -1004,13 +1000,6 @@ def create_mentor_session(
     # Convert the Pydantic model to dictionary
     session_data = session_in.model_dump()
 
-    # Convert session_type to string if it's an enum
-    session_type = session_data.get("session_type")
-    if isinstance(session_type, Enum):
-        session_data["session_type"] = session_type.value
-    else:
-        session_data["session_type"] = str(session_type)
-
     session_obj = MentorSession(**session_data)
 
     session.add(session_obj)
@@ -1033,13 +1022,6 @@ def update_mentor_session(
     session_obj = get_mentor_session_or_404(session, session_id)
 
     update_data = session_in.model_dump(exclude_unset=True)
-    if "session_type" in update_data:
-        if hasattr(update_data["session_type"], "value"):
-            # It's an enum, get the value
-            update_data["session_type"] = update_data["session_type"].value
-        else:
-            # It's already a string, use as-is
-            update_data["session_type"] = update_data["session_type"]
 
     for key, value in update_data.items():
         setattr(session_obj, key, value)

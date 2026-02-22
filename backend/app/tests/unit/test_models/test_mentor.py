@@ -66,7 +66,6 @@ class TestMentorModels:
 
         assert session_obj.mentor_id == test_mentor_profile.user_id
         assert session_obj.title == mentor_session_data["title"]
-        assert session_obj.session_type == SessionType.CODE_REVIEW
         assert session_obj.duration_minutes == 60
         assert session_obj.price_usd == 50.0
         assert session_obj.is_public is True

@@ -143,7 +143,6 @@ class TestUserWorkflows:
             MentorSessionCreate(
                 mentor_id=user.id,
                 title="Intro Session",
-                session_type=SessionType.ONE_ON_ONE,
                 duration_minutes=30,
                 start_time=start_time,
                 end_time=end_time,

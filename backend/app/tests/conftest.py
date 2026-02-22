@@ -208,7 +208,6 @@ def mentor_session_data(test_mentor_profile) -> Dict[str, Any]:
         "mentor_id": test_mentor_profile.user_id,
         "title": "Code Review Session",
         "description": "Review your code and provide feedback",
-        "session_type": SessionType.CODE_REVIEW,
         "duration_minutes": 60,
         "price_usd": 50.0,
         "start_time": datetime.now() + timedelta(days=7),

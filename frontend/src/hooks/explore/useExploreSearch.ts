@@ -33,7 +33,7 @@ export const useExploreSearch = ({
   });
 
   const sessionFuseResults = useFuseSearch(sessions, searchQuery, {
-    keys: ["title", "description", "tags", "session_type"],
+    keys: ["title", "description", "tags"],
     threshold: 0.3,
   });
 
@@ -111,13 +111,6 @@ export const useExploreSearch = ({
   // Filter sessions
   const filteredSessions = useMemo(() => {
     let filtered = sessionFuseResults.map((r) => r.item);
-
-    // Filter by session type (multi-select)
-    if (filters.selectedSessionTypes.length > 0) {
-      filtered = filtered.filter((session) =>
-        filters.selectedSessionTypes.includes(session.session_type)
-      );
-    }
 
     // Filter by location type
     if (filters.locationType) {

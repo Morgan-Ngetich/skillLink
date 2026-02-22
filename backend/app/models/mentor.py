@@ -120,7 +120,6 @@ class MentorSession(SQLModel, table=True):
     title: str
     description: Optional[str] = None
     cover_image: Optional[str] = None
-    session_type: SessionType = Field(sa_column=Column(String, nullable=False))
     duration_minutes: int = 60
     price_usd: Optional[float] = None
 
@@ -279,7 +278,6 @@ class MentorSession(SQLModel, table=True):
             title=self.title,
             description=self.description,
             cover_image=self.cover_image,
-            session_type=self.session_type,
             duration_minutes=self.duration_minutes,
             price_usd=self.price_usd,
             tags=self.tags,
@@ -368,7 +366,6 @@ class MentorSession(SQLModel, table=True):
             title=self.title,
             description=self.description,
             cover_image=self.cover_image,
-            session_type=self.session_type,
             duration_minutes=self.duration_minutes,
             price_usd=self.price_usd,
             tags=self.tags,
@@ -587,7 +584,6 @@ class MentorSessionCreate(BaseModel):
     title: str
     description: Optional[str] = None
     cover_image: Optional[str] = None
-    session_type: SessionType
     duration_minutes: int = 60
     price_usd: Optional[float] = None
     tags: Optional[List[str]] = None
@@ -607,7 +603,6 @@ class MentorSessionUpdate(SQLModel):
     title: Optional[str] = None
     description: Optional[str] = None
     cover_image: Optional[str] = None
-    session_type: Optional[SessionType] = None
     duration_minutes: Optional[int] = None
     price_usd: Optional[float] = None
     is_public: Optional[bool] = None

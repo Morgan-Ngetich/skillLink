@@ -37,7 +37,6 @@ class MentorSessionPublic(SQLModel):
     title: str
     description: Optional[str] = None
     cover_image: Optional[str] = None
-    session_type: str
     duration_minutes: int
     price_usd: Optional[float] = None
     tags: Optional[List[str]] = None
@@ -196,7 +195,6 @@ class BookingSessionPublic(SQLModel):
     title: str
     description: Optional[str] = None
     cover_image: Optional[str] = None
-    session_type: str
     duration_minutes: int
     price_usd: Optional[float] = None
     tags: Optional[List[str]] = None

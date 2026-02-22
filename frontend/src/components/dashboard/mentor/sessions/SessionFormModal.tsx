@@ -35,29 +35,18 @@ import { LuTrash2, LuUpload, LuPlus, LuX, LuFileText } from "react-icons/lu";
 import { formatDuration } from "@/utils/calendarDataTransformer";
 
 
-const SessionApproach = {
-  ONE_ON_ONE: '1-on-1 Video Call',
-  CODE_REVIEW: 'Code Review',
-  RESUME_REVIEW: 'Resume Review',
-  MOCK_INTERVIEW: 'Mock Interview',
-  CAREER_ADVICE: 'Career Advice',
-  PORTFOLIO_REVIEW: 'Portfolio Review',
-}
-
 interface SessionFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   session?: MentorSessionPublic | null;
 }
 
-const SESSION_TYPES = Object.values(SessionApproach);
 const MATERIAL_TYPES = ["pdf", "video", "article", "link", "other"];
 
 interface SessionFormData {
   title: string;
   description: string;
   cover_image: string;
-  session_type: string;
   price_usd: string;
   max_bookings: string;
   location_type: LocationType;
@@ -84,7 +73,6 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
       title: "",
       description: "",
       cover_image: "",
-      session_type: SESSION_TYPES[0],
       price_usd: "",
       max_bookings: defaultMaxBookings,
       location_type: "online",
@@ -104,12 +92,7 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
   const preparationMaterials = watch("preparation_materials");
   const startTime = watch("start_time");
   const endTime = watch("end_time");
-  // const locationType = watch("location_type");
-  // const sessionType = watch("session_type");
-  // const isPublic = watch("is_public");
-  // const coverImage = watch("cover_image");
   watch("location_type");
-  watch("session_type");
   watch("is_public");
   watch("cover_image");
 
@@ -146,7 +129,6 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
         title: session.title || "",
         description: session.description || "",
         cover_image: session.cover_image || "",
-        session_type: session.session_type || SESSION_TYPES[0], // Use the value directly
         price_usd: session.price_usd?.toString() || "",
         max_bookings: session.max_bookings?.toString() ?? defaultMaxBookings,
         location_type: session.location_type || "online",
@@ -175,7 +157,6 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
         title: "",
         description: "",
         cover_image: "",
-        session_type: SESSION_TYPES[0],
         price_usd: "",
         max_bookings: defaultMaxBookings,
         location_type: "online",
@@ -324,7 +305,6 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
       title: data.title,
       description: data.description || undefined,
       cover_image: cover_image,
-      session_type: data.session_type as SessionType, // Send the value directly (e.g., "1-on-1 Video Call")
       duration_minutes: calculatedDuration,
       price_usd: data.price_usd ? parseFloat(data.price_usd) : undefined,
       max_bookings: data.max_bookings ? parseInt(data.max_bookings) : undefined,
@@ -436,32 +416,6 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
                     fontSize={{ base: "sm", md: "md" }}
                   />
                 </Field>
-
-                {/* Session Type */}
-                <Field label="Session Type">
-                  <Controller
-                    name="session_type"
-                    control={control}
-                    render={({ field }) => (
-                      <Flex flexWrap="wrap" gap={2}>
-                        {SESSION_TYPES.map((type) => (
-                          <Button
-                            key={type}
-                            size={{ base: "sm", md: "md" }}
-                            variant={field.value === type ? "solid" : "outline"}
-                            type="button"
-                            onClick={() => {
-                              field.onChange(type);
-                            }}
-                          >
-                            {type}
-                          </Button>
-                        ))}
-                      </Flex>
-                    )}
-                  />
-                </Field>
-
 
                 {/* Tags */}
                 <Field label="Tags (Optional)" helperText="Add relevant topics or skills">

@@ -1,6 +1,6 @@
-import { Box, Text, VStack, Separator } from "@chakra-ui/react";
+import { Box, Text, VStack } from "@chakra-ui/react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { SESSION_TYPES, PRICE_RANGES } from "../types";
+import { PRICE_RANGES } from "../types";
 import type { UseExploreFiltersReturn } from "@/hooks/explore/useExploreFilters";
 
 interface SessionFiltersProps {
@@ -10,7 +10,8 @@ interface SessionFiltersProps {
 export const SessionFilters = ({ filters }: SessionFiltersProps) => {
   return (
     <>
-      <Box>
+      {/* //TODO: add catergory filters  */}
+      {/* <Box>
         <Text fontWeight="semibold" fontSize="lg" mb={4}>
           Session Type
         </Text>
@@ -28,7 +29,7 @@ export const SessionFilters = ({ filters }: SessionFiltersProps) => {
         </VStack>
       </Box>
 
-      <Separator />
+      <Separator /> */}
 
       <Box>
         <Text fontWeight="semibold" fontSize="lg" mb={4}>

@@ -45,7 +45,6 @@ def browse_mentors(
 @router.get("/sessions", response_model=List[MentorSessionPublic])
 def browse_sessions(
     session: SessionDep,
-    session_type: Optional[str] = Query(None),
     location_type: Optional[LocationType] = Query(None),
     tag: Optional[str] = Query(None),
     mentor_expertise: Optional[str] = Query(None),
@@ -66,7 +65,6 @@ def browse_sessions(
     
     sessions = crud.list_public_sessions(
         session=session,
-        session_type=session_type,
         location_type=location_type,
         tag=tag,
         mentor_expertise=mentor_expertise,

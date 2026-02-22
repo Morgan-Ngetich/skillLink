@@ -72,7 +72,6 @@
 #             session,
 #             mentor_id=test_mentor_profile.user_id,
 #             title="FastAPI Code Review",
-#             session_type=SessionType.CODE_REVIEW,
 #             duration_minutes=60,
 #             start_time=start_time,
 #             end_time=end_time,
@@ -195,32 +194,6 @@
 #             crud.assign_role_to_user(session, mentee.id, "mentee")
 #             mentees.append(mentee)
         
-#         # 2. Create multiple session types
-#         from datetime import datetime, timedelta
-#         from app.models.enums import SessionType
-        
-#         sessions = []
-#         session_types = [SessionType.ONE_ON_ONE, SessionType.CODE_REVIEW, SessionType.CAREER_ADVICE]
-        
-#         for i, session_type in enumerate(session_types):
-#             start_time = datetime.now() + timedelta(days=i+1)
-#             end_time = start_time + timedelta(hours=1)
-            
-#             session_data = mentor_session_data.copy()
-#             session_data.update({
-#                 "title": f"{session_type.value} Session",
-#                 "session_type": session_type,
-#                 "start_time": start_time,
-#                 "end_time": end_time,
-#                 "max_bookings": 2  # Limit to 2 bookings per session
-#             })
-            
-#             mentor_session = crud.create_mentor_session(
-#                 session,
-#                 mentor_id=test_mentor_profile.user_id,
-#                 **session_data
-#             )
-#             sessions.append(mentor_session)
         
 #         # 3. Mentees book sessions
 #         bookings = []

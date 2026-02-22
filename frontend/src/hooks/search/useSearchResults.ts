@@ -21,7 +21,7 @@ export const useSearchResults = ({ search, limit = 10, types = ["mentor", "sessi
 
   // Run Fuse searches at top level
   const rawMentorResults = useFuseSearch(mentors, debouncedSearch, { keys: ["full_name","title","skills","about","area_of_focus"], threshold: 0.3, includeScore: true, minMatchCharLength: 2 });
-  const rawSessionResults = useFuseSearch(sessions, debouncedSearch, { keys: ["title","description","tags","session_type"], threshold: 0.3, includeScore: true, minMatchCharLength: 2 });
+  const rawSessionResults = useFuseSearch(sessions, debouncedSearch, { keys: ["title","description","tags"], threshold: 0.3, includeScore: true, minMatchCharLength: 2 });
   const rawServiceResults = useFuseSearch(services, debouncedSearch, { keys: ["title","description","category","highlights"], threshold: 0.3, includeScore: true, minMatchCharLength: 2 });
 
   // Memoized mapping
