@@ -1,36 +1,62 @@
 # MENTspace
 
-Modern Collaboration Platform
+A full-stack mentor–mentee matching platform built with microservices architecture.
 
 ---
 
-## Structure
+## Project Structure
+
+```
+skillLink/
+├── frontend/   — React Vite app (TypeScript, TanStack, Chakra UI)
+└── backend/    — FastAPI app (PostgreSQL, RabbitMQ, Celery, Docker)
+```
 
 - `frontend/` — [Frontend README](./frontend/README.md)
-- `backend/` — Backend setup coming soon
+- `backend/` — [Backend README](./backend/README.md)
 
 ---
 
-## Setup
+## Quickstart
 
-1. Clone the repo:
-  ```bash
-   git clone git@github.com:Morgan-Ngetich/skillLink.git
-   cd skillLink
-  ```
+### Prerequisites
+- [Docker](https://www.docker.com/) and Docker Compose installed
 
-2. Copy environment files:
-  ```bash
-   git clone git@github.com:Morgan-Ngetich/skillLink.git
-   cd skillLink
-  ```
+### Run the full stack
 
-3. Follow instructions in `frontend/README.md` to start the app.
+```bash
+# 1. Clone the repo
+git clone git@github.com:Morgan-Ngetich/skillLink.git
+cd skillLink
 
-## 💡 Notes
-- You’ll need Supabase credentials shared separately.
-- Feel free to contribute by opening issues or PRs.
+# 2. Copy environment files (credentials shared separately)
+cp .env.example .env
 
+# 3. Build and start all services
+docker compose build
+docker compose up -d
+```
 
-### License [MIT]
-- [https://github.com/Morgan-Ngetich/skillLink/blob/main/LICENSE](https://github.com/Morgan-Ngetich/killLink/blob/main/LICENSE)
+The application will be available at **http://localhost**.
+
+> **Note:** You will need Supabase credentials to run the app. Contact the maintainer to get the required `.env` values.
+
+---
+
+## Development
+
+For local frontend development with hot reload, see the [Frontend README](./frontend/README.md).
+
+For backend development including migrations and dependency management, see the [Backend README](./backend/README.md).
+
+---
+
+## Contributing
+
+Contributions are welcome. Feel free to open an issue or submit a pull request.
+
+---
+
+## License
+
+[MIT](https://github.com/Morgan-Ngetich/skillLink/blob/main/LICENSE)
