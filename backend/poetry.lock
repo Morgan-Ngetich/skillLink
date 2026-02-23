@@ -265,7 +265,7 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7
 
 [[package]]
 name = "coverage"
-version = "7.13.0"
+version = "7.13.4"
 description = "Code coverage measurement for Python"
 category = "dev"
 optional = false
@@ -654,6 +654,18 @@ test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest-cov (>=6)", "pytest-
 type = ["mypy (>=1.14.1)"]
 
 [[package]]
+name = "playwright"
+version = "1.58.0"
+description = "A high-level API to automate web browsers"
+category = "main"
+optional = false
+python-versions = ">=3.9"
+
+[package.dependencies]
+greenlet = ">=3.1.1,<4.0.0"
+pyee = ">=13,<14"
+
+[[package]]
 name = "pluggy"
 version = "1.6.0"
 description = "plugin and hook calling mechanisms for python"
@@ -748,6 +760,20 @@ azure-key-vault = ["azure-identity (>=1.16.0)", "azure-keyvault-secrets (>=4.8.0
 gcp-secret-manager = ["google-cloud-secret-manager (>=2.23.1)"]
 toml = ["tomli (>=2.0.1)"]
 yaml = ["pyyaml (>=6.0.1)"]
+
+[[package]]
+name = "pyee"
+version = "13.0.1"
+description = "A rough port of Node.js's EventEmitter to Python with a few tricks of its own"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[package.dependencies]
+typing-extensions = "*"
+
+[package.extras]
+dev = ["build", "flake8", "flake8-black", "pytest", "pytest-asyncio", "pytest-trio", "black", "isort", "jupyter-console", "mkdocs", "mkdocs-include-markdown-plugin", "mkdocstrings", "mypy", "sphinx", "toml", "tox", "trio", "trio", "trio-typing", "twine", "twisted", "validate-pyproject"]
 
 [[package]]
 name = "pygments"
@@ -1145,7 +1171,7 @@ python-versions = ">=3.9"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.10,<3.12"
-content-hash = "ccc7057c2dffc2b66948cb914f0797c9edd17565b4d079e73f3ab18b70226f01"
+content-hash = "00ef381b3ab46f893b80197a45e8b637b48725754394d48cc9c4847de98e81c0"
 
 [metadata.files]
 alembic = []
@@ -1194,6 +1220,7 @@ passlib = []
 pathspec = []
 pillow = []
 platformdirs = []
+playwright = []
 pluggy = []
 prompt-toolkit = []
 psycopg2-binary = []
@@ -1202,6 +1229,7 @@ pycparser = []
 pydantic = []
 pydantic-core = []
 pydantic-settings = []
+pyee = []
 pygments = []
 pytest = []
 pytest-cov = []

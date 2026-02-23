@@ -9,12 +9,9 @@ from app.api.routes import (
     public_router,
     admin_router,
 )
-from app.api.routes.crackmode import og
-
 
 api_router = APIRouter()
 
-api_router.include_router(og.router, tags=["crackmode"])
 
 # Auth (no prefix conflict)
 api_router.include_router(
