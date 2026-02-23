@@ -8,7 +8,7 @@ export function generateProfileSEO(
   // Handle not found
   if (!user) {
     return seo({
-      title: 'Profile Not Found | MENTspace',
+      title: 'Profile | MENTspace',
       description: 'This profile could not be found.',
       noindex: true,
     })
@@ -66,7 +66,7 @@ export function generateProfileSEO(
   const canonical = `${baseUrl}/profile/${user.uuid}`
 
   // Build OG image
-  const ogImage = `${baseUrl}/api/og/profile/${user.uuid}?type=${isMentor ? 'mentor' : 'user'}`
+  const ogImage = `${baseUrl}/api/v1/profiles/og/profile/${user.uuid}?type=${isMentor ? 'mentor' : 'user'}`
 
   return seo({
     title: `${title} | MENTspace`,
