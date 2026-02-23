@@ -407,6 +407,7 @@ const SessionCard: React.FC<SessionCardProps> = ({
                 redirectTo: undefined,
                 serviceModal: undefined,
                 serviceId: undefined,
+                serviceDetailId: undefined,
                 sessionModal: undefined,
                 sessionId: undefined,
                 sessionDetailId: undefined,
