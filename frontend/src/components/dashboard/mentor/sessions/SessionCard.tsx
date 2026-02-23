@@ -20,6 +20,8 @@ import { formatDuration } from "@/utils/calendarDataTransformer";
 import { useToggleSessionPublic } from "@/hooks/mentor/useToggleSessionPublic";
 import { Switch } from "@/components/ui";
 import { Link, useNavigate } from "@tanstack/react-router";
+import useToaster from "@/hooks/public/useToaster";
+import { FaShareSquare } from "react-icons/fa";
 
 interface SessionCardProps {
   session: MentorSessionPublic;
@@ -41,6 +43,7 @@ const SessionCard: React.FC<SessionCardProps> = ({
   isFromExplore = false,
 }) => {
   const navigate = useNavigate()
+  const toaster = useToaster()
 
   const { data: mentorProfileData, isLoading: mentorLoading } = useUserById(
     session.mentor_id
@@ -299,6 +302,29 @@ const SessionCard: React.FC<SessionCardProps> = ({
 
                 <Menu.Positioner>
                   <Menu.Content minW="180px">
+                    <Menu.Item
+                      value="share"
+                      onClick={() => {
+                        const url = `${window.location.origin}/profile/${mentorProfileData?.uuid}?pt=about&st=sessions&sessionDetailId=${session.uuid}`
+
+                        if (navigator.share) {
+                          // Native system share sheet
+                          navigator.share({
+                            title: session.title,
+                            text: `Check out this session by ${mentorProfileData?.full_name}`,
+                            url,
+                          })
+                        } else {
+                          // Fallback for browsers that don't support it (most desktops)
+                          navigator.clipboard.writeText(url)
+                          toaster({ id: "link_copied", title: "Link copied!", status: "info" })
+                        }
+                      }}
+                    >
+                      <FaShareSquare />
+                      Share
+                    </Menu.Item>
+
                     {/* Edit - disabled for past sessions */}
                     <Menu.Item
                       value="edit"
