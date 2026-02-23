@@ -3,11 +3,20 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from app.api.main import api_router
 from app.core.config import settings
+from contextlib import asynccontextmanager
+from app.api.routes.og.profile_og import start_browser, stop_browser
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await start_browser()
+    yield
+    await stop_browser()
 
 app = FastAPI(    
     title=settings.PROJECT_NAME,
     docs_url=f"{settings.API_V1_STR}/docs",
-    openapi_url=f"{settings.API_V1_STR}/openapi.json",    
+    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    lifespan=lifespan,
 )
 
 def custom_openapi():
