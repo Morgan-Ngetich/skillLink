@@ -1,11 +1,9 @@
-FROM python:3.11-buster
-
-# Fix Buster EOL repository issue
-RUN sed -i 's|http://deb.debian.org|http://archive.debian.org|g' /etc/apt/sources.list && \
-    sed -i 's|security.debian.org|archive.debian.org|g' /etc/apt/sources.list && \
-    echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
+FROM python:3.11-bookworm
 
 WORKDIR /app
+
+# Tells Playwright to always install/find browsers here regardless of which user runs it
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -26,11 +24,6 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Download and install wkhtmltopdf from official source
-RUN curl -o wkhtmltopdf.deb -SL https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.buster_amd64.deb \
-    && apt-get update && apt-get install -y ./wkhtmltopdf.deb \
-    && rm -f wkhtmltopdf.deb
-
 # Create non-root user
 RUN adduser --disabled-password --gecos '' appuser
 
@@ -47,12 +40,19 @@ ARG INSTALL_DEV=false
 # Copy only dependency files first to leverage caching
 COPY pyproject.toml poetry.lock* ./
 
-# Install dependencies (no --mount needed for Railway)
+# Install Python dependencies
 RUN bash -c "if [ \"$INSTALL_DEV\" = \"true\" ]; then \
     poetry install --no-root --no-interaction --no-ansi; \
 else \
     poetry install --no-root --only main --no-interaction --no-ansi; \
 fi"
+
+# Install Playwright deps (needs apt/root) then browser into /ms-playwright
+RUN poetry run playwright install-deps chromium
+RUN poetry run playwright install chromium
+
+# Make the browser dir readable by appuser
+RUN chmod -R 755 /ms-playwright
 
 # Check for syntax issues
 RUN poetry check
