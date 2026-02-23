@@ -109,7 +109,7 @@ docker compose restart backend
 
 Tests run against a dedicated test database in an isolated container.
 
-### Start the test database (/root directory)
+### Start the test database (at the root directory)
 
 ```bash
 docker compose -f docker-compose.test.yml up -d
