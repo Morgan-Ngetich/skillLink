@@ -6,6 +6,7 @@ from uuid import UUID
 
 from app.models.enums import ExperienceLevel, MentorType, LocationType, BookingStatus
 from app.models.base import PreparationMaterial
+from app.models.public.user_public import UserMinimal, BookingPublic
 
 if TYPE_CHECKING:
     from app.models.public.user_public import UserMinimal, BookingPublic
@@ -33,7 +34,7 @@ class MentorSessionPublic(SQLModel):
     id: int
     uuid: UUID
     mentor_id: int
-    
+    mentor: UserMinimal
     title: str
     description: Optional[str] = None
     cover_image: Optional[str] = None
@@ -191,7 +192,7 @@ class BookingSessionPublic(SQLModel):
     id: int
     uuid: UUID
     mentor_id: int
-    
+    mentor: UserMinimal
     title: str
     description: Optional[str] = None
     cover_image: Optional[str] = None

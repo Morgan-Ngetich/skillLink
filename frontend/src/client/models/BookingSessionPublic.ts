@@ -5,6 +5,7 @@
 import type { BookingStatus } from './BookingStatus';
 import type { LocationType } from './LocationType';
 import type { PreparationMaterial } from './PreparationMaterial';
+import type { UserMinimal } from './UserMinimal';
 /**
  * Slim session for bookings - no nested bookings to avoid circular dependency
  */
@@ -12,10 +13,10 @@ export type BookingSessionPublic = {
     id: number;
     uuid: string;
     mentor_id: number;
+    mentor: UserMinimal;
     title: string;
     description?: (string | null);
     cover_image?: (string | null);
-    session_type: string;
     duration_minutes: number;
     price_usd?: (number | null);
     tags?: (Array<string> | null);

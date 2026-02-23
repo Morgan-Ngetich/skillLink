@@ -18,6 +18,10 @@ export const $BookingSessionPublic = {
             type: 'number',
             isRequired: true,
         },
+        mentor: {
+            type: 'UserMinimal',
+            isRequired: true,
+        },
         title: {
             type: 'string',
             isRequired: true,
@@ -37,10 +41,6 @@ export const $BookingSessionPublic = {
             }, {
                 type: 'null',
             }],
-        },
-        session_type: {
-            type: 'string',
-            isRequired: true,
         },
         duration_minutes: {
             type: 'number',
