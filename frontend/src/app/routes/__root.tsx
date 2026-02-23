@@ -47,8 +47,8 @@ export const Route = createRootRoute({
       { name: 'theme-color', content: '#3A3A3A' },
     ],
     links: [
-      { rel: 'icon', href: '/favicon.ico' },
-      { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+      { rel: 'icon', href: '/group.png' },
+      { rel: 'apple-touch-icon', href: '/group.png' },
       { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
       { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: '' },
       { rel: 'preconnect', href: 'https://backend-production-3e33.up.railway.app/' },
