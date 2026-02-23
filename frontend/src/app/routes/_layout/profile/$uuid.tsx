@@ -4,6 +4,7 @@ import { UsersService } from '@/client'
 import ProfilePageSkeleton from '@/skeletons/profilPage/Index'
 import { generateProfileSEO } from '@/seo/profileSeo'
 import { generateSessionSEO } from '@/seo/sessionSeo'
+import { generateServiceSEO } from '@/seo/serviceSeo'
 import { fetchCurrentUser } from '@/hooks/auth/useAuthQuery'
 import { toNativePromise } from '@/utils/toNativePromisse'
 
@@ -28,24 +29,33 @@ export const Route = createFileRoute('/_layout/profile/$uuid')({
 
   head: ({ loaderData, match }) => {
     const { publicData } = loaderData || {}
-    const sessionDetailId = (match?.search as Record<string, string>)?.sessionDetailId
+    const search = (match?.search ?? {}) as Record<string, string>
+    const sessionDetailId = search.sessionDetailId
+    const serviceDetailId = search.serviceDetailId
 
-    // If a session is being shared, find it in the already-loaded profile data
-    if (sessionDetailId && publicData?.profile?.mentor_profile?.sessions) {
-      const session = publicData.profile.mentor_profile.sessions.find(
-        (s) => s.uuid === sessionDetailId
-      )
+    const sessions = publicData?.profile?.mentor_profile?.sessions ?? []
+    const services = publicData?.profile?.mentor_profile?.services ?? []
+
+    // Session SEO
+    if (sessionDetailId) {
+      const session = sessions.find((s) => s.uuid === sessionDetailId)
       if (session) {
+        return { meta: generateSessionSEO(session, publicData?.full_name) }
+      }
+    }
+
+    // Service SEO
+    if (serviceDetailId) {
+      const service = services.find((s) => s.uuid === serviceDetailId)
+      if (service) {
         return {
-          meta: generateSessionSEO(session, publicData.full_name),
+          meta: generateServiceSEO(service, publicData?.full_name, publicData?.uuid),
         }
       }
     }
 
     // Default: profile SEO
-    return {
-      meta: generateProfileSEO(publicData),
-    }
+    return { meta: generateProfileSEO(publicData) }
   },
 
   validateSearch: (search: Record<string, unknown>) => ({
@@ -56,6 +66,7 @@ export const Route = createFileRoute('/_layout/profile/$uuid')({
     redirectTo: (search.redirectTo as string | undefined) ?? undefined,
     serviceModal: (search.serviceModal as 'create' | 'edit' | undefined) ?? undefined,
     serviceId: (search.serviceId as string | undefined) ?? undefined,
+    serviceDetailId: (search.serviceDetailId as string | undefined) ?? undefined,
     sessionModal: (search.sessionModal as 'create' | 'edit' | undefined) ?? undefined,
     sessionId: (search.sessionId as string | undefined) ?? undefined,
     sessionDetailId: (search.sessionDetailId as string | undefined) ?? undefined,
