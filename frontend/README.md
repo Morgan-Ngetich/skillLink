@@ -69,8 +69,8 @@ cp .env.example .env
 npm run dev
 ```
 
-- Access the app at **http://localhost:5174**
-- Access the app's openAPI docs at **http://localhost:5174/api/v1/docs**
+- Access the app at **http://localhost:3000**
+- Access the app's openAPI docs at **http://localhost:3000/api/v1/docs**
 
 ---
 
