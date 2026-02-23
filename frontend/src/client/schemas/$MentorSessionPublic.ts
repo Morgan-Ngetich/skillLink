@@ -42,10 +42,6 @@ export const $MentorSessionPublic = {
                 type: 'null',
             }],
         },
-        session_type: {
-            type: 'string',
-            isRequired: true,
-        },
         duration_minutes: {
             type: 'number',
             isRequired: true,

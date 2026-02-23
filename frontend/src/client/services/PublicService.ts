@@ -54,7 +54,6 @@ export class PublicService {
      * @throws ApiError
      */
     public static browseSessionsApiV1PublicSessionsGet({
-        sessionType,
         locationType,
         tag,
         mentorExpertise,
@@ -68,7 +67,6 @@ export class PublicService {
         limit = 20,
         offset,
     }: {
-        sessionType?: (string | null),
         locationType?: (LocationType | null),
         tag?: (string | null),
         mentorExpertise?: (string | null),
@@ -86,7 +84,6 @@ export class PublicService {
             method: 'GET',
             url: '/api/v1/public/sessions',
             query: {
-                'session_type': sessionType,
                 'location_type': locationType,
                 'tag': tag,
                 'mentor_expertise': mentorExpertise,

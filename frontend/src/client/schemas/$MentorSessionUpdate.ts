@@ -28,14 +28,6 @@ export const $MentorSessionUpdate = {
                 type: 'null',
             }],
         },
-        session_type: {
-            type: 'any-of',
-            contains: [{
-                type: 'SessionType',
-            }, {
-                type: 'null',
-            }],
-        },
         duration_minutes: {
             type: 'any-of',
             contains: [{

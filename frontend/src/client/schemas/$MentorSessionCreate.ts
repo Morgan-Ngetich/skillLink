@@ -28,10 +28,6 @@ export const $MentorSessionCreate = {
                 type: 'null',
             }],
         },
-        session_type: {
-            type: 'SessionType',
-            isRequired: true,
-        },
         duration_minutes: {
             type: 'number',
         },

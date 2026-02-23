@@ -18,7 +18,6 @@ export type MentorSessionPublic = {
     title: string;
     description?: (string | null);
     cover_image?: (string | null);
-    session_type: string;
     duration_minutes: number;
     price_usd?: (number | null);
     tags?: (Array<string> | null);

@@ -4,13 +4,11 @@
 /* eslint-disable */
 import type { LocationType } from './LocationType';
 import type { PreparationMaterial } from './PreparationMaterial';
-import type { SessionType } from './SessionType';
 export type MentorSessionCreate = {
     mentor_id: number;
     title: string;
     description?: (string | null);
     cover_image?: (string | null);
-    session_type: SessionType;
     duration_minutes?: number;
     price_usd?: (number | null);
     tags?: (Array<string> | null);
