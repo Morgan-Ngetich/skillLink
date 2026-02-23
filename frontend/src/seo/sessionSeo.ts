@@ -57,7 +57,6 @@ export function generateSessionSEO(
     displayMentor,
     'mentorship session',
     'mentoring',
-    session.session_type,
     ...(session.tags || []),
   ].filter(Boolean)
 
