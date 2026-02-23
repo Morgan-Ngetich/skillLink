@@ -16,6 +16,9 @@ import { FaCoins } from "react-icons/fa6";
 import type { MentorServicePublic } from "@/client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import useToaster from "@/hooks/public/useToaster";
+import { useUserById } from "@/hooks/public/useProfile";
+import { FaShareSquare } from "react-icons/fa";
 
 interface ServiceCardProps {
   service: MentorServicePublic;
@@ -34,6 +37,12 @@ const ServiceCard = ({
   onToggleExpand,
   showActions = true // prop from readOnly or !readOnly
 }: ServiceCardProps) => {
+  const toaster = useToaster()
+
+  const { data: mentorProfileData } = useUserById(
+    service.mentor_id
+  );
+
   const cardBg = useColorModeValue("white", "gray.800");
   const borderCol = useColorModeValue("gray.200", "gray.700");
 
@@ -324,6 +333,28 @@ const ServiceCard = ({
 
             <Menu.Positioner>
               <Menu.Content minW="180px">
+                <Menu.Item
+                  value="share"
+                  onClick={() => {
+                    const url = `${window.location.origin}/profile/${mentorProfileData?.uuid}?pt=about&st=services&serviceDetailId=${service.uuid}`
+
+                    if (navigator.share) {
+                      // Native system share sheet
+                      navigator.share({
+                        title: service.title,
+                        text: `Check out this session by ${mentorProfileData?.full_name}`,
+                        url,
+                      })
+                    } else {
+                      // Fallback for browsers that don't support it (most desktops)
+                      navigator.clipboard.writeText(url)
+                      toaster({ id: "link_copied", title: "Link copied!", status: "info" })
+                    }
+                  }}
+                >
+                  <FaShareSquare />
+                  Share
+                </Menu.Item>
                 {/* Edit - disabled for past sessions */}
                 <Menu.Item
                   value="edit"
