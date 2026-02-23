@@ -105,6 +105,28 @@ docker compose restart backend
 
 ---
 
+## Tests
+
+Tests run against a dedicated test database in an isolated container.
+
+### Start the test database (/root directory)
+
+```bash
+docker compose -f docker-compose.test.yml up -d
+```
+
+### Run tests
+
+From the **root of the repository**:
+
+```bash
+docker exec -it backend pytest
+```
+
+> Make sure the backend container is running and the test DB is healthy before running tests.
+
+---
+
 ## Common Docker Commands
 
 | Command | Description |
