@@ -144,7 +144,6 @@ export const useExploreSearch = ({
     return filtered;
   }, [
     sessionFuseResults, 
-    filters.selectedSessionTypes, 
     filters.locationType,
     filters.sessionPriceRange,
     filters.minPrice,

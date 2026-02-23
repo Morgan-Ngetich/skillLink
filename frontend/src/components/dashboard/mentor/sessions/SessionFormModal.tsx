@@ -28,7 +28,7 @@ import {
 } from "@/components/ui";
 import { useMentorSessions } from "@/hooks/mentor/useMentorSessions";
 import { useAuth } from "@/hooks/auth/useAuth";
-import type { MentorSessionPublic, PreparationMaterial, SessionType } from "@/client";
+import type { MentorSessionPublic, PreparationMaterial } from "@/client";
 import { type LocationType } from "@/client";
 import { useSupabaseStorage } from "@/hooks/supabase/useSupabaseStorage";
 import { LuTrash2, LuUpload, LuPlus, LuX, LuFileText } from "react-icons/lu";
