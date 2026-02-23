@@ -3,6 +3,7 @@ import { Suspense, lazy, useEffect } from 'react'
 import { UsersService } from '@/client'
 import ProfilePageSkeleton from '@/skeletons/profilPage/Index'
 import { generateProfileSEO } from '@/seo/profileSeo'
+import { generateSessionSEO } from '@/seo/sessionSeo'
 import { fetchCurrentUser } from '@/hooks/auth/useAuthQuery'
 import { toNativePromise } from '@/utils/toNativePromisse'
 
@@ -11,9 +12,7 @@ const ProfilePage = lazy(() => import('@/pages/ProfilePage'))
 async function fetchProfileData(uuid: string) {
   try {
     const publicData = await toNativePromise(
-      UsersService.getUserApiV1UsersIdentifierGet({
-        identifier: uuid,
-      })
+      UsersService.getUserApiV1UsersIdentifierGet({ identifier: uuid })
     )
     return { publicData }
   } catch (error) {
@@ -24,13 +23,26 @@ async function fetchProfileData(uuid: string) {
 
 export const Route = createFileRoute('/_layout/profile/$uuid')({
   loader: async ({ params }) => {
-    // Only fetch public data in loader (SSR-safe)
-    const profileData = await fetchProfileData(params.uuid)
-    return profileData
+    return await fetchProfileData(params.uuid)
   },
 
-  head: ({ loaderData }) => {
+  head: ({ loaderData, match }) => {
     const { publicData } = loaderData || {}
+    const sessionDetailId = (match?.search as Record<string, string>)?.sessionDetailId
+
+    // If a session is being shared, find it in the already-loaded profile data
+    if (sessionDetailId && publicData?.profile?.mentor_profile?.sessions) {
+      const session = publicData.profile.mentor_profile.sessions.find(
+        (s) => s.uuid === sessionDetailId
+      )
+      if (session) {
+        return {
+          meta: generateSessionSEO(session, publicData.full_name),
+        }
+      }
+    }
+
+    // Default: profile SEO
     return {
       meta: generateProfileSEO(publicData),
     }
@@ -59,17 +71,13 @@ function ProfileRouteComponent() {
   const navigate = useNavigate()
   const { uuid } = Route.useParams()
 
-  // Client-side only: Check auth and redirect if needed
   useEffect(() => {
     let mounted = true
 
     const checkAuthAndRedirect = async () => {
       try {
         const user = await fetchCurrentUser({ skipCache: true })
-
         if (!mounted) return
-
-        // If viewing own profile and setup incomplete, redirect
         if (user && user.uuid === uuid && !user?.profile?.is_profile_setup_complete) {
           navigate({
             to: '/profile-setup',
@@ -83,18 +91,14 @@ function ProfileRouteComponent() {
         }
       } catch (error) {
         console.error('Auth check failed:', error)
-        // Fail silently - user can still view profile as public
       }
     }
 
-    // Only run on client
     if (typeof window !== 'undefined') {
       checkAuthAndRedirect()
     }
 
-    return () => {
-      mounted = false
-    }
+    return () => { mounted = false }
   }, [uuid, navigate])
 
   return (
