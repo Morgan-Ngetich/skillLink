@@ -123,4 +123,25 @@ export class ProfilesService {
             },
         });
     }
+    /**
+     * Get Profile Og
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public static getProfileOgApiV1ProfilesOgProfileUuidGet({
+        uuid,
+    }: {
+        uuid: string,
+    }): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/profiles/og/profile/{uuid}',
+            path: {
+                'uuid': uuid,
+            },
+            errors: {
+                422: `Validation Error`,
+            },
+        });
+    }
 }
