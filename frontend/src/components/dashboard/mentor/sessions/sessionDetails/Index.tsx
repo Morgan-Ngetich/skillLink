@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogCloseTrigger,
 } from "@/components/ui/dialog";
-import { Tabs, Stack, Button, HStack, Text, Badge } from "@chakra-ui/react";
+import { Tabs, Stack, Button, HStack, Text, Badge, Box } from "@chakra-ui/react";
 import { LuUser, LuUsers, LuBookOpen, LuClock, LuCircleX } from "react-icons/lu";
 import type { MentorSessionPublic } from "@/client";
 import { useMentorBookings } from "@/hooks/mentor/useMentorBookings";
@@ -121,62 +121,64 @@ const SessionDetailModal = ({ session, isOpen, onClose, isLoading }: SessionDeta
           <DialogCloseTrigger />
         </DialogHeader>
 
-        <DialogBody flex="1" overflow="auto" px={{ base: 4, md: 6 }}>
+        <DialogBody flex="1" px={{ base: 4, md: 6 }}>
           {isLoading || !session ? (
             <SessionDetailSkeleton />
           ) : (
             <Tabs.Root defaultValue="details">
-              <Tabs.List mb={4}>
-                <Tabs.Trigger value="details" fontSize={{ base: "sm", md: "md" }}>
-                  <HStack gap={1.5}>
-                    <LuUser aria-hidden="true" />
-                    <Text>Details</Text>
-                  </HStack>
-                </Tabs.Trigger>
-
-                {session.preparation_materials && session.preparation_materials.length > 0 && (
-                  <Tabs.Trigger value="prep" fontSize={{ base: "sm", md: "md" }}>
+              <Box overflowX="auto" whiteSpace="nowrap" mb={4}>
+                <Tabs.List w="max-content" minW="100%">
+                  <Tabs.Trigger value="details" fontSize={{ base: "sm", md: "md" }}>
                     <HStack gap={1.5}>
-                      <LuBookOpen aria-hidden="true" />
-                      <Text>Prep</Text>
+                      <LuUser aria-hidden="true" />
+                      <Text>Details</Text>
                     </HStack>
                   </Tabs.Trigger>
-                )}
 
-                <Tabs.Trigger value="participants" fontSize={{ base: "sm", md: "md" }}>
-                  <HStack gap={1.5}>
-                    <LuUsers aria-hidden="true" />
-                    <Text>Participants</Text>
-                    <Text>({sessionConfirmedBookings.length})</Text>
-                  </HStack>
-                </Tabs.Trigger>
+                  {session.preparation_materials && session.preparation_materials.length > 0 && (
+                    <Tabs.Trigger value="prep" fontSize={{ base: "sm", md: "md" }}>
+                      <HStack gap={1.5}>
+                        <LuBookOpen aria-hidden="true" />
+                        <Text>Prep</Text>
+                      </HStack>
+                    </Tabs.Trigger>
+                  )}
 
-                {isOwner && sessionPendingBookings.length > 0 && (
-                  <Tabs.Trigger value="pending" fontSize={{ base: "sm", md: "md" }}>
+                  <Tabs.Trigger value="participants" fontSize={{ base: "sm", md: "md" }}>
                     <HStack gap={1.5}>
-                      <LuClock aria-hidden="true" />
-                      <Text>Pending</Text>
-                      <Badge colorPalette="orange" size="sm">
-                        {sessionPendingBookings.length}
-                      </Badge>
+                      <LuUsers aria-hidden="true" />
+                      <Text>Participants</Text>
+                      <Text>({sessionConfirmedBookings.length})</Text>
                     </HStack>
                   </Tabs.Trigger>
-                )}
 
-                {isOwner && sessionCancelledBookings.length > 0 && (
-                  <Tabs.Trigger value="cancelled">
-                    <HStack gap={1.5}>
-                      <LuCircleX />
-                      <Text>Cancelled</Text>
-                      <Badge colorPalette="red" size="sm" variant="subtle">
-                        {sessionCancelledBookings.length}
-                      </Badge>
-                    </HStack>
-                  </Tabs.Trigger>
-                )}
+                  {isOwner && sessionPendingBookings.length > 0 && (
+                    <Tabs.Trigger value="pending" fontSize={{ base: "sm", md: "md" }}>
+                      <HStack gap={1.5}>
+                        <LuClock aria-hidden="true" />
+                        <Text>Pending</Text>
+                        <Badge colorPalette="orange" size="sm">
+                          {sessionPendingBookings.length}
+                        </Badge>
+                      </HStack>
+                    </Tabs.Trigger>
+                  )}
 
-                <Tabs.Indicator />
-              </Tabs.List>
+                  {isOwner && sessionCancelledBookings.length > 0 && (
+                    <Tabs.Trigger value="cancelled">
+                      <HStack gap={1.5}>
+                        <LuCircleX />
+                        <Text>Cancelled</Text>
+                        <Badge colorPalette="red" size="sm" variant="subtle">
+                          {sessionCancelledBookings.length}
+                        </Badge>
+                      </HStack>
+                    </Tabs.Trigger>
+                  )}
+
+                  <Tabs.Indicator />
+                </Tabs.List>
+              </Box>
 
               <Tabs.Content value="details">
                 <SessionDetailsTab
