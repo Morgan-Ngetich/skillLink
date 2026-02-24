@@ -1,100 +1,26 @@
-import time
-import httpx
-import base64
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import Response
 from sqlmodel import select
-from playwright.async_api import async_playwright, Browser, Playwright
 
 from app.api.deps import SessionDep
-from app.models import User  # adjust if your ORM model is named differently
+from app.models import User
+from app.api.routes.og.og_shared import (
+    render_html_to_png,
+    cache_get, cache_set, cache_invalidate,
+    avatar_to_base64,
+    get_initials, truncate,
+    _CACHE_TTL_24H,
+)
 
 router = APIRouter()
 
 
-# ── Persistent browser instance
-# One Chromium process shared across all requests — much faster than launching
-# per-request. Pages are still isolated (each request gets its own page).
-
-_playwright: Playwright | None = None
-_browser: Browser | None = None
-
-
-async def start_browser() -> None:
-    """Call in FastAPI lifespan startup."""
-    global _playwright, _browser
-    _playwright = await async_playwright().start()
-    _browser = await _playwright.chromium.launch(
-        args=["--no-sandbox", "--disable-dev-shm-usage"],  # required on Railway/Linux
-    )
-
-
-async def stop_browser() -> None:
-    """Call in FastAPI lifespan shutdown."""
-    global _playwright, _browser
-    if _browser:
-        await _browser.close()
-        _browser = None
-    if _playwright:
-        await _playwright.stop()
-        _playwright = None
-
-
-async def _render_html_to_png(html: str) -> bytes:
-    if not _browser:
-        raise RuntimeError("Browser not started — call start_browser() in app lifespan.")
-    page = await _browser.new_page(viewport={"width": 1200, "height": 630})
-    try:
-        # networkidle ensures Google Fonts finish loading before screenshot
-        await page.set_content(html, wait_until="networkidle")
-        return await page.screenshot(
-            type="png",
-            clip={"x": 0, "y": 0, "width": 1200, "height": 630},
-        )
-    finally:
-        await page.close()
-
-
-# ── In-memory cache
-_CACHE: dict[str, dict] = {}
-_CACHE_TTL = 60 * 60 * 24  # 24 hours
-
-
-def _cache_get(key: str) -> bytes | None:
-    entry = _CACHE.get(key)
-    if entry and (time.time() - entry["ts"]) < _CACHE_TTL:
-        return entry["data"]
-    return None
-
-
-def _cache_set(key: str, data: bytes) -> None:
-    _CACHE[key] = {"data": data, "ts": time.time()}
-
-
-def invalidate_og_cache(uuid: str) -> None:
+def invalidate_og_profile_cache(uuid: str) -> None:
     """Call from your profile-update route to bust the cached image."""
-    _CACHE.pop(uuid, None)
-
-
-# ── Avatar helper
-async def _avatar_to_base64(url: str) -> str:
-    """Fetch avatar URL → base64 data-URI so Playwright doesn't need network."""
-    if not url:
-        return ""
-    try:
-        async with httpx.AsyncClient(timeout=3.0) as client:
-            r = await client.get(url)
-            r.raise_for_status()
-            ct = r.headers.get("content-type", "image/jpeg").split(";")[0]
-            b64 = base64.b64encode(r.content).decode()
-            return f"data:{ct};base64,{b64}"
-    except Exception:
-        return ""
+    cache_invalidate(uuid)
 
 
 # ── HTML template
-# CSS copied 1:1 from the approved profile-og-card.html design.
-# No webkit hacks needed — Playwright runs real modern Chromium.
 
 _HTML = """<!doctype html>
 <html lang="en">
@@ -127,7 +53,6 @@ _HTML = """<!doctype html>
       isolation: isolate;
     }}
 
-    /* Background glow */
     .og-card::before {{
       content: '';
       position: absolute;
@@ -138,7 +63,6 @@ _HTML = """<!doctype html>
       z-index: 0;
     }}
 
-    /* Faint grid lines */
     .og-card::after {{
       content: '';
       position: absolute;
@@ -152,7 +76,6 @@ _HTML = """<!doctype html>
 
     .og-card > * {{ position: relative; z-index: 1; }}
 
-    /* Top row */
     .top-row {{
       display: flex;
       align-items: flex-start;
@@ -160,11 +83,7 @@ _HTML = """<!doctype html>
       flex: 1;
     }}
 
-    /* Avatar */
-    .avatar-wrap {{
-      flex-shrink: 0;
-      position: relative;
-    }}
+    .avatar-wrap {{ flex-shrink: 0; position: relative; }}
 
     .avatar {{
       width: 148px;
@@ -209,7 +128,6 @@ _HTML = """<!doctype html>
       white-space: nowrap;
     }}
 
-    /* Info block */
     .info {{
       flex: 1;
       display: flex;
@@ -240,11 +158,9 @@ _HTML = """<!doctype html>
       text-overflow: ellipsis;
     }}
 
-    /* Stats row */
     .stats {{
       display: flex;
       align-items: center;
-      gap: 0;
       margin-top: 4px;
     }}
 
@@ -256,11 +172,7 @@ _HTML = """<!doctype html>
       margin-right: 28px;
       border-right: 1px solid rgba(255,255,255,.08);
     }}
-    .stat:last-child {{
-      border-right: none;
-      margin-right: 0;
-      padding-right: 0;
-    }}
+    .stat:last-child {{ border-right: none; margin-right: 0; padding-right: 0; }}
 
     .stat-value {{
       font-family: 'Syne', sans-serif;
@@ -278,7 +190,6 @@ _HTML = """<!doctype html>
       text-transform: uppercase;
     }}
 
-    /* About snippet */
     .about {{
       font-size: 20px;
       font-weight: 400;
@@ -292,7 +203,6 @@ _HTML = """<!doctype html>
       margin-top: 2px;
     }}
 
-    /* Tags */
     .tags {{
       display: flex;
       gap: 10px;
@@ -314,7 +224,6 @@ _HTML = """<!doctype html>
       letter-spacing: 0.01em;
     }}
 
-    /* Bottom bar */
     .bottom-bar {{
       display: flex;
       align-items: center;
@@ -356,9 +265,7 @@ _HTML = """<!doctype html>
     </div>
   </div>
 
-  <div class="tags">
-    {tags_html}
-  </div>
+  <div class="tags">{tags_html}</div>
 
   <div class="bottom-bar">
     <div class="brand">MENTspace</div>
@@ -371,6 +278,7 @@ _HTML = """<!doctype html>
 
 
 # ── Template builders
+
 def _build_avatar_html(avatar_b64: str, initials: str) -> str:
     if avatar_b64:
         return f'<img class="avatar" src="{avatar_b64}" alt="avatar" />'
@@ -408,22 +316,10 @@ def _build_tags_html(tags: list[str]) -> str:
     return "".join(f'<span class="tag">{t}</span>' for t in tags[:6])
 
 
-def _get_initials(full_name: str) -> str:
-    parts = full_name.strip().split()
-    return f"{parts[0][0]}{parts[-1][0]}".upper() if len(parts) >= 2 else full_name[:2].upper()
-
-
-def _truncate(text: str, max_len: int) -> str:
-    if not text:
-        return ""
-    return text if len(text) <= max_len else text[: max_len - 1] + "…"
-
-
-# ── Route
 @router.get("/profile/{uuid}")
-async def get_profile_og(uuid: str, session: SessionDep) -> Response:
-    # 1. Cache check
-    cached = _cache_get(uuid)
+async def get_og_profile(uuid: str, session: SessionDep) -> Response:
+    # 1. Cache
+    cached = cache_get(uuid, ttl=_CACHE_TTL_24H)
     if cached:
         return Response(
             content=cached,
@@ -442,7 +338,7 @@ async def get_profile_og(uuid: str, session: SessionDep) -> Response:
     is_mentor = public.is_mentor and mentor_profile is not None
 
     # 3. Avatar → base64
-    avatar_b64 = await _avatar_to_base64(public.avatar_url or "")
+    avatar_b64 = await avatar_to_base64(public.avatar_url or "")
 
     # 4. Tags
     tags: list[str] = []
@@ -461,29 +357,29 @@ async def get_profile_og(uuid: str, session: SessionDep) -> Response:
 
     # 6. About
     about_raw = (profile.about or "") if profile else ""
-    about = _truncate(about_raw, 160) or f"View {public.full_name}'s profile on MENTspace"
+    about = truncate(about_raw, 160) or f"View {public.full_name}'s profile on MENTspace"
 
     # 7. Build HTML
-    base_url = "mentspace.io"  # or pull from settings
+    base_url = "mentspace.io"
     html = _HTML.format(
-        full_name=_truncate(public.full_name, 40),
-        role=_truncate(role, 60),
+        full_name=truncate(public.full_name, 40),
+        role=truncate(role, 60),
         about=about,
-        avatar_html=_build_avatar_html(avatar_b64, _get_initials(public.full_name)),
+        avatar_html=_build_avatar_html(avatar_b64, get_initials(public.full_name)),
         badge_html=_build_badge_html(is_mentor),
         stats_html=_build_stats_html(mentor_profile if is_mentor else None),
         tags_html=_build_tags_html(tags),
         profile_url=f"{base_url}/profile/{uuid}",
     )
 
-    # 8. Render — real Chromium, pixel-perfect
+    # 8. Render
     try:
-        image_bytes = await _render_html_to_png(html)
+        image_bytes = await render_html_to_png(html)
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Image render failed: {exc}")
 
     # 9. Cache + return
-    _cache_set(uuid, image_bytes)
+    cache_set(uuid, image_bytes)
     return Response(
         content=image_bytes,
         media_type="image/png",

@@ -2,6 +2,7 @@ from app.api.routes.auth import router as auth_router
 from app.api.routes.users import router as users_router
 from app.api.routes.profiles import router as profiles_router
 from app.api.routes.mentors import router as mentors_router
+from app.api.routes.og import router as og_router
 from app.api.routes.goals import router as goals_router
 from app.api.routes.boards import router as boards_router
 from app.api.routes.public import router as public_router
@@ -12,6 +13,7 @@ __all__ = [
     "users_router", 
     "profiles_router",
     "mentors_router",
+    "og_router",
     "goals_router",
     "boards_router",
     "public_router",

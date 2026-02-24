@@ -4,6 +4,7 @@ from app.api.routes import (
     users_router,
     profiles_router,
     mentors_router,
+    og_router,
     goals_router,
     boards_router,
     public_router,
@@ -39,6 +40,10 @@ api_router.include_router(
     mentors_router,
     prefix="/mentors",
     tags=["mentors"]
+)
+
+api_router.include_router(
+    og_router    
 )
 
 # Goals & Roadmaps

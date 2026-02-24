@@ -4,7 +4,7 @@ from fastapi.openapi.utils import get_openapi
 from app.api.main import api_router
 from app.core.config import settings
 from contextlib import asynccontextmanager
-from app.api.routes.og.profile_og import start_browser, stop_browser
+from app.api.routes.og.og_shared import start_browser, stop_browser
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
