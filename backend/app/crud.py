@@ -159,7 +159,7 @@ def update_user(session: Session, user: User, user_in: UserUpdate) -> User:
     session.commit()
     session.refresh(user)
     
-    user = get_user_by_id(user_id=user.id)
+    user = get_user_by_id(session, user.id)
     invalidate_og_profile_cache(str(user.uuid))
     
     return user
@@ -373,7 +373,7 @@ def update_user_profile(session: Session, user_id: int, profile_in: UserProfileU
     session.commit()
     session.refresh(profile)
     
-    user = get_user_by_id(user_id=user_id)
+    user = get_user_by_id(session=session, user_id=user_id)
     invalidate_og_profile_cache(str(user.uuid))
     
     return profile
@@ -529,7 +529,7 @@ def update_mentor_profile(
     session.commit()
     session.refresh(profile)
     
-    user = get_user_by_id(user_id=user_id)
+    user = get_user_by_id(session, user_id)
     invalidate_og_profile_cache(str(user.uuid))
     
     return profile
