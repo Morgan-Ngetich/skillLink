@@ -66,7 +66,7 @@ export function generateProfileSEO(
   const canonical = `${baseUrl}/profile/${user.uuid}`
 
   // Build OG image
-  const ogImage = `${baseUrl}/api/v1/profiles/og/profile/${user.uuid}?type=${isMentor ? 'mentor' : 'user'}`
+  const ogImage = `${baseUrl}/api/v1/og/profile/${user.uuid}?type=${isMentor ? 'mentor' : 'user'}`
 
   return seo({
     title: `${title} | MENTspace`,

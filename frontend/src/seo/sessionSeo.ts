@@ -67,9 +67,8 @@ export function generateSessionSEO(
     : undefined
 
   // OG image
-  const ogImage = session.cover_image
-  ? session.cover_image
-  : `${baseUrl}/api/v1/og/profile/${session.mentor?.uuid}?type=mentor`
+  const ogImage = `${baseUrl}/api/v1/og/session/${session?.uuid}?type=mentor`
+
 
   return seo({
     title: `${title} | MENTspace`,
