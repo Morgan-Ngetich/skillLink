@@ -33,7 +33,7 @@ from app.utils.validation import (
     # clean_malformed_json,
 )
 from app.utils.helper import ProgressService
-from app.crud import get_user_skills
+from app import crud
 from app.api.deps import CurrentUser
 import json
 from enum import Enum
@@ -46,6 +46,7 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 from app.core.llm.llm_executor import get_llm_executor
 # from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM, BitsAndBytesConfig
 from groq import Groq
+
 
 
 class LLMProvider(str, Enum):
@@ -204,7 +205,7 @@ def build_goal_context(
     try:
         base_context = {
             "user": {
-                "skills": get_user_skills(session, current_user.id),
+                "skills": crud.get_user_skills(session, current_user.id),
             },
             "current_goals": [
                 {
