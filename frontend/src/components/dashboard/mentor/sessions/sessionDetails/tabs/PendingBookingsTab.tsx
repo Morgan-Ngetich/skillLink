@@ -1,4 +1,4 @@
-import { VStack, Box, HStack, Text, Badge, Button } from "@chakra-ui/react";
+import { VStack, Box, HStack, Text, Badge, Button, Flex } from "@chakra-ui/react";
 import { Avatar } from "@/components/ui";
 import { LuCheck, LuX } from "react-icons/lu";
 import type { BookingPublic } from "@/client";
@@ -65,13 +65,16 @@ const PendingBookingsTab = ({
           const isDenyingThis = isProcessingThis && actionType === 'deny';
 
           return (
-            <HStack
+            <Flex
               key={booking.id}
+              direction={{base: "column", md: "row"}}
+              align="stretch"
               justify={"space-between"}
               p={3}
               bg="cardbg"
               rounded="lg"
               transition="all 0.2s"
+              gap={3}
             >
               <HStack align="start" gap={3}>
                 <Avatar
@@ -79,7 +82,7 @@ const PendingBookingsTab = ({
                   src={booking.mentee?.avatar_url ?? "/fallback.jpg"}
                   name={booking.mentee?.full_name || `Participant ${booking.id}`}
                 />
-                <Box flex="1">
+                <Box flex="1" minW={0}>
                   <Text fontWeight="semibold" fontSize={{ base: "sm", md: "md" }}>
                     {booking.mentee?.full_name || "Anonymous"}
                   </Text>
@@ -103,7 +106,8 @@ const PendingBookingsTab = ({
                 </Box>
               </HStack>
 
-              <HStack gap={2} justify="end" mt={3}>
+              {/* Buttons always sit at the bottom, aligned right */}
+              <HStack gap={2} justify="flex-end">
                 <Button
                   size="xs"
                   variant="outline"
@@ -126,7 +130,7 @@ const PendingBookingsTab = ({
                   Confirm
                 </Button>
               </HStack>
-            </HStack>
+            </Flex>
           );
         })
       ) : (
