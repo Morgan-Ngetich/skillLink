@@ -51,6 +51,8 @@ from app.core.security import get_password_hash, verify_password
 from uuid import UUID
 from app.utils.logger_config import llm_logger
 # from app.utils.logo_fetcher import enrich_with_logos
+from app.api.routes.og.og_session import invalidate_session_og_cache
+from app.api.routes.og.og_profile import invalidate_og_profile_cache
 
 
 def get_user_by_email(session: Session, email: str) -> User | None:
@@ -156,6 +158,10 @@ def update_user(session: Session, user: User, user_in: UserUpdate) -> User:
     session.add(user)
     session.commit()
     session.refresh(user)
+    
+    user = get_user_by_id(user_id=user.id)
+    invalidate_og_profile_cache(str(user.uuid))
+    
     return user
 
 
@@ -366,6 +372,10 @@ def update_user_profile(session: Session, user_id: int, profile_in: UserProfileU
     session.add(profile)
     session.commit()
     session.refresh(profile)
+    
+    user = get_user_by_id(user_id=user_id)
+    invalidate_og_profile_cache(str(user.uuid))
+    
     return profile
 
 
@@ -518,6 +528,10 @@ def update_mentor_profile(
     session.add(profile)
     session.commit()
     session.refresh(profile)
+    
+    user = get_user_by_id(user_id=user_id)
+    invalidate_og_profile_cache(str(user.uuid))
+    
     return profile
 
 
@@ -1038,6 +1052,9 @@ def update_mentor_session(
 
     # Reload with relationships
     session_obj = get_mentor_session(session, session_obj.id)
+    
+    # Invalidate og_session cache
+    invalidate_session_og_cache(str(session_obj.uuid))
 
     return session_obj
 
@@ -1065,6 +1082,9 @@ def delete_mentor_session(session: Session, session_id: int) -> None:
 
     # update the cached stats
     update_mentor_cached_stats(session, mentor_id)
+    
+    invalidate_session_og_cache(str(session_obj.uuid))
+
 
 
 # MENTOR SERVICES
