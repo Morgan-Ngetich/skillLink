@@ -51,12 +51,6 @@ For backend development including migrations and dependency management, see the 
 
 ---
 
-## Contributing
-
-Contributions are welcome. Feel free to open an issue or submit a pull request.
-
----
-
 ## License
 
 [MIT](https://github.com/Morgan-Ngetich/skillLink/blob/main/LICENSE)
