@@ -102,7 +102,7 @@ def update_session(
         )
     
     updated = crud.update_mentor_session(session, session_id, session_in)
-    return updated.to_public()
+    return updated.to_public(current_user_id=current_user.id)
 
 
 @router.patch(
@@ -129,7 +129,7 @@ def toggle_session_visibility(
     session.commit()
     session.refresh(mentor_session)
     
-    return mentor_session.to_public()
+    return mentor_session.to_public(current_user_id=current_user.id)
 
 
 @router.delete("/sessions/{session_id}", status_code=204)
@@ -163,4 +163,4 @@ def get_mentor_sessions(
         mentor_id=mentor_id,
         current_user_id=current_user_id
     )
-    return [s.to_public() for s in sessions]
+    return [s.to_public(current_user_id=current_user_id) for s in sessions]
