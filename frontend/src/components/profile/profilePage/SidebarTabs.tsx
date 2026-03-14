@@ -75,7 +75,7 @@ const SidebarTabs = ({ search, mentorData, readOnly, isOwnProfile, handlers }: S
 
   return (
     <Tabs.Root
-      value={search.st || "services"}
+      value={search.st || "sessions"}
       onValueChange={(e) => handlers.handleSidebarTabChange(e.value)}
       variant="enclosed"
       w="full"
