@@ -37,7 +37,7 @@ def list_users(session: SessionDep, skip: int = 0, limit: int = 100, current_use
 def get_user(
     identifier: str,
     session: SessionDep,
-    current_user: CurrentUserOptional = None
+    current_user: CurrentUserOptional
 ) -> UserPublic:
     """
     Get user by ID or UUID (public endpoint)
