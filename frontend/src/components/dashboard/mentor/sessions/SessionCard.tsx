@@ -22,6 +22,7 @@ import { Switch } from "@/components/ui";
 import { Link, useNavigate } from "@tanstack/react-router";
 import useToaster from "@/hooks/public/useToaster";
 import { FaShareSquare } from "react-icons/fa";
+import { FaVideo } from "react-icons/fa6";
 
 interface SessionCardProps {
   session: MentorSessionPublic;
@@ -61,6 +62,10 @@ const SessionCard: React.FC<SessionCardProps> = ({
   const spotsLeft = session.available_spots || 0;
   const isUserBooked = session.user_has_booked || false;
   const isUserCancelledByMentor = session.user_cancelled_by_mentor || false;
+
+  const bookingStatus = session?.user_booking_status
+  const isUserPending = bookingStatus === "pending"
+  const isUserConfirmed = bookingStatus === "confirmed"
 
   // Session can be booked if: upcoming, not cancelled, not full, and public
   // const canBook = isSessionUpcoming && !isSessionCancelled && !isFull && session.is_public;
@@ -146,10 +151,16 @@ const SessionCard: React.FC<SessionCardProps> = ({
         disabled: false,
       };
     }
-    if (isUserBooked) {
+    if (isUserBooked && isUserConfirmed) {
       return {
         text: "Booked",
-        colorPalette: "blue",
+        colorPalette: "green",
+      };
+    }
+    if (isUserPending) {
+      return {
+        text: "Pending...",
+        colorPalette: "orange",
       };
     }
     if (isUserCancelledByMentor) {
@@ -441,8 +452,29 @@ const SessionCard: React.FC<SessionCardProps> = ({
               >
                 {pendingCount} pending
               </Badge>
-            )
-            }
+            )}
+
+            {isUserBooked && isUserConfirmed && session.is_active && (
+              <Button
+                size={isSmall ? "2xs" : "xs"}
+                colorPalette="blue"
+                onClick={() => {
+                  if (session.meeting_link) {
+                    window.open(session.meeting_link, "_blank");
+                  }
+                }}
+              >
+                <HStack gap={1}>
+                  <Text fontSize={isSmall ? "2xs" : "sm"}>
+                    <FaVideo />
+                  </Text>
+
+                  <Text fontSize={isSmall ? "2xs" : "sm"}>
+                    Join Session
+                  </Text>
+                </HStack>
+              </Button>
+            )}
           </HStack>
         </Box>
 
@@ -489,7 +521,8 @@ const SessionCard: React.FC<SessionCardProps> = ({
               <Button
                 size={isSmall ? "xs" : "sm"}
                 colorPalette={bookingButtonProps.colorPalette}
-                rounded={'full'}
+                title={"View details"}
+                rounded={isSmall ? "xl" : "full"}
                 fontWeight="semibold"
                 disabled={bookingButtonProps.disabled}
                 onClick={
@@ -506,6 +539,7 @@ const SessionCard: React.FC<SessionCardProps> = ({
                     () => !bookingButtonProps.disabled && onViewDetails?.(session)
                   )
                 }
+                w="100%"
                 cursor={bookingButtonProps.disabled ? "not-allowed" : "pointer"}
               >
                 {bookingButtonProps.text}
@@ -513,8 +547,8 @@ const SessionCard: React.FC<SessionCardProps> = ({
             </VStack>
           </Flex>
         </Box>
-      </Flex>
-    </Box>
+      </Flex >
+    </Box >
   );
 };
 
