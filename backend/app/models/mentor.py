@@ -138,7 +138,7 @@ class MentorSession(SQLModel, table=True):
     # Availability & booking rules
     is_public: bool = Field(default=True)
     is_cancelled: bool = Field(default=False)
-    # TODO: Create a propery that toogles this is session end_time > 1hour from now
+    # TODO: Create a propery that toogles this if session end_time > 1hour from now
     is_active: bool = Field(default=True)
     max_bookings: Optional[int] = None
 
@@ -206,17 +206,18 @@ class MentorSession(SQLModel, table=True):
         has_booking = self.user_has_booked(user_id)
         return is_owner or has_booking
 
+    # TODO: next() returns the first match only. In this case that's fine because a user should only ever have one booking per session. But if somehow a user had duplicate bookings it would silently ignore the rest. 
     def get_user_booking(self, user_id: int) -> "MentorSessionBooking":
         return next((b for b in self.bookings if b.mentee_id == user_id), None)
 
     def to_public(self, current_user_id: Optional[int] = None) -> "MentorSessionPublic":
         """Convert to MentorSessionPublic"""
         from .public.mentor_public import MentorSessionPublic
-        from app.utils.current_request_user import RequestContext
+        # from app.utils.current_request_user import RequestContext
 
-        current_user_id = (
-            RequestContext.get_user() if current_user_id is None else current_user_id
-        )
+        # current_user_id = (
+        #     RequestContext.get_user() if current_user_id is None else current_user_id
+        # )
 
         # Try to access bookings
         try:
@@ -269,6 +270,13 @@ class MentorSession(SQLModel, table=True):
             self.get_user_booking(current_user_id) if current_user_id else None
         )
         booking_status = user_booking.status if user_booking else None
+        
+        # ADD THIS
+        print(f"🔍 to_public called with current_user_id: {current_user_id}")
+        print(f"🔍 session id: {self.id}")
+        print(f"🔍 bookings count: {len(list(self.bookings))}")
+        for b in self.bookings:
+            print(f"   → booking mentee_id: {b.mentee_id}, status: {b.status}")
 
         return MentorSessionPublic(
             id=self.id,

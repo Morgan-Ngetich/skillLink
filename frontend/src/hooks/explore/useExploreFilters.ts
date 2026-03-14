@@ -2,6 +2,8 @@ import { useState, useCallback, useMemo } from "react";
 import type { ViewType } from "@/components/explore/types";
 import { type LocationType } from "@/client";
 
+// TODO: Find a way for users to filter using sessionTypes. This applys to the backend as well.
+
 export interface ExploreFilters {
   // Common filters
   minPrice?: number;
