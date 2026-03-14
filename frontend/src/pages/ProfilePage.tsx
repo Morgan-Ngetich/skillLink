@@ -42,7 +42,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ initialPublicData }) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
 
   // Auth state - only needed to determine if viewing own profile
-  const { user, isLoading: isUserLoading } = useAuth();
+  const { user, isLoading: isUserAuthLoading } = useAuth();
   const { cachedUserMetadata } = useSession()
 
   const isOwnProfile = useMemo(() => {
@@ -64,6 +64,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ initialPublicData }) => {
   } = useUserByUuid(uuid, {
     // Use initial data from route loader
     initialData: initialPublicData || undefined,
+    enabled: !isUserAuthLoading && !!uuid
   });
 
   // Determine if we need mentor-specific hooks BEFORE calling them
@@ -79,7 +80,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ initialPublicData }) => {
   const [sessionToDelete, setSessionToDelete] = useState<MentorSessionPublic | null>(null);
   const [isDeleteServiceDialogOpen, setIsDeleteServiceDialogOpen] = useState(false);
   const [serviceToDelete, setServiceToDelete] = useState<MentorServicePublic | null>(null);
-  
+
   const { sessions: freshSessions } = useMentorSessions({ enabled: shouldFetchMentorData });
 
   // Profile data - memoized to prevent unnecessary recalculations
@@ -155,7 +156,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ initialPublicData }) => {
   const selectedSessionFromUrl = fetchedSession || null;
 
   // Loading state - simplified
-  const isLoadingProfile = isUserLoading || (!initialPublicData && isPublicUserLoading);
+  const isLoadingProfile = isUserAuthLoading || (!initialPublicData && isPublicUserLoading);
   const hasRequiredData = isOwnProfile ? !!user : !!publicUser;
   // Show skeleton only if we have NO data at all
   if (isLoadingProfile && !initialPublicData && !publicUser && !personalProfile) {
