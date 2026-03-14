@@ -1,93 +1,20 @@
 import { Box, Flex, Text, Image, Badge, VStack, HStack, Button } from "@chakra-ui/react";
 import { FaStar, FaEye } from "react-icons/fa6";
 import { useRef, useEffect, useState } from "react";
+import { usePublicPeopleAlsoViewed } from "@/hooks/public/usePublicMentors";
+import { useNavigate } from "@tanstack/react-router";
+import { PeopleAlsoViewedSkeleton } from "@/skeletons/PeopleAlsoViewedSkeleton";
 
-const mentors = [
-  {
-    name: "Sarah Mento",
-    role: "AI Researcher",
-    img: 4,
-    rating: 4.9,
-    reviews: 127,
-    sessions: 85,
-    location: "San Francisco",
-    rate: "$120/hr",
-    isOnline: true,
-    viewedBy: 24,
-    skills: ["Machine Learning", "Python"]
-  },
-  {
-    name: "James Eventon",
-    role: "Systems Architect",
-    img: 5,
-    rating: 4.8,
-    reviews: 89,
-    sessions: 62,
-    location: "New York",
-    rate: "$150/hr",
-    isOnline: false,
-    viewedBy: 18,
-    skills: ["AWS", "Microservices"]
-  },
-  {
-    name: "Dr. Talkman",
-    role: "NeuroTech Advisor",
-    img: 6,
-    rating: 5.0,
-    reviews: 156,
-    sessions: 98,
-    location: "Boston",
-    rate: "$200/hr",
-    isOnline: true,
-    viewedBy: 31,
-    skills: ["Neuroscience", "Research"]
-  },
-  {
-    name: "Maria Santos",
-    role: "Product Designer",
-    img: 1,
-    rating: 4.7,
-    reviews: 73,
-    sessions: 45,
-    location: "Austin",
-    rate: "$90/hr",
-    isOnline: true,
-    viewedBy: 15,
-    skills: ["UI/UX", "Figma"]
-  },
-  {
-    name: "Alex Chen",
-    role: "Full Stack Developer",
-    img: 2,
-    rating: 4.9,
-    reviews: 112,
-    sessions: 78,
-    location: "Seattle",
-    rate: "$110/hr",
-    isOnline: false,
-    viewedBy: 22,
-    skills: ["React", "Node.js"]
-  },
-  {
-    name: "Dr. Kim Park",
-    role: "Data Scientist",
-    img: 3,
-    rating: 4.8,
-    reviews: 134,
-    sessions: 91,
-    location: "Chicago",
-    rate: "$140/hr",
-    isOnline: true,
-    viewedBy: 28,
-    skills: ["Analytics", "Python"]
-  },
-];
 
-const PeopleAlsoViewed = () => {
-  const border = { base: 'gray.200', _dark: 'gray.700' }
- const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+const PeopleAlsoViewedMentors = () => {
 
+  const border = { base: 'gray.200', _dark: 'gray.700' };
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const [showButton, setShowButton] = useState(false);
+  
+  const navigate = useNavigate()
+
+  const { data: mentors = [], isLoading } = usePublicPeopleAlsoViewed(6, true);
 
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
@@ -95,32 +22,23 @@ const PeopleAlsoViewed = () => {
 
     const handleScroll = () => {
       const { scrollTop } = scrollContainer;
-
-      // Show button when user has scrolled down (not at top)
-      // You can adjust this threshold as needed
-      const scrollThreshold = 50; // pixels
-
-      // Option 1: Show button when scrolled past threshold
-      setShowButton(scrollTop > scrollThreshold);
-
-      // Option 2: Show button when near bottom (uncomment to use instead)
-      // const isNearBottom = scrollTop + clientHeight >= scrollHeight - 50;
-      // setShowButton(isNearBottom);
-
-      // Option 3: Show button when can scroll more (has more content below)
-      // const canScrollMore = scrollTop + clientHeight < scrollHeight - 10;
-      // setShowButton(canScrollMore);
+      setShowButton(scrollTop > 50);
     };
 
     scrollContainer.addEventListener('scroll', handleScroll);
-
-    // Check initial scroll position
     handleScroll();
-
-    return () => {
-      scrollContainer.removeEventListener('scroll', handleScroll);
-    };
+    return () => scrollContainer.removeEventListener('scroll', handleScroll);
   }, []);
+
+  if (isLoading) return (
+    <Box
+      w='100%'
+    >
+      <PeopleAlsoViewedSkeleton />
+    </Box>
+  );
+
+  if (!mentors.length) return null;
 
   return (
     <Flex
@@ -135,7 +53,7 @@ const PeopleAlsoViewed = () => {
       direction={"column"}
       w='100%'
     >
-      <Flex align="center" justify="space-between" mb="1">
+      <Flex align="center" justify="space-between" mb={{base: 2, md: 3}}>
         <VStack align="start" gap={0}>
           <Text fontSize="lg" fontWeight="bold">
             People also viewed
@@ -152,10 +70,10 @@ const PeopleAlsoViewed = () => {
         </Badge>
       </Flex>
 
-      <VStack gap={1} align="stretch" maxH={'md'} overflowY={'auto'} mb={1}   ref={scrollContainerRef}>
-        {mentors.map((mentor, index) => (
+      <VStack gap={1} align="stretch" maxH={'md'} overflowY={'auto'} mb={1} ref={scrollContainerRef}>
+        {mentors.map((mentor) => (
           <Box
-            key={index}
+            key={mentor.uuid}
             borderRadius="xl"
             bg={"cardbg"}
             borderWidth="1px"
@@ -167,18 +85,23 @@ const PeopleAlsoViewed = () => {
               transform: 'translateY(-1px)',
               shadow: 'md',
             }}
+            onClick={() => {
+              navigate({
+                to: `/profile/${mentor.uuid}`
+              })
+            }}
           >
             <Flex align="start" gap="3">
               <Box position="relative">
                 <Image
-                  src={`https://i.pravatar.cc/50?img=${mentor.img}`}
-                  alt={mentor.name}
+                  src={mentor.avatar_url ?? `https://i.pravatar.cc/50?u=${mentor.uuid}`}
+                  alt={mentor.full_name ?? "Mentor"}
                   rounded="full"
                   boxSize="50px"
                   border="2px solid"
-                  borderColor={mentor.isOnline ? "green.300" : "gray.200"}
+                  borderColor={mentor.is_available ? "green.300" : "gray.200"}
                 />
-                {mentor.isOnline && (
+                {mentor.is_available && (
                   <Box
                     position="absolute"
                     bottom="2px"
@@ -196,36 +119,32 @@ const PeopleAlsoViewed = () => {
                 <Flex w="100%" justify="space-between" align="start">
                   <VStack align="start" gap={0}>
                     <Text fontWeight="bold" fontSize="sm" lineClamp={1}>
-                      {mentor.name}
+                      {mentor.full_name ?? "Unknown"}
                     </Text>
-
                     <Text fontSize="xs" color="gray.600" _dark={{ color: "gray.400" }}>
-                      {mentor.role}
+                      {mentor.title}
                     </Text>
                   </VStack>
                   <Text fontSize="sm" fontWeight="bold">
-                    {mentor.rate}
+                    {mentor.min_session_price
+                      ? `$${mentor.min_session_price}/hr`
+                      : "Free"}
                   </Text>
                 </Flex>
 
                 <HStack gap={1} fontSize="xs" color="gray.500">
                   <HStack gap={1}>
                     <FaStar color="orange" size={10} />
-                    <Text>{mentor.rating}</Text>
-                    <Text>({mentor.reviews})</Text>
+                    <Text>{mentor.average_rating?.toFixed(1) ?? "0"}</Text>
                   </HStack>
                   <Text>•</Text>
-                  <Text>{mentor.sessions} sessions</Text>
+                  <Text>{mentor.total_sessions} sessions</Text>
                 </HStack>
-
-
               </VStack>
-
             </Flex>
           </Box>
         ))}
       </VStack>
-
 
       {showButton && (
         <Box
@@ -236,20 +155,22 @@ const PeopleAlsoViewed = () => {
           opacity={showButton ? 1 : 0}
           transform={showButton ? 'translateY(0)' : 'translateY(10px)'}
           transition="all 0.3s ease-in-out"
+          onClick={() => (
+            navigate({
+              to: "/explore",
+              search: {
+                view: 'mentors',
+              }
+            })
+          )}
         >
-          <Button
-            width="70%"
-            size="sm"
-            fontSize="xs"
-            mt="auto"
-          >
+          <Button width="70%" size="sm" fontSize="xs" mt="auto">
             View All Similar Mentors →
           </Button>
         </Box>
       )}
-
     </Flex>
   );
 };
 
-export default PeopleAlsoViewed;
+export default PeopleAlsoViewedMentors;

@@ -50,6 +50,7 @@ from app.models import (
 from app.core.security import get_password_hash, verify_password
 from uuid import UUID
 from app.utils.logger_config import llm_logger
+
 # from app.utils.logo_fetcher import enrich_with_logos
 from app.api.routes.og.og_session import invalidate_session_og_cache
 from app.api.routes.og.og_profile import invalidate_og_profile_cache
@@ -158,10 +159,10 @@ def update_user(session: Session, user: User, user_in: UserUpdate) -> User:
     session.add(user)
     session.commit()
     session.refresh(user)
-    
+
     user = get_user_by_id(session, user.id)
     invalidate_og_profile_cache(str(user.uuid))
-    
+
     return user
 
 
@@ -372,10 +373,10 @@ def update_user_profile(session: Session, user_id: int, profile_in: UserProfileU
     session.add(profile)
     session.commit()
     session.refresh(profile)
-    
+
     user = get_user_by_id(session=session, user_id=user_id)
     invalidate_og_profile_cache(str(user.uuid))
-    
+
     return profile
 
 
@@ -438,6 +439,35 @@ def get_mentor_profile_or_404(session: Session, user_id: int) -> MentorProfile:
 #     return profile
 
 
+def get_also_viewed_mentors(
+    session: Session,
+    exclude_mentor_uuid: UUID,
+    limit: int = 6,
+) -> List[User]:
+    """
+    Returns random active mentors excluding the given mentor_id.
+    """
+    query = (
+        select(User)
+        .join(MentorProfile, MentorProfile.user_id == User.id)
+        .join(MentorSettings, MentorSettings.mentor_id == MentorProfile.user_id)
+        .where(
+            User.is_active,
+            MentorSettings.profile_visibility,
+            User.uuid != exclude_mentor_uuid,
+        )
+        .order_by(sa.func.random())
+        .limit(limit)
+        .options(
+            selectinload(User.mentor_profile).selectinload(MentorProfile.services),
+            selectinload(User.mentor_profile).selectinload(MentorProfile.sessions),
+            selectinload(User.mentor_profile).selectinload(MentorProfile.settings),
+        )
+    )
+
+    return list(session.exec(query).all())
+
+
 def list_public_mentors(
     session: Session,
     expertise: Optional[str] = None,
@@ -457,7 +487,7 @@ def list_public_mentors(
         .join(MentorProfile, MentorProfile.user_id == User.id)
         .join(MentorSettings, MentorSettings.mentor_id == MentorProfile.user_id)
         .where(User.is_active, MentorSettings.profile_visibility)
-        # TODO: intead of order_by create a marketing logic that would base the mentors on return.
+        # TODO: intead of order_by create a marketing/reccomendation logic that would base the mentors on return.
         .order_by(User.created_at.desc())
         .options(
             selectinload(User.mentor_profile).selectinload(MentorProfile.services),
@@ -528,10 +558,10 @@ def update_mentor_profile(
     session.add(profile)
     session.commit()
     session.refresh(profile)
-    
+
     user = get_user_by_id(session, user_id)
     invalidate_og_profile_cache(str(user.uuid))
-    
+
     return profile
 
 
@@ -929,7 +959,7 @@ def get_featured_sessions(session: Session, limit: int = 20) -> List[MentorSessi
                     MentorSessionBooking.mentee
                 )  # Also load mentee
             )
-            .order_by(MentorSession.created_at.asc())
+            .order_by(MentorSession.created_at.desc())
             .limit(limit)
         ).all()
     )
@@ -1052,7 +1082,7 @@ def update_mentor_session(
 
     # Reload with relationships
     session_obj = get_mentor_session(session, session_obj.id)
-    
+
     # Invalidate og_session cache
     invalidate_session_og_cache(str(session_obj.uuid))
 
@@ -1082,9 +1112,8 @@ def delete_mentor_session(session: Session, session_id: int) -> None:
 
     # update the cached stats
     update_mentor_cached_stats(session, mentor_id)
-    
-    invalidate_session_og_cache(str(session_obj.uuid))
 
+    invalidate_session_og_cache(str(session_obj.uuid))
 
 
 # MENTOR SERVICES
@@ -1110,7 +1139,7 @@ def list_services_by_mentor(
 
 def get_featured_services(session: Session, limit: int = 20) -> List[MentorService]:
     """Get Features mentor services (earliest created, active only)"""
-    # TODO: Later replace with popularity metrwics or explicit 'featured' flag
+    # TODO: Later replace with popularity metrics or explicit 'featured' flag
     return list(
         session.exec(
             select(MentorService)

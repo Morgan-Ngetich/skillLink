@@ -78,7 +78,7 @@ export const useBrowseMentors = (params?: UseMentorsParams) => {
  */
 export const useBrowseSessions = (params?: UseSessionsParams) => {
   const {
-    sessionType,
+    // sessionType,
     locationType,
     tag,
     mentorExpertise,
@@ -97,7 +97,6 @@ export const useBrowseSessions = (params?: UseSessionsParams) => {
   return useQuery<MentorSessionPublic[], Error>({
     queryKey: [
       'browseSessions',
-      sessionType,
       locationType,
       tag,
       mentorExpertise,
@@ -114,7 +113,6 @@ export const useBrowseSessions = (params?: UseSessionsParams) => {
     queryFn: () =>
       toNativePromise(
         PublicService.browseSessionsApiV1PublicSessionsGet({
-          sessionType,
           locationType,
           tag,
           mentorExpertise,
@@ -332,5 +330,21 @@ export const usePublicSessionByUuid = (
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 2,
     enabled: enabled && !!sessionUuid,
+  });
+};
+
+
+export const usePublicPeopleAlsoViewed = (
+  limit: number | undefined,
+  enabled: boolean = true
+) => {
+  return useQuery<MentorExplorePublic[], Error>({
+    queryKey: ['publicPeopleViewedMentors', limit],
+    queryFn: () => toNativePromise(
+      PublicService.peopleAlsoViewedApiV1PublicMentorsAlsoViewedGet({ limit })
+    ),
+    staleTime: 1000 * 60 * 50,
+    retry: 2,
+    enabled: enabled,
   });
 };

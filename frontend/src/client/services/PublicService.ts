@@ -171,4 +171,27 @@ export class PublicService {
             url: '/api/v1/public/featured/services',
         });
     }
+    /**
+     * People Also Viewed
+     * Returns random mentors excluding the current profile.
+     * TODO: Simple random selection for now — evolve to tag-based later.
+     * @returns MentorExplorePublic Successful Response
+     * @throws ApiError
+     */
+    public static peopleAlsoViewedApiV1PublicMentorsAlsoViewedGet({
+        limit = 6,
+    }: {
+        limit?: number,
+    }): CancelablePromise<Array<MentorExplorePublic>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/public/mentors/also-viewed',
+            query: {
+                'limit': limit,
+            },
+            errors: {
+                422: `Validation Error`,
+            },
+        });
+    }
 }
