@@ -18,7 +18,21 @@ export default function BecomeMentorCard() {
       router.navigate({
         to: '/profile/$uuid',
         params: { uuid: user.uuid },
-        search: { st: 'services' }, // Open services tab or whatever makes sense
+        search: {
+          st: 'sessions',
+          pt: "about",
+
+          drawer: undefined,
+          step: undefined,
+          redirectTo: undefined,
+          serviceModal: undefined,
+          serviceId: undefined,
+          serviceDetailId: undefined,
+          sessionModal: undefined,
+          sessionId: undefined,
+          sessionDetailId: undefined,
+          settings: undefined
+        }, // Open services tab or whatever makes sense
       })
       return
     }
@@ -39,9 +53,19 @@ export default function BecomeMentorCard() {
         to: '/profile/$uuid',
         params: { uuid: user?.uuid || '' },
         search: {
+          st: 'sessions',
+          pt: "about",
+
           drawer: 'setup-profile',
           step: nextStep,
           redirectTo: 'mentor-setup',
+          serviceModal: undefined,
+          serviceId: undefined,
+          serviceDetailId: undefined,
+          sessionModal: undefined,
+          sessionId: undefined,
+          sessionDetailId: undefined,
+          settings: undefined
         },
       })
       return
@@ -50,7 +74,21 @@ export default function BecomeMentorCard() {
     router.navigate({
       to: '/profile/$uuid',
       params: { uuid: user?.uuid || '' },
-      search: { drawer: 'mentor-setup', step: 'expertise' },
+      search: {
+        st: 'sessions',
+        pt: "about",
+
+        drawer: 'mentor-setup',
+        step: 'expertise',
+        redirectTo: undefined,
+        serviceModal: undefined,
+        serviceId: undefined,
+        serviceDetailId: undefined,
+        sessionModal: undefined,
+        sessionId: undefined,
+        sessionDetailId: undefined,
+        settings: undefined
+      },
     })
   }
 
