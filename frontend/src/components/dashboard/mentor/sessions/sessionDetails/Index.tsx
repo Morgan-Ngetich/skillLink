@@ -54,7 +54,7 @@ const SessionDetailModal = ({ session, isOpen, onClose, isLoading }: SessionDeta
 
   const isOwner = session ? user?.is_mentor && session.mentor_id === user.id : false;
   const isFull = session?.is_full ?? false;
-  const isBooked = session?.user_has_booked ?? false
+  const isUserBooked = session?.user_has_booked ?? false
   const requiresMessage = userData?.profile?.mentor_profile?.settings?.require_intro_message;
 
   const sessionPendingBookings = session ? (session.bookings || []).filter((b) => b.status === "pending") : [];
@@ -98,6 +98,9 @@ const SessionDetailModal = ({ session, isOpen, onClose, isLoading }: SessionDeta
   const handleDenyBooking = async (bookingId: number) => {
     await denyBooking(bookingId, "Denied by mentor")
   };
+
+  console.log("isOwner", isOwner)
+  console.log("isUserBooked", isUserBooked)
 
   return (
     <DialogRoot
@@ -180,7 +183,7 @@ const SessionDetailModal = ({ session, isOpen, onClose, isLoading }: SessionDeta
                 </Tabs.List>
               </Box>
 
-              <Tabs.Content value="details">
+              <Tabs.Content value="details" overflowY="auto" maxH="calc(90vh - 220px)">
                 <SessionDetailsTab
                   session={session}
                   userData={userData}
@@ -193,13 +196,13 @@ const SessionDetailModal = ({ session, isOpen, onClose, isLoading }: SessionDeta
               </Tabs.Content>
 
               {session.preparation_materials && session.preparation_materials.length > 0 && (
-                <Tabs.Content value="prep">
+                <Tabs.Content value="prep" overflowY="auto" maxH="calc(90vh - 220px)">
                   <PreparationTab materials={session.preparation_materials} />
                 </Tabs.Content>
               )}
 
               {isOwner && (
-                <Tabs.Content value="pending">
+                <Tabs.Content value="pending" overflowY="auto" maxH="calc(90vh - 220px)">
                   <PendingBookingsTab
                     bookings={sessionPendingBookings}
                     onConfirm={handleConfirmBooking}
@@ -210,7 +213,7 @@ const SessionDetailModal = ({ session, isOpen, onClose, isLoading }: SessionDeta
                 </Tabs.Content>
               )}
 
-              <Tabs.Content value="participants">
+              <Tabs.Content value="participants" overflowY="auto" maxH="calc(90vh - 220px)">
                 <ParticipantsTab
                   bookings={sessionConfirmedBookings}
                   sessionTitle={session.title}
@@ -220,7 +223,7 @@ const SessionDetailModal = ({ session, isOpen, onClose, isLoading }: SessionDeta
               </Tabs.Content>
 
               {isOwner && (
-                <Tabs.Content value="cancelled">
+                <Tabs.Content value="cancelled" overflowY="auto" maxH="calc(90vh - 220px)">
                   <CancelledBookingsTab
                     bookings={sessionCancelledBookings}
                     sessionTitle={session.title}
@@ -247,18 +250,18 @@ const SessionDetailModal = ({ session, isOpen, onClose, isLoading }: SessionDeta
               w={{ base: "full", sm: "auto" }}
               order={{ base: 2, sm: 1 }}
             >
-              {isOwner || isBooked ? "Close" : "Cancel"}
+              {isOwner || isUserBooked ? "Close" : "Cancel"}
             </Button>
             {!isOwner && !isLoading && (
               <Button
                 colorPalette="green"
                 onClick={handleBook}
                 loading={isBooking}
-                disabled={isFull || isBooked || (requiresMessage && !message.trim())}
+                disabled={isFull || isUserBooked || (requiresMessage && !message.trim())}
                 w={{ base: "full", sm: "auto" }}
                 order={{ base: 1, sm: 2 }}
               >
-                {isBooked ? "Booked" : isFull ? "Session Full" : "Book Session"}
+                {isUserBooked ? "Booked" : isFull ? "Session Full" : "Book Session"}
               </Button>
             )}
           </Stack>
