@@ -12,6 +12,7 @@ import {
   Tag,
   Grid,
   Flex,
+  Spinner,
 } from "@chakra-ui/react";
 import {
   DialogRoot,
@@ -49,7 +50,7 @@ const CATEGORIES = [
 const ServiceFormModal = ({ isOpen, onClose, service }: ServiceFormModalProps) => {
   const { user } = useAuth();
   const { saveService, isSubmitting } = useMentorServices();
-  const { uploadFile, isUploading } = useSupabaseStorage();
+  const { uploadFile, deleteFile, isUploading, isDeleting } = useSupabaseStorage();
 
   const [formData, setFormData] = useState({
     title: "",
@@ -64,10 +65,18 @@ const ServiceFormModal = ({ isOpen, onClose, service }: ServiceFormModalProps) =
   const [newHighlight, setNewHighlight] = useState("");
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [bannerPreview, setBannerPreview] = useState<string>("");
+  const [oldBannerPath, setOldBannerPath] = useState<string>("");
 
   // Load existing service data
   useEffect(() => {
     if (service) {
+      if (service?.banner_url) {
+        const urlParts = service.banner_url.split("/mentor-services/");
+        if (urlParts.length > 1) {
+          setOldBannerPath(decodeURIComponent(urlParts[1]));
+        }
+      }
+
       setFormData({
         title: service.title || "",
         description: service.description || "",
@@ -104,10 +113,44 @@ const ServiceFormModal = ({ isOpen, onClose, service }: ServiceFormModalProps) =
     }
   };
 
-  const removeBanner = () => {
-    setBannerFile(null);
-    setBannerPreview("");
-    setFormData((prev) => ({ ...prev, banner_url: "" }));
+  const removeBanner = async () => {
+    if (oldBannerPath && user?.uuid) {
+      try {
+        await new Promise<void>((resolve, reject) => {
+          deleteFile(
+            { bucket: "mentor-services", path: oldBannerPath, userUuid: user.uuid },
+            { onSuccess: () => resolve(), onError: reject }
+          );
+        });
+      } catch (error) {
+        console.error("Failed to delete banner:", error);
+      }
+    }
+
+    // If editing existing service, update backend immediately
+    if (service?.id) {
+      await saveService(
+        {
+          id: service.id,
+          mentor_id: user?.id || 0,
+          banner_url: null, // Remove the image
+        },
+        {
+          onSuccess: () => {
+            setBannerFile(null);
+            setBannerPreview("");
+            setOldBannerPath("");
+            setFormData(prev => ({ ...prev, banner_url: "" }));
+          },
+        }
+      );
+    } else {
+      // For new services, just clear local state
+      setBannerFile(null);
+      setBannerPreview("");
+      setOldBannerPath("");
+      setFormData(prev => ({ ...prev, banner_url: "" }));
+    }
   };
 
   const addHighlight = () => {
@@ -191,7 +234,7 @@ const ServiceFormModal = ({ isOpen, onClose, service }: ServiceFormModalProps) =
             {/* Banner Upload */}
             <Field label="Service Banner (Optional)" >
               {bannerPreview ? (
-                <Box position="relative"  mx="auto">
+                <Box position="relative" mx="auto" w="full">
                   <Image
                     src={bannerPreview}
                     alt="Banner preview"
@@ -199,7 +242,27 @@ const ServiceFormModal = ({ isOpen, onClose, service }: ServiceFormModalProps) =
                     h="200px"
                     objectFit="cover"
                     borderRadius="lg"
+                    opacity={isDeleting ? 0.4 : 1}
+                    transition="opacity 0.2s"
                   />
+                  {isDeleting && (
+                    <Flex
+                      position="absolute"
+                      inset={0}
+                      bg="blackAlpha.600"
+                      borderRadius="lg"
+                      align="center"
+                      justify="center"
+                      direction="column"
+                      gap={2}
+                      w="full"
+                    >
+                      <Spinner size="md" color="white" />
+                      <Text color="white" fontSize="sm" fontWeight="medium">
+                        Removing image...
+                      </Text>
+                    </Flex>
+                  )}
                   <IconButton
                     aria-label="Remove banner"
                     position="absolute"
@@ -208,6 +271,8 @@ const ServiceFormModal = ({ isOpen, onClose, service }: ServiceFormModalProps) =
                     size="sm"
                     colorPalette="red"
                     onClick={removeBanner}
+                    loading={isDeleting}
+                    disabled={isDeleting}
                   >
                     <LuTrash2 />
                   </IconButton>
@@ -325,7 +390,7 @@ const ServiceFormModal = ({ isOpen, onClose, service }: ServiceFormModalProps) =
                       <Tag.Root key={i} colorPalette="blue" size="lg">
                         <Tag.Label>{highlight}</Tag.Label>
                         <Tag.CloseTrigger onClick={() => removeHighlight(i)} >
-                          < BiX/>
+                          < BiX />
                         </Tag.CloseTrigger>
                       </Tag.Root>
                     ))}

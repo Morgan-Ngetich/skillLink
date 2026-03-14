@@ -13,6 +13,7 @@ import {
   Text,
   Stack,
   Separator,
+  Spinner,
 } from "@chakra-ui/react";
 import {
   DialogRoot,
@@ -357,7 +358,29 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
                         h={{ base: "150px", md: "200px" }}
                         objectFit="cover"
                         borderRadius="lg"
+                        opacity={isDeleting ? 0.4 : 1}
+                        transition="opacity 0.3s"
                       />
+
+                      {/* Dark overlay when deleting */}
+                      {isDeleting && (
+                        <Flex
+                          position="absolute"
+                          inset={0}
+                          bg="blackAlpha.600"
+                          borderRadius="lg"
+                          align="center"
+                          justify="center"
+                          direction="column"
+                          gap={2}
+                        >
+                          <Spinner size="md" color="white" />
+                          <Text color="white" fontSize="sm" fontWeight="medium">
+                            Removing image...
+                          </Text>
+                        </Flex>
+                      )}
+
                       <IconButton
                         aria-label="Remove cover image"
                         position="absolute"
@@ -366,6 +389,8 @@ const SessionFormModal = ({ isOpen, onClose, session }: SessionFormModalProps) =
                         size="sm"
                         colorPalette="red"
                         onClick={removeBanner}
+                        loading={isDeleting}
+                        disabled={isDeleting}
                       >
                         <LuTrash2 />
                       </IconButton>
