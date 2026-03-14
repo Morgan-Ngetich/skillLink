@@ -7,18 +7,39 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class OgService {
     /**
-     * Get Profile Og
+     * Get Og Profile
      * @returns any Successful Response
      * @throws ApiError
      */
-    public static getProfileOgApiV1ProfilesOgProfileUuidGet({
+    public static getOgProfileApiV1OgProfileUuidGet({
         uuid,
     }: {
         uuid: string,
     }): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/v1/profiles/og/profile/{uuid}',
+            url: '/api/v1/og/profile/{uuid}',
+            path: {
+                'uuid': uuid,
+            },
+            errors: {
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
+     * Get Session Og
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public static getSessionOgApiV1OgSessionUuidGet({
+        uuid,
+    }: {
+        uuid: string,
+    }): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/og/session/{uuid}',
             path: {
                 'uuid': uuid,
             },
