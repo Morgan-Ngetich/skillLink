@@ -10,7 +10,7 @@ import React, { useState, useEffect, useMemo, lazy } from "react";
 
 import HeroCard from "./herocard/HeroCard";
 import GrowthStats from "./GrowthStats";
-import TopMentors from "./TopMentors";
+import PeopleAlsoViewedMentors from "./PeopleAlsoViewedMentors";
 import FeaturedMentors from "./FeaturedMentors";
 
 import "keen-slider/keen-slider.min.css";
@@ -175,7 +175,7 @@ const Home: React.FC<HomeProps> = ({ initialFeaturedData }) => {
 
             {/* Top Mentors */}
             <Box>
-              <TopMentors />
+              <PeopleAlsoViewedMentors />
             </Box>
           </VStack>
         </Box>
@@ -204,7 +204,7 @@ const Home: React.FC<HomeProps> = ({ initialFeaturedData }) => {
             <VStack gap={6} align="stretch">
               <GrowthStats />
               <Box position="sticky" top="80px">
-                <TopMentors />
+                <PeopleAlsoViewedMentors />
               </Box>
             </VStack>
           </SimpleGrid>

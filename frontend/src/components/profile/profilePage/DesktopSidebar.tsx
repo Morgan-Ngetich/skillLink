@@ -1,5 +1,5 @@
 import { VStack } from "@chakra-ui/react";
-import PeopleAlsoViewed from "@/components/homepage/TopMentors";
+import PeopleAlsoViewedMentors from "@/components/homepage/PeopleAlsoViewedMentors";
 import SidebarTabs from "./SidebarTabs";
 
 interface DesktopSidebarProps {
@@ -23,7 +23,7 @@ const DesktopSidebar = ({ search, mentorData, readOnly, isOwnProfile, handlers }
         isOwnProfile={isOwnProfile}
         handlers={handlers}
       />
-      <PeopleAlsoViewed />
+      <PeopleAlsoViewedMentors />
     </VStack>
   );
 };

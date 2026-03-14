@@ -1,5 +1,5 @@
 import { VStack } from "@chakra-ui/react";
-import PeopleAlsoViewed from "@/components/homepage/TopMentors";
+import PeopleAlsoViewedMentors from "@/components/homepage/PeopleAlsoViewedMentors";
 import type { UserProfilePublic } from "@/client";
 import ProfileCompletionCard from "@/components/other/ProfileCompletionCard";
 import BecomeMentorCard from "@/components/dashboard/mentor/mentorProfileSetup/BecomeMentorCard";
@@ -20,7 +20,7 @@ const MenteeSidebar = ({ isOwnProfile, user_is_mentor, personalProfile, onEditPr
 
       {isOwnProfile && !user_is_mentor && <BecomeMentorCard />}
 
-      <PeopleAlsoViewed />
+      <PeopleAlsoViewedMentors />
     </VStack>
   );
 };

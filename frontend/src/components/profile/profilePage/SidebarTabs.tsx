@@ -20,23 +20,6 @@ interface SidebarTabsProps {
 const SidebarTabs = ({ search, mentorData, readOnly, isOwnProfile, handlers }: SidebarTabsProps) => {
   const tabs = [
     {
-      value: "services",
-      label: "Services",
-      icon: FaServicestack,
-      content: (
-        <ServicesContent
-          services={mentorData?.services || []}
-          readOnly={readOnly}
-          serviceModal={search.serviceModal}
-          serviceId={search.serviceId}
-          onOpenServiceModal={handlers.openServiceModal}
-          onCloseServiceModal={handlers.closeServiceModal}
-          onEdit={handlers.handleServiceEdit}
-          onDelete={handlers.handleServiceDelete}
-        />
-      ),
-    },
-    {
       value: "sessions",
       label: "Sessions",
       icon: LuClock4,
@@ -54,6 +37,23 @@ const SidebarTabs = ({ search, mentorData, readOnly, isOwnProfile, handlers }: S
             onViewDetails={handlers.handleSessionViewDetails}
           />
         </VStack>
+      ),
+    },
+    {
+      value: "services",
+      label: "Services",
+      icon: FaServicestack,
+      content: (
+        <ServicesContent
+          services={mentorData?.services || []}
+          readOnly={readOnly}
+          serviceModal={search.serviceModal}
+          serviceId={search.serviceId}
+          onOpenServiceModal={handlers.openServiceModal}
+          onCloseServiceModal={handlers.closeServiceModal}
+          onEdit={handlers.handleServiceEdit}
+          onDelete={handlers.handleServiceDelete}
+        />
       ),
     },
     {
