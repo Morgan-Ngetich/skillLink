@@ -72,7 +72,7 @@ export const useNavItems = () => {
         params: { id: user.uuid },
         search: {
           pt: 'about',
-          st: 'services',
+          st: 'sessions',
           settings: 'open',
         },
         requiredAuth: true,
