@@ -167,45 +167,47 @@ const ServiceCard = ({
       flexDirection="column"
     >
       {/* Banner Image */}
-      {service.banner_url && (
-        <Box
-          h={{ base: "125px", md: "150px" }}
-          overflow="hidden"
-          bg="gray.subtle"
-          position="relative"
-          flexShrink={0}
-        >
-          <Image
-            src={service.banner_url ?? "fallback.jpg"}
-            alt={service.title}
-            w="full"
-            h="full"
-            objectFit="cover"
-          />
+      <Box h={{ base: "125px", md: "150px" }} bg="bg.muted">
+        {service.banner_url && (
+          <Box
+            overflow="hidden"
+            bg="gray.subtle"
+            position="relative"
+            flexShrink={0}
+            h={{ base: "125px", md: "150px" }} 
+          >
+            <Image
+              src={service.banner_url ?? "fallback.jpg"}
+              alt={service.title}
+              w="full"
+              h="full"
+              objectFit="cover"
+            />
 
-          {!service.is_active && (
-            <Box position="absolute" bottom={1} left={1}>
-              <Badge colorPalette="red" textAlign="center">
-                Inactive
-              </Badge>
-            </Box>
-          )}
+            {!service.is_active && (
+              <Box position="absolute" bottom={1} left={1}>
+                <Badge colorPalette="red" textAlign="center">
+                  Inactive
+                </Badge>
+              </Box>
+            )}
 
-          {service.category && (
-            <Box position="absolute" bottom={1} right={1}>
-              <Badge
-                colorPalette="blue"
-                fontSize="2xs"
-                borderRadius="md"
-                outline="1px solid"
-                outlineColor="border.emphasized"
-              >
-                {service.category}
-              </Badge>
-            </Box>
-          )}
-        </Box>
-      )}
+            {service.category && (
+              <Box position="absolute" bottom={1} right={1}>
+                <Badge
+                  colorPalette="blue"
+                  fontSize="2xs"
+                  borderRadius="md"
+                  outline="1px solid"
+                  outlineColor="border.emphasized"
+                >
+                  {service.category}
+                </Badge>
+              </Box>
+            )}
+          </Box>
+        )}
+      </Box>
 
       <VStack align="start" gap={3} px={{ base: 2, md: 3 }} py={3} flex={1}>
         {/* Title */}
