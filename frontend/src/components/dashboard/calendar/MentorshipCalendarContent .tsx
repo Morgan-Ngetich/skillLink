@@ -242,7 +242,7 @@ const MentorshipCalendarContent: React.FC<MentorshipCalendarContentProps> = ({
             p={8}
             bg="cardbg"
             border="1px dashed"
-            borderColor="border.subtle"
+            borderColor="gray.600"
             borderRadius="lg"
           >
             <Text fontSize="md" fontWeight="semibold" mb={2}>
@@ -256,7 +256,6 @@ const MentorshipCalendarContent: React.FC<MentorshipCalendarContentProps> = ({
             {isOwnProfile && user?.is_mentor && (
               <Button 
                 size="sm" 
-                colorPalette="blue"
                 onClick={() => {
                   window.location.href = `/profile/${user.uuid}?st=sessions&sessionModal=create`;
                 }}

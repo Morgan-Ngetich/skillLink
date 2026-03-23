@@ -15,7 +15,7 @@ export const MentorCardSkeleton = () => {
       borderWidth="2px"
       borderColor={{ base: 'gray.200', _dark: 'gray.700' }}
       minW={"250px"}
-      maxW={"290px"}
+      maxW={"full"}
     >
       {/* Cover Image Section */}
       <Box position="relative" borderRadius="xl">

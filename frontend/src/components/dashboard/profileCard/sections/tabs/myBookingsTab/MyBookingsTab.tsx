@@ -21,7 +21,6 @@ const MyBookingsTab: React.FC<MyBookingsTabProps> = ({
   onEditBooking,
 }) => {
 
-  console.log("MyBookingsTab render - isOwnProfile:", isOwnProfile);
   // Get initial view from URL or default to list
   const getInitialView = (): string => {
     const urlParams = new URLSearchParams(window.location.search);

@@ -59,8 +59,6 @@ export default function MentorProfileSetupModal({
     experience_level: mentorProfile?.experience_level ?? 'mid',
   })
 
-  console.log("Profile title", profile?.title)
-
   const [newIndustry, setNewIndustry] = useState('')
   const [newExpertise, setNewExpertise] = useState('')
   const [error, setError] = useState<string | null>(null)
