@@ -3,7 +3,7 @@ from typing import Any
 
 from sqlmodel import select
 from sqlalchemy import func
-from app.api.deps import CurrentUserOptional, SessionDep, require_role
+from app.api.deps import CurrentUser, CurrentUserOptional, SessionDep, require_role
 from app.models import (
     User,
     UserPublic,
@@ -85,6 +85,26 @@ def update_user(session: SessionDep, user_id: int, user_in: UserUpdate) -> UserP
 
     updated_user = crud.update_user(session, user, user_in)
     return updated_user.to_public()
+
+
+@router.delete("/me", status_code=200)
+def delete_own_account(
+    session: SessionDep,
+    current_user: CurrentUser,
+) -> Any:
+    user = crud.get_user_by_id(session=session, user_id=current_user.id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Expunge all loaded objects so ORM doesn't try to manage cascades itself
+    session.expunge_all()
+
+    # Re-fetch just the user without loading relationships
+    user = session.get(User, current_user.id)
+    session.delete(user)
+    session.commit()
+
+    return {"status": "success", "detail": "Account deleted successfully"}
 
 
 @router.delete("/{user_id}", dependencies=[Depends(require_role(RoleName.SUPERUSER))])

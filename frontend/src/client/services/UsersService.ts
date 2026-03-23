@@ -24,6 +24,18 @@ export class UsersService {
         });
     }
     /**
+     * Delete Own Account
+     * User can only delete their own account.
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public static deleteOwnAccountApiV1UsersMeDelete(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/users/me',
+        });
+    }
+    /**
      * Update Me
      * Update current user's information
      * @returns UserPublic Successful Response

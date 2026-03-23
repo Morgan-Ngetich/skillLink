@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button, HStack, Tabs } from "@chakra-ui/react";
+import { Button, HStack, Tabs, Text } from "@chakra-ui/react";
 import {
   DialogRoot,
   DialogContent,
@@ -15,6 +15,7 @@ import VisibilityTab from "./tabs/VisibilityTab";
 import BookingRulesTab from "./tabs/BookingRulesTab";
 import MenteesTab from "./tabs/MenteesTab";
 import CommunicationTab from "./tabs/CommunicationTab";
+import DeleteAccountDialog from "./tabs/DeleteAccountDialog";
 import type { MentorSettingsForm } from "./types";
 
 interface MentorSettingsDialogProps {
@@ -56,6 +57,7 @@ const MentorSettingsDialog = ({
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
     if (settings) {
@@ -91,7 +93,19 @@ const MentorSettingsDialog = ({
     <DialogRoot open={isOpen} onOpenChange={(e) => !e.open && onClose()} size="lg">
       <DialogContent maxH="90vh" display="flex" flexDirection="column">
         <DialogHeader>
-          <DialogTitle>Mentor Settings</DialogTitle>
+          <HStack justify="space-between" w="full">
+            <DialogTitle>Mentor Settings</DialogTitle>
+            <Text
+              fontSize="xs"
+              color="red.400"
+              cursor="pointer"
+              textDecoration="underline"
+              onClick={() => setIsDeleteDialogOpen(true)}
+              _hover={{ color: "red.600" }}
+            >
+              Delete my account
+            </Text>
+          </HStack>
         </DialogHeader>
 
         <DialogBody flex="1" overflowY="auto">
@@ -143,6 +157,10 @@ const MentorSettingsDialog = ({
               Save Settings
             </Button>
           </HStack>
+          <DeleteAccountDialog
+            isOpen={isDeleteDialogOpen}
+            onClose={() => setIsDeleteDialogOpen(false)}
+          />
         </DialogFooter>
       </DialogContent>
     </DialogRoot>

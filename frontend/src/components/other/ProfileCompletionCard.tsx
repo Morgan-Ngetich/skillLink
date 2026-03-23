@@ -18,8 +18,7 @@ interface ProfileCompletionCardProps {
 export default function ProfileCompletionCard({ onEditProfile }: ProfileCompletionCardProps) {
   const { profileCompletionStatus } = useProfile()
   
-  if (!profileCompletionStatus) return null
-  // console.log("profileCompletionStatus", profileCompletionStatus)
+  if (!profileCompletionStatus || profileCompletionStatus.completion_percentage == 100) return null
 
   // Find the first incomplete step
   const firstIncompleteStep = profileCompletionStatus?.missing_fields[0]?.step|| 'basic'

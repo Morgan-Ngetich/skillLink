@@ -29,7 +29,9 @@ if TYPE_CHECKING:
 
 # ==================== MENTOR PROFILE MODEL ====================
 class MentorProfile(SQLModel, table=True):
-    user_id: int = Field(foreign_key="users.id", primary_key=True, index=True)
+    user_id: int = Field(
+        foreign_key="users.id", primary_key=True, index=True, ondelete="CASCADE"
+    )
 
     # Core Identity
     title: str
@@ -58,9 +60,15 @@ class MentorProfile(SQLModel, table=True):
 
     # Relationships
     user: Optional["User"] = Relationship(back_populates="mentor_profile")
-    sessions: List["MentorSession"] = Relationship(back_populates="mentor")
-    services: List["MentorService"] = Relationship(back_populates="mentor")
-    settings: Optional["MentorSettings"] = Relationship(back_populates="mentor")
+    sessions: List["MentorSession"] = Relationship(
+        back_populates="mentor", sa_relationship_kwargs={"passive_deletes": True}
+    )
+    services: List["MentorService"] = Relationship(
+        back_populates="mentor", sa_relationship_kwargs={"passive_deletes": True}
+    )
+    settings: Optional["MentorSettings"] = Relationship(
+        back_populates="mentor", sa_relationship_kwargs={"passive_deletes": True}
+    )
 
     @property
     def is_mentor_profile_complete(self) -> bool:
@@ -114,7 +122,7 @@ class MentorProfile(SQLModel, table=True):
 class MentorSession(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     uuid: UUID = Field(default_factory=uuid4, index=True, unique=True)
-    mentor_id: int = Field(foreign_key="mentorprofile.user_id")
+    mentor_id: int = Field(foreign_key="mentorprofile.user_id", ondelete="CASCADE")
 
     # Session Details
     title: str
@@ -157,7 +165,9 @@ class MentorSession(SQLModel, table=True):
 
     # Relationships
     mentor: "MentorProfile" = Relationship(back_populates="sessions")
-    bookings: List["MentorSessionBooking"] = Relationship(back_populates="session")
+    bookings: List["MentorSessionBooking"] = Relationship(
+        back_populates="session", sa_relationship_kwargs={"passive_deletes": True}
+    )
 
     @property
     def total_bookings(self) -> int:
@@ -206,7 +216,7 @@ class MentorSession(SQLModel, table=True):
         has_booking = self.user_has_booked(user_id)
         return is_owner or has_booking
 
-    # TODO: next() returns the first match only. In this case that's fine because a user should only ever have one booking per session. But if somehow a user had duplicate bookings it would silently ignore the rest. 
+    # TODO: next() returns the first match only. In this case that's fine because a user should only ever have one booking per session. But if somehow a user had duplicate bookings it would silently ignore the rest.
     def get_user_booking(self, user_id: int) -> "MentorSessionBooking":
         return next((b for b in self.bookings if b.mentee_id == user_id), None)
 
@@ -270,7 +280,7 @@ class MentorSession(SQLModel, table=True):
             self.get_user_booking(current_user_id) if current_user_id else None
         )
         booking_status = user_booking.status if user_booking else None
-        
+
         # ADD THIS
         print(f"🔍 to_public called with current_user_id: {current_user_id}")
         print(f"🔍 session id: {self.id}")
@@ -447,7 +457,7 @@ class MentorSessionBooking(SQLModel, table=True):
 class MentorService(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     uuid: UUID = Field(default_factory=uuid4, index=True, unique=True)
-    mentor_id: int = Field(foreign_key="mentorprofile.user_id")
+    mentor_id: int = Field(foreign_key="mentorprofile.user_id", ondelete="CASCADE")
 
     title: str
     description: Optional[str] = Field(default=None, max_length=500)
@@ -492,12 +502,12 @@ class MentorService(SQLModel, table=True):
 # TODO: Create a Field for Mentors to set the X hours before a session starts that bookings are no longer allowed. Refer to `crud.py validate_session_booking`
 class MentorSettings(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    mentor_id: int = Field(foreign_key="mentorprofile.user_id")
+    mentor_id: int = Field(foreign_key="mentorprofile.user_id", ondelete="CASCADE")
 
     currently_open_to_mentees: bool = Field(default=True)
     profile_visibility: bool = Field(default=True)
     auto_accept_bookings: bool | None = Field(
-        default=None,
+        default=True,
         sa_column=Column(Boolean, server_default=text("true"), nullable=False),
     )
 

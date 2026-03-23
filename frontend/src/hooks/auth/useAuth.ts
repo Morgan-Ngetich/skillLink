@@ -206,6 +206,31 @@ export function useAuth() {
     return { error };
   };
 
+  // TODO: Delete user from Supabase auth on account deletion to fully retire their UUID.
+  // Skipping this risks UUID reuse — a new user assigned the same UUID could inherit stale data or permissions.
+  const deleteUserMe = useMutation<void, Error, void>({
+    mutationFn: () => toNativePromise(UsersService.deleteOwnAccountApiV1UsersMeDelete()),
+    onSuccess: async () => {
+      await supabase.auth.signOut()
+      clearAuthSession();
+      invalidateTokenCache();
+
+      await queryClient.removeQueries({ queryKey: ['auth', 'user'] });
+      await queryClient.invalidateQueries()
+      
+      navigate({ to: '/login' });
+    },
+    onError: (error: unknown) => {
+      toast({
+        id: 'delete-user-error',
+        title: 'Failed to delete account',
+        description: getApiErrorMessage(error),
+        status: 'error',
+      });
+    },
+  });
+
+
   return {
     user,
     isLoading,
@@ -220,5 +245,6 @@ export function useAuth() {
     resendVerificationEmail,
 
     signInWithGoogle,
+    deleteUserMe,
   };
 }

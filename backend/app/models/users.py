@@ -77,23 +77,37 @@ class User(SQLModel, table=True):
     # Relationships
     roles: List["UserRole"] = Relationship(back_populates="user", cascade_delete=True)
     profile: Optional["UserProfile"] = Relationship(
-        back_populates="user", sa_relationship_kwargs={"uselist": False}
+        back_populates="user",
+        sa_relationship_kwargs={"uselist": False, "passive_deletes": True},
     )
     mentor_profile: Optional["MentorProfile"] = Relationship(
-        back_populates="user", sa_relationship_kwargs={"uselist": False}
+        back_populates="user",
+        sa_relationship_kwargs={"uselist": False, "passive_deletes": True},
     )
 
     # Roadmap relationships
-    boards: List["Board"] = Relationship(back_populates="owner")
-    roadmaps: List["Roadmap"] = Relationship(back_populates="owner")
-    goals: List["Goal"] = Relationship(back_populates="owner")
+    boards: List["Board"] = Relationship(
+        back_populates="owner", sa_relationship_kwargs={"passive_deletes": True}
+    )
+    roadmaps: List["Roadmap"] = Relationship(
+        back_populates="owner", sa_relationship_kwargs={"passive_deletes": True}
+    )
+    goals: List["Goal"] = Relationship(
+        back_populates="owner", sa_relationship_kwargs={"passive_deletes": True}
+    )
     assigned_cards: List["Card"] = Relationship(
         back_populates="assignee",
-        sa_relationship_kwargs={"foreign_keys": "[Card.assignee_id]"},
+        sa_relationship_kwargs={
+            "foreign_keys": "[Card.assignee_id]",
+            "passive_deletes": True,
+        },
     )
     created_cards: List["Card"] = Relationship(
         back_populates="created_by",
-        sa_relationship_kwargs={"foreign_keys": "[Card.created_by_id]"},
+        sa_relationship_kwargs={
+            "foreign_keys": "[Card.created_by_id]",
+            "passive_deletes": True,
+        },
     )
 
     def has_role(self, role_name: RoleName) -> bool:
@@ -116,8 +130,12 @@ class User(SQLModel, table=True):
         from .public.user_public import UserPublic
         from .enums import GoalStatus
 
-        profile_public = self.profile.to_public(current_user_id=current_user_id) if self.profile else None
-    
+        profile_public = (
+            self.profile.to_public(current_user_id=current_user_id)
+            if self.profile
+            else None
+        )
+
         return UserPublic(
             id=self.id,
             uuid=str(self.uuid),
@@ -169,14 +187,13 @@ class User(SQLModel, table=True):
         # Only for users with mentor profile
         if not self.is_mentor or not self.mentor_profile:
             return None
-        
+
         mentor_profile: "MentorProfile" = self.mentor_profile
         profile: "UserProfile" = self.profile
         settings: "MentorSettings" = mentor_profile.settings
-        
+
         public_sessions = [
-            s for s in mentor_profile.sessions
-            if s.is_public and s.is_active
+            s for s in mentor_profile.sessions if s.is_public and s.is_active
         ]
 
         prices = [s.price_usd for s in public_sessions if s.price_usd is not None]
@@ -261,7 +278,6 @@ class UserProfile(SQLModel, table=True):
                 self.interests,
                 self.skills,
                 self.social_links,
-                self.contact_details,
                 self.education,
                 self.experience,
             ]
@@ -281,7 +297,7 @@ class UserProfile(SQLModel, table=True):
                 self.interests,
                 self.skills,
             ]
-    )
+        )
 
     def to_public(self, current_user_id: Optional[int] = None):
         """Convert to UserProfilePublic"""
@@ -289,7 +305,9 @@ class UserProfile(SQLModel, table=True):
 
         mentor_profile_public = None
         if self.user and self.user.mentor_profile:
-            mentor_profile_public = self.user.mentor_profile.to_public(current_user_id=current_user_id)
+            mentor_profile_public = self.user.mentor_profile.to_public(
+                current_user_id=current_user_id
+            )
 
         return UserProfilePublic(
             user_id=self.user_id,

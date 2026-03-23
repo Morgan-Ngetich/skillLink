@@ -45,7 +45,7 @@ export default function BecomeMentorCard() {
       toast({
         id: "complete-profile-first",
         title: 'Complete your profile first',
-        description: 'You need to complete your profile before becoming a mentor',
+        description: `Missing: ${missingFields.map((f: { label: string }) => f.label).join(', ')}`,
         status: 'warning',
       })
 
