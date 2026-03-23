@@ -68,6 +68,17 @@ function RootComponent() {
   })
 
   useEffect(() => {
+    const warmExternalServices = async () => {
+      const services = [
+        "https://university-domains-list-api-g36q.onrender.com/",
+      ];
+      await Promise.allSettled(services.map(url => fetch(url)));
+    };
+
+    warmExternalServices();
+  }, []);
+
+  useEffect(() => {
     console.log('✅ ROOT HYDRATED SUCCESSFULLY')
   }, [])
 
