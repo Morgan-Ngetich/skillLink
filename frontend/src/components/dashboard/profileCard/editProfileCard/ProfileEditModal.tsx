@@ -21,10 +21,11 @@ import { useProfile } from '@/hooks/public/useProfile'
 // import { useAuth } from '@/hooks/auth/useAuth'
 // import ProfilePreviewMini from '@/components/dashboard/menteeProfile/ProfilePreviewMini'
 import type { UserProfileUpdate, UserProfileCreate } from '@/client'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import InstitutionAutocomplete from './InstitutionAutocomplete'
 import SocialLinksSelector from './SocialLinksSelector'
 import { useRouter, useSearch } from '@tanstack/react-router'
+import useToaster from '@/hooks/public/useToaster'
 
 interface ProfileEditModalProps {
   isOpen: boolean
@@ -86,12 +87,16 @@ const EMPTY_EDUCATION_ENTRY = {
 }
 
 export default function ProfileEditModal({ isOpen, onClose, initialStep = "basic" }: ProfileEditModalProps) {
-  const { profile, updateProfileAll, isSubmitting } = useProfile()
-  // const { user } = useAuth()
-  // const showPreview = useBreakpointValue({ base: false, lg: true })
-
+  const { profile, updateProfileAll, isSubmitting, refetch } = useProfile()
+  const toast = useToaster()
   const router = useRouter()
   const search = useSearch({ strict: false })
+
+  // Temporary input states
+  const [newFocus, setNewFocus] = useState('')
+  const [newGoal, setNewGoal] = useState('')
+  const [newInterest, setNewInterest] = useState('')
+  const [newSkill, setNewSkill] = useState('')
 
   const getStepIndex = (stepId: string): number => {
     const index = STEPS.findIndex(s => s.id === stepId)
@@ -177,29 +182,49 @@ export default function ProfileEditModal({ isOpen, onClose, initialStep = "basic
     }
   }, [isOpen, profile])
 
-  // Temporary input states
-  const [newFocus, setNewFocus] = useState('')
-  const [newGoal, setNewGoal] = useState('')
-  const [newInterest, setNewInterest] = useState('')
-  const [newSkill, setNewSkill] = useState('')
-
-  const { refetch } = useProfile()
-
   const handleSubmit = async () => {
+    const isRedirectingToMentor = search.redirectTo === 'mentor-setup'
+
     await updateProfileAll(formData, {
       onSuccess: () => {
         refetch()
 
-        // Check if there's a redirect
-        if (search.redirectTo === 'mentor-setup') {
-          // Profile complete, now open mentor setup
+        if (isRedirectingToMentor) {
+          const missingFields = [
+            !formData.title && 'Title',
+            !formData.about && 'About',
+            !formData.location && 'Location',
+            (!formData.experience || formData.experience.length === 0) && 'Work experience',
+            (!formData.education || formData.education.length === 0) && 'Education',
+            (!formData.skills || formData.skills.length < 3) && 'Skills (at least 3)',
+            (!formData.interests || formData.interests.length === 0) && 'Interests',
+            (!formData.social_links?.linkedin && !formData.social_links?.github) && 'LinkedIn or GitHub',
+          ].filter(Boolean) as string[]
+
+          if (missingFields.length > 0) {
+            toast({
+              id: 'profile-incomplete',
+              title: 'Profile still incomplete',
+              description: `Missing: ${missingFields.join(', ')}`,
+              status: 'warning',
+            })
+            return
+          }
+
+          if (!profile?.uuid) return
           router.navigate({
-            to: `/profile${profile?.uuid}`,
-            search: { drawer: 'mentor-setup', step: 'expertise' },
+            to: '/profile/$uuid',
+            params: { uuid: profile.uuid },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            search: (prev: any) => ({
+              ...prev,
+              drawer: 'mentor-setup',
+              step: 'expertise',
+              redirectTo: undefined,
+            }),
             replace: true,
           })
         } else {
-          // Normal flow - just close
           onClose()
           setStep(0)
         }
@@ -296,6 +321,23 @@ export default function ProfileEditModal({ isOpen, onClose, initialStep = "basic
 
   useEffect(() => scrollToEnd(educationEndRef), [formData.education?.length])
   useEffect(() => scrollToEnd(experienceEndRef), [formData.experience?.length])
+
+  const isFormDirty = useMemo(() => {
+    if (!profile) return false
+    return JSON.stringify(formData) !== JSON.stringify({
+      title: profile.title || '',
+      about: profile.about || '',
+      location: profile.location || '',
+      area_of_focus: profile.area_of_focus || [],
+      goals: profile.goals || [],
+      interests: profile.interests || [],
+      skills: profile.skills || [],
+      social_links: profile.social_links || {},
+      contact_details: profile.contact_details || {},
+      education: profile.education && profile.education?.length > 0 ? profile.education : [EMPTY_EDUCATION_ENTRY],
+      experience: profile.experience && profile.experience?.length > 0 ? profile.experience : [EMPTY_EXPERIENCE_ENTRY],
+    })
+  }, [formData, profile])
 
   const renderBasicInfo = () => (
     <VStack gap={4} align="stretch">
@@ -796,7 +838,7 @@ export default function ProfileEditModal({ isOpen, onClose, initialStep = "basic
 
             {/* If last step -> show Save button; otherwise Next */}
             {step === STEPS.length - 1 ? (
-              <Button colorPalette="green" onClick={handleSubmit} loading={isSubmitting}>
+              <Button colorPalette="green" onClick={handleSubmit} loading={isSubmitting} disabled={!isFormDirty}>
                 Save Profile
               </Button>
             ) : (
