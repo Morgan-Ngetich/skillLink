@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query
 from uuid import UUID
 from typing import List
-from app.api.deps import SessionDep, CurrentUser
+from app.api.deps import SessionDep, CurrentUserOptional
 from app.models import (
     MentorExplorePublic,
 )
@@ -11,7 +11,7 @@ router = APIRouter()
 
 @router.get("/mentors/also-viewed", response_model=List[MentorExplorePublic])
 def people_also_viewed(
-    currentUser: CurrentUser,
+    currentUser: CurrentUserOptional,
     session: SessionDep,
     limit: int = Query(6, ge=1, le=10),
 ):
@@ -21,7 +21,7 @@ def people_also_viewed(
     """
     users = crud.get_also_viewed_mentors(
         session=session,
-        exclude_mentor_uuid=currentUser.uuid,
+        exclude_mentor_uuid=currentUser.uuid if currentUser else None,
         limit=limit,
     )
 

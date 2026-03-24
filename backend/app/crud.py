@@ -441,7 +441,7 @@ def get_mentor_profile_or_404(session: Session, user_id: int) -> MentorProfile:
 
 def get_also_viewed_mentors(
     session: Session,
-    exclude_mentor_uuid: UUID,
+    exclude_mentor_uuid: UUID | None,
     limit: int = 6,
 ) -> List[User]:
     """
@@ -454,7 +454,7 @@ def get_also_viewed_mentors(
         .where(
             User.is_active,
             MentorSettings.profile_visibility,
-            User.uuid != exclude_mentor_uuid,
+            *([User.uuid != exclude_mentor_uuid] if exclude_mentor_uuid else []),
         )
         .order_by(sa.func.random())
         .limit(limit)
