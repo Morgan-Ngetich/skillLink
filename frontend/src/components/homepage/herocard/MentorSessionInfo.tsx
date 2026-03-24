@@ -223,6 +223,7 @@ const MentorSessionInfo: React.FC<MentorSessionInfoProps> = ({
                   redirectTo: undefined,
                   serviceModal: undefined,
                   serviceId: undefined,
+                  serviceDetailId: undefined,
                   sessionModal: undefined,
                   sessionId: undefined,
                   sessionDetailId: undefined,

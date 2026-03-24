@@ -36,9 +36,23 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor, maxW = "full" })
       h="full"
       display="flex"
       flexDirection="column"
-      onClick={isMobile ? () => navigate({ 
-        to: "/profile/$uuid", // ✅ Use the route path
-        params: { uuid: mentor.uuid } // ✅ Pass params separately
+      onClick={isMobile ? () => navigate({
+        to: "/profile/$uuid",
+        params: { uuid: mentor.uuid },
+        search: {
+          pt: "about",
+          st: "sessions",
+          drawer: undefined,
+          step: undefined,
+          redirectTo: undefined,
+          serviceModal: undefined,
+          serviceId: undefined,
+          serviceDetailId: undefined,
+          sessionModal: undefined,
+          sessionId: undefined,
+          sessionDetailId: undefined,
+          settings: undefined,
+        }
       }) : undefined}
     >
       {/* Cover Image and Avatar */}
@@ -181,9 +195,23 @@ export const MentorCard: React.FC<MentorCardProps> = ({ mentor, maxW = "full" })
 
         {/* CTA */}
         {!isMobile && (
-          <Link 
-            to="/profile/$uuid" // ✅ Use the route path
-            params={{ uuid: mentor.uuid }} // ✅ Pass params separately
+          <Link
+            to="/profile/$uuid"
+            params={{ uuid: mentor.uuid }}
+            search={{
+              pt: "about",
+              st: "sessions",
+              drawer: undefined,
+              step: undefined,
+              redirectTo: undefined,
+              serviceModal: undefined,
+              serviceId: undefined,
+              serviceDetailId: undefined,
+              sessionModal: undefined,
+              sessionId: undefined,
+              sessionDetailId: undefined,
+              settings: undefined,
+            }}
           >
             <Button mt={5} width="100%">
               View Profile

@@ -199,6 +199,7 @@ const InfoPanelContent: React.FC<InfoPanelContentProps> = ({
                     redirectTo: undefined,
                     serviceModal: undefined,
                     serviceId: undefined,
+                    serviceDetailId: undefined,
                     sessionModal: undefined,
                     sessionId: undefined,
                     sessionDetailId: undefined,
